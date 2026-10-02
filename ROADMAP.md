@@ -145,7 +145,9 @@ npm にはまだ出していない（`@genelab/gassan` は 2026-10-02 時点で�
 ## v1.0.0 — 凍結
 
 - [ ] API の破壊的変更を止める宣言
-- [ ] ドキュメントサイト（各項目が `modal.skill.md` の ID と相互リンク）
+- [x] ドキュメントサイト（各項目が `modal.skill.md` の ID と相互リンク）
+      … 先行して公開した（<https://hiroki-abe-58.github.io/gassan/>、ソースは `site/`）。
+      表・件数・API は仕様書と型定義からビルド時に生成し、手で書いた数値を持たない
 - [ ] 移行ガイド（Radix Dialog / react-modal / Headless UI から）
 
 **受け入れ条件**

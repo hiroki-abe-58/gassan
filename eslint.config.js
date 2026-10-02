@@ -32,6 +32,17 @@ export default tseslint.config(
     },
   },
   {
+    // 環境モジュール宣言（declare module '...'）の中では import 文が書けない（TS2439）。
+    // 型を参照する手段が import() 型注釈しかないので、宣言ファイルに限って許す。
+    files: ['**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports', fixStyle: 'inline-type-imports', disallowTypeAnnotations: false },
+      ],
+    },
+  },
+  {
     // CLI スクリプトは標準出力が仕事なので console を許す。
     files: ['scripts/**/*.mjs'],
     rules: { 'no-console': 'off' },

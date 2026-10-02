@@ -57,6 +57,10 @@ jobs:
       - name: Build demo
         run: npm run build:demo
 
+      # 仕様書・追跡表・型定義から表を組み立てるので、文書の書式が崩れるとここで落ちる。
+      - name: Build documentation site
+        run: npm run site:build
+
   # 利用者の立場からの検証。tarball を実インストールし、ESM / CJS / CSS が引けるか、
   # bundler / node16 / nodenext の3方式すべてで型が解決できるかを見る。
   # ネットワークを使うので verify とは別ジョブにしてある。

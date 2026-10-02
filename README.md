@@ -10,6 +10,11 @@
 - **閉じる理由** — 8種類の `CloseReason` を区別し、拒否するときは必ず理由を返す
 - **スクリム** — 黒60%の決め打ちをやめ、意図別の4段階トークンにする
 
+**ドキュメントサイト: <https://hiroki-abe-58.github.io/gassan/>**
+— 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・寸法・モーション）、
+全コンポーネントの動くデモと API、135項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
+表・件数・API の説明はすべて仕様書と型定義からビルド時に生成していて、手で書いた数値は無い。
+
 設計の全文は [`modal.skill.md`](./modal.skill.md)（135項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
 AI コーディング時はそのファイルをコンテキストに入れる。
 
@@ -24,8 +29,11 @@ AI コーディング時はそのファイルをコンテキストに入れる�
 
 ## インストール
 
+npm にはまだ公開していない。当面は GitHub から直接入れる。
+インストール時に `prepare` が走り、配布物（ESM / CJS / 型 / CSS）がその場でビルドされる。
+
 ```bash
-npm install @genelab/gassan
+npm install github:hiroki-abe-58/gassan
 ```
 
 ```tsx
@@ -273,10 +281,17 @@ const ok = await modals.confirm({ title: '削除しますか', tone: 'danger' })
 
 ```bash
 npm install
-npm run dev              # examples/react のデモ（Vite）
+npm run dev              # examples/react のデモ（Vite）。実機検品の台
+npm run site:dev         # ドキュメントサイトを手元で開く（http://localhost:5180）
+npm run site:build       # サイトを site/dist に書き出す（npm run site:preview で確認）
 npm run verify           # typecheck → lint → test → trace → docs → build → dist / SSR / pack 検品
 npm run check:consumer   # tarball を実インストールして外から検証（ネットワークが要る）
 ```
+
+ドキュメントサイトは `site/` にある。仕様書・追跡表・検証レポート・`src` の型定義を
+ビルド時に読み込んで表と API を組み立てる（`site/plugins/gassan-data.ts`）。
+デモのコード表示は、動いているデモのファイルそのもの（`?raw`）なので、見本とコードがずれない。
+`main` に push すると GitHub Actions がビルドして GitHub Pages に公開する。
 
 `examples/css-check.html` はブラウザで直接開ける。
 top layer・退出アニメ・スクリムの濃度など、jsdom では確かめられない層を目視するためのページ。

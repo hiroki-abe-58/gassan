@@ -1,0 +1,8 @@
+/*
+ * レイヤの順序を、gassan の CSS より先に確定させる。
+ *
+ * サイトの要素向けの土台（site-base）は gassan より弱くしておく。dialog は top layer に出ても
+ * DOM 上はページの子孫なので、強いままだとサイトの input や p の指定がモーダルの中身まで上書きしてしまう。
+ * gassan 自身が勧めている使い方（利用側は @layer の外から上書きする）の、ちょうど逆向きの使い方である。
+ */
+@layer site-base, gassan;

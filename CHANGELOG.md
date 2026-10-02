@@ -25,6 +25,27 @@ npm に一度も出していないので、利用者への影響は無い。名�
 `data-kind` のように `data-k` で始まるだけの名前は対象外（`data-k-` の接頭辞だけを改めた）。
 置換後も `npm run verify` は全段通り、配布物の raw サイズは 1 バイトも変わっていない。
 
+### 追加（ドキュメントサイト）
+
+- **`site/`** — Material Design 3 のガイドラインの形で、設計思想・スタイル・コンポーネント・振る舞い仕様・検証を読めるサイト。
+  GitHub Pages（<https://hiroki-abe-58.github.io/gassan/>）に公開する。ROADMAP v1.0 の項目を先行して満たした。
+  - 設計思想: 存在理由 / 4 層モデル / 5 類型と意思決定マトリクス / アクセシビリティ / 禁止事項と品質基準 / 実装ノート
+  - スタイル: スクリム / 色とコントラスト / 寸法と配置 / モーション
+  - コンポーネント: 12 ページ。それぞれ「概要（動くデモと Do / Don't）」「API」「アクセシビリティ」のタブ
+  - 振る舞い仕様: 135 項目を検索・カテゴリ・必須度・状態で絞り込める。`#/spec/G-03` のように項目へ直接リンクできる
+- **表を手で書かない** — `site/plugins/gassan-data.ts` が `modal.skill.md` / `docs/traceability.md` / `VERIFICATION.md` /
+  `src/styles.css` のトークン / `src` の型定義（TypeScript Compiler API で JSDoc と既定値まで）を読んでデータを作る。
+  仕様書を直せばサイトも直る。存在しない仕様 ID や型名を参照すると開発時に落ちる。
+- **デモのコードは、動いているファイルそのもの** — `?raw` で読み込んで表示するので、見本とコードがずれない。
+- サイト自身もアクセシビリティを守る。ページ遷移で見出しへフォーカスを移す、タブは APG の Tabs パターン、
+  狭い画面のメニューは gassan のシート（`routeKey` でページ遷移時に閉じ、`finalFocus` で移った先の見出しへ戻す）、
+  配色はすべて 4.5:1 以上。
+- `npm run site:dev` / `site:build` / `site:preview`。`npm run typecheck` はサイトも型検査する。CI でサイトをビルドし、
+  `.github/workflows/pages.yml` が `main` への push で公開する。
+- `prepare` を追加。`npm install github:hiroki-abe-58/gassan` で入れたとき、配布物をその場でビルドする。
+- `@types/node` を devDependencies に追加。`vite.config.ts` の `node:url` の型は、これまで開発機のホームにあった
+  `~/node_modules/@types/node` を偶然拾って通っていただけで、クリーンな CI では落ちるはずだった。
+
 ### 修正（実ブラウザで描いて初めて見えた配置の崩れ 3 件。H-09 / F-02 / A-02）
 
 ドキュメントサイトのデモを実際のブラウザで撮って見比べたところ、jsdom では原理的に見えない

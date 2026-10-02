@@ -32,9 +32,11 @@ console.log('checking publishable package');
 
 // --- 1. tarball に何が入るかを npm 自身に聞く -------------------------------
 // --dry-run なので実際には publish も pack もしない。
+// --ignore-scripts: dist は verify の前段（npm run build）で作ってある。ここで prepare（tsup）を
+// 走らせると、そのログが標準出力に混ざって JSON が壊れる。見たいのは同梱物だけである。
 let files = [];
 try {
-  const raw = execFileSync('npm', ['pack', '--dry-run', '--json'], {
+  const raw = execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'ignore'],
   });

@@ -5,6 +5,7 @@ coverage/
 .DS_Store
 .vitest-cache/
 examples/react/dist/
+site/dist/
 
 # scripts/check-docs.mjs の作業ディレクトリ（実行後に消える）
 .tmp-doccheck/
