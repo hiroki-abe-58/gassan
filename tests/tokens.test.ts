@@ -13,6 +13,9 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+// 比の計算と検査する組は、ドキュメントサイトの色のページと共有する（表示と検査を別々に持たない）。
+import { CONTRAST_PAIRS, contrastRatio } from '../site/data/color';
+
 const raw = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8');
 /** コメントを落とした本文。コメント中の語に反応させないため。 */
 const css = raw.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -121,6 +124,23 @@ describe('tokens / container (C-02 C-03 C-05 C-06 C-10 M-09)', () => {
     expect(css).toMatch(/\.g-panel > \.g-header\s*\{\s*grid-row:\s*1;/);
     expect(css).toMatch(/\.g-panel > \.g-body\s*\{\s*grid-row:\s*2;/);
     expect(css).toMatch(/\.g-panel > \.g-footer\s*\{\s*grid-row:\s*3;/);
+  });
+
+  it('説明文は自分で左右の余白を持たない（ヘッダにも本文にも余白があり、二重に字下げされる）', () => {
+    // Modal.Description はヘッダか本文の中に置く。どちらも --g-pad-inline の余白を持っている。
+    expect(block('.g-desc')).not.toMatch(/padding/);
+  });
+
+  it('H-09: つまみを置いたときは 4 行にし、つまみを 1 行目に置く（行が無いとフッタの下に落ちる）', () => {
+    // 行を割り当てないと、自動配置で暗黙の 4 行目に入り、シートの下端につまみが出る。
+    // jsdom はレイアウトを計算しないので、配置の規則そのものを固定する。
+    expect(css).toMatch(
+      /\.g-panel:has\(> \.g-handle\)\s*\{\s*grid-template-rows:\s*auto auto minmax\(0, 1fr\) auto;/,
+    );
+    expect(css).toMatch(/\.g-panel > \.g-handle\s*\{\s*grid-row:\s*1;/);
+    expect(css).toMatch(/\.g-panel:has\(> \.g-handle\) > \.g-header\s*\{\s*grid-row:\s*2;/);
+    expect(css).toMatch(/\.g-panel:has\(> \.g-handle\) > \.g-body\s*\{\s*grid-row:\s*3;/);
+    expect(css).toMatch(/\.g-panel:has\(> \.g-handle\) > \.g-footer\s*\{\s*grid-row:\s*4;/);
   });
 
   it('100vh を使わない（モバイルのアドレスバーで高さが破綻する）', () => {
@@ -287,35 +307,11 @@ function palette(scheme: 'light' | 'dark'): (name: string) => string {
   };
 }
 
-/** WCAG 2.x の相対輝度とコントラスト比。 */
-function contrast(a: string, b: string): number {
-  const lum = (hex: string): number => {
-    const [r, g, b2] = [1, 3, 5].map((i) => {
-      const c = Number.parseInt(hex.slice(i, i + 2), 16) / 255;
-      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-    });
-    return 0.2126 * (r ?? 0) + 0.7152 * (g ?? 0) + 0.0722 * (b2 ?? 0);
-  };
-  const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
-  return ((hi ?? 0) + 0.05) / ((lo ?? 0) + 0.05);
-}
-
-/** [前景, 背景, 最低比, 何の組か] */
-const PAIRS: readonly [string, string, number, string][] = [
-  ['fg', 'surface', 4.5, '本文'],
-  ['fg-muted', 'surface', 4.5, '補足・tertiary・ゲート中の secondary'],
-  ['on-accent', 'accent', 4.5, 'primary'],
-  ['on-accent-muted', 'accent-muted', 4.5, 'ゲート中の primary（G-10）'],
-  ['on-danger', 'danger', 4.5, 'danger ボタン（F-06）'],
-  ['danger', 'surface', 4.5, 'エラー文・必須の印'],
-  ['focus', 'surface', 3, 'フォーカスリング（K-07。非テキストは 3:1）'],
-];
-
 /** 最低比を割っている組を「何の組か: 実測」で返す。空なら合格。 */
 function shortfalls(scheme: 'light' | 'dark'): string[] {
   const color = palette(scheme);
-  return PAIRS.flatMap(([fg, bg, min, what]) => {
-    const ratio = contrast(color(fg), color(bg));
+  return CONTRAST_PAIRS.flatMap(([fg, bg, min, what]) => {
+    const ratio = contrastRatio(color(fg), color(bg));
     return ratio >= min ? [] : [`${what}: --g-${fg} / --g-${bg} = ${ratio.toFixed(2)}:1（${String(min)}:1 未満）`];
   });
 }

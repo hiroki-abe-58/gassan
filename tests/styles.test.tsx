@@ -22,6 +22,11 @@ describe('styles / footer order (F-02〜F-04)', () => {
     expect(rules).not.toMatch(/column-reverse/);
   });
 
+  it('order で見た目の順番を入れ替えない（GateStatus を本文の末尾に置くと先頭へ飛んでいた）', () => {
+    // order も column-reverse と同じく、視覚順と読み上げ・Tab 順を食い違わせる。
+    expect(rules).not.toMatch(/(^|[^-\w])order\s*:/m);
+  });
+
   it('ボタン列は残り幅を占め、最初の tertiary だけを左へ分離する', () => {
     expect(rules).toMatch(/\.g-footer-actions\s*\{[^}]*flex:\s*1;/);
     expect(rules).toMatch(

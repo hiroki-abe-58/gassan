@@ -15,8 +15,8 @@
 npm run verify                        … EXIT 0
   ├─ tsc --noEmit                     … エラー 0
   ├─ eslint .                         … エラー 0 / 警告 0
-  ├─ vitest run                       … 392 passed (17 files)
-  ├─ node scripts/check-trace.mjs     … 8 項目すべて ok（135 項目が追跡表に実在、392 件のテストが根拠として結線）
+  ├─ vitest run                       … 395 passed (17 files)
+  ├─ node scripts/check-trace.mjs     … 8 項目すべて ok（135 項目が追跡表に実在、395 件のテストが根拠として結線）
   ├─ node scripts/check-docs.mjs      … 文書のコード例 20 件が公開 API でコンパイル（外部依存の 3 件は対象外と明示）
   ├─ tsup                             … ESM / CJS / d.ts / d.cts 生成成功
   ├─ node scripts/check-dist.mjs      … 8 項目すべて ok（公開 API 33 個、文書の実測サイズ 4 箇所がビルドと一致）
@@ -51,13 +51,13 @@ SSR 時点でゲートが fail-closed になっていること、`Modal.Chart` �
 |---|---:|---:|---:|
 | `dist/index.js` (ESM) | 80,056 B | 19,551 B | 22,528 B |
 | `dist/index.cjs` | 82,950 B | 19,781 B | 22,528 B |
-| `dist/styles.css` | 23,443 B | 4,884 B | 6,144 B |
+| `dist/styles.css` | 23,686 B | 4,906 B | 6,144 B |
 
 追補前（13,495 B / 13,659 B / 4,503 B）からの増分は、退出 fallback・`Modal.Chart`・フッタ規則のぶん。
 
 `styles.css` は配布用にコメントを落としてある。設計意図つきの原文は `dist/styles.source.css`。
 
-### テストの内訳（392件 = 追補前 103件 + 25件 + 構造 8件 + 環境 28件 + トークン 45件 + シート 42件 + シートの指離し 16件 + 入れ子 13件 + 受け渡しの静的検査 3件 + 構造コンテナの空入力 8件 + ゲートの多重登録と命令的 API の出口 24件 + 登録が出揃う前のゲート 19件 + props の契約 22件 + 色のコントラスト 3件 + 止められない Esc 2件）
+### テストの内訳（395件 = 追補前 103件 + 25件 + 構造 8件 + 環境 28件 + トークン 45件 + シート 42件 + シートの指離し 16件 + 入れ子 13件 + 受け渡しの静的検査 3件 + 構造コンテナの空入力 8件 + ゲートの多重登録と命令的 API の出口 24件 + 登録が出揃う前のゲート 19件 + props の契約 22件 + 色のコントラスト 3件 + 止められない Esc 2件 + 実ブラウザで見つけた配置の規則 3件）
 
 追補3 で 65 件足し、**追跡表の「未検証」を 6 件から 0 件にした。**
 
@@ -79,10 +79,10 @@ SSR 時点でゲートが fail-closed になっていること、`Modal.Chart` �
 | `tests/content.test.tsx` | 46 | +1 | タイトル省略・本文・読了ゲート・ボタン・ギャラリー・フォーム部品・命令的 API |
 | `tests/exit.test.tsx` | 9 | +9（新規） | 退出 fallback・returnValue のリセット・ネイティブ close の後始末・A-01 の誤検知 |
 | `tests/chart.test.tsx` | 7 | +7（新規） | `Modal.Chart` の名前 / 要約 / aria-hidden 既定 / visualAccessible / details / 文言 / 開発時警告 |
-| `tests/styles.test.tsx` | 8 | 0 | フッタの順序規則と退出状態の CSS（静的な回帰検査）、フッタの DOM 順 |
+| `tests/styles.test.tsx` | 9 | +1 | フッタの順序規則と退出状態の CSS（静的な回帰検査）、フッタの DOM 順 |
 | `tests/environment.test.tsx` | 28 | +28（新規） | 送信ショートカット・メディア既定・仮想キーボード・戻るジェスチャ・長押しの禁止・拡大耐性 |
 | `tests/structure.test.tsx` | 8 | 0 | 見出しレベル・スロット配置・インジケータ・テーブルの配線 |
-| `tests/tokens.test.ts` | 48 | +48（新規） | トークンの値と CSS 不変条件（スクリム濃度・タップ寸法・`100vh` 禁止・ゲート中の当たり判定・`@layer` の閉じ込め・つまみの寸法・ディテントの割合・ライト / ダークの色の組のコントラスト比） |
+| `tests/tokens.test.ts` | 50 | +50（新規） | トークンの値と CSS 不変条件（スクリム濃度・タップ寸法・`100vh` 禁止・ゲート中の当たり判定・`@layer` の閉じ込め・つまみの寸法・ディテントの割合・ライト / ダークの色の組のコントラスト比） |
 | `tests/detent.test.tsx` | 42 | +42（新規） | つまみ（H-09）・ディテントの解決とスナップ（M-03）・ドラッグの開始条件と後始末（M-02） |
 | `tests/props-contract.test.tsx` | 22 | +22（新規） | 制御 `loading` と内部 pending の論理和（F-08）・リストの識別子重複（D-13）・変化通知の条件（D-14）・`Modal.Button` の予約名（D-11）・空のリスト |
 
@@ -302,7 +302,7 @@ CDP の `Runtime.evaluate` で `getComputedStyle` / `getBoundingClientRect` / `g
 |---|---|
 | `npm run typecheck` | 型 |
 | `npm run lint` | 静的解析 |
-| `npm run test` | 392 件の単体・結合テスト |
+| `npm run test` | 395 件の単体・結合テスト |
 | `npm run build` | ESM / CJS / `.d.ts` / `.d.cts` / CSS |
 | `npm run check:dist` | `"use client"`・公開 API・サイズ予算 |
 | `npm run check:ssr` | SSR で落ちないか（Next.js App Router 互換） |

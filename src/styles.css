@@ -262,6 +262,14 @@
   .g-panel > .g-body   { grid-row: 2; }
   .g-panel > .g-footer { grid-row: 3; }
 
+  /* シートのつまみ（Modal.Handle）を置いたときだけ 4 行にし、つまみを 1 行目に置く。H-09。
+   * 行を割り当てないと自動配置で暗黙の 4 行目（フッタの下）に入り、パネルの下端につまみが出る。 */
+  .g-panel:has(> .g-handle) { grid-template-rows: auto auto minmax(0, 1fr) auto; }
+  .g-panel > .g-handle { grid-row: 1; }
+  .g-panel:has(> .g-handle) > .g-header { grid-row: 2; }
+  .g-panel:has(> .g-handle) > .g-body   { grid-row: 3; }
+  .g-panel:has(> .g-handle) > .g-footer { grid-row: 4; }
+
   .g-dialog[data-size="sm"]   { --g-panel-max: var(--g-size-sm); }
   .g-dialog[data-size="md"]   { --g-panel-max: var(--g-size-md); }
   .g-dialog[data-size="lg"]   { --g-panel-max: var(--g-size-lg); }
@@ -401,9 +409,10 @@
   }
   .g-title-toggle:hover { color: var(--g-fg); }
 
+  /* 左右の余白は持たない。置き場所のヘッダも本文も --g-pad-inline を持っているので、
+   * ここでも足すと二重に字下げされる。 */
   .g-desc {
     margin: 0;
-    padding: 0 var(--g-pad-inline);
     color: var(--g-fg-muted);
     font-size: 0.875rem;
     line-height: 1.6;
@@ -511,10 +520,12 @@
     transition: box-shadow var(--g-dur-out) linear;
   }
 
+  /* 置いた場所にそのまま出す。order で先頭へ動かすと、本文の末尾に置いたときに
+   * 視覚上だけ先頭へ飛び、読み上げ・Tab 順と食い違う（F-02 と同じ理由）。
+   * フッタのボタン列に置いたときは 1 行を占めて、ボタンの上か下に並ぶ。 */
   .g-gate-status {
     margin: 0;
     flex: 1 1 100%;
-    order: -1;
     font-size: 0.8125rem;
     color: var(--g-fg-muted);
   }
