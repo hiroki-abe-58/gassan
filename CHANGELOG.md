@@ -23,6 +23,30 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
 - テストを 201 件から 314 件に増やした（`tests/detent.test.tsx` 42 件、`tests/tokens.test.ts` に 8 件、
   `tests/sheet-drag.test.tsx` 16 件、`tests/nested.test.tsx` 13 件、`tests/passthrough.test.tsx` 34 件）。
 
+### 修正（props の契約。制御と非制御の混在・重複値・変化通知）
+
+公開 API ごとに「制御／非制御」「非同期」「アンマウント」「動的 props」「空・重複・境界値」を
+突き合わせて監査した。どれも**主たる経路は動いているのに、脇の入力で静かに壊れる**種類で、
+利用側からは観測しにくい。経緯は `modal.skill.md` §10-22・§10-23 に残した。
+
+- **`loading={false}` で二重送信の防止が外れていた（F-08）** — 外から渡す `loading` と
+  内部の pending を `loading ?? pending` で合成していた。`??` は `undefined` のときしか右へ落ちないので、
+  `loading={isSubmitting}` のように `false` を渡すと、`onAction` の最中でも何度でも押せた。
+  論理和（`Boolean(loading) || pending`）に直した。`onAction` が reject しても pending は解ける。
+- **リストの識別子重複を名指しで警告する（D-13、新規項目）** — `Modal.Gallery` の `items[].id`、
+  `Modal.Chips` の `options[].value` が重複したら、どの prop のどの値かを開発時に警告する。
+  React の key 警告は prop 名を言わない。重複は黙って間引かず、渡した件数のまま描く。
+- **変化の通知を「観測できる値が変わったとき」に揃えた（D-14、新規項目）** —
+  `onIndexChange` はマウントしただけで `0` を鳴らしていた。直前に知らせた値と違うときだけ鳴らす。
+  逆に `onDetentChange` は操作のハンドラの中でしか鳴らさず、`detents` が縮んで段が丸められたとき・
+  開き直して既定の段へ戻ったときは黙っていた。Gallery は同じ状況（`items` の縮小で位置が切り詰められた）で
+  鳴らしており、2 つの部品で約束が逆だった。通知を「見えている値」の effect から出すようにした。
+- **`Modal.Button` も予約名を守る（D-11）** — ここだけは `ButtonHTMLAttributes` をそのまま受けるため
+  生の `{...rest}` を通しており、`data-variant` などを渡されても警告が出ていなかった。
+  `stripReservedData` を通し、他の部品と同じく警告して落とす。生の `{...rest}` はリポジトリから無くなった。
+- 項目を 133 件から 135 件に、テストを 365 件から 387 件に増やした（`tests/props-contract.test.tsx` 22 件）。
+  調査用に置いていた `tests/probe.test.tsx` は、全ケースを上へ移したうえで削除した。
+
 ### 修正（登録が出揃う前のゲート。独立監査で見つけた 3 件目の fail-open）
 
 ゲートは子の effect で登録される。サーバーでは effect が走らず、クライアントでも
@@ -207,8 +231,8 @@ import するので、tsup の変換で壊れても気づけない。消費者�
   パネルに残っていた。`open` が false になった時点でドラッグを畳む。
 - **段を減らすと `aria-valuenow` が `aria-valuemax` を超えた（M-03）** — `detents` は prop なので
   開いている最中に減りうる。読み取り時に丸め、state と ref も揃え直す。
-  この丸めでは `onDetentChange` を鳴らさない。prop を変えたのは利用側であり、
-  その通知でまた `detents` を変えられると往復が止まらない。
+  （当初はこの丸めで `onDetentChange` を鳴らさないとしていたが、D-14 で
+  「見えている段が変わったら原因を問わず鳴らす」に統一した。上の「props の契約」を参照）
 - 2 本目のポインタはドラッグ中に割り込めないようにした。`pointerType` が違えば
   どちらも `isPrimary` になりうるため、`isPrimary` だけでは弾けない。
 

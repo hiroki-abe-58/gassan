@@ -774,7 +774,6 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     detentIndexRef.current = clamped;
     setDetentIndexState(clamped);
     if (!options?.silent) announce(labels.detentChanged(labels.detent(token)));
-    emitDetentChange(token);
   });
 
   // 段の一覧は利用側の prop なので、開いている最中に減ることがある。
@@ -790,8 +789,6 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
 
   // 丸めた結果を state 側にも書き戻す。ここを放っておくと ref が範囲外のまま残り、
   // 次の setDetentIndex が「変化なし」と誤判定して操作が 1 回効かなくなる。
-  // onDetentChange は鳴らさない。prop を変えたのは利用側であり、
-  // その通知で detents をまた変えられると往復が止まらなくなる。
   useEffect(() => {
     if (!detentsEnabled) return;
     if (detentIndexRef.current <= lastDetent && detentIndexRef.current >= 0) return;
@@ -799,6 +796,18 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     detentIndexRef.current = clamped;
     setDetentIndexState(clamped);
   }, [detentsEnabled, lastDetent]);
+
+  // 通知は「見えている段」が変わったときだけ。原因は問わない。D-14。
+  // 操作で動いたのも、detents が縮んで丸められたのも、開き直して既定へ戻ったのも、
+  // 利用側が持っている「今の段」が古くなる点では同じである（Gallery の切り詰めと揃える）。
+  // マウントしただけ・同じ段に留まっただけでは鳴らさない。閉じている間は見えていないので、
+  // 次に開いたとき、最後に知らせた段と比べる。
+  const notifiedDetent = useRef(activeDetent);
+  useEffect(() => {
+    if (!open || !activeDetent || notifiedDetent.current === activeDetent) return;
+    notifiedDetent.current = activeDetent;
+    emitDetentChange(activeDetent);
+  }, [open, activeDetent, emitDetentChange]);
 
   /* ------------------------------------------------------------------ swipe */
 

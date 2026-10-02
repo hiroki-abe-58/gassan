@@ -33,8 +33,8 @@
 - [x] フッタの視覚順 = DOM 順 = Tab 順（狭幅でも反転しない）
 - [x] 要件監査・コントロールの合成レシピ・ライブラリ比較の3文書（`docs/`）
 - [x] `data-*` の受け渡し（D-11。E2E の選択子が通る。予約名は守り、落とすときは警告する）
-- [x] 130 項目の追跡表（`docs/traceability.md`）と、それを機械検証する `check:trace`
-- [x] 365 テスト / 型チェック / lint / dist 検品が CI で通る
+- [x] 135 項目の追跡表（`docs/traceability.md`）と、それを機械検証する `check:trace`
+- [x] 387 テスト / 型チェック / lint / dist 検品が CI で通る
 - [x] 公開形態の整備（LICENSE / CHANGELOG / `publishConfig.access` / dual-package の型条件）
 
 **受け入れ条件（すべて満たした）**
@@ -42,12 +42,12 @@
 数値はこの木で `npm run verify` / `npm run check:dist` が出す実測値であり、
 `npm run check:trace` が文書との食い違いを落とす。v0.2.0 で先行着手したシート分を含む。
 
-- `npm run verify` が緑（typecheck → lint → 365 tests → trace → docs → build → dist → SSR → pack）
+- `npm run verify` が緑（typecheck → lint → 387 tests → trace → docs → build → dist → SSR → pack）
 - `dist/index.js` が gzip 22 KB 未満、`styles.css` が gzip 6 KB 未満
-  … 実測 18,955 B / 4,893 B（2026-10-02 再計測。v0.2.0 のシート分・入れ子の修正・data-* の受け渡し・ゲートの登録まわりの修正を含む）
+  … 実測 19,482 B / 4,885 B（2026-10-02 再計測。v0.2.0 のシート分・入れ子の修正・data-* の受け渡し・ゲートの登録まわり・props の契約の修正を含む）
 - `"use client"` が両フォーマットの先頭にある
 - 公開 API 33 個が dist に存在する
-- `modal.skill.md` の 130 項目が 1 件残らず `docs/traceability.md` に現れ、
+- `modal.skill.md` の 135 項目が 1 件残らず `docs/traceability.md` に現れ、
   各行の根拠（テスト名・CSS の文字列・ファイル）が実在する
 - 実機検品票 B-1〜B-18 が、`VERIFICATION.md` と `examples/css-check.html` で一致する
 - `npm run check:consumer` が緑。tarball を実インストールし、

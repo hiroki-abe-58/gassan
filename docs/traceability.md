@@ -1,12 +1,12 @@
-# 追跡表 — 132 項目が「どこで」満たされているか
+# 追跡表 — 135 項目が「どこで」満たされているか
 
-対象: `@genelab/kasane` v0.1.0（+ v0.2.0 のシート分）/ 日付: 2026-10-01
+対象: `@genelab/kasane` v0.1.0（+ v0.2.0 のシート分）/ 日付: 2026-10-02
 
-[`modal.skill.md`](../modal.skill.md) §4 の 132 項目を、実装・テスト・CSS・ロードマップのどれに
+[`modal.skill.md`](../modal.skill.md) §4 の 135 項目を、実装・テスト・CSS・ロードマップのどれに
 結びつけたかを 1 行ずつ記録する。**この表は `npm run check:trace` が機械検証する。**
 ID の欠落・余剰、必須度の食い違い、存在しないテスト名の引用は CI で落ちる。
 
-「132 項目に対応した」は、書いただけなら主張にすぎない。検証できる形にするための表である。
+「135 項目に対応した」は、書いただけなら主張にすぎない。検証できる形にするための表である。
 
 ---
 
@@ -38,7 +38,7 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 
 ---
 
-## L. レイヤ／ライフサイクル（14）
+## L. レイヤ／ライフサイクル（15）
 
 | ID | 度 | 状態 | 根拠 |
 |---|:-:|---|---|
@@ -149,13 +149,13 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 | F-05 | M | 記述 | `C:--k-tap` `T:タップ領域は WCAG 2.5.8 の 24px を上回る` `T:アイコンボタンとフッタのボタンはトークンを共有する（片方だけ小さくならない）` |
 | F-06 | M | 実装 | `T:closeOnClick は理由つきで閉じる` |
 | F-07 | M | 実装 | `T:処理中でもボタンの名前は保たれる` |
-| F-08 | M | 実装 | `T:onAction 実行中は二重送信を握りつぶす` |
+| F-08 | M | 実装 | `T:onAction 実行中は二重送信を握りつぶす` `T:loading={false} を渡しても onAction は 1 回しか走らない` `T:loading={false} でも onAction 中は aria-busy が立つ` `T:loading を渡さなければ従来どおり内部 pending で防ぐ` `T:loading={true} は onAction が無くても busy になる` `T:onAction が reject しても pending は解け、再試行できる` |
 | F-09 | S | 実装 | `T:ライブリージョンは常設され、開いた時点では空` |
 | F-10 | O | 実装 | `T:Cmd + Enter で primary を起動する` `T:Ctrl + Enter でも起動する` `T:修飾キーなしの Enter では起動しない（テキスト入力を壊さない）` `T:submitShortcut を明示しない限り効かない（既定は無効）` `T:起動するのは primary だけで、secondary は巻き込まない` `T:ゲート中の primary はショートカットでも起動しない` `T:処理中の primary はショートカットの連打でも二重に走らない` |
 | F-11 | O | 実装 | `T:showModal() の前に returnValue を空にする（前回の submit を持ち越さない）` `T:returnValue 付きで閉じられたら submit として扱う` `T:ネイティブ側が先に閉じても後始末（onExited / scroll unlock / reset）を行う` |
 | F-12 | M | 記述 | `C:env(safe-area-inset` `T:セーフエリアは必ず max() で包む（0 の端末で余白が消えない）` |
 
-## G. 活性化ゲート（10）
+## G. 活性化ゲート（12）
 
 | ID | 度 | 状態 | 根拠 |
 |---|:-:|---|---|
@@ -214,7 +214,7 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 | M-08 | M | 実装 | `T:title 属性は使わない` |
 | M-09 | M | 記述 | `C:dvh` `T:シートの最大高は 100dvh 未満（掴む余地を必ず残す）` `T:full は CSS の --k-sheet-max-block (92dvh) と揃っている` `T:M-03: full の割合が CSS の上限 92dvh と一致している` |
 
-## D. 実装／DX（10）
+## D. 実装／DX（14）
 
 | ID | 度 | 状態 | 根拠 |
 |---|:-:|---|---|
@@ -228,8 +228,10 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 | D-08 | M | 実装 | `T:充足済みのゲートは除外する` `T:未登録の名前は fail-closed（ブロックする）` |
 | D-09 | M | 実装 | `T:開いたまま unmount しても例外を投げず、dialog を閉じる` `S:vitest.setup.ts` |
 | D-10 | M | 実装 | `T:Esc は cancel を止めて自前のルートに合流する` `S:vitest.setup.ts` |
-| D-11 | M | 実装 | `T:Modal.Root は data-* をホスト要素へ渡す` `T:Modal.Header は data-* をホスト要素へ渡す` `T:Modal.Controls は data-* をホスト要素へ渡す` `T:Modal.Back は data-* をホスト要素へ渡す` `T:Modal.Close は data-* をホスト要素へ渡す` `T:Modal.Indicator は data-* をホスト要素へ渡す` `T:Modal.Title は data-* をホスト要素へ渡す` `T:Modal.Description は data-* をホスト要素へ渡す` `T:Modal.Body は data-* をホスト要素へ渡す` `T:Modal.Section は data-* をホスト要素へ渡す` `T:Modal.Footer は data-* をホスト要素へ渡す` `T:Modal.Button は data-* をホスト要素へ渡す` `T:Modal.Consent は data-* をホスト要素へ渡す` `T:Modal.GateStatus は data-* をホスト要素へ渡す` `T:Modal.Media は data-* をホスト要素へ渡す` `T:Modal.Gallery は data-* をホスト要素へ渡す` `T:Modal.Field は data-* をホスト要素へ渡す` `T:Modal.Chips は data-* をホスト要素へ渡す` `T:Modal.Switch は data-* をホスト要素へ渡す` `T:Modal.Table は data-* をホスト要素へ渡す` `T:Modal.Alert は data-* をホスト要素へ渡す` `T:Modal.Chart は data-* をホスト要素へ渡す` `T:Modal.Handle は data-* をホスト要素へ渡す` `T:公開コンポーネントは 1 つ残らず受け渡しを検査している` `T:kasane が書く data-kind は消費者の値で壊れない` `T:予約語を渡すと開発時に警告する` `T:aria-* は受け取らず、警告して落とす（名前は label / Modal.Title を使う）` `T:aria-* を渡しても label が無ければ名前は付かない（黙って名前が付く事故を防ぐ）` `T:src が書く data-* はすべて RESERVED_DATA に載っている` `T:消費者が置く data-k-no-swipe は予約していない` `T:Modal.Gate は要素を描かないので受け渡しの対象外` `T:kasane が書く data-* は 1 つ残らずスプレッドより後ろにある` `T:濾過を通さない生の {...rest} は Modal.Button の 1 箇所だけ` `T:公開コンポーネントの数だけ domPassthrough の呼び出しがある` |
+| D-11 | M | 実装 | `T:Modal.Root は data-* をホスト要素へ渡す` `T:Modal.Header は data-* をホスト要素へ渡す` `T:Modal.Controls は data-* をホスト要素へ渡す` `T:Modal.Back は data-* をホスト要素へ渡す` `T:Modal.Close は data-* をホスト要素へ渡す` `T:Modal.Indicator は data-* をホスト要素へ渡す` `T:Modal.Title は data-* をホスト要素へ渡す` `T:Modal.Description は data-* をホスト要素へ渡す` `T:Modal.Body は data-* をホスト要素へ渡す` `T:Modal.Section は data-* をホスト要素へ渡す` `T:Modal.Footer は data-* をホスト要素へ渡す` `T:Modal.Button は data-* をホスト要素へ渡す` `T:Modal.Consent は data-* をホスト要素へ渡す` `T:Modal.GateStatus は data-* をホスト要素へ渡す` `T:Modal.Media は data-* をホスト要素へ渡す` `T:Modal.Gallery は data-* をホスト要素へ渡す` `T:Modal.Field は data-* をホスト要素へ渡す` `T:Modal.Chips は data-* をホスト要素へ渡す` `T:Modal.Switch は data-* をホスト要素へ渡す` `T:Modal.Table は data-* をホスト要素へ渡す` `T:Modal.Alert は data-* をホスト要素へ渡す` `T:Modal.Chart は data-* をホスト要素へ渡す` `T:Modal.Handle は data-* をホスト要素へ渡す` `T:公開コンポーネントは 1 つ残らず受け渡しを検査している` `T:kasane が書く data-kind は消費者の値で壊れない` `T:予約語を渡すと開発時に警告する` `T:aria-* は受け取らず、警告して落とす（名前は label / Modal.Title を使う）` `T:aria-* を渡しても label が無ければ名前は付かない（黙って名前が付く事故を防ぐ）` `T:src が書く data-* はすべて RESERVED_DATA に載っている` `T:消費者が置く data-k-no-swipe は予約していない` `T:Modal.Gate は要素を描かないので受け渡しの対象外` `T:kasane が書く data-* は 1 つ残らずスプレッドより後ろにある` `T:濾過を通さない生の {...rest} は 1 箇所も無い` `T:公開コンポーネントの数だけ濾過の呼び出しがある` `T:予約済みの data-* は無視して警告する` `T:予約外の data-* と aria-* はそのまま通す` |
 | D-12 | S | 実装 | `T:構造コンテナは children を省略できる` `T:名前を持つ部品は children を省略できない` `T:children なしの Body でもスクロール領域と名前が残る` `T:children なしの Section は、見出しが無ければただの div になる` `T:children なしでも title があれば section と見出しを出す` `T:children なしの Header / Footer も落ちずに枠だけ残る` `T:空の本文でも読了ゲートが満たされ、ボタンが押せる` `T:空の本文でも、測れないあいだは閉じたまま（fail-closed）` `S:src/body.tsx` |
+| D-13 | S | 実装 | `T:duplicateValues は重複だけを最初に現れた順で返す` `T:duplicateValues は一意なら空を返す` `T:Modal.Gallery の items[].id 重複を警告する` `T:Modal.Chips の options[].value 重複を警告する` `T:重複を黙って落とさない（渡した件数のまま描く）` `T:一意なら警告しない` `T:Modal.Gallery は items が空になっても落ちない` `T:Modal.Chips は options が空でも落ちない` `S:src/internal/dom.ts` |
+| D-14 | S | 実装 | `T:onIndexChange はマウントしただけでは鳴らない` `T:位置が動いたら onIndexChange が鳴る` `T:items が縮んで位置が切り詰められたら onIndexChange が鳴る` `T:onDetentChange もマウントしただけでは鳴らない` `T:同じ段に留まる操作では onDetentChange が鳴らない` `T:detents が縮んで段が丸められたら onDetentChange が鳴る（Gallery の切り詰めと揃える）` `T:開き直して既定の段へ戻ったら onDetentChange が鳴る` `T:onDetentChange が新しい段の名前で呼ばれる` |
 
 ---
 
@@ -264,7 +266,7 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 
 ## 関連
 
-- [`modal.skill.md`](../modal.skill.md) §4 — 132 項目の定義
+- [`modal.skill.md`](../modal.skill.md) §4 — 135 項目の定義
 - [`requirements-audit.md`](./requirements-audit.md) — 元依頼を要件に割り直した表
 - [`VERIFICATION.md`](../VERIFICATION.md) — 実行した検証と、jsdom では見られないもの
 - [`ROADMAP.md`](../ROADMAP.md) — 未実装項目の行き先

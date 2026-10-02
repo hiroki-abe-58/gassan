@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
- * 129 項目の追跡可能性を機械検証する。
+ * modal.skill.md §4 の全項目の追跡可能性を機械検証する。
  *
  * 実行: node scripts/check-trace.mjs
  *
- * 「129 項目を満たした」は、書いただけでは主張にすぎない。
+ * 「全項目を満たした」は、書いただけでは主張にすぎない。
  * このスクリプトは modal.skill.md §4 の全 ID が docs/traceability.md に
  * 過不足なく現れ、かつ各行が挙げた根拠が実在することを検査する。
  *
  * 検査するもの:
  *   1. §4 の見出しが宣言した件数（例「L. レイヤ／ライフサイクル（14）」）と実際の行数が一致する
- *   2. 合計が 129 である
+ *   2. 合計が TOTAL（下の定数）である
  *   3. traceability.md の ID 集合が §4 の ID 集合と完全一致する（欠落も余剰も不可）
  *   4. 必須度（M/S/O）が 2 つの文書で一致する
  *   5. 根拠トークンが実在する
@@ -90,7 +90,7 @@ for (const { letter } of skillItems.values()) {
 }
 
 // 1-c. 合計
-const TOTAL = 133;
+const TOTAL = 135;
 if (skillItems.size !== TOTAL) {
   fail(`${SKILL}: §4 の項目数が ${skillItems.size} 件（${TOTAL} 件であるべき）`);
 } else {

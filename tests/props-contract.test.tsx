@@ -309,6 +309,68 @@ describe('D-14 変化の通知は変化したときだけ鳴る', () => {
     fireEvent.keyDown(screen.getByRole('slider'), { key: 'ArrowDown' });
     expect(onDetentChange).toHaveBeenCalledWith('half');
   });
+
+  function detentHarness(onDetentChange: (detent: DetentToken) => void): {
+    shrink: () => void;
+    toggle: () => void;
+  } {
+    function Harness(): ReactNode {
+      const [open, setOpen] = useState(true);
+      const [detents, setDetents] = useState<readonly DetentToken[]>(['peek', 'half', 'full']);
+      return (
+        <>
+          <button type="button" onClick={() => setDetents(['peek', 'half'])}>
+            段を減らす
+          </button>
+          <button type="button" onClick={() => setOpen((v) => !v)}>
+            開閉
+          </button>
+          <Modal.Root
+            open={open}
+            onOpenChange={setOpen}
+            label="経路"
+            placement="sheet"
+            detents={detents}
+            defaultDetent="peek"
+            onDetentChange={onDetentChange}
+          >
+            <Modal.Handle />
+            <Modal.Body>本文</Modal.Body>
+          </Modal.Root>
+        </>
+      );
+    }
+    render(<Harness />);
+    return {
+      shrink: () => fireEvent.click(screen.getByRole('button', { name: '段を減らす' })),
+      toggle: () => fireEvent.click(screen.getByRole('button', { name: '開閉' })),
+    };
+  }
+
+  it('detents が縮んで段が丸められたら onDetentChange が鳴る（Gallery の切り詰めと揃える）', () => {
+    const onDetentChange = vi.fn();
+    const view = detentHarness(onDetentChange);
+    fireEvent.keyDown(screen.getByRole('slider'), { key: 'End' });
+    expect(onDetentChange).toHaveBeenLastCalledWith('full');
+    onDetentChange.mockClear();
+    view.shrink();
+    expect(screen.getByRole('slider')).toHaveAttribute('aria-valuenow', '1');
+    expect(onDetentChange).toHaveBeenCalledTimes(1);
+    expect(onDetentChange).toHaveBeenCalledWith('half');
+  });
+
+  it('開き直して既定の段へ戻ったら onDetentChange が鳴る', async () => {
+    const onDetentChange = vi.fn();
+    const view = detentHarness(onDetentChange);
+    fireEvent.keyDown(screen.getByRole('slider'), { key: 'End' });
+    onDetentChange.mockClear();
+    view.toggle();
+    await waitFor(() => expect(document.querySelector('dialog')?.open).toBe(false));
+    expect(onDetentChange).not.toHaveBeenCalled();
+    view.toggle();
+    await waitFor(() => expect(onDetentChange).toHaveBeenCalledWith('peek'));
+    expect(onDetentChange).toHaveBeenCalledTimes(1);
+  });
 });
 
 /* -------------------------------------------------------------------------- */
@@ -316,7 +378,7 @@ describe('D-14 変化の通知は変化したときだけ鳴る', () => {
 /* -------------------------------------------------------------------------- */
 
 describe('D-11 Modal.Button は生のまま通すが、予約名だけは守る', () => {
-  it('予約みの data-* は無視して警告する', () => {
+  it('予約済みの data-* は無視して警告する', () => {
     renderModal({
       children: (
         <Modal.Footer>
