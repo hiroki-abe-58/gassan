@@ -1,0 +1,167 @@
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  padding: 40px 24px 96px;
+  font-family: system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  line-height: 1.75;
+  background: light-dark(#f6f6f7, #131316);
+  color: light-dark(#16161a, #f2f2f3);
+}
+
+.wrap {
+  max-inline-size: 760px;
+  margin-inline: auto;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 4px;
+  letter-spacing: 0.01em;
+}
+
+.lead {
+  margin: 0 0 32px;
+  color: light-dark(#6b6b74, #a1a1ab);
+  font-size: 0.9375rem;
+}
+
+.card {
+  display: grid;
+  gap: 8px;
+  padding: 18px 20px;
+  margin-block-end: 14px;
+  border-radius: 14px;
+  background: light-dark(#fff, #1c1c20);
+  border: 1px solid light-dark(#0000000f, #ffffff14);
+}
+
+.card h2 {
+  font-size: 0.9375rem;
+  margin: 0;
+}
+
+.card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: light-dark(#6b6b74, #a1a1ab);
+}
+
+.card .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block-start: 6px;
+}
+
+button.trigger {
+  min-block-size: 38px;
+  padding-inline: 16px;
+  border: 0;
+  border-radius: 9px;
+  background: light-dark(#16161a, #f2f2f3);
+  color: light-dark(#fff, #131316);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.trigger.ghost {
+  background: transparent;
+  color: inherit;
+  border: 1px solid light-dark(#00000022, #ffffff2a);
+}
+
+.result {
+  font-size: 0.8125rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: light-dark(#6b6b74, #a1a1ab);
+}
+
+.long-text p {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  color: inherit;
+}
+
+.swatch {
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* 7. 部品の合成 — デモ専用。fieldset の UA 既定枠を落とし、.k-field と間隔を揃える。 */
+.demo-fieldset {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+.demo-fieldset > legend {
+  padding: 0;
+  margin-block-end: 6px;
+}
+.demo-choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 44px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.demo-choice > input {
+  inline-size: 18px;
+  block-size: 18px;
+  margin: 0;
+}
+
+/* 8. グラフ */
+.demo-bars {
+  inline-size: 100%;
+  max-block-size: 220px;
+}
+.demo-bars rect {
+  fill: currentColor;
+  opacity: 0.8;
+}
+.demo-bars text {
+  font-size: 11px;
+  fill: currentColor;
+}
+
+/* 9. シートと段 — 実機で段を触るための台 */
+.note {
+  align-self: center;
+  font-size: 0.8125rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: light-dark(#6b6b74, #a1a1ab);
+}
+.stops {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stops > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-block-size: 44px;
+  padding-inline: 2px;
+  border-block-end: 1px solid light-dark(#0000000f, #ffffff14);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+.stops > li:last-child {
+  border-block-end: 0;
+}

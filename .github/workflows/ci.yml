@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 開発機は Node 18 だが、一部の依存が Node 20+ を要求し始めている。
+        # 18 を落とす前に、20 / 22 で緑であることを先に担保しておく。
+        node: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: 要件の追跡表（modal.skill.md との対応）
+        run: npm run check:trace
+
+      - name: 文書のコード例がコンパイルできるか
+        run: npm run check:docs
+
+      - name: Build
+        run: npm run build
+
+      - name: Check dist (size budget / "use client" / public API)
+        run: npm run check:dist
+
+      - name: SSR smoke test (Next.js App Router 互換)
+        run: npm run check:ssr
+
+      # publish の瞬間まで気づけない事故（access 未設定・LICENSE 欠落・
+      # 同梱文書のリンク切れ・types 条件の取り違え）を、毎 PR で落とす。
+      - name: Check publishable package
+        run: npm run check:pack
+
+      - name: Build demo
+        run: npm run build:demo
+
+  # 利用者の立場からの検証。tarball を実インストールし、ESM / CJS / CSS が引けるか、
+  # bundler / node16 / nodenext の3方式すべてで型が解決できるかを見る。
+  # ネットワークを使うので verify とは別ジョブにしてある。
+  consumer:
+    runs-on: ubuntu-latest
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run check:consumer

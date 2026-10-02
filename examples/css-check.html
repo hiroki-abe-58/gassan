@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kasane — CSS 検品ページ</title>
+
+<!--
+  jsdom では検証できない層を、実ブラウザで目視確認するためのページ。
+  React は使わない。素の <dialog> に kasane の DOM 構造を手書きしてある。
+
+  確認する項目（VERIFICATION.md の「ブラウザでしか確かめられないもの」と対応）:
+    1. showModal() で top layer に載り、背景が inert になる（背後のボタンが押せない）
+    2. @starting-style による入場
+    3. 退出アニメ（L-07）。React 版と同じ手順を下の closeWithExit() が再現する:
+       data-exiting を付ける → dialog は open のまま退出状態へ遷移 → --k-dur-out 後に close()
+       → overlay 非対応ブラウザ（MDN 上 Limited availability）でも退出が見えることを確認する
+    4. scrim 4段階の見え方（黒 60% が濃すぎることの確認）
+    5. Esc / 背景クリック / フォーカストラップ（Tab がモーダル内で循環する）
+    6. line-clamp による省略と、選択・コピーすると全文が取れること
+    7. スクロール端の影
+    8. prefers-reduced-motion / prefers-reduced-transparency（OS 設定を切り替えて再読込）
+    9. forced-colors（Windows のハイコントラスト）
+
+  開き方: このファイルをブラウザで直接開く（ビルド不要）。
+-->
+
+<link rel="stylesheet" href="../src/styles.css">
+<style>
+  body {
+    margin: 0;
+    padding: 32px;
+    font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: #f6f6f7;
+    color: #16161a;
+    line-height: 1.7;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #131316; color: #f2f2f3; }
+  }
+  h1 { font-size: 1.25rem; margin: 0 0 4px; }
+  p.lead { margin: 0 0 24px; color: #6b6b74; font-size: 0.875rem; }
+  .panel {
+    display: grid;
+    gap: 14px;
+    max-inline-size: 640px;
+    padding: 18px;
+    border-radius: 12px;
+    background: canvas;
+    border: 1px solid #0001;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .row > label { font-size: 0.8125rem; font-weight: 600; min-inline-size: 92px; }
+  button.plain {
+    min-height: 36px; padding-inline: 14px;
+    border: 1px solid #0003; border-radius: 8px;
+    background: canvas; color: inherit; font: inherit; font-size: 0.875rem; cursor: pointer;
+  }
+  button.plain[aria-pressed="true"] { background: #16161a; color: #fff; border-color: transparent; }
+  @media (prefers-color-scheme: dark) {
+    button.plain[aria-pressed="true"] { background: #f2f2f3; color: #131316; }
+  }
+  .go { font-weight: 700; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8125em; }
+  .note { font-size: 0.8125rem; color: #6b6b74; margin: 0; }
+
+  /* 検品チェックリスト */
+  .checklist { counter-reset: none; }
+  .checklist ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+  .checklist li {
+    display: grid;
+    grid-template-columns: auto 4.5rem 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 7px 8px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .checklist li:nth-child(odd) { background: #00000008; }
+  .checklist input[type="checkbox"] { inline-size: 18px; block-size: 18px; margin-block-start: 2px; }
+  .checklist .id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: #6b6b74; }
+  .checklist li:has(input:checked) { background: #16a34a1a; }
+  .checklist li:has(input:checked) .what { text-decoration: line-through; opacity: 0.6; }
+  .checklist .fail { display: block; font-size: 0.8125rem; color: #b4232a; }
+  .progress {
+    display: flex; gap: 10px; align-items: baseline;
+    font-size: 0.875rem; font-weight: 700; margin-block: 10px 6px;
+  }
+  .progress output { font-variant-numeric: tabular-nums; }
+  @media (prefers-color-scheme: dark) {
+    .checklist li:nth-child(odd) { background: #ffffff0f; }
+    .checklist li:has(input:checked) { background: #16a34a26; }
+    .checklist .fail { color: #ff9ba0; }
+  }
+</style>
+</head>
+<body>
+
+<h1>kasane — CSS 検品ページ</h1>
+<p class="lead">実ブラウザでしか確かめられない層を目視する。React は介在していない。</p>
+
+<div class="panel">
+  <div class="row">
+    <label for="x">背景のボタン</label>
+    <button class="plain" id="x" onclick="alert('これが押せたら inert が効いていない')">押せてはいけない</button>
+  </div>
+
+  <div class="row" data-group="scrim">
+    <label>scrim</label>
+    <button class="plain" data-value="none">none</button>
+    <button class="plain" data-value="subtle">subtle 20%</button>
+    <button class="plain" data-value="default" aria-pressed="true">default 32%</button>
+    <button class="plain" data-value="strong">strong 50%</button>
+    <button class="plain" data-value="immersive">immersive +blur</button>
+  </div>
+
+  <div class="row" data-group="size">
+    <label>size</label>
+    <button class="plain" data-value="sm">sm</button>
+    <button class="plain" data-value="md" aria-pressed="true">md</button>
+    <button class="plain" data-value="lg">lg</button>
+    <button class="plain" data-value="xl">xl</button>
+    <button class="plain" data-value="full">full</button>
+  </div>
+
+  <div class="row" data-group="placement">
+    <label>placement</label>
+    <button class="plain" data-value="center" aria-pressed="true">center</button>
+    <button class="plain" data-value="top">top</button>
+    <button class="plain" data-value="sheet">sheet</button>
+  </div>
+
+  <div class="row" data-group="content">
+    <label>中身</label>
+    <button class="plain" data-value="short" aria-pressed="true">短い</button>
+    <button class="plain" data-value="long">長い（スクロール影）</button>
+    <button class="plain" data-value="longtitle">長いタイトル（省略）</button>
+  </div>
+
+  <div class="row">
+    <button class="plain go" id="open">モーダルを開く</button>
+    <button class="plain" id="open-nested">2枚重ねる（スクリムの二重掛け確認）</button>
+    <button class="plain" id="shake">閉じるのを拒否する演出</button>
+  </div>
+
+  <p class="note">
+    退出アニメの検証: 閉じるときに一瞬で消えるなら、<code>overlay</code> が transition list に入っていない。
+    <code>styles.css</code> の <code>transition-property</code> から <code>overlay</code> を外して比べると違いが分かる。
+  </p>
+</div>
+
+<div class="panel checklist">
+  <h2 style="margin:0 0 4px; font-size:1rem;">検品チェックリスト（18項目）</h2>
+  <p class="note">
+    ここは <code>VERIFICATION.md</code> 第3節の実体である。単体テスト 365 件が通っていても、
+    <strong>下記は保証されない</strong>。上のコントロールで条件を変えながら 1 項目ずつ潰す。
+  </p>
+  <div class="progress">
+    <span>進捗</span><output id="progress">0 / 18</output>
+    <button class="plain" id="reset-checks" type="button">クリア</button>
+  </div>
+  <ol>
+      <li data-item="top layer に載るか">
+        <input type="checkbox" id="chk-B-1" aria-labelledby="lbl-B-1">
+        <span class="id">B-1</span>
+        <span>
+          <label class="what" id="lbl-B-1" for="chk-B-1"><strong>top layer に載るか</strong> — 背景の「押せてはいけない」ボタンが押せない</label>
+          <span class="fail">落ちていたら: inert が効いていない</span>
+        </span>
+      </li>
+      <li data-item="フォーカストラップ">
+        <input type="checkbox" id="chk-B-2" aria-labelledby="lbl-B-2">
+        <span class="id">B-2</span>
+        <span>
+          <label class="what" id="lbl-B-2" for="chk-B-2"><strong>フォーカストラップ</strong> — Tab を押し続けてもモーダル内で循環する</label>
+          <span class="fail">落ちていたら: showModal() ではなく show() を呼んでいる</span>
+        </span>
+      </li>
+      <li data-item="フォーカス復帰">
+        <input type="checkbox" id="chk-B-3" aria-labelledby="lbl-B-3">
+        <span class="id">B-3</span>
+        <span>
+          <label class="what" id="lbl-B-3" for="chk-B-3"><strong>フォーカス復帰</strong> — 閉じた後、開いたボタンにフォーカスが戻る</label>
+          <span class="fail">落ちていたら: —</span>
+        </span>
+      </li>
+      <li data-item="入場アニメ">
+        <input type="checkbox" id="chk-B-4" aria-labelledby="lbl-B-4">
+        <span class="id">B-4</span>
+        <span>
+          <label class="what" id="lbl-B-4" for="chk-B-4"><strong>入場アニメ</strong> — ふわりと出る（瞬間表示ではない）</label>
+          <span class="fail">落ちていたら: @starting-style に未対応</span>
+        </span>
+      </li>
+      <li data-item="退出アニメ">
+        <input type="checkbox" id="chk-B-5" aria-labelledby="lbl-B-5">
+        <span class="id">B-5</span>
+        <span>
+          <label class="what" id="lbl-B-5" for="chk-B-5"><strong>退出アニメ</strong> — 閉じるとき消え去らず動きが見える。Safari / Firefox でも</label>
+          <span class="fail">落ちていたら: data-exiting の退出状態が効いていない／close() が早すぎる</span>
+        </span>
+      </li>
+      <li data-item="スクリムの濃度">
+        <input type="checkbox" id="chk-B-6" aria-labelledby="lbl-B-6">
+        <span class="id">B-6</span>
+        <span>
+          <label class="what" id="lbl-B-6" for="chk-B-6"><strong>スクリムの濃度</strong> — default(32%) で背後の文脈が読める</label>
+          <span class="fail">落ちていたら: トークンの適用漏れ</span>
+        </span>
+      </li>
+      <li data-item="backdrop-filter の負荷">
+        <input type="checkbox" id="chk-B-7" aria-labelledby="lbl-B-7">
+        <span class="id">B-7</span>
+        <span>
+          <label class="what" id="lbl-B-7" for="chk-B-7"><strong>backdrop-filter の負荷</strong> — immersive で大画面でもカクつかない</label>
+          <span class="fail">落ちていたら: blur を既定にしてはいけない理由の実演</span>
+        </span>
+      </li>
+      <li data-item="line-clamp の省略">
+        <input type="checkbox" id="chk-B-8" aria-labelledby="lbl-B-8">
+        <span class="id">B-8</span>
+        <span>
+          <label class="what" id="lbl-B-8" for="chk-B-8"><strong>line-clamp の省略</strong> — 長いタイトルが2行で … になり、選択コピーで全文が取れる</label>
+          <span class="fail">落ちていたら: JS で文字列を切っている</span>
+        </span>
+      </li>
+      <li data-item="スクロール端の影">
+        <input type="checkbox" id="chk-B-9" aria-labelledby="lbl-B-9">
+        <span class="id">B-9</span>
+        <span>
+          <label class="what" id="lbl-B-9" for="chk-B-9"><strong>スクロール端の影</strong> — 上下端で影が出入りする</label>
+          <span class="fail">落ちていたら: :has() か data-at-* の不一致</span>
+        </span>
+      </li>
+      <li data-item="prefers-reduced-motion">
+        <input type="checkbox" id="chk-B-10" aria-labelledby="lbl-B-10">
+        <span class="id">B-10</span>
+        <span>
+          <label class="what" id="lbl-B-10" for="chk-B-10"><strong>prefers-reduced-motion</strong> — OS 設定を切り替えるとアニメが止まる</label>
+          <span class="fail">落ちていたら: メディアクエリの漏れ</span>
+        </span>
+      </li>
+      <li data-item="prefers-reduced-transparency">
+        <input type="checkbox" id="chk-B-11" aria-labelledby="lbl-B-11">
+        <span class="id">B-11</span>
+        <span>
+          <label class="what" id="lbl-B-11" for="chk-B-11"><strong>prefers-reduced-transparency</strong> — 透明度を下げる設定で blur が切れる</label>
+          <span class="fail">落ちていたら: 同上</span>
+        </span>
+      </li>
+      <li data-item="forced-colors">
+        <input type="checkbox" id="chk-B-12" aria-labelledby="lbl-B-12">
+        <span class="id">B-12</span>
+        <span>
+          <label class="what" id="lbl-B-12" for="chk-B-12"><strong>forced-colors</strong> — Windows ハイコントラストで境界が見える</label>
+          <span class="fail">落ちていたら: 同上</span>
+        </span>
+      </li>
+      <li data-item="iOS の背面スクロール">
+        <input type="checkbox" id="chk-B-13" aria-labelledby="lbl-B-13">
+        <span class="id">B-13</span>
+        <span>
+          <label class="what" id="lbl-B-13" for="chk-B-13"><strong>iOS の背面スクロール</strong> — シート表示で背後が動かない</label>
+          <span class="fail">落ちていたら: lockScroll が要る場面</span>
+        </span>
+      </li>
+      <li data-item="仮想キーボード">
+        <input type="checkbox" id="chk-B-14" aria-labelledby="lbl-B-14">
+        <span class="id">B-14</span>
+        <span>
+          <label class="what" id="lbl-B-14" for="chk-B-14"><strong>仮想キーボード</strong> — 入力にフォーカスしても本文が隠れない</label>
+          <span class="fail">落ちていたら: --k-keyboard-inset が実機で反映されていない</span>
+        </span>
+      </li>
+      <li data-item="スワイプで閉じる">
+        <input type="checkbox" id="chk-B-15" aria-labelledby="lbl-B-15">
+        <span class="id">B-15</span>
+        <span>
+          <label class="what" id="lbl-B-15" for="chk-B-15"><strong>スワイプで閉じる</strong> — 下フリックで閉じ、本文スクロール中は反応しない</label>
+          <span class="fail">落ちていたら: 判定のしきい値が実機の指の速度と合っていない</span>
+        </span>
+      </li>
+      <li data-item="400% ズーム">
+        <input type="checkbox" id="chk-B-16" aria-labelledby="lbl-B-16">
+        <span class="id">B-16</span>
+        <span>
+          <label class="what" id="lbl-B-16" for="chk-B-16"><strong>400% ズーム</strong> — 拡大しても読了ゲートが成立し、横スクロールが出ない</label>
+          <span class="fail">落ちていたら: リフロー後に寸法が再評価されていない</span>
+        </span>
+      </li>
+      <li data-item="長押し">
+        <input type="checkbox" id="chk-B-17" aria-labelledby="lbl-B-17">
+        <span class="id">B-17</span>
+        <span>
+          <label class="what" id="lbl-B-17" for="chk-B-17"><strong>長押し</strong> — タイトルを長押しすると OS のコンテキストメニューが出る</label>
+          <span class="fail">落ちていたら: kasane が長押しを奪っている</span>
+        </span>
+      </li>
+      <li data-item="段の吸い付き">
+        <input type="checkbox" id="chk-B-18" aria-labelledby="lbl-B-18">
+        <span class="id">B-18</span>
+        <span>
+          <label class="what" id="lbl-B-18" for="chk-B-18"><strong>段の吸い付き</strong> — 指を離すと最も近い段へ吸い付き、速い下フリックは閉じずに 1 段下がる。矢印キーでも段が移る</label>
+          <span class="fail">落ちていたら: 段の割合（peek 30% / half 60% / full 92%）が実機の画面比と合っていない</span>
+        </span>
+      </li>
+  </ol>
+  <p class="note">
+    チェック状態は <code>localStorage</code> に残る。ブラウザを変えたら必ずやり直すこと
+    （<code>overlay</code> 非対応の Safari / Firefox で B-5 が落ちる可能性がある）。
+  </p>
+</div>
+
+<!-- ===================================================================== -->
+
+<dialog class="k-dialog" id="dlg" data-scrim="default" data-size="md" data-placement="center">
+  <div class="k-scrim" aria-hidden="true"></div>
+  <div class="k-panel" tabindex="-1">
+    <header class="k-header">
+      <div class="k-controls">
+        <div class="k-controls-slot" data-slot="start">
+          <button type="button" class="k-iconbtn" aria-label="戻る">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="k-controls-slot" data-slot="center">
+          <p class="k-indicator"><span aria-hidden="true">2 / 5</span><span class="k-sr-only">5ステップ中2ステップ目</span></p>
+        </div>
+        <div class="k-controls-slot" data-slot="end">
+          <button type="button" class="k-iconbtn" aria-label="閉じる" data-close>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <h2 class="k-title">
+        <span class="k-title-text" data-clamped id="dlg-title" style="--k-title-lines:2">配送先の住所を変更する</span>
+      </h2>
+    </header>
+
+    <div class="k-body" tabindex="0" role="group" aria-label="本文" data-at-start data-at-end id="dlg-body">
+      <div class="k-body-inner" id="dlg-content">
+        <p>短い本文。ここでは端の影は出ない（上下とも端にいるため）。</p>
+        <label class="k-consent"><input type="checkbox"><span>内容を確認しました</span></label>
+      </div>
+    </div>
+
+    <footer class="k-footer">
+      <p class="k-footer-note">あとから変更できます</p>
+      <div class="k-footer-actions">
+        <button type="button" class="k-btn" data-variant="tertiary" data-close>キャンセル</button>
+        <button type="button" class="k-btn" data-variant="primary">保存する</button>
+      </div>
+    </footer>
+  </div>
+  <p class="k-sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+</dialog>
+
+<dialog class="k-dialog" id="dlg2" data-scrim="default" data-size="sm" data-placement="center">
+  <div class="k-scrim" aria-hidden="true"></div>
+  <div class="k-panel" tabindex="-1">
+    <header class="k-header">
+      <h2 class="k-title"><span class="k-title-text">2枚目。下のスクリムが消えているか</span></h2>
+    </header>
+    <div class="k-body" tabindex="0" role="group" aria-label="本文" data-at-start data-at-end>
+      <div class="k-body-inner">
+        <p>下のダイアログに <code>data-k-covered</code> が付き、スクリムが1枚ぶんだけ見えていれば正しい。</p>
+      </div>
+    </div>
+    <footer class="k-footer">
+      <div class="k-footer-actions">
+        <button type="button" class="k-btn" data-variant="primary" data-close>閉じる</button>
+      </div>
+    </footer>
+  </div>
+</dialog>
+
+<script>
+  const dlg = document.getElementById('dlg');
+  const dlg2 = document.getElementById('dlg2');
+  const content = document.getElementById('dlg-content');
+  const title = document.getElementById('dlg-title');
+
+  const state = { scrim: 'default', size: 'md', placement: 'center', content: 'short' };
+
+  const LONG = Array.from({ length: 14 }, (_, i) =>
+    `<p>段落 ${i + 1}。スクロールすると上端と下端の影が出入りする。影は「まだ続きがある」ことの唯一の手がかりなので、
+     スクロール可能なのに影が出ないなら実装が間違っている。</p>`).join('');
+
+  function applyContent() {
+    if (state.content === 'long') {
+      content.innerHTML = LONG;
+      title.textContent = '配送先の住所を変更する';
+    } else if (state.content === 'longtitle') {
+      content.innerHTML = '<p>タイトルが2行で省略され、末尾に … が付く。テキストを選択してコピーすると全文が取れることを確認する（DOM は省略していない）。</p>';
+      title.textContent = '配送先の住所と、受け取り日時、それから置き配の可否についての設定をまとめて変更する';
+    } else {
+      content.innerHTML = '<p>短い本文。ここでは端の影は出ない（上下とも端にいるため）。</p>' +
+        '<label class="k-consent"><input type="checkbox"><span>内容を確認しました</span></label>';
+      title.textContent = '配送先の住所を変更する';
+    }
+    updateEdges();
+  }
+
+  function applyState() {
+    dlg.dataset.scrim = state.scrim;
+    dlg.dataset.size = state.size;
+    dlg.dataset.placement = state.placement;
+  }
+
+  for (const group of document.querySelectorAll('[data-group]')) {
+    group.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-value]');
+      if (!button) return;
+      for (const sibling of group.querySelectorAll('button')) sibling.setAttribute('aria-pressed', 'false');
+      button.setAttribute('aria-pressed', 'true');
+      state[group.dataset.group] = button.dataset.value;
+      applyState();
+      if (group.dataset.group === 'content') applyContent();
+    });
+  }
+
+  // スクロール端の影。React 版と同じロジック。
+  const body = document.getElementById('dlg-body');
+  function updateEdges() {
+    const scrollable = body.scrollHeight - body.clientHeight > 1;
+    body.toggleAttribute('data-at-start', body.scrollTop <= 1);
+    body.toggleAttribute('data-at-end', !scrollable || body.scrollHeight - body.clientHeight - body.scrollTop <= 1);
+  }
+  body.addEventListener('scroll', () => requestAnimationFrame(updateEdges));
+
+  document.getElementById('open').addEventListener('click', () => {
+    applyState();
+    applyContent();
+    dlg.showModal();
+    dlg.querySelector('.k-panel').focus();
+    requestAnimationFrame(updateEdges);
+  });
+
+  document.getElementById('open-nested').addEventListener('click', () => {
+    if (!dlg.open) dlg.showModal();
+    dlg2.showModal();
+    // 最前面以外のスクリムを消す。React 版では stack.ts がこれをやる。
+    dlg.setAttribute('data-k-covered', '');
+  });
+
+  document.getElementById('shake').addEventListener('click', () => {
+    if (!dlg.open) dlg.showModal();
+    const panel = dlg.querySelector('.k-panel');
+    panel.setAttribute('data-k-blocked', '');
+    dlg.querySelector('[role="status"]').textContent = 'このダイアログはまだ閉じられません。';
+    setTimeout(() => panel.removeAttribute('data-k-blocked'), 420);
+  });
+
+  for (const dialog of [dlg, dlg2]) {
+    dialog.addEventListener('click', (event) => {
+      if (event.target.closest('[data-close]')) closeWithExit(dialog);
+    });
+    // 背景クリック。押下と解放の両方がスクリム上のときだけ閉じる。
+    let downOnScrim = false;
+    dialog.addEventListener('pointerdown', (event) => {
+      downOnScrim = event.target === dialog.querySelector('.k-scrim');
+    });
+    dialog.addEventListener('pointerup', (event) => {
+      const ok = downOnScrim && event.target === dialog.querySelector('.k-scrim');
+      downOnScrim = false;
+      if (ok) closeWithExit(dialog);
+    });
+    dialog.addEventListener('close', () => {
+      if (dialog === dlg2) dlg.removeAttribute('data-k-covered');
+    });
+  }
+
+  // React 版（ModalRoot の performClose / finalizeClose）と同じ手順。L-07。
+  function closeWithExit(dialog) {
+    if (dialog.hasAttribute('data-exiting')) return;
+    dialog.setAttribute('data-exiting', '');
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const out = parseFloat(getComputedStyle(dialog).getPropertyValue('--k-dur-out')) || 120;
+    setTimeout(() => {
+      dialog.close();
+      // data-exiting が付いたままスタイルを確定させ、discrete transition の二周目を起こさない。
+      void getComputedStyle(dialog).display;
+      dialog.removeAttribute('data-exiting');
+    }, reduced ? 0 : out + 20);
+  }
+</script>
+<script>
+/* 検品チェックリストの進捗。localStorage に残す。 */
+(() => {
+  const KEY = 'kasane.css-check.v1';
+  const boxes = [...document.querySelectorAll('.checklist input[type="checkbox"]')];
+  const out = document.getElementById('progress');
+  const saved = JSON.parse(localStorage.getItem(KEY) ?? '{}');
+
+  const render = () => {
+    const done = boxes.filter((b) => b.checked).length;
+    out.textContent = `${done} / ${boxes.length}`;
+  };
+  for (const box of boxes) {
+    box.checked = Boolean(saved[box.id]);
+    box.addEventListener('change', () => {
+      saved[box.id] = box.checked;
+      localStorage.setItem(KEY, JSON.stringify(saved));
+      render();
+    });
+  }
+  document.getElementById('reset-checks').addEventListener('click', () => {
+    for (const box of boxes) box.checked = false;
+    localStorage.removeItem(KEY);
+    render();
+  });
+  render();
+})();
+</script>
+
+</body>
+</html>

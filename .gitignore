@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.DS_Store
+.vitest-cache/
+examples/react/dist/
+
+# scripts/check-docs.mjs の作業ディレクトリ（実行後に消える）
+.tmp-doccheck/
