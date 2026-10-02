@@ -216,6 +216,8 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
   const blockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const announceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const guardPendingRef = useRef(false);
+  /** ブラウザが止めさせなかった Esc の印。直後のネイティブの close を 'esc' として報告する。L-09。 */
+  const unstoppableEscRef = useRef(false);
   const scrollLockedRef = useRef(false);
   const pointerDownOnScrimRef = useRef(false);
   const swipeRef = useRef<{
@@ -479,6 +481,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
         // 前回 <form method="dialog"> で閉じた値が残ると、次回の外部 close() が
         // submit と誤分類される。F-11。
         el.returnValue = '';
+        unstoppableEscRef.current = false;
         try {
           el.showModal();
         } catch {
@@ -661,6 +664,15 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
       // React は非バブルの cancel でも fiber ツリーを遡って祖先の onCancel を呼ぶため、
       // これが無いと Esc 一回で重なった2枚が同時に閉じる。
       if (!isOwnDialogEvent(dialogRef.current, event.target)) return;
+      // ブラウザが止めさせない Esc がある。HTML の close watcher は、利用者の操作を挟まずに
+      // 続けて押された Esc の cancel を cancelable=false で送り、preventDefault を無視して閉じる
+      // （ページが利用者を閉じ込められないための濫用防止）。ここで拒否の案内を出すと
+      // 「閉じられません」と読み上げた直後に閉じる嘘になり、onRequestClose に聞いても答えを守れない。
+      // 止めずに通し、直後のネイティブの close を 'esc' として報告する。§10-24。
+      if (!event.cancelable) {
+        unstoppableEscRef.current = true;
+        return;
+      }
       // 常に止めて自前ルートへ一本化する。L-09。
       // closedby="none" を使わないのは、あれだと cancel すら発火せず理由を返せないため
       // （closedby は MDN 上 Limited availability でもある）。
@@ -674,11 +686,18 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     const el = dialogRef.current;
     // 入れ子の内側が閉じたときの close を弾く。L-12。cancel と同じく React 経由で遡る。
     if (!isOwnDialogEvent(el, event.target)) return;
+    const unstoppableEsc = unstoppableEscRef.current;
+    unstoppableEscRef.current = false;
     // 閉→即開のときに遅れて届く close を弾く。
     if (el?.open) return;
     // 我々の同期による close。
     if (!open) return;
-    // ここに来るのは <form method="dialog"> か、外部から el.close() を呼ばれた場合。F-11。
+    // ここに来るのは、止められない Esc（上の handleCancel）、<form method="dialog">、
+    // 外部から el.close() を呼ばれた場合のいずれか。F-11。
+    if (unstoppableEsc) {
+      onOpenChange(false, 'esc');
+      return;
+    }
     const hasReturnValue = Boolean(el?.returnValue);
     onOpenChange(false, hasReturnValue ? 'submit' : 'programmatic');
   });

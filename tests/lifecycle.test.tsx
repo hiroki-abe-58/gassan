@@ -42,6 +42,28 @@ describe('lifecycle / L', () => {
     expect(onOpenChange).toHaveBeenCalledWith(false, 'esc');
   });
 
+  it('止められない Esc（cancelable=false）は、拒否の案内を出さずに esc として報告する', async () => {
+    // consent は Esc を拒否する類型。それでもブラウザが閉じるなら、「閉じられません」と言ってはいけない。
+    const { dialog, panel, onOpenChange } = renderModal({ kind: 'consent' });
+    act(() => {
+      pressEscape(dialog(), { cancelable: false });
+    });
+    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false, 'esc'));
+    expect(onOpenChange).not.toHaveBeenCalledWith(false, 'programmatic');
+    expect(panel()).not.toHaveAttribute('data-g-blocked');
+    expect(screen.getByRole('status', { hidden: true })).not.toHaveTextContent('閉じられません');
+  });
+
+  it('止められない Esc では onRequestClose に問い合わせない（守れない答えを聞かない）', async () => {
+    const onRequestClose = vi.fn(() => false);
+    const { dialog, onOpenChange } = renderModal({ kind: 'form', onRequestClose });
+    act(() => {
+      pressEscape(dialog(), { cancelable: false });
+    });
+    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false, 'esc'));
+    expect(onRequestClose).not.toHaveBeenCalled();
+  });
+
   it('dismiss.esc=false なら閉じず、無言にもしない', async () => {
     const { dialog, panel, onOpenChange } = renderModal({
       kind: 'view',

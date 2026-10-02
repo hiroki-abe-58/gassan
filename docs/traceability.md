@@ -50,7 +50,7 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 | L-06 | M | 実機 | `C:overlay` `B:1-2. 実ブラウザでの計測` |
 | L-07 | S | 実装 | `T:close 要求の直後は open のまま data-exiting が付き、期限後に close して onExited` `T:退出中に開き直すと close せず、open のまま元に戻る` `T:退出中は discrete transition を止め、二重待ちを起こさない` `T:閉じ切ると onExited が一度だけ呼ばれる` `T:退出中の Esc / 背景クリックは何もしない（二重に閉じない）` `T:ms と s の両方を解釈する` `T:壊れた値は fallback に落ちる` |
 | L-08 | M | 実装 | `T:すべての理由が型として区別できる` `T:× ボタンは理由 close-button で閉じる` `T:外部から close() されたら programmatic として通知する` |
-| L-09 | S | 実装 | `T:onRequestClose が false を返すと閉じない` `T:onRequestClose が Promise を返す場合は解決を待つ` `T:非同期ガードの解決前に連打しても二重に閉じない` |
+| L-09 | S | 実装 | `T:onRequestClose が false を返すと閉じない` `T:onRequestClose が Promise を返す場合は解決を待つ` `T:非同期ガードの解決前に連打しても二重に閉じない` `T:止められない Esc（cancelable=false）は、拒否の案内を出さずに esc として報告する` `T:止められない Esc では onRequestClose に問い合わせない（守れない答えを聞かない）` |
 | L-10 | S | 実装 | `T:dismiss.esc=false なら閉じず、無言にもしない` |
 | L-11 | O | 実装 | `N:top layer のスタックはネイティブが管理し、Esc は最上位だけを閉じる` `T:2枚開くと下にだけ data-g-covered が付く` `T:上を閉じると下の覆いが外れ、下が最前面に戻る` |
 | L-12 | S | 実装 | `T:最前面以外に data-g-covered を付ける` `T:同じ要素を二重に push しても重複しない` `T:Esc 一回で閉じるのは内側だけ（外側まで伝わらない）` `T:内側が閉じても外側は programmatic として扱われない` `T:内側の Cmd+Enter は内側の primary だけを押す` `T:外側の Cmd+Enter は外側の primary を押す（ガードが効きすぎていない）` |
@@ -177,7 +177,7 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 | ID | 度 | 状態 | 根拠 |
 |---|:-:|---|---|
 | K-01 | M | 委譲 | `N:showModal() のフォーカス閉じ込めに任せ、自前のトラップは 1 行も書かない` |
-| K-02 | M | 実装 | `T:Esc は cancel を止めて自前のルートに合流する` `T:kind=consent は Esc でも背景クリックでも閉じない` |
+| K-02 | M | 実装 | `T:Esc は cancel を止めて自前のルートに合流する` `T:kind=consent は Esc でも背景クリックでも閉じない` `T:止められない Esc（cancelable=false）は、拒否の案内を出さずに esc として報告する` |
 | K-03 | M | 実装 | `T:初期フォーカスは × ボタンではなくパネル本体` |
 | K-04 | O | 実装 | `T:initialFocus を指定するとそこに合焦する` `T:テキスト入力とテキストエリアを検出する` |
 | K-05 | M | 実装 | `T:初期フォーカスは × ボタンではなくパネル本体` |

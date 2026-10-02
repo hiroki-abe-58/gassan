@@ -162,9 +162,15 @@ export function renderModal(options: RenderModalOptions = {}): RenderModalResult
   };
 }
 
-/** ネイティブの Esc 相当。jsdom は Esc で cancel を発火しないので直接投げる。 */
-export function pressEscape(dialog: HTMLDialogElement): Event {
-  const event = new Event('cancel', { cancelable: true, bubbles: false });
+/**
+ * ネイティブの Esc 相当。jsdom は Esc で cancel を発火しないので直接投げる。
+ *
+ * cancelable: false は、ブラウザが止めさせない Esc を再現する。HTML の close watcher は、
+ * 利用者の操作を挟まずに続けて押された Esc の cancel を止められない形で送り、そのまま閉じる。
+ */
+export function pressEscape(dialog: HTMLDialogElement, { cancelable = true } = {}): Event {
+  const event = new Event('cancel', { cancelable, bubbles: false });
   dialog.dispatchEvent(event);
+  if (!cancelable) dialog.close();
   return event;
 }
