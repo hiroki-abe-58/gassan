@@ -49,9 +49,11 @@
 
     --g-accent: #1f2430;
     --g-on-accent: #ffffff;
-    /* ゲート中の primary。aria-disabled はフォーカス可能なので
-     * WCAG の「非活性コントロールは除外」規定に頼れない。4.5:1 を維持する。 */
-    --g-accent-muted: #8b91a0;
+    /* ゲート中の primary の背景。aria-disabled はフォーカス可能なので
+     * WCAG の「非活性コントロールは除外」規定に頼れない。白文字で 4.5:1 を維持する
+     * （#8b91a0 だった頃は 3.16:1 で、この約束を破っていた。tests/tokens.test.ts が計算して落とす）。
+     * 文字色としては使わない。ダークでは明るい文字にも暗い面にも 4.5:1 を取れる色が存在しない。 */
+    --g-accent-muted: #6e7483;
     --g-on-accent-muted: #ffffff;
 
     --g-danger: #b3251e;
@@ -100,7 +102,7 @@
       --g-on-accent: #16181d;
       --g-accent-muted: #565d6c;
       --g-on-accent-muted: #eef0f4;
-      --g-danger: #e0564d;
+      --g-danger: #e35d54;   /* #e0564d は面との比が 4.45:1 で、ボタンにもエラー文にも足りなかった */
       --g-on-danger: #1b1e25;
       --g-shadow:
         0 1px 2px rgb(0 0 0 / 0.4),
@@ -549,7 +551,7 @@
   .g-btn[data-gated][data-variant="secondary"],
   .g-btn[data-gated][data-variant="tertiary"] {
     background: transparent;
-    color: var(--g-accent-muted);
+    color: var(--g-fg-muted);
     border-color: var(--g-border);
   }
 

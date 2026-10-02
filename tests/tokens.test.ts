@@ -262,6 +262,73 @@ describe('tokens / gated button (G-10)', () => {
     const forced = atMedia('forced-colors: active');
     expect(forced).toMatch(/\.g-btn\[data-gated\][^{]*\{[^}]*GrayText/);
   });
+
+  it('ゲート中の secondary / tertiary は、背景用のトークンを文字色に流用しない', () => {
+    // --g-accent-muted は「明るい文字を載せる背景」。ダークでは暗い面の上の文字として
+    // 4.5:1 を取れない（明るい文字にも暗い面にも 4.5:1 を取れる色は存在しない）。
+    const quiet = block('.g-btn[data-gated][data-variant="secondary"],\n  .g-btn[data-gated][data-variant="tertiary"]');
+    expect(quiet).toMatch(/color:\s*var\(--g-fg-muted\)/);
+    expect(quiet).not.toMatch(/color:\s*var\(--g-accent-muted\)/);
+  });
+});
+
+/* ========================================================================== */
+/* 色のコントラスト G-10 K-07 F-06 S-07                                       */
+/* ========================================================================== */
+
+/** トークンの値（ライトと、ダークで上書きされたもの）。#rrggbb だけを扱う。 */
+function palette(scheme: 'light' | 'dark'): (name: string) => string {
+  const darkBlock = atMedia('prefers-color-scheme: dark');
+  return (name) => {
+    const re = new RegExp(`--g-${name}\\s*:\\s*(#[0-9a-fA-F]{6})\\s*;`);
+    const value = (scheme === 'dark' ? re.exec(darkBlock)?.[1] : undefined) ?? re.exec(css)?.[1];
+    if (!value) throw new Error(`--g-${name} は #rrggbb で書かれていない`);
+    return value;
+  };
+}
+
+/** WCAG 2.x の相対輝度とコントラスト比。 */
+function contrast(a: string, b: string): number {
+  const lum = (hex: string): number => {
+    const [r, g, b2] = [1, 3, 5].map((i) => {
+      const c = Number.parseInt(hex.slice(i, i + 2), 16) / 255;
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * (r ?? 0) + 0.7152 * (g ?? 0) + 0.0722 * (b2 ?? 0);
+  };
+  const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return ((hi ?? 0) + 0.05) / ((lo ?? 0) + 0.05);
+}
+
+/** [前景, 背景, 最低比, 何の組か] */
+const PAIRS: readonly [string, string, number, string][] = [
+  ['fg', 'surface', 4.5, '本文'],
+  ['fg-muted', 'surface', 4.5, '補足・tertiary・ゲート中の secondary'],
+  ['on-accent', 'accent', 4.5, 'primary'],
+  ['on-accent-muted', 'accent-muted', 4.5, 'ゲート中の primary（G-10）'],
+  ['on-danger', 'danger', 4.5, 'danger ボタン（F-06）'],
+  ['danger', 'surface', 4.5, 'エラー文・必須の印'],
+  ['focus', 'surface', 3, 'フォーカスリング（K-07。非テキストは 3:1）'],
+];
+
+/** 最低比を割っている組を「何の組か: 実測」で返す。空なら合格。 */
+function shortfalls(scheme: 'light' | 'dark'): string[] {
+  const color = palette(scheme);
+  return PAIRS.flatMap(([fg, bg, min, what]) => {
+    const ratio = contrast(color(fg), color(bg));
+    return ratio >= min ? [] : [`${what}: --g-${fg} / --g-${bg} = ${ratio.toFixed(2)}:1（${String(min)}:1 未満）`];
+  });
+}
+
+describe('tokens / contrast (G-10 K-07 F-06 S-07)', () => {
+  // it.each は使わない。check-trace はテストを it( の出現で数えるので、件数が文書とずれる。
+  it('ライトのトークンの組はすべて最低コントラスト比を満たす（ゲート中の primary を含む）', () => {
+    expect(shortfalls('light')).toEqual([]);
+  });
+
+  it('ダークのトークンの組はすべて最低コントラスト比を満たす（ゲート中の primary を含む）', () => {
+    expect(shortfalls('dark')).toEqual([]);
+  });
 });
 
 /* ========================================================================== */
