@@ -56,8 +56,8 @@ function sheet(options: Options = {}) {
   }
 
   const result = render(<Harness />);
-  const panel = () => result.container.querySelector('.k-panel') as HTMLElement;
-  const handle = () => result.container.querySelector('.k-handle') as HTMLElement;
+  const panel = () => result.container.querySelector('.g-panel') as HTMLElement;
+  const handle = () => result.container.querySelector('.g-handle') as HTMLElement;
   const dialog = () => result.container.querySelector('dialog') as HTMLDialogElement;
 
   // jsdom はレイアウトを持たない。幾何はここで与える。
@@ -161,10 +161,10 @@ describe('pointer capture / M-02', () => {
 
     down(view.handle(), 100);
     move(view.handle(), 420);
-    expect(view.panel()).toHaveAttribute('data-k-dragging');
+    expect(view.panel()).toHaveAttribute('data-g-dragging');
 
     fireEvent.lostPointerCapture(view.panel(), { pointerId: 1 });
-    expect(view.panel()).not.toHaveAttribute('data-k-dragging');
+    expect(view.panel()).not.toHaveAttribute('data-g-dragging');
     // 捕捉の喪失は中断。段は動かさない。
     expect(view.dialog()).toHaveAttribute('data-detent', 'full');
   });
@@ -176,7 +176,7 @@ describe('pointer capture / M-02', () => {
     });
     expect(() => down(view.handle(), 100)).not.toThrow();
     move(view.handle(), 420);
-    expect(view.panel()).toHaveAttribute('data-k-dragging');
+    expect(view.panel()).toHaveAttribute('data-g-dragging');
   });
 
   it('ドラッグ中の 2 本目のポインタは割り込めない', () => {
@@ -189,7 +189,7 @@ describe('pointer capture / M-02', () => {
     up(view.panel(), 900, 2);
 
     // 2 本目は無視され、1 本目の操作が生き続ける
-    expect(view.panel()).toHaveAttribute('data-k-dragging');
+    expect(view.panel()).toHaveAttribute('data-g-dragging');
     up(view.panel(), 420, 1);
     expect(view.dialog()).toHaveAttribute('data-detent', 'half');
   });
@@ -205,24 +205,24 @@ describe('close while dragging / M-03', () => {
 
     down(view.handle(), 100);
     move(view.handle(), 600);
-    expect(view.panel()).toHaveAttribute('data-k-dragging');
+    expect(view.panel()).toHaveAttribute('data-g-dragging');
 
     view.setOpen(false);
-    expect(view.panel()).not.toHaveAttribute('data-k-dragging');
+    expect(view.panel()).not.toHaveAttribute('data-g-dragging');
 
     view.setOpen(true);
-    expect(view.panel()).not.toHaveAttribute('data-k-dragging');
-    expect(view.panel().style.getPropertyValue('--k-sheet-detent')).toBe('92.00dvh');
+    expect(view.panel()).not.toHaveAttribute('data-g-dragging');
+    expect(view.panel().style.getPropertyValue('--g-sheet-detent')).toBe('92.00dvh');
   });
 
   it('閉じたまま始まっても、開いたときの高さは既定の段である', () => {
     // 閉じている間に高さを戻す処理が、React が書いた値と違うものを書くと
     // 開いたときに別の段の高さで現れる。state が既に既定値だと再レンダーも起きず戻らない。
     const view = sheet({ detents: THREE, initialOpen: false });
-    expect(view.panel().style.getPropertyValue('--k-sheet-detent')).toBe('92.00dvh');
+    expect(view.panel().style.getPropertyValue('--g-sheet-detent')).toBe('92.00dvh');
 
     view.setOpen(true);
-    expect(view.panel().style.getPropertyValue('--k-sheet-detent')).toBe('92.00dvh');
+    expect(view.panel().style.getPropertyValue('--g-sheet-detent')).toBe('92.00dvh');
   });
 
   it('閉じたあとに遅れて届く pointerup では閉じない', () => {
@@ -284,7 +284,7 @@ describe('detents prop changes / M-03', () => {
 describe('inline style ownership / C-08', () => {
   it('同じ段に戻ったときも高さの指定が残る（React は再レンダーしない）', () => {
     const view = sheet({ detents: THREE });
-    expect(view.panel().style.getPropertyValue('--k-sheet-detent')).toBe('92.00dvh');
+    expect(view.panel().style.getPropertyValue('--g-sheet-detent')).toBe('92.00dvh');
 
     // わずかに動かして離す。吸い付く先は元と同じ段。
     down(view.handle(), 100);
@@ -293,7 +293,7 @@ describe('inline style ownership / C-08', () => {
 
     expect(view.dialog()).toHaveAttribute('data-detent', 'full');
     // ここが消えると block-size が auto に落ち、シートが内容なりの高さへ縮む。
-    expect(view.panel().style.getPropertyValue('--k-sheet-detent')).toBe('92.00dvh');
+    expect(view.panel().style.getPropertyValue('--g-sheet-detent')).toBe('92.00dvh');
   });
 
   it('中断したときも高さの指定が残る', () => {
@@ -303,19 +303,19 @@ describe('inline style ownership / C-08', () => {
     move(view.handle(), 420);
     fireEvent.pointerCancel(view.panel(), { pointerId: 1, clientY: 420 });
 
-    expect(view.panel().style.getPropertyValue('--k-sheet-detent')).toBe('92.00dvh');
+    expect(view.panel().style.getPropertyValue('--g-sheet-detent')).toBe('92.00dvh');
   });
 
   it('段を使わないシートでは高さを指定しない（内容なりに伸びる）', () => {
     // 既定の kind="form" は backdrop 不可。スワイプはスクリム押下と同じ許可に従う。
     const view = sheet({ kind: 'view', swipeToDismiss: true });
-    expect(view.panel().style.getPropertyValue('--k-sheet-detent')).toBe('');
+    expect(view.panel().style.getPropertyValue('--g-sheet-detent')).toBe('');
 
     down(view.panel(), 100);
     move(view.panel(), 200);
-    expect(view.panel().style.getPropertyValue('--k-swipe-y')).toBe('100px');
+    expect(view.panel().style.getPropertyValue('--g-swipe-y')).toBe('100px');
     up(view.panel(), 200);
-    expect(view.panel().style.getPropertyValue('--k-swipe-y')).toBe('');
-    expect(view.panel().style.getPropertyValue('--k-sheet-detent')).toBe('');
+    expect(view.panel().style.getPropertyValue('--g-swipe-y')).toBe('');
+    expect(view.panel().style.getPropertyValue('--g-sheet-detent')).toBe('');
   });
 });

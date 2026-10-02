@@ -118,12 +118,12 @@ function renderNested(options: NestOptions = {}): NestResult {
 
   // 内側は外側の本文の中にある。DOM の包含関係で一意に決まる。
   const outerEl = (): HTMLDialogElement => {
-    const el = document.querySelector<HTMLDialogElement>('dialog.k-dialog');
+    const el = document.querySelector<HTMLDialogElement>('dialog.g-dialog');
     if (!el) throw new Error('outer dialog not found');
     return el;
   };
   const innerEl = (): HTMLDialogElement => {
-    const el = outerEl().querySelector<HTMLDialogElement>('dialog.k-dialog');
+    const el = outerEl().querySelector<HTMLDialogElement>('dialog.g-dialog');
     if (!el) throw new Error('inner dialog not found');
     return el;
   };
@@ -170,25 +170,25 @@ afterEach(() => {
 /* ========================================================================== */
 
 describe('nested modals / L-11 + L-12 覆い', () => {
-  it('2枚開くと下にだけ data-k-covered が付く', async () => {
+  it('2枚開くと下にだけ data-g-covered が付く', async () => {
     const nest = renderNested();
-    expect(nest.outer()).not.toHaveAttribute('data-k-covered');
+    expect(nest.outer()).not.toHaveAttribute('data-g-covered');
 
     await nest.openInner();
 
-    expect(nest.outer()).toHaveAttribute('data-k-covered');
-    expect(nest.inner()).not.toHaveAttribute('data-k-covered');
+    expect(nest.outer()).toHaveAttribute('data-g-covered');
+    expect(nest.inner()).not.toHaveAttribute('data-g-covered');
   });
 
   it('上を閉じると下の覆いが外れ、下が最前面に戻る', async () => {
     const nest = renderNested();
     await nest.openInner();
-    expect(nest.outer()).toHaveAttribute('data-k-covered');
+    expect(nest.outer()).toHaveAttribute('data-g-covered');
 
     cancelOn(nest.inner());
 
     await waitFor(() => {
-      expect(nest.outer()).not.toHaveAttribute('data-k-covered');
+      expect(nest.outer()).not.toHaveAttribute('data-g-covered');
     });
     expect(nest.outer().open).toBe(true);
   });
@@ -230,7 +230,7 @@ describe('nested modals / L-12 イベントの染み出し', () => {
     const nest = renderNested({ submitShortcut: true });
     await nest.openInner();
 
-    const body = nest.inner().querySelector<HTMLElement>('.k-body');
+    const body = nest.inner().querySelector<HTMLElement>('.g-body');
     expect(body).not.toBeNull();
     act(() => {
       body?.dispatchEvent(
@@ -245,7 +245,7 @@ describe('nested modals / L-12 イベントの染み出し', () => {
   it('外側の Cmd+Enter は外側の primary を押す（ガードが効きすぎていない）', async () => {
     const nest = renderNested({ submitShortcut: true });
 
-    const body = nest.outer().querySelector<HTMLElement>('.k-body');
+    const body = nest.outer().querySelector<HTMLElement>('.g-body');
     act(() => {
       body?.dispatchEvent(
         new KeyboardEvent('keydown', { key: 'Enter', metaKey: true, bubbles: true }),
@@ -286,10 +286,10 @@ describe('nested modals / K-06 フォーカス復帰の連鎖', () => {
 describe('nested modals / M-06 スクロールロック', () => {
   it('上を閉じても下が開いている間はロックが外れない', async () => {
     const nest = renderNested({ lockScroll: true });
-    expect(document.documentElement).toHaveAttribute('data-k-locked');
+    expect(document.documentElement).toHaveAttribute('data-g-locked');
 
     await nest.openInner();
-    expect(document.documentElement).toHaveAttribute('data-k-locked');
+    expect(document.documentElement).toHaveAttribute('data-g-locked');
 
     cancelOn(nest.inner());
 
@@ -297,7 +297,7 @@ describe('nested modals / M-06 スクロールロック', () => {
       expect(nest.inner().open).toBe(false);
     });
     // 外側はまだ開いている。ここで外れたら背面がスクロールしてしまう。
-    expect(document.documentElement).toHaveAttribute('data-k-locked');
+    expect(document.documentElement).toHaveAttribute('data-g-locked');
   });
 });
 
@@ -344,8 +344,8 @@ describe('nested modals / M-07 戻るジェスチャ', () => {
   it('行き先が自分の印なら戻るジェスチャとして扱わない', async () => {
     const nest = renderNested({ closeOnBack: true });
     // 外側が開いた時点の印。上が × で閉じると、後始末の back() でここへ戻ってくる。
-    const own = window.history.state as { __kasane?: string } | null;
-    expect(typeof own?.__kasane).toBe('string');
+    const own = window.history.state as { __gassan?: string } | null;
+    expect(typeof own?.__gassan).toBe('string');
 
     act(() => {
       window.dispatchEvent(new PopStateEvent('popstate', { state: own }));

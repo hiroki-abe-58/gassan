@@ -52,7 +52,7 @@ describe('lifecycle / L', () => {
     });
 
     expect(onOpenChange).not.toHaveBeenCalled();
-    expect(panel()).toHaveAttribute('data-k-blocked');
+    expect(panel()).toHaveAttribute('data-g-blocked');
     await waitFor(() => {
       expect(screen.getByRole('status')).toHaveTextContent('閉じられません');
     });
@@ -188,7 +188,7 @@ describe('lifecycle / L', () => {
 
     // 閉じている間の <dialog> の中身は display:none なので role では引けない。
     // これは jsdom の既定スタイルが実ブラウザと同じ挙動を持っているということ。
-    const rawCheckbox = () => document.querySelector<HTMLInputElement>('.k-consent input');
+    const rawCheckbox = () => document.querySelector<HTMLInputElement>('.g-consent input');
 
     await user.click(screen.getByRole('checkbox'));
     expect(rawCheckbox()).toBeChecked();

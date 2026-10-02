@@ -11,8 +11,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@genelab/kasane': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
-      'kasane/styles.css': fileURLToPath(new URL('./src/styles.css', import.meta.url)),
+      '@genelab/gassan': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+      'gassan/styles.css': fileURLToPath(new URL('./src/styles.css', import.meta.url)),
     },
   },
   server: { port: 5173 },

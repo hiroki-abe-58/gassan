@@ -79,7 +79,7 @@ export const ModalHandle = forwardRef<HTMLDivElement, ModalHandleProps>(function
 
   if (placement !== 'sheet') return null;
 
-  const classes = ['k-handle', className].filter(Boolean).join(' ');
+  const classes = ['g-handle', className].filter(Boolean).join(' ');
 
   if (!interactive) {
     return (
@@ -87,10 +87,10 @@ export const ModalHandle = forwardRef<HTMLDivElement, ModalHandleProps>(function
         {...domPassthrough(rest, 'Modal.Handle')}
         ref={ref}
         className={classes}
-        data-k-swipe-origin=""
+        data-g-swipe-origin=""
         aria-hidden="true"
       >
-        <span className="k-handle-bar" />
+        <span className="g-handle-bar" />
       </div>
     );
   }
@@ -102,11 +102,11 @@ export const ModalHandle = forwardRef<HTMLDivElement, ModalHandleProps>(function
       {...domPassthrough(rest, 'Modal.Handle')}
       ref={ref}
       className={classes}
-      data-k-swipe-origin=""
+      data-g-swipe-origin=""
     >
       <button
         type="button"
-        className="k-handle-grip"
+        className="g-handle-grip"
         role="slider"
         aria-label={label ?? labels.sheetHandle}
         aria-valuemin={0}
@@ -117,7 +117,7 @@ export const ModalHandle = forwardRef<HTMLDivElement, ModalHandleProps>(function
         onKeyDown={onKeyDown}
         onClick={onClick}
       >
-        <span className="k-handle-bar" />
+        <span className="g-handle-bar" />
       </button>
     </div>
   );

@@ -1,5 +1,5 @@
 {
-  "name": "@genelab/kasane",
+  "name": "@genelab/gassan",
   "version": "0.1.0",
   "description": "Native <dialog> based modal shell for React. Layer 1 is delegated to the browser; the library focuses on information structure, activation gates and accessibility.",
   "keywords": [
@@ -16,13 +16,13 @@
   ],
   "license": "MIT",
   "author": "Hiroki Abe (https://github.com/hiroki-abe-58)",
-  "homepage": "https://github.com/hiroki-abe-58/kasane#readme",
+  "homepage": "https://github.com/hiroki-abe-58/gassan#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hiroki-abe-58/kasane.git"
+    "url": "git+https://github.com/hiroki-abe-58/gassan.git"
   },
   "bugs": {
-    "url": "https://github.com/hiroki-abe-58/kasane/issues"
+    "url": "https://github.com/hiroki-abe-58/gassan/issues"
   },
   "type": "module",
   "sideEffects": [

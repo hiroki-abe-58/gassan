@@ -223,7 +223,7 @@ describe('予約された data-* は上書きできない', () => {
     warn.mockRestore();
   });
 
-  it('kasane が書く data-kind は消費者の値で壊れない', () => {
+  it('gassan が書く data-kind は消費者の値で壊れない', () => {
     render(
       <Modal.Root open onOpenChange={noop} kind="confirm" data-kind="hijacked">
         <Modal.Body>b</Modal.Body>
@@ -262,7 +262,7 @@ describe('予約された data-* は上書きできない', () => {
     expect(document.querySelector('dialog')?.getAttribute('aria-label')).toBeNull();
   });
 
-  it('消費者が置く data-k-no-swipe は予約していない', () => {
+  it('消費者が置く data-g-no-swipe は予約していない', () => {
     for (const name of CONSUMER_DATA) {
       expect(RESERVED_DATA.has(name)).toBe(false);
     }
@@ -302,7 +302,7 @@ describe('予約表は src の実態と一致する', () => {
 
 describe('スプレッドの位置（消費者の値で内部状態を壊させない）', () => {
   /**
-   * 実際に kasane の内部 data-* を守っているのは RESERVED_DATA のガードではなく、
+   * 実際に gassan の内部 data-* を守っているのは RESERVED_DATA のガードではなく、
    * **JSX のスプレッド順**である。後勝ちなので、スプレッドが data-* より後ろに
    * 移動した瞬間、消費者が data-kind や data-gated を書き換えられるようになる。
    * ガードを外しても「上書きされない」側のテストは通ってしまうことを実測で確かめたので、
@@ -331,7 +331,7 @@ describe('スプレッドの位置（消費者の値で内部状態を壊させ�
     return at;
   };
 
-  it('kasane が書く data-* は 1 つ残らずスプレッドより後ろにある', () => {
+  it('gassan が書く data-* は 1 つ残らずスプレッドより後ろにある', () => {
     const violations: string[] = [];
     for (const file of tsxFiles()) {
       const text = readFileSync(file, 'utf8');

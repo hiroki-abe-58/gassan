@@ -1,4 +1,4 @@
-# kasane
+# gassan
 
 ネイティブ `<dialog>` を土台にした React のモーダルシェル。
 フォーカストラップ・Esc・背景の inert 化・top layer は**一行も実装していない**。ブラウザに任せている。
@@ -25,12 +25,12 @@ AI コーディング時はそのファイルをコンテキストに入れる�
 ## インストール
 
 ```bash
-npm install @genelab/kasane
+npm install @genelab/gassan
 ```
 
 ```tsx
-import { Modal } from '@genelab/kasane';
-import '@genelab/kasane/styles.css';
+import { Modal } from '@genelab/gassan';
+import '@genelab/gassan/styles.css';
 ```
 
 peer は React 18.2 以上（19 でも動く）。Next.js App Router では `"use client"` 済みなので、そのまま import できる。
@@ -143,7 +143,7 @@ function Example() {
 | `gate={[]}` | 開く | 条件ゼロだと確定している。待つ理由が無い |
 
 サーバーのマークアップとクライアントの初回レンダーが一致するので、hydration のずれは起きない。
-理由テキストは `KasaneProvider` の `unresolvedReason` で差し替えられる。
+理由テキストは `GassanProvider` の `unresolvedReason` で差し替えられる。
 
 ---
 
@@ -163,7 +163,7 @@ function Example() {
 | `Modal.Chart` | グラフの器。名前（`label`）と傾向のテキスト代替（`summary`）を配線し、元データを `<details>` で開閉する。描画はしない |
 | `Modal.Handle` | シートのつまみ。段があれば `role="slider"` の操作子、無ければ掴みどころの飾り |
 | `ModalHost` `useModals` | 命令的 API（`await confirm()`） |
-| `KasaneProvider` | 文言の差し替え（既定は日本語、`englishLabels` も同梱） |
+| `GassanProvider` | 文言の差し替え（既定は日本語、`englishLabels` も同梱） |
 
 `Modal.Field` は render prop なので、中身はネイティブ入力でも Base UI でも構わない。
 選択肢のグループ（ラジオ・複数チェック）は `label` ではなく `fieldset` / `legend` で名前を付ける。
@@ -198,7 +198,7 @@ function Example() {
 
 | 渡したもの | どうなるか | 代わりに |
 |---|---|---|
-| `data-kind` など kasane が内部で使う名前 | 無視される（内部状態が壊れるため） | 別の名前を使う |
+| `data-kind` など gassan が内部で使う名前 | 無視される（内部状態が壊れるため） | 別の名前を使う |
 | `aria-label` など `data-` 以外のハイフン付き prop | 無視される | 名前は `label` か `Modal.Title`、説明は `aria-describedby` |
 
 TypeScript はハイフンを含む JSX 属性名を過剰プロパティ検査から外すので、
@@ -258,8 +258,8 @@ const ok = await modals.confirm({ title: '削除しますか', tone: 'danger' })
 を使う。いずれも Baseline（`<dialog>` は 2022 年、その他は 2023〜2024 年）。
 
 退出アニメに使う CSS の `overlay` だけは **MDN 上 Limited availability（Baseline ではない）**。
-そのため kasane は JS の fallback を持つ。閉じる要求を受けたら `data-exiting` を付けて dialog を開いたまま退出状態を描き、
-`--k-dur-out`（`prefers-reduced-motion` なら待たない）後に `close()` する。
+そのため gassan は JS の fallback を持つ。閉じる要求を受けたら `data-exiting` を付けて dialog を開いたまま退出状態を描き、
+`--g-dur-out`（`prefers-reduced-motion` なら待たない）後に `close()` する。
 `onExited`・中身のリセット・フォーカス復帰・スクロールロック解除は、すべて `close()` の後に行う。
 
 `requestClose()` は Baseline 2025、`closedby` は Limited availability。どちらも使わず、

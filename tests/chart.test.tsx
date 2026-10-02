@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { KasaneProvider, Modal, englishLabels } from '../src';
+import { GassanProvider, Modal, englishLabels } from '../src';
 import { resetWarnings } from '../src/internal/dom';
 import { renderModal } from './utils';
 
@@ -63,7 +63,7 @@ describe('chart / B-14', () => {
 
   it('既定では視覚チャートを支援技術から隠す', () => {
     renderChart();
-    const visual = document.querySelector('.k-chart-visual');
+    const visual = document.querySelector('.g-chart-visual');
     expect(visual).toHaveAttribute('aria-hidden', 'true');
     // 「path path path…」を読ませない。
     expect(screen.queryByRole('img', { name: '棒グラフ' })).toBeNull();
@@ -71,14 +71,14 @@ describe('chart / B-14', () => {
 
   it('visualAccessible で視覚チャートを開放する', () => {
     renderChart({ visualAccessible: true });
-    expect(document.querySelector('.k-chart-visual')).not.toHaveAttribute('aria-hidden');
+    expect(document.querySelector('.g-chart-visual')).not.toHaveAttribute('aria-hidden');
     expect(screen.getByRole('img', { name: '棒グラフ' })).toBeInTheDocument();
   });
 
   it('data は details で開閉でき、既定の文言は「元データを表示」', async () => {
     const user = userEvent.setup();
     renderChart({ data: table });
-    const details = document.querySelector<HTMLDetailsElement>('details.k-chart-data');
+    const details = document.querySelector<HTMLDetailsElement>('details.g-chart-data');
     if (!details) throw new Error('details missing');
     expect(details.open).toBe(false);
     const summary = screen.getByText('元データを表示');
@@ -95,11 +95,11 @@ describe('chart / B-14', () => {
     expect(screen.getByText('表で見る').tagName).toBe('SUMMARY');
 
     render(
-      <KasaneProvider labels={englishLabels}>
+      <GassanProvider labels={englishLabels}>
         <Modal.Chart label="Sales" summary="Peaks in March." data={table}>
           {bars}
         </Modal.Chart>
-      </KasaneProvider>,
+      </GassanProvider>,
     );
     expect(screen.getByText('Show data').tagName).toBe('SUMMARY');
   });

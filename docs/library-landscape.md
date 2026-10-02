@@ -8,25 +8,25 @@
 
 ## 1. 結論
 
-- **kasane はシェル（層1〜3）を native `<dialog>` に任せ、中身のコントロールは Base UI などに委ねる。**
+- **gassan はシェル（層1〜3）を native `<dialog>` に任せ、中身のコントロールは Base UI などに委ねる。**
   モーダル自体を Base UI / React Aria / Radix の Dialog で作る案とは競合関係にあり、併用はしない。
 - **React Aria と W3C APG は「答え合わせ」に使う。** キーボード操作・フォーカス・名前付けの期待挙動を
   照合する基準として参照し、実装の依存にはしない。
 - **`overlay` は MDN 上 Limited availability（Baseline ではない）。** CSS だけの退出アニメに頼らず、
-  kasane は今回 JS の fallback（`data-exiting` を付けて `--k-dur-out` 待ってから `close()`）を持った。
+  gassan は今回 JS の fallback（`data-exiting` を付けて `--g-dur-out` 待ってから `close()`）を持った。
 - **`requestClose()` は Baseline 2025、`closedby` は Limited availability。** 前者は理由付きの close を
-  1経路に集める kasane の設計と同じ方向だが、kasane は `cancel` を常に止めて React 側の `requestClose(reason)` に
+  1経路に集める gassan の設計と同じ方向だが、gassan は `cancel` を常に止めて React 側の `requestClose(reason)` に
   集約しているため、現時点で置き換える必要はない。`closedby` は採用しない。
 
 断定しすぎないために書いておく。Radix / React Aria / Base UI の Dialog は、どれも成熟していて
-アクセシビリティにも真剣に取り組んでいる。kasane が native を選ぶ理由は「そちらが劣るから」ではなく、
+アクセシビリティにも真剣に取り組んでいる。gassan が native を選ぶ理由は「そちらが劣るから」ではなく、
 **2026 年のブラウザが層1を標準で持っているなら、それを使うのが最短**という判断による。
 
 ---
 
 ## 2. プラットフォーム側の現況（MDN）
 
-| 機能 | MDN の表示（2026-09-29 閲覧） | kasane での扱い |
+| 機能 | MDN の表示（2026-09-29 閲覧） | gassan での扱い |
 |---|---|---|
 | `<dialog>` / `showModal()` / `close()` | Baseline Widely available（2022-03 から主要ブラウザで利用可） | 層1を全面委譲 |
 | `showModal()` 中の外側の inert 化 | `<dialog>` の説明に記載 | 自前の `aria-hidden` 付与はしない |
@@ -44,7 +44,7 @@
 
 `overlay` について補足する。MDN は「`overlay` は作者が値を設定できず、`allow-discrete` の transition list に
 入れることで top layer からの除去を遅らせられる」と説明している。つまり**未対応ブラウザでは、`close()` した瞬間に
-top layer から外れて消える**。kasane は close 前に `data-exiting` で退出状態を描き、待ってから `close()` するので、
+top layer から外れて消える**。gassan は close 前に `data-exiting` で退出状態を描き、待ってから `close()` するので、
 対応の有無にかかわらず退出が見える（手元の Chrome での実測は [`VERIFICATION.md`](../VERIFICATION.md) 第1節）。
 
 ---
@@ -65,20 +65,20 @@ top layer から外れて消える**。kasane は close 前に `data-exiting` �
 
 「未確認」は、今回の一次資料の範囲で確かめられなかった項目である。存在しないという意味ではない。
 
-### 3-2. kasane から見た役割
+### 3-2. gassan から見た役割
 
-| 候補 | kasane での位置づけ | 理由 |
+| 候補 | gassan での位置づけ | 理由 |
 |---|---|---|
 | native `<dialog>` | **シェルそのもの** | 層1（top layer・inert・フォーカス・Esc）がブラウザにある。ポータルも z-index も要らない |
 | Base UI | **中身のコントロールの委譲先**（Select / Combobox / Slider など） | 未スタイルで、デザインシステムに載せやすい。Portal の `container` に要素か ref を渡せるので、`showModal()` の inert 領域の内側へ描画できる（[`control-recipes.md`](./control-recipes.md) §3） |
-| React Aria | **答え合わせ**（期待挙動の参照） | フォーカス管理・dismiss の props 設計が文書化されている。kasane の振る舞い表（`modal.skill.md` §4）と突き合わせる |
+| React Aria | **答え合わせ**（期待挙動の参照） | フォーカス管理・dismiss の props 設計が文書化されている。gassan の振る舞い表（`modal.skill.md` §4）と突き合わせる |
 | W3C APG | **答え合わせ**（規範） | modal dialog パターンの期待挙動（フォーカス移動、Tab の循環、Esc、閉じた後のフォーカス復帰、close ボタン） |
-| Radix Dialog | 使わない（シェルとして競合） | ポータル＋自前トラップで層1を持つ設計。kasane と同じ層を二重に持つことになる |
+| Radix Dialog | 使わない（シェルとして競合） | ポータル＋自前トラップで層1を持つ設計。gassan と同じ層を二重に持つことになる |
 
 ### 3-3. APG との差分（記録）
 
 APG の modal dialog パターンは `role="dialog"` の要素に `aria-modal="true"` を付ける前提で書かれている。
-kasane はネイティブの `showModal()` がモーダル状態を持つため `aria-modal` を付けない（`modal.skill.md` A-03）。
+gassan はネイティブの `showModal()` がモーダル状態を持つため `aria-modal` を付けない（`modal.skill.md` A-03）。
 これは意図した差分であり、スクリーンリーダーでの実挙動は VERIFICATION 第3節の実機確認に含める。
 
 ---

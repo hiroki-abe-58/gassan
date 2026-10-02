@@ -46,7 +46,7 @@ describe('resolveDetents / M-03', () => {
     expect(detentIndexOf([], 'peek')).toBe(0);
   });
 
-  it('full は CSS の --k-sheet-max-block (92dvh) と揃っている', () => {
+  it('full は CSS の --g-sheet-max-block (92dvh) と揃っている', () => {
     expect(DETENT_FRACTION.full).toBeCloseTo(0.92, 5);
     expect(DETENT_FRACTION.peek).toBeLessThan(DETENT_FRACTION.half);
     expect(DETENT_FRACTION.half).toBeLessThan(DETENT_FRACTION.full);
@@ -177,16 +177,16 @@ describe('Modal.Handle / H-09', () => {
         </>
       ),
     });
-    expect(container.querySelector('.k-handle')).toBeNull();
+    expect(container.querySelector('.g-handle')).toBeNull();
   });
 
   it('段を指定しなければ、ただの掴みどころ（aria-hidden・フォーカス不可）', () => {
     const { container } = sheet();
-    const handle = container.querySelector('.k-handle');
+    const handle = container.querySelector('.g-handle');
     expect(handle).not.toBeNull();
     expect(handle).toHaveAttribute('aria-hidden', 'true');
-    expect(handle).toHaveAttribute('data-k-swipe-origin');
-    expect(container.querySelector('.k-handle button')).toBeNull();
+    expect(handle).toHaveAttribute('data-g-swipe-origin');
+    expect(container.querySelector('.g-handle button')).toBeNull();
   });
 
   it('段があれば role="slider" の操作子になる', () => {
@@ -203,7 +203,7 @@ describe('Modal.Handle / H-09', () => {
   it('段がひとつだけなら飾りのまま（動かせないものを操作子にしない）', () => {
     const { container } = sheet({ detents: ['half'] });
     expect(screen.queryByRole('slider')).toBeNull();
-    expect(container.querySelector('.k-handle')).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.g-handle')).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('矢印ーで段を移る', () => {
@@ -268,19 +268,19 @@ describe('Modal.Handle / H-09', () => {
   it('パネルに段の高さが入り、ダイアログに data-detent が出る', () => {
     const { container } = sheet({ detents: ['peek', 'half', 'full'], defaultDetent: 'half' });
     const dialog = container.querySelector('dialog');
-    const panel = container.querySelector('.k-panel') as HTMLElement;
+    const panel = container.querySelector('.g-panel') as HTMLElement;
     expect(dialog).toHaveAttribute('data-detent', 'half');
-    expect(panel.style.getPropertyValue('--k-sheet-detent')).toBe('60.00dvh');
+    expect(panel.style.getPropertyValue('--g-sheet-detent')).toBe('60.00dvh');
 
     fireEvent.keyDown(screen.getByRole('slider'), { key: 'End' });
     expect(dialog).toHaveAttribute('data-detent', 'full');
-    expect(panel.style.getPropertyValue('--k-sheet-detent')).toBe('92.00dvh');
+    expect(panel.style.getPropertyValue('--g-sheet-detent')).toBe('92.00dvh');
   });
 
   it('段を使わないシートには高さを注さない（従来の挙動を変えない）', () => {
     const { container } = sheet();
-    const panel = container.querySelector('.k-panel') as HTMLElement;
-    expect(panel.style.getPropertyValue('--k-sheet-detent')).toBe('');
+    const panel = container.querySelector('.g-panel') as HTMLElement;
+    expect(panel.style.getPropertyValue('--g-sheet-detent')).toBe('');
     expect(container.querySelector('dialog')).not.toHaveAttribute('data-detent');
   });
 
@@ -307,8 +307,8 @@ describe('Modal.Handle / H-09', () => {
 /* ========================================================================== */
 
 describe('sheet drag / M-02 + M-03', () => {
-  const panelOf = (container: HTMLElement) => container.querySelector('.k-panel') as HTMLElement;
-  const handleOf = (container: HTMLElement) => container.querySelector('.k-handle') as HTMLElement;
+  const panelOf = (container: HTMLElement) => container.querySelector('.g-panel') as HTMLElement;
+  const handleOf = (container: HTMLElement) => container.querySelector('.g-handle') as HTMLElement;
   const drag = (el: Element, from: number, to: number, id = 1) => {
     fireEvent.pointerDown(el, { pointerId: id, clientY: from, button: 0, isPrimary: true });
     fireEvent.pointerMove(el, { pointerId: id, clientY: to });
@@ -321,9 +321,9 @@ describe('sheet drag / M-02 + M-03', () => {
     window.innerHeight = 1000;
 
     drag(handleOf(container), 100, 300);
-    expect(panel).toHaveAttribute('data-k-dragging');
+    expect(panel).toHaveAttribute('data-g-dragging');
     // 920 - 200 = 720
-    expect(panel.style.getPropertyValue('--k-sheet-detent')).toBe('720px');
+    expect(panel.style.getPropertyValue('--g-sheet-detent')).toBe('720px');
   });
 
   it('指を離すと近い段に吸い付き、インラインの px は消える', () => {
@@ -335,9 +335,9 @@ describe('sheet drag / M-02 + M-03', () => {
     drag(handleOf(container), 100, 420); // 920 - 320 = 600 = half
     fireEvent.pointerUp(panel, { pointerId: 1, clientY: 420 });
 
-    expect(panel).not.toHaveAttribute('data-k-dragging');
+    expect(panel).not.toHaveAttribute('data-g-dragging');
     expect(container.querySelector('dialog')).toHaveAttribute('data-detent', 'half');
-    expect(panel.style.getPropertyValue('--k-sheet-detent')).toBe('60.00dvh');
+    expect(panel.style.getPropertyValue('--g-sheet-detent')).toBe('60.00dvh');
   });
 
   it('ドラッグで段が変わったときは読み上げる（キーボードと違い valuetext が鳴らない）', async () => {
@@ -359,38 +359,38 @@ describe('sheet drag / M-02 + M-03', () => {
 
     drag(handleOf(container), 100, 420);
     fireEvent.pointerCancel(panel, { pointerId: 1, clientY: 420 });
-    expect(panel).not.toHaveAttribute('data-k-dragging');
+    expect(panel).not.toHaveAttribute('data-g-dragging');
     expect(container.querySelector('dialog')).toHaveAttribute('data-detent', 'full');
   });
 
   it('本文がスクロール途中でも、つまみからのドラッグは始まる', () => {
     const { container } = sheet({ detents: ['peek', 'half', 'full'] });
     const panel = panelOf(container);
-    const body = container.querySelector('.k-body') as HTMLElement;
+    const body = container.querySelector('.g-body') as HTMLElement;
     Object.defineProperty(panel, 'offsetHeight', { value: 920, configurable: true });
     Object.defineProperty(body, 'scrollTop', { value: 200, configurable: true });
     window.innerHeight = 1000;
 
     drag(handleOf(container), 100, 300);
-    expect(panel).toHaveAttribute('data-k-dragging');
+    expect(panel).toHaveAttribute('data-g-dragging');
   });
 
   it('本文がスクロール途中なら、本文からのドラッグは始まらない', () => {
     const { container } = sheet({ detents: ['peek', 'half', 'full'] });
     const panel = panelOf(container);
-    const body = container.querySelector('.k-body') as HTMLElement;
+    const body = container.querySelector('.g-body') as HTMLElement;
     Object.defineProperty(panel, 'offsetHeight', { value: 920, configurable: true });
     Object.defineProperty(body, 'scrollTop', { value: 200, configurable: true });
 
     drag(body, 100, 300);
-    expect(panel).not.toHaveAttribute('data-k-dragging');
+    expect(panel).not.toHaveAttribute('data-g-dragging');
   });
 
   it('段が無く swipeToDismiss も無ければドラッグしない', () => {
     const { container } = sheet();
     const panel = panelOf(container);
     drag(handleOf(container), 100, 300);
-    expect(panel).not.toHaveAttribute('data-k-dragging');
+    expect(panel).not.toHaveAttribute('data-g-dragging');
   });
 
   it('閉じられない設定でも、段があれば高さは変えられる', () => {

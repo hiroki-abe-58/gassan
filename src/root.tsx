@@ -249,7 +249,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
 
   const labels = useLabels();
   const reactId = useId();
-  const base = id ?? `kasane-${reactId}`;
+  const base = id ?? `gassan-${reactId}`;
   const ids = useMemo<ModalIds>(
     () => ({
       dialog: base,
@@ -295,11 +295,11 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
   const signalBlocked = useEvent((message?: string) => {
     const panel = panelRef.current;
     if (panel) {
-      panel.setAttribute('data-k-blocked', '');
+      panel.setAttribute('data-g-blocked', '');
       if (blockTimerRef.current) clearTimeout(blockTimerRef.current);
       blockTimerRef.current = setTimeout(() => {
         blockTimerRef.current = null;
-        panel.removeAttribute('data-k-blocked');
+        panel.removeAttribute('data-g-blocked');
       }, BLOCKED_FEEDBACK_MS);
     }
     announce(message ?? blockedMessage ?? DEFAULT_BLOCKED_MESSAGE);
@@ -332,7 +332,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     try {
       verdict = onRequestClose(reason);
     } catch (error) {
-      console.error('[kasane] onRequestClose threw; keeping the dialog open.', error);
+      console.error('[gassan] onRequestClose threw; keeping the dialog open.', error);
       return;
     }
 
@@ -351,7 +351,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
       },
       (error: unknown) => {
         guardPendingRef.current = false;
-        console.error('[kasane] onRequestClose rejected; keeping the dialog open.', error);
+        console.error('[gassan] onRequestClose rejected; keeping the dialog open.', error);
       },
     );
   });
@@ -413,7 +413,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     }
     if (el.hasAttribute('data-exiting')) {
       // [data-exiting] が付いたまま一度スタイルを確定させる。
-      // CSS 側は .k-dialog[data-exiting] { transition: none } なので、
+      // CSS 側は .g-dialog[data-exiting] { transition: none } なので、
       // overlay 対応ブラウザでも display / overlay の discrete transition が
       // もう一周走らない（見えない全画面要素が 120ms 居座ってクリックを奪う、を防ぐ）。
       try {
@@ -440,7 +440,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
    * CSS の overlay transition は MDN 上 Limited availability（Baseline ではない）。
    * 未対応ブラウザで data-exiting を付けた直後に close() すると、top layer から即座に外れて
    * 一瞬で消える。そこで dialog は open のまま data-exiting で退出状態を描き、
-   * --k-dur-out（reduced-motion なら最短）を待ってから close() する。
+   * --g-dur-out（reduced-motion なら最短）を待ってから close() する。
    * state を経由すると1フレーム遅れるので、属性は DOM に直接付ける。
    */
   const performClose = useEvent((el: HTMLDialogElement) => {
@@ -450,7 +450,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     popModal(el);
     const delay = prefersReducedMotion()
       ? REDUCED_EXIT_MS
-      : readCssDurationMs(el, '--k-dur-out', 120) + EXIT_GRACE_MS;
+      : readCssDurationMs(el, '--g-dur-out', 120) + EXIT_GRACE_MS;
     exitTimerRef.current = setTimeout(() => {
       exitTimerRef.current = null;
       finalizeClose(el);
@@ -541,7 +541,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     if (!vv || !el) return;
     const update = () => {
       const inset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-      el.style.setProperty('--k-keyboard-inset', `${Math.round(inset)}px`);
+      el.style.setProperty('--g-keyboard-inset', `${Math.round(inset)}px`);
     };
     update();
     vv.addEventListener('resize', update);
@@ -549,15 +549,15 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     return () => {
       vv.removeEventListener('resize', update);
       vv.removeEventListener('scroll', update);
-      el.style.removeProperty('--k-keyboard-inset');
+      el.style.removeProperty('--g-keyboard-inset');
     };
   }, [open]);
 
   // ブラウザバックで閉じる。M-07。
   useEffect(() => {
     if (!open || !closeOnBack || typeof window === 'undefined' || !window.history) return;
-    const token = `kasane-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    window.history.pushState({ __kasane: token }, '');
+    const token = `gassan-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    window.history.pushState({ __gassan: token }, '');
     const onPop = (event: PopStateEvent) => {
       // popstate は window のイベントなので、開いている全モーダルの購読者に届く。
       // 戻る1回で閉じるのは最前面だけ。これが無いと重なった2枚が同時に消える。L-12。
@@ -569,15 +569,15 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
       // 逆にユーザーが戻るを押したときは、自分の entry より手前へ出るので印は一致しない。
       // カウンタで打ち消す手もあるが、back() が最初の entry で何も起こさないと
       // 印が消費されず次の本物の戻るを飲み込む。状態を持たないこの判定なら漏れない。M-07。
-      const landing = event.state as { __kasane?: string } | null;
-      if (landing?.__kasane === token) return;
+      const landing = event.state as { __gassan?: string } | null;
+      if (landing?.__gassan === token) return;
       requestClose('back-button');
     };
     window.addEventListener('popstate', onPop);
     return () => {
       window.removeEventListener('popstate', onPop);
-      const state = window.history.state as { __kasane?: string } | null;
-      if (state?.__kasane === token) window.history.back();
+      const state = window.history.state as { __gassan?: string } | null;
+      if (state?.__gassan === token) window.history.back();
     };
   }, [open, closeOnBack, requestClose]);
 
@@ -714,7 +714,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
       // 内側のモーダル（閉じていても DOM には居る）のボタンが先に当たってしまう。
       const candidates =
         panelRef.current?.querySelectorAll<HTMLElement>(
-          '.k-btn[data-variant="primary"]:not([data-gated]):not([data-loading])',
+          '.g-btn[data-variant="primary"]:not([data-gated]):not([data-loading])',
         ) ?? [];
       let button: HTMLElement | null = null;
       for (const candidate of Array.from(candidates)) {
@@ -837,12 +837,12 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
   const restorePanelStyle = useCallback(() => {
     const panel = panelRef.current;
     if (!panel) return;
-    panel.removeAttribute('data-k-dragging');
-    panel.style.removeProperty('--k-swipe-y');
+    panel.removeAttribute('data-g-dragging');
+    panel.style.removeProperty('--g-swipe-y');
     // removeProperty で済ませない。同じ段に吸い付いたときは再レンダーが起きず、
     // 消したままだと block-size が auto に落ちてシートが内容なりの高さへ縮む。C-08。
-    if (activeDetent) panel.style.setProperty('--k-sheet-detent', detentCssValue(activeDetent));
-    else panel.style.removeProperty('--k-sheet-detent');
+    if (activeDetent) panel.style.setProperty('--g-sheet-detent', detentCssValue(activeDetent));
+    else panel.style.removeProperty('--g-sheet-detent');
   }, [activeDetent]);
 
   const handlePanelPointerDown = useCallback(
@@ -857,7 +857,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
       const target = event.target as HTMLElement | null;
       // つまみは「掴むための場所」なので、本文スクロール位置も
       // ボタン類の除外リストも無視して必ずドラッグを始める。
-      const fromHandle = Boolean(target?.closest?.('[data-k-swipe-origin]'));
+      const fromHandle = Boolean(target?.closest?.('[data-g-swipe-origin]'));
       if (!fromHandle) {
         // 本文がスクロール途中ならドラッグを始めない。さもないとスクロールと競合する。M-02。
         if ((bodyRef.current?.scrollTop ?? 0) > 0) return;
@@ -901,17 +901,17 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
         const max = top ? detentHeight(top, vh) : 0;
         const raw = session.startHeight - deltaY;
         const next = max > 0 ? Math.min(max, Math.max(0, raw)) : Math.max(0, raw);
-        panel.setAttribute('data-k-dragging', '');
-        panel.style.setProperty('--k-sheet-detent', `${next}px`);
+        panel.setAttribute('data-g-dragging', '');
+        panel.style.setProperty('--g-sheet-detent', `${next}px`);
         return;
       }
 
       if (deltaY <= 0) {
-        panel.style.removeProperty('--k-swipe-y');
+        panel.style.removeProperty('--g-swipe-y');
         return;
       }
-      panel.setAttribute('data-k-dragging', '');
-      panel.style.setProperty('--k-swipe-y', `${deltaY}px`);
+      panel.setAttribute('data-g-dragging', '');
+      panel.style.setProperty('--g-swipe-y', `${deltaY}px`);
     },
     [detentsEnabled, detentTokens, lastDetent],
   );
@@ -985,7 +985,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
   }, []);
 
   // 閉じるときはドラッグを畳む。掴んだまま Esc を押された場合などに、
-  // data-k-dragging と px の高さが残り、次に開いたとき縮んだ姿で現れる。
+  // data-g-dragging と px の高さが残り、次に開いたとき縮んだ姿で現れる。
   useEffect(() => {
     if (open) return;
     swipeRef.current = null;
@@ -1073,7 +1073,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
       {...domPassthrough(rest, 'Modal.Root')}
       ref={mergeRefs(dialogRef, forwardedRef)}
       id={ids.dialog}
-      className={cx('k-dialog', className)}
+      className={cx('g-dialog', className)}
       style={style}
       data-kind={kind}
       data-size={size}
@@ -1090,14 +1090,14 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
       onPointerUp={handlePointerUp}
       onKeyDown={handleKeyDown}
     >
-      <div className="k-scrim" ref={scrimRef} aria-hidden="true" />
+      <div className="g-scrim" ref={scrimRef} aria-hidden="true" />
       <div
-        className="k-panel"
+        className="g-panel"
         ref={panelRef}
         tabIndex={-1}
         style={
           activeDetent
-            ? ({ '--k-sheet-detent': detentCssValue(activeDetent) } as CSSProperties)
+            ? ({ '--g-sheet-detent': detentCssValue(activeDetent) } as CSSProperties)
             : undefined
         }
         onPointerDown={handlePanelPointerDown}
@@ -1113,7 +1113,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
           </GateContext.Provider>
         </ModalContext.Provider>
       </div>
-      <p className="k-sr-only" role="status" aria-live="polite" aria-atomic="true">
+      <p className="g-sr-only" role="status" aria-live="polite" aria-atomic="true">
         {live}
       </p>
     </dialog>

@@ -85,14 +85,14 @@ AI の学習データには 2022年以前のモーダル実装が大量に含ま
 | `<dialog>` / `showModal()` / `::backdrop` | Baseline（2022-03〜） | 全主要ブラウザ |
 | `@starting-style` | Baseline（2024-08〜） | Chrome 117 / Safari 17.5 / Firefox 129 |
 | `transition-behavior: allow-discrete` | Baseline（2024〜） | 同上 |
-| `overlay` プロパティ | **Limited availability（not Baseline）**、Experimental | 未対応ブラウザでは `close()` した瞬間に top layer から外れて消える。§4 L-07 の fallback（close 前に `data-exiting`、`--k-dur-out` 待って `close()`）を実装せよ |
+| `overlay` プロパティ | **Limited availability（not Baseline）**、Experimental | 未対応ブラウザでは `close()` した瞬間に top layer から外れて消える。§4 L-07 の fallback（close 前に `data-exiting`、`--g-dur-out` 待って `close()`）を実装せよ |
 | `:has()` | Baseline（2023-12〜） | スクロールロックとスクロールシャドウに使用 |
 | `:modal` 擬似クラス | Baseline | `html:has(dialog:modal)` でスクロールロック |
 | `dvh` / `svh` / `lvh` | Baseline | `100vh` は禁止 |
 | `prefers-reduced-transparency` | ★Chrome 118 / Safari 17、Firefox 未対応 | 未対応環境では blur が残る前提で既定値を設計する |
 | `scrollbar-gutter: stable` | ★Safari 18.2〜 | 古い Safari ではレイアウトシフトが残る |
 | `closedby` 属性 | **Limited availability** | 採用しない。`closedby="none"` では `cancel` すら発火せず、拒否の理由を返せない。JS 側で同等の制御を持つ |
-| `requestClose()` | **Baseline 2025**（2025-05〜） | `cancel` → `close` の順で発火する「取り消せる close」。kasane は `cancel` を常に止め、React 側の `requestClose(reason)` に集約しているので置き換えない（理由を持てないため） |
+| `requestClose()` | **Baseline 2025**（2025-05〜） | `cancel` → `close` の順で発火する「取り消せる close」。gassan は `cancel` を常に止め、React 側の `requestClose(reason)` に集約しているので置き換えない（理由を持てないため） |
 | `env(keyboard-inset-height)` | ★Chromium のみ | VisualViewport API で fallback |
 | CSS カルーセル（`::scroll-marker`） | ★Chrome 135〜 | Progressive enhancement としてのみ |
 
@@ -203,7 +203,7 @@ v1.1 までは「primary を上に出すため column-reverse」としていた�
 
 凡例 — 必須度 `M`=必須 / `S`=推奨 / `O`=opt-in
 
-この表は要件の定義であって、実装状況ではない。参照実装 `@genelab/kasane` が各項目を
+この表は要件の定義であって、実装状況ではない。参照実装 `@genelab/gassan` が各項目を
 どこで満たしているか（テスト名・CSS・未実装の行き先）は [`docs/traceability.md`](docs/traceability.md) にある。
 そちらは `npm run check:trace` が機械検証していて、**存在しないテスト名を根拠に書くと CI が落ちる。**
 「135 項目に対応した」を主張ではなく検査結果にするための仕組みで、
@@ -219,12 +219,12 @@ v1.1 までは「primary を上に出すため column-reverse」としていた�
 | L-04 | 入場アニメーション | S | `@starting-style` で初期値を与える。180ms |
 | L-05 | 退出アニメーション | S | `transition-behavior: allow-discrete` を `display` に指定。120ms（入場より速く） |
 | L-06 | 退出中の top layer 保持 | M | `transition` list に **`overlay` を含める**（対応ブラウザ用）。ネイティブ側が先に閉じたときの退出はこれだけが頼り |
-| L-07 | `overlay` 未対応時の fallback | S | close 要求で **`close()` を呼ばずに** `data-exiting` を付け、dialog を open のまま scrim / panel を閉状態へ遷移させる。`--k-dur-out`（reduced-motion は最短）待ってから `close()`。途中で再オープンされたらタイマーを取り消し、属性を外して open のまま戻す。onExited / リセット / フォーカス復帰 / スクロールロック解除は `close()` の後。center / top / sheet の3配置すべてに退出状態を書く。`[data-exiting]` の間は dialog の discrete transition を止め、close 後に二周目を走らせない |
+| L-07 | `overlay` 未対応時の fallback | S | close 要求で **`close()` を呼ばずに** `data-exiting` を付け、dialog を open のまま scrim / panel を閉状態へ遷移させる。`--g-dur-out`（reduced-motion は最短）待ってから `close()`。途中で再オープンされたらタイマーを取り消し、属性を外して open のまま戻す。onExited / リセット / フォーカス復帰 / スクロールロック解除は `close()` の後。center / top / sheet の3配置すべてに退出状態を書く。`[data-exiting]` の間は dialog の discrete transition を止め、close 後に二周目を走らせない |
 | L-08 | close 理由の分類 | M | `esc / backdrop / close-button / back-button / submit / programmatic / swipe / route-change` |
 | L-09 | close の拒否（guard） | S | `cancel` イベントを常に `preventDefault()` し、自前の `requestClose(reason)` に一本化 |
 | L-10 | 拒否時のフィードバック | S | 無反応にしない。揺らす + `role="status"` |
 | L-11 | ネストの許可 | O | top layer のスタックはネイティブが管理。Esc は最上位のみ閉じる（ネイティブ挙動） |
-| L-12 | ネスト時のスクリム二重掛け防止 | S | スタック登録簿を持ち、最上位以外に `data-k-covered` を付けてスクリムを 0 にする |
+| L-12 | ネスト時のスクリム二重掛け防止 | S | スタック登録簿を持ち、最上位以外に `data-g-covered` を付けてスクリムを 0 にする |
 | L-13 | ルート変更での自動クローズ | O | Next.js の `usePathname` を監視。`route-change` 理由で閉じる |
 | L-14 | 同時オープンの抑制 | O | 型Aの確認はキューイングし、同時に2枚出さない |
 | L-15 | 命令的 API の出口の保証 | S | `confirm()` の Promise は描画先が無いと永久に解決しない。(1) ホストの有無の判定は 1 ティック遅らせる（**子の effect は親より先に走るので、正しい構成でも同期判定では誤報になる**）(2) ホストが 2 つ以上なら警告する（同じキューの先頭を各々が描き、1 つの回答が全部を解決してしまう）(3) 待機中にホストが消えたら警告する。黙って握りつぶすと「await が返らない」だけが残り原因を辿れない |
@@ -249,7 +249,7 @@ v1.1 までは「primary を上に出すため column-reverse」としていた�
 | ID | 振る舞い | 度 | 実装の要点 |
 |---|---|:-:|---|
 | C-01 | 幅トークン | M | `sm 360 / md 520 / lg 720 / xl 960 / full` |
-| C-02 | 幅の上限と実幅 | M | `inline-size: min(100%, var(--k-panel-max))` |
+| C-02 | 幅の上限と実幅 | M | `inline-size: min(100%, var(--g-panel-max))` |
 | C-03 | 高さの上限 | M | `max-block-size: 100%`（dialog の padding box 基準）。`100vh` 禁止 |
 | C-04 | ビューポート余白 | M | `padding: max(16px, env(safe-area-inset-*))` |
 | C-05 | 内部グリッド | M | `grid-template-rows: auto minmax(0, 1fr) auto`。**`minmax(0,1fr)` を `1fr` にすると body が縮まずスクロールしない** |
@@ -272,7 +272,7 @@ v1.1 までは「primary を上に出すため column-reverse」としていた�
 | H-05 | タイトルをコントロール行に置かない | M | 長文で必ず干渉する。別行にする |
 | H-06 | ページインジケータ | O | 中央スロット。`1 / 5` は視覚用、SR 用に「5ステップ中 1ステップ目」を別途 |
 | H-07 | 追加メニュー | O | 右スロットの×の内側 |
-| H-08 | スクロール時の境界線 | S | `.k-panel:has(> .k-body:not([data-at-start])) > .k-header` |
+| H-08 | スクロール時の境界線 | S | `.g-panel:has(> .g-body:not([data-at-start])) > .g-header` |
 | H-09 | ドラッグハンドル | O | シート配置時のみ。装飾ではなく実際にドラッグ可能にする |
 | H-10 | ヘッダの固定 | M | grid の行1。`position: sticky` を使わない（スクロール領域はボディだけ） |
 
@@ -307,7 +307,7 @@ v1.1 までは「primary を上に出すため column-reverse」としていた�
 | B-11 | 自動再生の禁止 | M | 動画・音声は `autoplay` なし、`controls` あり |
 | B-12 | ギャラリー | O | scroll-snap + 前後ボタン + `aria-live` のカウンタ + キーボード左右。reduced-motion で自動送り停止 |
 | B-13 | テーブルの横スクロール | S | ラッパに `tabIndex={0}` + `role="group"` + `aria-label`。B-02 と同じ理由 |
-| B-14 | グラフのテキスト等価 | M | 図には必ず名前と傾向の要約を添え、元データは表で開閉可能にする。canvas 単体は情報ゼロ。kasane では `Modal.Chart`（`label` と `summary` が必須、`data` は `<details>`、視覚チャートは既定 `aria-hidden`） |
+| B-14 | グラフのテキスト等価 | M | 図には必ず名前と傾向の要約を添え、元データは表で開閉可能にする。canvas 単体は情報ゼロ。gassan では `Modal.Chart`（`label` と `summary` が必須、`data` は `<details>`、視覚チャートは既定 `aria-hidden`） |
 
 ### F. フッタ／ボタン群（12）
 
@@ -315,7 +315,7 @@ v1.1 までは「primary を上に出すため column-reverse」としていた�
 |---|---|:-:|---|
 | F-01 | 階層は3つまで | M | primary 1 / secondary 1 / tertiary 1 |
 | F-02 | 順序 | M | §3-4。DOM 順 = 視覚順 = Tab 順 |
-| F-03 | tertiary の左寄せ | S | ボタン列（`.k-footer-actions`）を `flex: 1` にし、その最初の tertiary に `margin-inline-end: auto`。補足（note）があっても崩れない |
+| F-03 | tertiary の左寄せ | S | ボタン列（`.g-footer-actions`）を `flex: 1` にし、その最初の tertiary に `margin-inline-end: auto`。補足（note）があっても崩れない |
 | F-04 | モバイル縦積み | S | `flex-direction: column`（**reverse にしない**）+ 全幅。縦積み時は F-03 の auto margin を 0 に戻す |
 | F-05 | 最小高さ 44px | M | |
 | F-06 | 破壊的操作の色 | M | 位置は据え置き、色のみ danger |
@@ -341,7 +341,7 @@ v1.1 までは「primary を上に出すため column-reverse」としていた�
 | G-09 | 充足の粘着 | M | 一度満たしたら、内容の再描画で解除しない |
 | G-10 | 非活性ボタンのコントラスト | M | `disabled` と違い `aria-disabled` 要素はフォーカス可能なので、WCAG の非活性コントロール除外規定に頼れない。4.5:1 を維持する。`opacity: .5` で済ませない |
 | G-11 | ゲート名の多重登録 | M | 登録簿を `name → entry` で持つと後勝ちになり、**先に登録したほうが unmount しただけで名前ごと消える**。残った条件が未充足でもボタンが押せる＝ fail-open になる。`name → instanceId → entry` の二段で持ち、参照直前に連言（ひとつでも未充足なら未充足）で畳む。畳んだ結果は実際に登録された entry そのものにし、reason と focus を混ぜた合成物を作らない。重複は開発時に警告する。参照側（`gate={['a','a']}`）の重複も 1 件に畳む |
-| G-12 | 登録が出揃う前のゲート | M | ゲートは子の effect で登録される。サーバーでは effect が走らず、クライアントでも最初のレンダーでは走っていない。その窓で登録簿は空になるが、`gate={true}` が「空＝条件が無い」と読むと fail-open する。**登録簿が権威を持つ世代**を Root が持ち、出揃うまでは `gate={true}` を未充足として扱う。名前を並べた形は未登録を 1 件ずつ合成するので元から fail-closed、`gate={[]}` は「条件ゼロ」と確定しているので待たせない。フラグは世代（`resetOnClose` の作り直し）と結び付ける。確定の記録は Root の effect で行う（React は子の effect を先に流すので、その時点で配下の登録は済んでおり、同じフラッシュで束ねられてちらつかない）。理由テキストは `KasaneLabels` を通す |
+| G-12 | 登録が出揃う前のゲート | M | ゲートは子の effect で登録される。サーバーでは effect が走らず、クライアントでも最初のレンダーでは走っていない。その窓で登録簿は空になるが、`gate={true}` が「空＝条件が無い」と読むと fail-open する。**登録簿が権威を持つ世代**を Root が持ち、出揃うまでは `gate={true}` を未充足として扱う。名前を並べた形は未登録を 1 件ずつ合成するので元から fail-closed、`gate={[]}` は「条件ゼロ」と確定しているので待たせない。フラグは世代（`resetOnClose` の作り直し）と結び付ける。確定の記録は Root の effect で行う（React は子の effect を先に流すので、その時点で配下の登録は済んでおり、同じフラッシュで束ねられてちらつかない）。理由テキストは `GassanLabels` を通す |
 
 ### K. キーボード／フォーカス（10）
 
@@ -393,7 +393,7 @@ v1.1 までは「primary を上に出すため column-reverse」としていた�
 | D-02 | 宣言的 API | M | `<Modal.Root open onOpenChange>` |
 | D-03 | 命令的 API | S | `const ok = await confirm({...})`。確認ダイアログは宣言的に書くと state が爆発する |
 | D-04 | 状態の DOM 公開 | S | `data-*` 属性（`data-size` / `data-scrim` / `data-placement` / `data-gated` / `data-exiting`）。テストとスタイル上書きの両方に効く |
-| D-05 | CSS カスケードレイヤ | S | `@layer kasane`。利用側が詳細度戦争なしで上書きできる |
+| D-05 | CSS カスケードレイヤ | S | `@layer gassan`。利用側が詳細度戦争なしで上書きできる |
 | D-06 | トークンによるテーマ | M | すべての色・寸法・時間をカスタムプロパティに |
 | D-07 | `useEvent` パターン | S | ゲート登録のコールバックが毎レンダー変わると登録・解除ループに入る |
 | D-08 | ゲート登録は2つの effect に分ける | M | 更新用（deps あり）と解除用（unmount のみ）。1つにすると cleanup → 再登録で無限ループ |
@@ -713,8 +713,8 @@ v1.0 では「`column-reverse` で primary を上に出す」とし、v1.1 で�
 ボタン列だけに掛ける」と直した。だが反転そのものが誤りだった。**視覚順と Tab 順・読み上げ順が逆になる。**
 v1.2 で `column-reverse` を廃止し、DOM 順のまま縦に積む。
 
-もう一つ、`.k-footer > .k-btn[data-variant="tertiary"]:first-child` という左寄せ規則は、
-ボタンが `.k-footer-actions` の中にあるため**一度も一致していなかった**。
+もう一つ、`.g-footer > .g-btn[data-variant="tertiary"]:first-child` という左寄せ規則は、
+ボタンが `.g-footer-actions` の中にあるため**一度も一致していなかった**。
 ボタン列を `flex: 1` にし、その直下の最初の tertiary に `margin-inline-end: auto` を当てる。
 さらに、狭幅の `@container` 規則は同じ詳細度の基本規則より**後ろ**に置かないと負ける。
 
@@ -787,7 +787,7 @@ click が来なかったとき、残骸が次のキーボード操作（Enter）
 
 ドラッグのハンドラをパネルに付けると、ポインタが外へ出た時点で `pointermove` も
 `pointerup` も届かなくなる。タッチには暗黙の捕捉があるが、**マウスには無い。**
-縮んだ高さのまま、`data-k-dragging` が付いたまま固まる。
+縮んだ高さのまま、`data-g-dragging` が付いたまま固まる。
 
 `pointerdown` で `setPointerCapture(event.pointerId)` を呼ぶ。合わせて
 `lostpointercapture` を**中断**として扱う（段は動かさず元に戻す）。正常に指を離したときも
@@ -819,13 +819,13 @@ click が来なかったとき、残骸が次のキーボード操作（Enter）
 結果はどちらも「Esc 一回で重なった2枚が同時に閉じる」。`<dialog>` に任せているつもりでも、
 ハンドラを React の prop で書いた時点でこの穴が開く。
 
-**最も近い `dialog.k-dialog` が自分自身のときだけ通す**、で2経路とも塞げる。
+**最も近い `dialog.g-dialog` が自分自身のときだけ通す**、で2経路とも塞げる。
 
 ```ts
-target.closest('dialog.k-dialog') === myDialog
+target.closest('dialog.g-dialog') === myDialog
 ```
 
-同じ罠が DOM 検索にもある。`panel.querySelector('.k-btn[data-variant="primary"]')` は
+同じ罠が DOM 検索にもある。`panel.querySelector('.g-btn[data-variant="primary"]')` は
 パネル配下を全部見るので、**本文の中にマウントされた内側のモーダルのボタンを先に拾う**。
 内側が閉じていても DOM には居るので、閉じていても誤爆する。
 `querySelectorAll` して、自分の dialog に属する最初の 1 件を選ぶ。
@@ -862,13 +862,13 @@ target.closest('dialog.k-dialog') === myDialog
 <dialog {...domPassthrough(rest, 'Modal.Root')} data-kind={kind}>
 ```
 
-この順序である限り、濾過が無くても kasane の値が勝つ。
+この順序である限り、濾過が無くても gassan の値が勝つ。
 つまり実際に内部状態を守っているのは順序のほうで、予約表が担っているのは
 **「黙って捨てない」という警告の層**だけである。両者は別の仕事をしている。
 
 守るべき不変条件は 2 つあり、どちらも静的に固定できる。
 
-- kasane が書く `data-*` は 1 つ残らずスプレッドより後ろにある（順序＝実効的な防御）
+- gassan が書く `data-*` は 1 つ残らずスプレッドより後ろにある（順序＝実効的な防御）
 - 濾過を通さない生の `{...rest}` を増やさない（警告の層を迂回させない）
 
 振る舞いのテストだけ見ていると、防御が消えても緑のままになる。
@@ -952,7 +952,7 @@ Root の effect が走る時点では配下の Gate / Consent / Body(readGate) �
 
 ついでに、未登録ゲートの理由が日本語のベタ書きだった。
 `englishLabels` を入れていても、そこだけ日本語が出る。
-**ライブラリが出す文字列は、例外なく `KasaneLabels` を通す。**
+**ライブラリが出す文字列は、例外なく `GassanLabels` を通す。**
 「めったに出ない文言」ほどベタ書きされやすく、だから最後まで残る。
 
 ### 10-22. 制御 prop の `false` は「指定なし」ではない（F-08 の穴）
@@ -1007,7 +1007,7 @@ const busy = Boolean(loading) || pending;
 | `<button disabled={!agreed}>` | 理由が伝わらない | `aria-disabled` + アナウンス + 誘導 |
 | `onScroll={e => { if (atBottom) setRead(true) }}` | SR 利用者が詰む | 4条件の論理和 |
 | `<div data-slot="x" {...rest}>` | 消費者が内部状態を上書きできる | スプレッドを先頭に置き、自分の `data-*` は後ろ |
-| `panel.querySelector('.k-btn[data-variant="primary"]')` | 入れ子の内側のボタンを拾う | `closest('dialog.k-dialog')` で自分のものに絞る |
+| `panel.querySelector('.g-btn[data-variant="primary"]')` | 入れ子の内側のボタンを拾う | `closest('dialog.g-dialog')` で自分のものに絞る |
 | `let skipNextPopstate = true` | back() が空振りすると印が漏れる | 行き先の state が自分の印かで判定 |
 | `<div className="overflow-y-auto">` | キーボードでスクロール不可 | `tabIndex={0}` + `role="group"` + 名前 |
 | `max-h-[90vh]` | モバイルで破綻 | `max-block-size: 100%`（dvh 基準の親） |

@@ -1,9 +1,9 @@
 # コントロールの合成レシピ
 
-モーダルの中に置く入力部品の最小例。kasane はどの部品も**作り直さない**。
+モーダルの中に置く入力部品の最小例。gassan はどの部品も**作り直さない**。
 境界は2つだけで、それ以外はネイティブ要素か Base UI の持ち物である。
 
-| 境界 | 使う場面 | kasane が渡すもの |
+| 境界 | 使う場面 | gassan が渡すもの |
 |---|---|---|
 | `Modal.Field` | **1 つの入力**に名前・補助文・エラーを付ける | render prop で `id` / `aria-describedby` / `aria-invalid` / `aria-required` |
 | `fieldset` + `legend` | **選択肢のグループ**（ラジオ、複数チェック）に名前を付ける | なし（HTML のまま） |
@@ -11,7 +11,7 @@
 グループに `label` を使わないこと。`label` は1つのコントロールにしか結び付かず、
 「配送方法」という問いがラジオ群の名前として読み上げられない。グループの名前は `legend` の仕事である。
 
-以下のコードはすべて `<Modal.Body>` の中に置く前提で、`import { Modal } from '@genelab/kasane'` 済みとする。
+以下のコードはすべて `<Modal.Body>` の中に置く前提で、`import { Modal } from '@genelab/gassan'` 済みとする。
 
 ---
 
@@ -27,7 +27,7 @@
 | レンジ | `<input type="range">` | 摘みが2つ・目盛り・値の吹き出しが要る → Base UI Slider |
 | セレクト / ドロップダウン | `<select>`（選択肢が固定で少ない） | 見た目の自由・検索・複数選択・非同期の選択肢 → Base UI Select / Combobox |
 | ファイル | `<input type="file">` | — |
-| 日付 / 時刻 | `<input type="date">` / `type="time"` / `datetime-local` | 範囲選択・独自のカレンダー表示が要る → 専用ライブラリ（kasane は関与しない） |
+| 日付 / 時刻 | `<input type="date">` / `type="time"` / `datetime-local` | 範囲選択・独自のカレンダー表示が要る → 専用ライブラリ（gassan は関与しない） |
 | チップス | `Modal.Chips` | — |
 
 判断基準は1つ。**ネイティブで要件を満たせるなら、ネイティブを使う。**
@@ -57,7 +57,7 @@
 ### 2-2. チェックボックス（単体）
 
 ```tsx
-<label className="k-consent">
+<label className="g-consent">
   <input type="checkbox" checked={newsletter} onChange={(e) => setNewsletter(e.target.checked)} />
   <span>お知らせをメールで受け取る</span>
 </label>
@@ -69,7 +69,7 @@
 
 ```tsx
 <fieldset>
-  <legend className="k-label">通知の種類</legend>
+  <legend className="g-label">通知の種類</legend>
   {KINDS.map((kind) => (
     <label key={kind.value}>
       <input
@@ -99,7 +99,7 @@
 
 ```tsx
 <fieldset>
-  <legend className="k-label">配送方法</legend>
+  <legend className="g-label">配送方法</legend>
   {SHIPPING.map((option) => (
     <label key={option.value}>
       <input
@@ -210,13 +210,13 @@ Base UI（`@base-ui/react`。v1.0.0 で `@base-ui-components/react` から改名
 
 `showModal()` で開いたダイアログの外側は inert になる。Base UI の Portal は既定で `<body>` に出すため、
 そのままだと選択肢が**表示されるのに押せない**。`Select.Portal` / `Combobox.Portal` の `container`
-（要素か ref を受け付ける）に、kasane のパネルを渡す。
+（要素か ref を受け付ける）に、gassan のパネルを渡す。
 
 ```tsx
-import { useModalContext } from '@genelab/kasane';
+import { useModalContext } from '@genelab/gassan';
 
 function usePanelContainer() {
-  // Modal.Root の内側で呼ぶ。panelRef は .k-panel を指す。
+  // Modal.Root の内側で呼ぶ。panelRef は .g-panel を指す。
   return useModalContext('PanelContainer').panelRef;
 }
 ```
@@ -316,7 +316,7 @@ import { Slider } from '@base-ui/react/slider';
 
 | 注意 | 理由 |
 |---|---|
-| ポップアップが開いている間の Esc で、モーダルまで一緒に閉じないか確かめる | Esc はポップアップ側とダイアログ側（ネイティブの `cancel`）の両方に関わる。kasane は `cancel` を常に止めて理由 `esc` として扱い、`kind` の dismiss ポリシーと `onRequestClose` に従う。ポップアップとの順序は実ブラウザでの確認事項（未検証） |
+| ポップアップが開いている間の Esc で、モーダルまで一緒に閉じないか確かめる | Esc はポップアップ側とダイアログ側（ネイティブの `cancel`）の両方に関わる。gassan は `cancel` を常に止めて理由 `esc` として扱い、`kind` の dismiss ポリシーと `onRequestClose` に従う。ポップアップとの順序は実ブラウザでの確認事項（未検証） |
 | 初期フォーカスをテキスト入力に当てない（タッチ端末） | 仮想キーボードが本文を隠す。K-04 |
 | 送信エラーは `Modal.Alert` にまとめ、最初のエラー項目へフォーカス | 入力のたびに `role="alert"` で割り込むと入力できなくなる。B-09 / F-08 |
 | 選択肢のポップアップがスクリムの下に隠れないか確認する | 実ブラウザでの検証は ROADMAP v0.3 の受け入れ条件 |

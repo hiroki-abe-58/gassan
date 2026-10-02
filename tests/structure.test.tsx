@@ -81,7 +81,7 @@ describe('controls slots / H-01, H-02', () => {
       ),
     });
 
-    const controls = dialog().querySelector<HTMLElement>('.k-controls');
+    const controls = dialog().querySelector<HTMLElement>('.g-controls');
     expect(controls).not.toBeNull();
 
     // DOM 順は常に start → center → end。視覚順と Tab 順が一致する
@@ -96,7 +96,7 @@ describe('controls slots / H-01, H-02', () => {
 
   it('戻るが無くても3スロットは維持される（中央がズレない）', () => {
     const { dialog } = renderModal();
-    const controls = dialog().querySelector<HTMLElement>('.k-controls')!;
+    const controls = dialog().querySelector<HTMLElement>('.g-controls')!;
     expect(Array.from(controls.children).map((c) => c.getAttribute('data-slot'))).toEqual([
       'start',
       'center',
@@ -106,8 +106,8 @@ describe('controls slots / H-01, H-02', () => {
 
   it('タイトルはコントロール行の外に出る（長文でも干渉しない）', () => {
     const { dialog } = renderModal();
-    const controls = dialog().querySelector<HTMLElement>('.k-controls')!;
-    const title = dialog().querySelector<HTMLElement>('.k-title')!;
+    const controls = dialog().querySelector<HTMLElement>('.g-controls')!;
+    const title = dialog().querySelector<HTMLElement>('.g-title')!;
     expect(controls.contains(title)).toBe(false);
   });
 });
@@ -134,7 +134,7 @@ describe('indicator / H-06', () => {
 
   it('視覚は「2 / 5」、読み上げは文章に分かれている', () => {
     render(<IndicatorHarness current={2} />);
-    const indicator = document.querySelector<HTMLElement>('.k-indicator')!;
+    const indicator = document.querySelector<HTMLElement>('.g-indicator')!;
 
     // 「2スラッシュ5」と読まれないよう、視覚表現は支援技術から隠す
     const visual = indicator.querySelector<HTMLElement>('[aria-hidden="true"]')!;

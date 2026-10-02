@@ -64,7 +64,7 @@ export function useModalContext(component: string): ModalContextValue {
   const ctx = useContext(ModalContext);
   if (!ctx) {
     throw new Error(
-      `[kasane] <${component}> must be rendered inside <Modal.Root>. ` +
+      `[gassan] <${component}> must be rendered inside <Modal.Root>. ` +
         'Wrap it, or use the imperative API (useModals).',
     );
   }
@@ -100,7 +100,7 @@ export const GateContext = createContext<GateContextValue>(EMPTY_GATES);
  * 初回レンダーの一瞬だけ未登録になる。ここで通してしまうと、
  * 「開いた直後だけ押せてしまう」という最悪の競合が生まれる。
  *
- * 理由テキストは KasaneLabels から取る。ここで文字列をベタ書きすると、
+ * 理由テキストは GassanLabels から取る。ここで文字列をベタ書きすると、
  * englishLabels を入れていても未登録ゲートのときだけ日本語が出る。
  */
 export function useBlockers(selector: GateSelector | undefined): GateEntry[] {

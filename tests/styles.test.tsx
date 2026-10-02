@@ -23,15 +23,15 @@ describe('styles / footer order (F-02〜F-04)', () => {
   });
 
   it('ボタン列は残り幅を占め、最初の tertiary だけを左へ分離する', () => {
-    expect(rules).toMatch(/\.k-footer-actions\s*\{[^}]*flex:\s*1;/);
+    expect(rules).toMatch(/\.g-footer-actions\s*\{[^}]*flex:\s*1;/);
     expect(rules).toMatch(
-      /\.k-footer-actions > \.k-btn\[data-variant="tertiary"\]:first-child\s*\{\s*margin-inline-end:\s*auto;/,
+      /\.g-footer-actions > \.g-btn\[data-variant="tertiary"\]:first-child\s*\{\s*margin-inline-end:\s*auto;/,
     );
   });
 
   it('狭幅の縦積み規則は、ボタン列の基本規則より後に置く（詳細度が同じなので順序で勝つ）', () => {
-    const base = rules.indexOf('.k-footer-actions {');
-    const narrow = rules.indexOf('@container k-panel (max-width: 400px)');
+    const base = rules.indexOf('.g-footer-actions {');
+    const narrow = rules.indexOf('@container g-panel (max-width: 400px)');
     expect(base).toBeGreaterThan(-1);
     expect(narrow).toBeGreaterThan(base);
   });
@@ -47,9 +47,9 @@ describe('styles / footer order (F-02〜F-04)', () => {
         </Modal.Footer>
       ),
     });
-    const footer = document.querySelector<HTMLElement>('.k-footer');
+    const footer = document.querySelector<HTMLElement>('.g-footer');
     if (!footer) throw new Error('footer missing');
-    expect(footer.firstElementChild).toHaveClass('k-footer-note');
+    expect(footer.firstElementChild).toHaveClass('g-footer-note');
     const names = within(footer)
       .getAllByRole('button')
       .map((button) => button.textContent);
@@ -59,18 +59,18 @@ describe('styles / footer order (F-02〜F-04)', () => {
 
 describe('styles / exit fallback (L-07)', () => {
   it('scrim と panel の退出状態を持つ', () => {
-    expect(rules).toContain('.k-dialog[open][data-exiting] .k-scrim');
-    expect(rules).toContain('.k-dialog[open][data-exiting] .k-panel');
+    expect(rules).toContain('.g-dialog[open][data-exiting] .g-scrim');
+    expect(rules).toContain('.g-dialog[open][data-exiting] .g-panel');
   });
 
   it('sheet は下へ抜ける退出状態を別に持つ（center / top は共通）', () => {
     expect(rules).toMatch(
-      /\.k-dialog\[data-placement="sheet"\]\[open\]\[data-exiting\] \.k-panel\s*\{[^}]*translate:\s*0 100%;/,
+      /\.g-dialog\[data-placement="sheet"\]\[open\]\[data-exiting\] \.g-panel\s*\{[^}]*translate:\s*0 100%;/,
     );
   });
 
   it('退出中は discrete transition を止め、二重待ちを起こさない', () => {
-    expect(rules).toMatch(/\.k-dialog\[data-exiting\]\s*\{\s*transition:\s*none;/);
+    expect(rules).toMatch(/\.g-dialog\[data-exiting\]\s*\{\s*transition:\s*none;/);
   });
 
   it('z-index の保険は使わない（top layer の外側の話なので効かない）', () => {

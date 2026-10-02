@@ -27,8 +27,8 @@ function token(name: string): string {
 /**
  * セレクタのブロック本文を取る（最初の 1 件、ネストなし前提）。
  *
- * 行頭に錨を打つのが要。`.k-panel` で素朴に検索すると
- * `.k-dialog[data-k-covered] .k-panel { scale: .985 }` を先に掴んでしまう。
+ * 行頭に錨を打つのが要。`.g-panel` で素朴に検索すると
+ * `.g-dialog[data-g-covered] .g-panel { scale: .985 }` を先に掴んでしまう。
  */
 function block(selector: string): string {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -59,12 +59,12 @@ function atMedia(query: string): string {
 
 describe('tokens / scrim (S-01 S-02 S-04 D-06)', () => {
   it('既定のスクリムは 32%。黒 60% の慣習を採らない', () => {
-    expect(Number(token('k-scrim-a-default'))).toBe(0.32);
+    expect(Number(token('g-scrim-a-default'))).toBe(0.32);
   });
 
   it('4段の濃度は単調に増える（意図の段階が逆転していない）', () => {
     const ladder = ['subtle', 'default', 'strong', 'immersive'].map((k) =>
-      Number(token(`k-scrim-a-${k}`)),
+      Number(token(`g-scrim-a-${k}`)),
     );
     expect(ladder).toEqual([...ladder].sort((a, b) => a - b));
     expect(new Set(ladder).size).toBe(4);
@@ -83,10 +83,10 @@ describe('tokens / scrim (S-01 S-02 S-04 D-06)', () => {
     const reduced = atMedia('prefers-reduced-transparency: reduce');
     expect(reduced).toMatch(/backdrop-filter:\s*none/);
     // 補償しないと、blur を消したぶん分離そのものが消える。
-    const compensated = [...reduced.matchAll(/--k-scrim-a:\s*([\d.]+)/g)].map((m) => Number(m[1]));
+    const compensated = [...reduced.matchAll(/--g-scrim-a:\s*([\d.]+)/g)].map((m) => Number(m[1]));
     expect(compensated.length).toBe(4);
     expect(Math.min(...compensated)).toBeGreaterThanOrEqual(0.32);
-    expect(compensated[1]).toBeGreaterThan(Number(token('k-scrim-a-default')));
+    expect(compensated[1]).toBeGreaterThan(Number(token('g-scrim-a-default')));
   });
 });
 
@@ -97,10 +97,10 @@ describe('tokens / scrim (S-01 S-02 S-04 D-06)', () => {
 describe('tokens / color scheme (S-07)', () => {
   it('ダークでは面を明るくして分離する（スクリムを濃くして誤魔化さない）', () => {
     const dark = atMedia('prefers-color-scheme: dark');
-    expect(dark).toMatch(/--k-surface:/);
-    expect(dark).toMatch(/--k-border:/);
+    expect(dark).toMatch(/--g-surface:/);
+    expect(dark).toMatch(/--g-border:/);
     // ダークで濃度だけ上げるのは「暗い上に暗い」で分離しない。
-    expect(dark).not.toMatch(/--k-scrim-a-default:/);
+    expect(dark).not.toMatch(/--g-scrim-a-default:/);
   });
 });
 
@@ -110,43 +110,43 @@ describe('tokens / color scheme (S-07)', () => {
 
 describe('tokens / container (C-02 C-03 C-05 C-06 C-10 M-09)', () => {
   it('パネル幅は min(100%, 上限) で、狭い画面からはみ出さない', () => {
-    expect(block('.k-panel')).toMatch(/inline-size:\s*min\(100%,/);
+    expect(block('.g-panel')).toMatch(/inline-size:\s*min\(100%,/);
   });
 
   it('本文行は minmax(0, 1fr)。1fr 単体だと縮まずスクロールしない', () => {
-    expect(block('.k-panel')).toMatch(/grid-template-rows:\s*auto minmax\(0, *1fr\) auto/);
+    expect(block('.g-panel')).toMatch(/grid-template-rows:\s*auto minmax\(0, *1fr\) auto/);
   });
 
   it('3行はすべて明示。暗黙行に落ちると minmax が効かなくなる', () => {
-    expect(css).toMatch(/\.k-panel > \.k-header\s*\{\s*grid-row:\s*1;/);
-    expect(css).toMatch(/\.k-panel > \.k-body\s*\{\s*grid-row:\s*2;/);
-    expect(css).toMatch(/\.k-panel > \.k-footer\s*\{\s*grid-row:\s*3;/);
+    expect(css).toMatch(/\.g-panel > \.g-header\s*\{\s*grid-row:\s*1;/);
+    expect(css).toMatch(/\.g-panel > \.g-body\s*\{\s*grid-row:\s*2;/);
+    expect(css).toMatch(/\.g-panel > \.g-footer\s*\{\s*grid-row:\s*3;/);
   });
 
   it('100vh を使わない（モバイルのアドレスバーで高さが破綻する）', () => {
     const offenders = [...css.matchAll(/\b\d+vh\b/g)].map((m) => m[0]);
     expect(offenders).toEqual([]);
-    expect(token('k-sheet-max-block')).toMatch(/dvh$/);
+    expect(token('g-sheet-max-block')).toMatch(/dvh$/);
   });
 
   it('シートの最大高は 100dvh 未満（掴む余地を必ず残す）', () => {
-    const value = Number(token('k-sheet-max-block').replace('dvh', ''));
+    const value = Number(token('g-sheet-max-block').replace('dvh', ''));
     expect(value).toBeGreaterThan(0);
     expect(value).toBeLessThan(100);
   });
 
   it('dialog 側で縦溢れを封じる（中央寄せで上端が切れる古典バグを構造的に消す）', () => {
-    const dialog = block('.k-dialog');
+    const dialog = block('.g-dialog');
     expect(dialog).toMatch(/overflow:\s*hidden/);
     expect(dialog).toMatch(/position:\s*fixed/);
     expect(dialog).toMatch(/inset:\s*0/);
     // dialog はビューポートを占め、寸法の制約はパネル側だけが持つ。
     expect(dialog).toMatch(/max-block-size:\s*none/);
-    expect(block('.k-panel')).toMatch(/max-block-size:\s*100%/);
+    expect(block('.g-panel')).toMatch(/max-block-size:\s*100%/);
   });
 
   it('閉じている間はクリックを奪わない（描画が残るあいだの当たり判定を消す）', () => {
-    expect(css).toMatch(/\.k-dialog:not\(\[open\]\)\s*\{[^}]*pointer-events:\s*none/);
+    expect(css).toMatch(/\.g-dialog:not\(\[open\]\)\s*\{[^}]*pointer-events:\s*none/);
   });
 });
 
@@ -171,21 +171,21 @@ describe('tokens / safe area (C-04 F-12 M-05)', () => {
 
 describe('tokens / tap target (H-03 F-05)', () => {
   it('タップ領域は WCAG 2.5.8 の 24px を上回る', () => {
-    const size = Number(token('k-tap').replace('px', ''));
+    const size = Number(token('g-tap').replace('px', ''));
     expect(size).toBeGreaterThanOrEqual(24);
     expect(size).toBeGreaterThanOrEqual(44); // Apple HIG
   });
 
   it('粗いポインタではさらに広げる', () => {
     const coarse = atMedia('pointer: coarse');
-    const size = Number(/--k-tap:\s*(\d+)px/.exec(coarse)?.[1]);
-    expect(size).toBeGreaterThan(Number(token('k-tap').replace('px', '')));
+    const size = Number(/--g-tap:\s*(\d+)px/.exec(coarse)?.[1]);
+    expect(size).toBeGreaterThan(Number(token('g-tap').replace('px', '')));
   });
 
   it('アイコンボタンとフッタのボタンはトークンを共有する（片方だけ小さくならない）', () => {
-    expect(block('.k-iconbtn')).toMatch(/inline-size:\s*var\(--k-tap\)/);
-    expect(block('.k-iconbtn')).toMatch(/block-size:\s*var\(--k-tap\)/);
-    expect(block('.k-controls')).toMatch(/min-block-size:\s*var\(--k-tap\)/);
+    expect(block('.g-iconbtn')).toMatch(/inline-size:\s*var\(--g-tap\)/);
+    expect(block('.g-iconbtn')).toMatch(/block-size:\s*var\(--g-tap\)/);
+    expect(block('.g-controls')).toMatch(/min-block-size:\s*var\(--g-tap\)/);
   });
 });
 
@@ -195,18 +195,18 @@ describe('tokens / tap target (H-03 F-05)', () => {
 
 describe('tokens / header (H-04 H-10)', () => {
   it('コントロール行は 1fr auto 1fr。戻るの有無で中央がズレない', () => {
-    expect(block('.k-controls')).toMatch(/grid-template-columns:\s*1fr auto 1fr/);
+    expect(block('.g-controls')).toMatch(/grid-template-columns:\s*1fr auto 1fr/);
   });
 
   it('「戻る」と「×」の距離は 8px 以上（最も高コストな誤タップを防ぐ）', () => {
-    const gap = Number(token('k-gap').replace('px', ''));
+    const gap = Number(token('g-gap').replace('px', ''));
     expect(gap).toBeGreaterThanOrEqual(8);
-    expect(block('.k-controls')).toMatch(/gap:\s*var\(--k-gap\)/);
+    expect(block('.g-controls')).toMatch(/gap:\s*var\(--g-gap\)/);
   });
 
   it('ヘッダは grid の行1で固定する（position: sticky を使わない）', () => {
-    expect(css).not.toMatch(/\.k-header\s*\{[^}]*position:\s*sticky/);
-    expect(css).toMatch(/\.k-panel > \.k-header\s*\{\s*grid-row:\s*1;/);
+    expect(css).not.toMatch(/\.g-header\s*\{[^}]*position:\s*sticky/);
+    expect(css).toMatch(/\.g-panel > \.g-header\s*\{\s*grid-row:\s*1;/);
   });
 
   it('スロットは列番号で固定する（DOM の順序に依存しない）', () => {
@@ -222,7 +222,7 @@ describe('tokens / header (H-04 H-10)', () => {
 
 describe('tokens / body (B-01 B-04 B-10)', () => {
   it('スクロールするのは本文だけで、連鎖を外に漏らさない', () => {
-    const body = block('.k-body');
+    const body = block('.g-body');
     expect(body).toMatch(/overflow:\s*auto/);
     expect(body).toMatch(/overscroll-behavior:\s*contain/);
     expect(body).toMatch(/scrollbar-gutter:\s*stable/);
@@ -234,7 +234,7 @@ describe('tokens / body (B-01 B-04 B-10)', () => {
   });
 
   it('メディアは比率を先に確保する（読み込み後にレイアウトが飛ばない）', () => {
-    expect(css).toMatch(/aspect-ratio:\s*var\(--k-ratio,\s*16 \/ 9\)/);
+    expect(css).toMatch(/aspect-ratio:\s*var\(--g-ratio,\s*16 \/ 9\)/);
   });
 });
 
@@ -243,7 +243,7 @@ describe('tokens / body (B-01 B-04 B-10)', () => {
 /* ========================================================================== */
 
 describe('tokens / gated button (G-10)', () => {
-  const gated = () => block('.k-btn[data-gated]');
+  const gated = () => block('.g-btn[data-gated]');
 
   it('ゲート中でもポインタを殺さない（押して理由を聞ける、が設計の核）', () => {
     expect(gated()).not.toMatch(/pointer-events/);
@@ -251,7 +251,7 @@ describe('tokens / gated button (G-10)', () => {
 
   it('opacity で潰さない（コントラストが落ちて理由が読めなくなる）', () => {
     expect(gated()).not.toMatch(/opacity/);
-    expect(gated()).toMatch(/--k-accent-muted/);
+    expect(gated()).toMatch(/--g-accent-muted/);
   });
 
   it('押せないことは cursor で伝える', () => {
@@ -260,7 +260,7 @@ describe('tokens / gated button (G-10)', () => {
 
   it('強制カラーモードでも「押せない」が伝わる', () => {
     const forced = atMedia('forced-colors: active');
-    expect(forced).toMatch(/\.k-btn\[data-gated\][^{]*\{[^}]*GrayText/);
+    expect(forced).toMatch(/\.g-btn\[data-gated\][^{]*\{[^}]*GrayText/);
   });
 });
 
@@ -271,49 +271,49 @@ describe('tokens / gated button (G-10)', () => {
 describe('tokens / remaining invariants (S-06 C-07 C-11 H-08 T-09 B-05 D-05)', () => {
   it('強制カラーモードでは枠で分離する（影と blur は無視されるため）', () => {
     const forced = atMedia('forced-colors: active');
-    expect(forced).toMatch(/\.k-panel\s*\{[^}]*border:\s*2px solid CanvasText/);
+    expect(forced).toMatch(/\.g-panel\s*\{[^}]*border:\s*2px solid CanvasText/);
     expect(forced).toMatch(/box-shadow:\s*none/);
   });
 
   it('角丸は 1 つのトークンから派生する（部位ごとに手書きしない）', () => {
-    expect(Number(token('k-radius').replace('px', ''))).toBeGreaterThan(0);
-    expect(css).toMatch(/border-radius:\s*var\(--k-radius\)/);
-    expect(() => token('k-radius-control')).not.toThrow();
-    expect(() => token('k-radius-sheet')).not.toThrow();
+    expect(Number(token('g-radius').replace('px', ''))).toBeGreaterThan(0);
+    expect(css).toMatch(/border-radius:\s*var\(--g-radius\)/);
+    expect(() => token('g-radius-control')).not.toThrow();
+    expect(() => token('g-radius-sheet')).not.toThrow();
   });
 
   it('パネルはコンテナクエリの基準になる（ビューポートではなく自分の幅で分岐する）', () => {
-    const panel = block('.k-panel');
+    const panel = block('.g-panel');
     expect(panel).toMatch(/container-type:\s*inline-size/);
-    expect(panel).toMatch(/container-name:\s*k-panel/);
-    expect(css).toMatch(/@container k-panel \(/);
+    expect(panel).toMatch(/container-name:\s*g-panel/);
+    expect(css).toMatch(/@container g-panel \(/);
   });
 
   it('スクロールシャドウは :has() で本文の端の状態から引く（JS で class を付けない）', () => {
     expect(css).toMatch(
-      /\.k-panel:has\(> \.k-body:not\(\[data-at-start\]\)\) > \.k-header\s*\{[^}]*box-shadow/,
+      /\.g-panel:has\(> \.g-body:not\(\[data-at-start\]\)\) > \.g-header\s*\{[^}]*box-shadow/,
     );
     expect(css).toMatch(
-      /\.k-panel:has\(> \.k-body:not\(\[data-at-end\]\)\) > \.k-footer\s*\{[^}]*box-shadow/,
+      /\.g-panel:has\(> \.g-body:not\(\[data-at-end\]\)\) > \.g-footer\s*\{[^}]*box-shadow/,
     );
   });
 
   it('タイトルは text-wrap: pretty で、最終行に 1 文字だけ落とさない', () => {
-    expect(block('.k-title')).toMatch(/text-wrap:\s*pretty/);
+    expect(block('.g-title')).toMatch(/text-wrap:\s*pretty/);
     // 省略は CSS だけで行う。DOM のテキストは常に完全に保つ（T-03）。
-    expect(css).toMatch(/\.k-title-text\[data-clamped\]\s*\{[^}]*-webkit-line-clamp/);
+    expect(css).toMatch(/\.g-title-text\[data-clamped\]\s*\{[^}]*-webkit-line-clamp/);
   });
 
   it('スクロールバー幅ぶんのレイアウトシフトを恒久的に殺す', () => {
     expect(css).toMatch(/:where\(html\)\s*\{\s*scrollbar-gutter:\s*stable/);
-    expect(block('.k-body')).toMatch(/scrollbar-gutter:\s*stable/);
+    expect(block('.g-body')).toMatch(/scrollbar-gutter:\s*stable/);
   });
 
   it('@layer の順序を先頭で確定させる（利用側が上書きしやすい）', () => {
     const decl = /@layer ([^;]+);/.exec(css);
-    expect(decl?.[1]).toBe('kasane.reset, kasane.tokens, kasane.core, kasane.theme');
+    expect(decl?.[1]).toBe('gassan.reset, gassan.tokens, gassan.core, gassan.theme');
     // 宣言はファイルの先頭側にあること。後から現れると順序が確定しない。
-    expect(css.indexOf('@layer kasane.reset,')).toBeLessThan(css.indexOf('@layer kasane.tokens {'));
+    expect(css.indexOf('@layer gassan.reset,')).toBeLessThan(css.indexOf('@layer gassan.tokens {'));
   });
 
   it('レイヤの外に規則を漏らさない（利用側の素の CSS と詳細度で殴り合わない）', () => {
@@ -346,7 +346,7 @@ describe('tokens / remaining invariants (S-06 C-07 C-11 H-08 T-09 B-05 D-05)', (
 
 describe('tokens / focus ring (K-07)', () => {
   it('フォーカスリングは :focus-visible にだけ出す', () => {
-    expect(block('.k-dialog :focus-visible')).toMatch(/outline:\s*2px solid/);
+    expect(block('.g-dialog :focus-visible')).toMatch(/outline:\s*2px solid/);
   });
 
   it('outline: none を裸で置かない（リングを消したまま代替を出し忘れない）', () => {
@@ -355,7 +355,7 @@ describe('tokens / focus ring (K-07)', () => {
     );
     for (const selector of naked) {
       // パネル本体だけは例外。プログラム的フォーカスにリングを出さないため。
-      expect(selector).toContain('.k-panel');
+      expect(selector).toContain('.g-panel');
     }
   });
 });
@@ -366,51 +366,51 @@ describe('tokens / focus ring (K-07)', () => {
 
 describe('sheet detents and handle', () => {
   it('M-03: 段を使わないシートは従来どおり内容なりの高さに落ちる', () => {
-    const sheet = block('.k-dialog[data-placement="sheet"] .k-panel');
+    const sheet = block('.g-dialog[data-placement="sheet"] .g-panel');
     // 変数が無いときの既定が auto であること。ここが 100% だと
     // 段を使わないシートまで全画面になり、後方互換が壊れる。
-    expect(sheet).toMatch(/block-size:\s*var\(--k-sheet-detent,\s*auto\)/);
-    expect(sheet).toMatch(/max-block-size:\s*min\(100%,\s*var\(--k-sheet-max-block\)\)/);
+    expect(sheet).toMatch(/block-size:\s*var\(--g-sheet-detent,\s*auto\)/);
+    expect(sheet).toMatch(/max-block-size:\s*min\(100%,\s*var\(--g-sheet-max-block\)\)/);
   });
 
   it('M-03: full の割合が CSS の上限 92dvh と一致している', () => {
-    expect(token('k-sheet-max-block')).toBe('92dvh');
+    expect(token('g-sheet-max-block')).toBe('92dvh');
   });
 
   it('C-08: 段のあるシートだけ高さを遷移させる', () => {
-    const anim = block('.k-dialog[data-placement="sheet"] .k-panel[style*="--k-sheet-detent"]');
+    const anim = block('.g-dialog[data-placement="sheet"] .g-panel[style*="--g-sheet-detent"]');
     expect(anim).toMatch(/interpolate-size:\s*allow-keywords/);
     expect(anim).toMatch(/transition:[\s\S]*block-size/);
   });
 
   it('M-02: ドラッグ中は遷移を切る（指に遅れて追従すると壊れて見える）', () => {
-    const dragging = block('.k-dialog[data-placement="sheet"] .k-panel[data-k-dragging]');
+    const dragging = block('.g-dialog[data-placement="sheet"] .g-panel[data-g-dragging]');
     expect(dragging).toMatch(/transition:\s*none/);
   });
 
   it('H-09: つまみの的が 44px 以上の指の面積を持つ', () => {
-    const grip = block('.k-handle-grip');
+    const grip = block('.g-handle-grip');
     const minBlock = grip.match(/min-block-size:\s*(\d+)px/)?.[1];
     const minInline = grip.match(/min-inline-size:\s*(\d+)px/)?.[1];
-    const pad = block('.k-handle').match(/padding-block:\s*(\d+)px\s+(\d+)px/);
+    const pad = block('.g-handle').match(/padding-block:\s*(\d+)px\s+(\d+)px/);
     expect(Number(minInline)).toBeGreaterThanOrEqual(44);
-    // 的の高さは grip 本体 + .k-handle の上下パディング
+    // 的の高さは grip 本体 + .g-handle の上下パディング
     const total = Number(minBlock) + Number(pad?.[1] ?? 0) + Number(pad?.[2] ?? 0);
     expect(total).toBeGreaterThanOrEqual(44);
   });
 
   it('H-09: つまみはキーボードでも見える（focus-visible に輪郭がある）', () => {
-    expect(block('.k-handle-grip:focus-visible')).toMatch(/outline:\s*var\(--k-focus-width\)/);
+    expect(block('.g-handle-grip:focus-visible')).toMatch(/outline:\s*var\(--g-focus-width\)/);
   });
 
   it('H-09: ドラッグ中にブラウザのスクロールへ奪われない', () => {
-    expect(block('.k-handle')).toMatch(/touch-action:\s*none/);
-    expect(block('.k-handle-grip')).toMatch(/touch-action:\s*none/);
+    expect(block('.g-handle')).toMatch(/touch-action:\s*none/);
+    expect(block('.g-handle-grip')).toMatch(/touch-action:\s*none/);
   });
 
   it('H-09: シート以外ではつまみを出さない', () => {
     expect(css).toMatch(
-      /\.k-dialog:not\(\[data-placement="sheet"\]\)\s*\.k-handle\s*\{\s*display:\s*none/,
+      /\.g-dialog:not\(\[data-placement="sheet"\]\)\s*\.g-handle\s*\{\s*display:\s*none/,
     );
   });
 });

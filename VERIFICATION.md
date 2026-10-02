@@ -1,6 +1,6 @@
 # 検証レポート
 
-対象: `@genelab/kasane` v0.1.0（公開前の追補を含む）
+対象: `@genelab/gassan` v0.1.0（公開前の追補を含む）
 日付: 2026-09-29
 環境: macOS 15.6.1 / Node v18.20.8 / npm 10.8.2 / TypeScript 5.9.3 / Vitest 3.2.7 / React 19 / jsdom 26
 実ブラウザ計測: Google Chrome 154.0.8037.58（headless、CDP 経由。第1-2節）
@@ -50,7 +50,7 @@ SSR 時点でゲートが fail-closed になっていること、`Modal.Chart` �
 | ファイル | raw | gzip | 予算 |
 |---|---:|---:|---:|
 | `dist/index.js` (ESM) | 79,700 B | 19,482 B | 22,528 B |
-| `dist/index.cjs` | 82,588 B | 19,712 B | 22,528 B |
+| `dist/index.cjs` | 82,588 B | 19,717 B | 22,528 B |
 | `dist/styles.css` | 23,447 B | 4,885 B | 6,144 B |
 
 追補前（13,495 B / 13,659 B / 4,503 B）からの増分は、退出 fallback・`Modal.Chart`・フッタ規則のぶん。
@@ -95,7 +95,7 @@ SSR 時点でゲートが fail-closed になっていること、`Modal.Chart` �
 | 名前なし警告（A-01） | 2 | 名前が無いときだけ警告 / 命令的 `confirm()` の2枚目で誤検知しない |
 | ギャラリー | 1 | 幅が測れない間に位置を巻き戻さない |
 | `Modal.Chart` | 7 | 上表のとおり |
-| CSS / フッタ | 8 | `column-reverse` 不在、`.k-footer-actions { flex: 1 }` と最初の tertiary の auto margin、狭幅規則の順序、DOM 順、3配置の退出状態、`[data-exiting] { transition: none }`、`z-index` 不在 |
+| CSS / フッタ | 8 | `column-reverse` 不在、`.g-footer-actions { flex: 1 }` と最初の tertiary の auto margin、狭幅規則の順序、DOM 順、3配置の退出状態、`[data-exiting] { transition: none }`、`z-index` 不在 |
 
 **追加テストが穴を捕まえられることの確認。** 追補前のソースに新しいテストを当てると、
 `exit.test.tsx` は 9 件中 7 件、`styles.test.tsx` は 8 件中 7 件、ギャラリーの 1 件が落ちる
@@ -163,10 +163,10 @@ jsdom は CSS を適用しないので、退出 fallback とフッタ配置は C
 | 1 | **開く前に読了ゲートが充足する** | 閉じている `<dialog>` は `display:none` なので `clientHeight` も `scrollHeight` も 0。「スクロール不要＝読み終えた」と判定していた | 規約を一度も表示せずに同意ボタンが押せる。**同意取得の実装として致命的** |
 | 2 | **`"use client"` が消える** | tsup の `banner` で入れたディレクティブを rollup が「バンドル時に壊れる」として削除 | Next.js App Router で import した瞬間に実行時エラー |
 | 3 | 名前なし警告の誤検知 | `Modal.Title` の登録は子の effect で起き、親に届くのは次のレンダー。親の effect が先に判定していた | 正しく実装している利用者のコンソールが毎回汚れる |
-| 4 | ローディング中にボタン名が消える | `.k-btn-label { visibility: hidden }` はアクセシビリティツリーからも除去される | 送信中のボタンが「名前のないボタン」になる |
+| 4 | ローディング中にボタン名が消える | `.g-btn-label { visibility: hidden }` はアクセシビリティツリーからも除去される | 送信中のボタンが「名前のないボタン」になる |
 | 5 | 処理中テキストがボタン名を汚す | `sr-only` の「処理中」を `<button>` の内側に置いていた | 名前が「送信 処理中」になる |
 | 6 | キャプション付き画像が潰れる | `figure` に `aspect-ratio` を掛けていたため、キャプション込みで比率が決まっていた | 画像の縦横比が崩れる |
-| 7 | 補足文まで上下反転する | 狭幅時の `column-reverse` を `.k-footer` 全体に掛けていた | 「後から変更できます」がボタンの下に落ちる（その後、反転そのものを廃止した。#18） |
+| 7 | 補足文まで上下反転する | 狭幅時の `column-reverse` を `.g-footer` 全体に掛けていた | 「後から変更できます」がボタンの下に落ちる（その後、反転そのものを廃止した。#18） |
 | 8 | 右スロットのボタンが重なる | `justify-self: end` を直接ボタンに掛けており、複数置くと同じグリッドセルで重なる | メニュー＋閉じるの並置ができない |
 | 9 | ゲート更新のたびに一瞬 fail-closed | 登録と解除を1つの effect に同居させていた | 理由テキストがちらつく |
 
@@ -200,7 +200,7 @@ jsdom は CSS を適用しないので、退出 fallback とフッタ配置は C
 | 16 | **前回の `returnValue` が次回に持ち越される** | `close()` は引数があるときだけ `returnValue` を更新し、`showModal()` は何もしない | 2回目の外部 `close()` が `submit` に誤分類される |
 | 17 | **ネイティブ側が先に閉じると後始末が走らない** | 閉じる処理を「`el.open` のとき」だけに書いていた。`<form method="dialog">` や外部 `close()` の後は `el.open` がもう false | スタックに残る（下のモーダルのスクリムが消えたまま）、`lockScroll` が解除されない、`onExited` が来ない（命令的 API なら Promise が解決しない） |
 | 18 | 狭幅で視覚順と Tab 順が逆 | `column-reverse` | キーボード利用者が「上から下へ」進めない |
-| 19 | 最初の tertiary が左へ分離されない | 規則が `.k-footer > .k-btn` だったが、ボタンは `.k-footer-actions` の中にある。**一度も一致していなかった** | 「やめる」が右側のボタン群に紛れる |
+| 19 | 最初の tertiary が左へ分離されない | 規則が `.g-footer > .g-btn` だったが、ボタンは `.g-footer-actions` の中にある。**一度も一致していなかった** | 「やめる」が右側のボタン群に紛れる |
 | 20 | 命令的 `confirm()` の2枚目で名前なし警告 | 外部ストア起点の再マウントでは、判定タイマー（0ms）が Title 登録の再レンダーより先に走る。#3 の対策（1 tick 待つ）では足りなかった | 正しく実装しているのにコンソールが汚れる（追補前のテスト出力にも出ていた） |
 | 21 | ギャラリーが進めた位置を巻き戻す | 幅 0（測れない）を 1 とみなして割っていた。#1 と同じ種類の穴 | jsdom ではテストが負荷次第で落ちる（実際に verify 中に落ちた）。実ブラウザでは閉じた dialog 内で起こりうる |
 | 22 | 閉じた dialog の内側にフォーカスが取り残される | フォーカス復帰を「`activeElement` が body のとき」に限っていた | フォーカス復帰を持たない環境で、見えない要素にフォーカスが残る |
@@ -240,10 +240,10 @@ jsdom は CSS を適用しないので、退出 fallback とフッタ配置は C
 | B-11 | `prefers-reduced-transparency` | 透明度を下げる設定で blur が切れること | 同上 |
 | B-12 | `forced-colors` | Windows ハイコントラストで境界が見えること | 同上 |
 | B-13 | iOS の背面スクロール | シート表示で背後が動かないこと | `lockScroll` が要る場面 |
-| B-14 | 仮想キーボード | 入力にフォーカスしても本文が隠れないこと。`--k-keyboard-inset` の計算は単体テスト済み（`tests/environment.test.tsx`）で、実機の `visualViewport` の挙動だけが未確認 | `--k-keyboard-inset` が実機で反映されていない |
+| B-14 | 仮想キーボード | 入力にフォーカスしても本文が隠れないこと。`--g-keyboard-inset` の計算は単体テスト済み（`tests/environment.test.tsx`）で、実機の `visualViewport` の挙動だけが未確認 | `--g-keyboard-inset` が実機で反映されていない |
 | B-15 | スワイプで閉じる | 下フリックで閉じ、本文スクロール中は反応しないこと。判定ロジックは単体テスト済み（`shouldDismissBySwipe`）で、体感だけが未確認 | 判定のしきい値が実機の指の速度と合っていない |
 | B-16 | 400% ズーム | 拡大しても読了ゲートが成立し、横スクロールが出ないこと。再評価の配線は単体テスト済み（G-06）で、リフロー結果だけが未確認 | リフロー後に寸法が再評価されていない |
-| B-17 | 長押し | タイトルを長押ししたとき OS のコンテキストメニューが出ること。kasane が長押しを奪っていないことは単体テスト済み（T-06） | kasane が長押しを奪っている |
+| B-17 | 長押し | タイトルを長押ししたとき OS のコンテキストメニューが出ること。gassan が長押しを奪っていないことは単体テスト済み（T-06） | gassan が長押しを奪っている |
 | B-18 | 段の吸い付き | `peek` / `half` / `full` の 3 段で、指を離すと最も近い段へ吸い付くこと。速い下フリックでは閉じずに 1 段下がり、最下段からさらに投げたときだけ閉じること。つまみを選んで矢印キーでも段が移ること。判定は単体テスト済み（`snapToDetent` / `tests/detent.test.tsx`）で、慣性と体感だけが未確認 | 段の割合（peek 30% / half 60% / full 92%）が実機の画面比と合っていない |
 
 ### jsdom が「実ブラウザと同じ」だった点
@@ -272,8 +272,8 @@ jsdom は CSS を適用しないので、退出 fallback とフッタ配置は C
 5. **実ブラウザでの計測は Chrome 154（`overlay` 対応）だけ。** Safari / Firefox での退出 fallback、
    実機（iOS / Android）、スクリーンリーダーでの `Modal.Chart` の読み上げ、Base UI のポップアップとの
    組み合わせ（Portal の `container`、Esc の順序）は未検証。
-6. **退出待ちは `--k-dur-out` を JS が読む。** 利用側が `transition-duration` だけを直接上書きし、
-   `--k-dur-out` を変えなかった場合、待ち時間と動きがずれる。トークンで変えること。
+6. **退出待ちは `--g-dur-out` を JS が読む。** 利用側が `transition-duration` だけを直接上書きし、
+   `--g-dur-out` を変えなかった場合、待ち時間と動きがずれる。トークンで変えること。
 
 ---
 

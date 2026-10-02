@@ -144,7 +144,7 @@ export function ModalConsent({
   return (
     <label
       {...domPassthrough(rest, 'Modal.Consent')}
-      className={className ? `k-consent ${className}` : 'k-consent'}
+      className={className ? `g-consent ${className}` : 'g-consent'}
     >
       <input
         ref={inputRef}
@@ -189,7 +189,7 @@ export function ModalGateStatus({
   return (
     <p
       {...domPassthrough(rest, 'Modal.GateStatus')}
-      className={className ? `k-gate-status ${className}` : 'k-gate-status'}
+      className={className ? `g-gate-status ${className}` : 'g-gate-status'}
     >
       {first.reason}
     </p>

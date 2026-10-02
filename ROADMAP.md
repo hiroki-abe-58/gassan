@@ -61,8 +61,8 @@ npm run check:consumer    # 外からの見え方を最終確認
 npm publish               # publishConfig.access: public 済み
 ```
 
-公開前に `repository` / `homepage` / `bugs` の URL を実在するリポジトリに差し替えること。
-現在は `github.com/hiroki-abe-58/kasane` を仮置きしている。
+`repository` / `homepage` / `bugs` は実在するリポジトリ `github.com/hiroki-abe-58/gassan` を指している。
+npm にはまだ出していない（`@genelab/gassan` は 2026-10-02 時点で未使用）。
 
 ---
 
@@ -130,11 +130,11 @@ npm publish               # publishConfig.access: public 済み
 
 ## v0.5.0 — ヘッドレス層の分離
 
-**これができる**: 自分のデザインシステムの見た目のまま、kasane の振る舞いだけを使える。
+**これができる**: 自分のデザインシステムの見た目のまま、gassan の振る舞いだけを使える。
 
 - [ ] `useModalShell()` / `useGate()` を公開し、DOM を利用側が書ける形にする
 - [ ] `styles.css` を任意にする（クラス名に依存しない構成）
-- [ ] Tailwind プリセット（`@genelab/kasane/tailwind`）
+- [ ] Tailwind プリセット（`@genelab/gassan/tailwind`）
 - [ ] トークンのカスタマイズ手順書
 
 **受け入れ条件**
@@ -159,7 +159,7 @@ npm publish               # publishConfig.access: public 済み
 ライブラリを作ったこと自体は記事の主題にしない。**主題は常に、読者が自分の環境で今すぐ動かせる標準技術のほうに置く。**
 新しく作ったものを主役にすると、読者にとっては「知らない名前の話」になり、評価も伸びない。
 
-| # | 媒体 | 主題 | kasane の扱い |
+| # | 媒体 | 主題 | gassan の扱い |
 |---|---|---|---|
 | 1 | Qiita / Zenn | `<dialog>` と `showModal()` — フォーカストラップを自作しなくてよくなった話 | 最後に実装例として1節 |
 | 2 | Qiita / Zenn | `@starting-style` と `allow-discrete` — 退出アニメを CSS だけで書く | `overlay` の落とし穴を実演 |
@@ -179,7 +179,7 @@ npm publish               # publishConfig.access: public 済み
 |---|---|
 | フォーカストラップの自前実装 | ブラウザが持っている。再実装は退化 |
 | セレクト・日付選択・コンボボックスの自作 | ネイティブか Base UI のほうが良い。競う意味がない |
-| チャートの描画 | 描画ライブラリは選択肢が多く、用途で最適解が違う。kasane は名前・要約・元データの配線（`Modal.Chart`）だけを持つ |
+| チャートの描画 | 描画ライブラリは選択肢が多く、用途で最適解が違う。gassan は名前・要約・元データの配線（`Modal.Chart`）だけを持つ |
 | トースト・ポップオーバー・ツールチップ | モーダルではない。別の問題 |
 | アニメーションライブラリへの依存 | CSS だけで足りる。依存ゼロを保つ |
 | `<dialog>` を使わないフォールバック | 対象ブラウザがすべて対応済み。分岐を持つほうが危険 |

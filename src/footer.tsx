@@ -37,10 +37,10 @@ export function ModalFooter({ children, note, className, ...rest }: ModalFooterP
   return (
     <footer
       {...domPassthrough(rest, 'Modal.Footer')}
-      className={className ? `k-footer ${className}` : 'k-footer'}
+      className={className ? `g-footer ${className}` : 'g-footer'}
     >
-      {note ? <p className="k-footer-note">{note}</p> : null}
-      <div className="k-footer-actions">{children}</div>
+      {note ? <p className="g-footer-note">{note}</p> : null}
+      <div className="g-footer-actions">{children}</div>
     </footer>
   );
 }
@@ -105,8 +105,8 @@ export function ModalButton({
   const { announce, requestClose } = useModalContext('Modal.Button');
   const blockers = useBlockers(gate);
   const reactId = useId();
-  const reasonId = `kasane-reason-${reactId}`;
-  const busyId = `kasane-busy-${reactId}`;
+  const reasonId = `gassan-reason-${reactId}`;
+  const busyId = `gassan-busy-${reactId}`;
 
   const [pending, setPending] = useState(false);
   const mountedRef = useRef(true);
@@ -151,7 +151,7 @@ export function ModalButton({
               if (closeOnClick) requestClose(closeOnClick);
             })
             .catch((error: unknown) => {
-              console.error('[kasane] onAction rejected.', error);
+              console.error('[gassan] onAction rejected.', error);
             })
             .finally(() => {
               if (mountedRef.current) setPending(false);
@@ -176,7 +176,7 @@ export function ModalButton({
       <button
         {...stripReservedData(rest, 'Modal.Button')}
         type={type}
-        className={className ? `k-btn ${className}` : 'k-btn'}
+        className={className ? `g-btn ${className}` : 'g-btn'}
         data-variant={variant}
         data-gated={blocked ? '' : undefined}
         data-loading={busy ? '' : undefined}
@@ -186,8 +186,8 @@ export function ModalButton({
         disabled={unavailable || undefined}
         onClick={handleClick}
       >
-        <span className="k-btn-label">{children}</span>
-        {busy ? <span className="k-btn-spinner" aria-hidden="true" /> : null}
+        <span className="g-btn-label">{children}</span>
+        {busy ? <span className="g-btn-spinner" aria-hidden="true" /> : null}
       </button>
       {/*
         状態テキストはボタンの「外」に置く。
@@ -196,12 +196,12 @@ export function ModalButton({
         （「送信する 規約への同意が必要です」のようになる）
       */}
       {blocked && first ? (
-        <span id={reasonId} className="k-sr-only">
+        <span id={reasonId} className="g-sr-only">
           {first.reason}
         </span>
       ) : null}
       {busy ? (
-        <span id={busyId} className="k-sr-only">
+        <span id={busyId} className="g-sr-only">
           {labels.loading}
         </span>
       ) : null}

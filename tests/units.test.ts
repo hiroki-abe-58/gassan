@@ -135,22 +135,22 @@ describe('isTextEntry', () => {
 });
 
 describe('modal stack', () => {
-  it('最前面以外に data-k-covered を付ける', () => {
+  it('最前面以外に data-g-covered を付ける', () => {
     resetModalStack();
     const a = document.createElement('dialog');
     const b = document.createElement('dialog');
 
     pushModal(a);
-    expect(a.hasAttribute('data-k-covered')).toBe(false);
+    expect(a.hasAttribute('data-g-covered')).toBe(false);
     expect(isTopModal(a)).toBe(true);
 
     pushModal(b);
-    expect(a.hasAttribute('data-k-covered')).toBe(true);
-    expect(b.hasAttribute('data-k-covered')).toBe(false);
+    expect(a.hasAttribute('data-g-covered')).toBe(true);
+    expect(b.hasAttribute('data-g-covered')).toBe(false);
     expect(isTopModal(b)).toBe(true);
 
     popModal(b);
-    expect(a.hasAttribute('data-k-covered')).toBe(false);
+    expect(a.hasAttribute('data-g-covered')).toBe(false);
     expect(isTopModal(a)).toBe(true);
 
     resetModalStack();

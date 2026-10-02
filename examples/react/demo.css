@@ -96,7 +96,7 @@ button.trigger.ghost {
   color: #fff;
 }
 
-/* 7. 部品の合成 — デモ専用。fieldset の UA 既定枠を落とし、.k-field と間隔を揃える。 */
+/* 7. 部品の合成 — デモ専用。fieldset の UA 既定枠を落とし、.g-field と間隔を揃える。 */
 .demo-fieldset {
   display: grid;
   gap: 6px;

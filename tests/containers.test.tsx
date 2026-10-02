@@ -100,7 +100,7 @@ describe('空の構造コンテナ / D-12', () => {
         </>
       ),
     });
-    const section = dialog().querySelector('.k-section');
+    const section = dialog().querySelector('.g-section');
     expect(section).not.toBeNull();
     // 名前のない region を支援技術に増やさない。
     expect(section?.tagName).toBe('DIV');
@@ -119,7 +119,7 @@ describe('空の構造コンテナ / D-12', () => {
         </>
       ),
     });
-    const section = dialog().querySelector('.k-section');
+    const section = dialog().querySelector('.g-section');
     expect(section?.tagName).toBe('SECTION');
     expect(screen.getByRole('heading', { name: 'まだ何もありません', level: 3 })).toBeVisible();
   });
@@ -134,8 +134,8 @@ describe('空の構造コンテナ / D-12', () => {
         </>
       ),
     });
-    expect(dialog().querySelector('.k-header')).not.toBeNull();
-    expect(dialog().querySelector('.k-footer')).not.toBeNull();
+    expect(dialog().querySelector('.g-header')).not.toBeNull();
+    expect(dialog().querySelector('.g-footer')).not.toBeNull();
   });
 
   /*

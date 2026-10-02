@@ -1,6 +1,6 @@
 # 要件監査 — 元依頼を要件表に分解し直す
 
-対象: `@genelab/kasane` v0.1.0（公開前）
+対象: `@genelab/gassan` v0.1.0（公開前）
 日付: 2026-09-29
 
 元依頼は「React / Next.js 向けの理想のモーダル」を作ること。
@@ -8,12 +8,12 @@
 
 | 状態 | 意味 |
 |---|---|
-| **実装済み** | kasane のコンポーネント・CSS・テストで直接満たしている |
-| **合成で対応** | kasane は器と配線だけを持ち、中身はネイティブ要素や Base UI などを組み合わせて満たす。**意図した境界**であり、未実装ではない |
+| **実装済み** | gassan のコンポーネント・CSS・テストで直接満たしている |
+| **合成で対応** | gassan は器と配線だけを持ち、中身はネイティブ要素や Base UI などを組み合わせて満たす。**意図した境界**であり、未実装ではない |
 | **ロードマップ** | 今は満たしていない。[`ROADMAP.md`](../ROADMAP.md) の版に割り当ててある |
 
 「合成で対応」を「実装済み」と書かないのは、責任の所在をはっきりさせるためだ。
-スライダーのキーボード操作が壊れていたら、それは kasane ではなくスライダーの持ち主の問題になる。
+スライダーのキーボード操作が壊れていたら、それは gassan ではなくスライダーの持ち主の問題になる。
 
 ---
 
@@ -26,7 +26,7 @@
 | R-01 | React / Next.js（App Router）でそのまま使える | 実装済み | `"use client"` を dist の先頭に付与。SSR で `window` に触れない | `check-dist` / `check-ssr` |
 | R-02 | 背景を操作不能にし、フォーカスを閉じ込める | 実装済み（委譲） | ネイティブ `<dialog>.showModal()`。自前のトラップは書かない | MDN `<dialog>`、W3C APG |
 | R-03 | 背景（scrim）の濃さを意図別に選べる | 実装済み | `scrim` トークン 4 段階＋none。既定は黒 32%・blur なし | `modal.skill.md` §3-1 |
-| R-04 | 開閉アニメーション | 実装済み | 入場は `@starting-style`。退出は **`overlay` が Limited availability（Baseline ではない）** なので、JS が `data-exiting` を付けて `--k-dur-out` 待ってから `close()` する fallback を持つ | `tests/exit.test.tsx`、VERIFICATION §1-2 |
+| R-04 | 開閉アニメーション | 実装済み | 入場は `@starting-style`。退出は **`overlay` が Limited availability（Baseline ではない）** なので、JS が `data-exiting` を付けて `--g-dur-out` 待ってから `close()` する fallback を持つ | `tests/exit.test.tsx`、VERIFICATION §1-2 |
 | R-05 | 寸法・配置（中央 / 上寄せ / シート） | 実装済み | `size` 5 種、`placement` の `auto` は JS で解決 | `tests/lifecycle.test.tsx` |
 | R-06 | 閉じる理由を区別し、拒否できる | 実装済み | `CloseReason` 8 種、`onRequestClose`（同期 / 非同期） | `tests/lifecycle.test.tsx` |
 
@@ -57,7 +57,7 @@
 `fieldset` / `legend`（選択肢のグループ）が境界で、中身はネイティブ要素か Base UI に任せる。
 最小例は [`control-recipes.md`](./control-recipes.md) にすべてある。
 
-| # | コントロール | 状態 | 推奨する中身 | kasane が持つもの |
+| # | コントロール | 状態 | 推奨する中身 | gassan が持つもの |
 |---|---|---|---|---|
 | R-18 | テキスト / テキストエリア | 合成で対応 | `<input type="text">` / `<textarea>` | `Modal.Field` の配線、タッチ端末で初期フォーカスを当てない（K-04） |
 | R-19 | チェックボックス（単体） | 合成で対応 | `<input type="checkbox">` | 同意用は `Modal.Consent`（ゲート連動）が実装済み |
@@ -92,7 +92,7 @@
 
 ## 2. 「合成で対応」を選んだ理由
 
-コントロールを kasane に取り込まないのは、手抜きではなく設計上の判断である。
+コントロールを gassan に取り込まないのは、手抜きではなく設計上の判断である。
 
 1. **モーダルの仕事は器と配線。** ラベル・補助文・エラーを `aria-describedby` で結ぶこと、
    タッチ端末で入力に初期フォーカスを当てないこと、ゲートと連動させること。ここまでが器の責務。
@@ -110,11 +110,11 @@
 
 | 穴 | 対応 |
 |---|---|
-| `overlay` 非対応ブラウザで退出アニメが一瞬で消える | `data-exiting` を付けて `--k-dur-out` 待ってから `close()` する fallback を実装（R-04） |
+| `overlay` 非対応ブラウザで退出アニメが一瞬で消える | `data-exiting` を付けて `--g-dur-out` 待ってから `close()` する fallback を実装（R-04） |
 | 前回の `returnValue` が残り、次の外部 `close()` が submit と誤分類される | `showModal()` の前に `returnValue = ''`（R-06） |
 | ネイティブ側が先に閉じると後始末（onExited / スクロールロック解除 / リセット）が走らない | 閉じた dialog を検知して後始末を実行（R-06） |
 | 狭幅のフッタで視覚順と Tab 順が逆になる | `column-reverse` を廃止し DOM 順で積む（R-29） |
-| 広幅で最初の tertiary が左へ分離されていなかった（セレクタが一致していなかった） | `.k-footer-actions` を `flex: 1` にし、その直下の最初の tertiary に `margin-inline-end: auto`（R-29） |
+| 広幅で最初の tertiary が左へ分離されていなかった（セレクタが一致していなかった） | `.g-footer-actions` を `flex: 1` にし、その直下の最初の tertiary に `margin-inline-end: auto`（R-29） |
 | グラフの器がなかった | `Modal.Chart` を追加（R-17） |
 | 命令的 `confirm()` の 2 枚目で名前なし警告が誤検知される | 登録数を同期的な ref でも持ち、判定に使う |
 

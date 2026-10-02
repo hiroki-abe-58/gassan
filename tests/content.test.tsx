@@ -11,7 +11,7 @@ import { emitIntersection, emitResize, mockScrollMetrics, renderModal } from './
 /* ========================================================================== */
 
 describe('title / T', () => {
-  const titleText = () => document.querySelector<HTMLElement>('.k-title-text');
+  const titleText = () => document.querySelector<HTMLElement>('.g-title-text');
 
   it('溢れていないあいだは展開トグルを出さない', () => {
     renderModal();
@@ -93,7 +93,7 @@ describe('title / T', () => {
     renderModal();
     expect(titleText()).not.toHaveAttribute('title');
     // WCAG 1.4.13 を満たせず、タッチでは開けもしない。T-05。
-    expect(document.querySelector('.k-title[title]')).toBeNull();
+    expect(document.querySelector('.g-title[title]')).toBeNull();
   });
 
   it('トグルの文言はダイアログ名に混入しない', async () => {
@@ -144,7 +144,7 @@ function primary(): HTMLElement {
  * テストでは「可視側」を名指しで読む。
  */
 function gateStatusText(): string {
-  return document.querySelector('.k-gate-status')?.textContent ?? '';
+  return document.querySelector('.g-gate-status')?.textContent ?? '';
 }
 
 describe('body / B', () => {
@@ -226,7 +226,7 @@ describe('read gate / G', () => {
     });
     expect(gateStatusText()).toBe('本文を最後までお読みください。');
 
-    const sentinel = document.querySelector('.k-sentinel');
+    const sentinel = document.querySelector('.g-sentinel');
     if (!sentinel) throw new Error('sentinel missing');
     act(() => {
       emitIntersection(sentinel, true);
@@ -246,7 +246,7 @@ describe('read gate / G', () => {
       emitResize(el);
     });
 
-    const marker = document.querySelector<HTMLElement>('.k-end-marker');
+    const marker = document.querySelector<HTMLElement>('.g-end-marker');
     if (!marker) throw new Error('marker missing');
     act(() => {
       marker.focus();
@@ -264,7 +264,7 @@ describe('read gate / G', () => {
     act(() => {
       emitResize(el);
     });
-    const sentinel = document.querySelector('.k-sentinel');
+    const sentinel = document.querySelector('.g-sentinel');
     if (!sentinel) throw new Error('sentinel missing');
     act(() => {
       emitIntersection(sentinel, true);

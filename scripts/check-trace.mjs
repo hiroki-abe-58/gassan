@@ -421,7 +421,7 @@ let docExampleCount = 0;
 for (const f of ['README.md', ...readdirSync(join(root, 'docs')).filter((n) => n.endsWith('.md')).map((n) => join('docs', n))]) {
   const md = read(f);
   for (const m of md.matchAll(/```(?:tsx|ts|jsx)\n([\s\S]*?)```/g)) {
-    if (/^import .*from '(?!@genelab\/kasane)/m.test(m[1])) continue; // 外部依存は対象外
+    if (/^import .*from '(?!@genelab\/gassan)/m.test(m[1])) continue; // 外部依存は対象外
     docExampleCount += 1;
   }
 }

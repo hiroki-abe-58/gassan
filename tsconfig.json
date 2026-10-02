@@ -24,7 +24,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "paths": {
-      "@genelab/kasane": [
+      "@genelab/gassan": [
         "./src/index.ts"
       ]
     }

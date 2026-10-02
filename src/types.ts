@@ -1,5 +1,5 @@
 /**
- * kasane — public types
+ * gassan — public types
  *
  * 設計の前提は modal.skill.md に準拠する。
  * 層1（top layer / focus / esc）はネイティブ <dialog> に委譲し、
@@ -92,7 +92,7 @@ export const DEFAULT_BLOCKED_MESSAGE =
  *   1. `gate={['name']}` の name が未登録（タイプミス、または登録より前のレンダー）
  *   2. `gate={true}` で、登録が出揃う前（SSR と、マウント直後の最初のレンダー）
  *
- * 利用側は KasaneProvider の `unresolvedReason` で差し替えられる。
+ * 利用側は GassanProvider の `unresolvedReason` で差し替えられる。
  */
 export const DEFAULT_UNRESOLVED_GATE_MESSAGE =
   'この操作にはまだ満たしていない条件があります。';

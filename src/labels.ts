@@ -9,7 +9,7 @@ import { DEFAULT_BLOCKED_MESSAGE, DEFAULT_UNRESOLVED_GATE_MESSAGE } from './type
  * 「読み上げ用の文言だけ差し替えたい」という現場の要求にも応えられない。
  * 既定は日本語。English は `englishLabels` を Provider に渡す。
  */
-export interface KasaneLabels {
+export interface GassanLabels {
   close: string;
   back: string;
   previous: string;
@@ -50,7 +50,7 @@ export interface KasaneLabels {
   detentChanged: (name: string) => string;
 }
 
-export const japaneseLabels: KasaneLabels = {
+export const japaneseLabels: GassanLabels = {
   close: '閉じる',
   back: '戻る',
   previous: '前へ',
@@ -76,7 +76,7 @@ export const japaneseLabels: KasaneLabels = {
   detentChanged: (name) => `シートの高さ: ${name}`,
 };
 
-export const englishLabels: KasaneLabels = {
+export const englishLabels: GassanLabels = {
   close: 'Close',
   back: 'Back',
   previous: 'Previous',
@@ -102,14 +102,14 @@ export const englishLabels: KasaneLabels = {
   detentChanged: (name) => `Sheet height: ${name}`,
 };
 
-const LabelsContext = createContext<KasaneLabels>(japaneseLabels);
+const LabelsContext = createContext<GassanLabels>(japaneseLabels);
 
-export function useLabels(): KasaneLabels {
+export function useLabels(): GassanLabels {
   return useContext(LabelsContext);
 }
 
-export interface KasaneProviderProps {
-  labels?: Partial<KasaneLabels>;
+export interface GassanProviderProps {
+  labels?: Partial<GassanLabels>;
   children: ReactNode;
 }
 
@@ -117,7 +117,7 @@ export interface KasaneProviderProps {
  * 文言を差し替える。部分指定でよい。
  * JSX を使わないのは、このファイルを .ts のまま保つため。
  */
-export function KasaneProvider({ labels, children }: KasaneProviderProps): ReactNode {
-  const merged: KasaneLabels = labels ? { ...japaneseLabels, ...labels } : japaneseLabels;
+export function GassanProvider({ labels, children }: GassanProviderProps): ReactNode {
+  const merged: GassanLabels = labels ? { ...japaneseLabels, ...labels } : japaneseLabels;
   return createElement(LabelsContext.Provider, { value: merged }, children);
 }

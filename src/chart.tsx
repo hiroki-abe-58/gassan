@@ -12,7 +12,7 @@ export interface ModalChartProps extends DataAttributes {
    * 図の aria-describedby として配線され、画面にも常に表示される。
    */
   summary: ReactNode;
-  /** 視覚チャート本体。SVG / canvas / 任意のチャートライブラリ。kasane は描画しない。 */
+  /** 視覚チャート本体。SVG / canvas / 任意のチャートライブラリ。gassan は描画しない。 */
   children: ReactNode;
   /** 元データ（表・リストなど）。渡すと <details> で開閉できる。 */
   data?: ReactNode;
@@ -55,7 +55,7 @@ export function ModalChart({
 }: ModalChartProps): ReactNode {
   const labels = useLabels();
   const reactId = useId();
-  const baseId = id ?? `kasane-chart-${reactId}`;
+  const baseId = id ?? `gassan-chart-${reactId}`;
   const captionId = `${baseId}-caption`;
   const summaryId = `${baseId}-summary`;
   const visualRef = useRef<HTMLDivElement | null>(null);
@@ -79,27 +79,27 @@ export function ModalChart({
     <figure
       {...domPassthrough(rest, 'Modal.Chart')}
       id={baseId}
-      className={className ? `k-chart ${className}` : 'k-chart'}
+      className={className ? `g-chart ${className}` : 'g-chart'}
       aria-labelledby={captionId}
       aria-describedby={summaryId}
     >
-      <figcaption id={captionId} className="k-chart-caption">
+      <figcaption id={captionId} className="g-chart-caption">
         {label}
       </figcaption>
       <div
         ref={visualRef}
-        className="k-chart-visual"
+        className="g-chart-visual"
         aria-hidden={visualAccessible ? undefined : true}
       >
         {children}
       </div>
-      <p id={summaryId} className="k-chart-summary">
+      <p id={summaryId} className="g-chart-summary">
         {summary}
       </p>
       {data !== undefined && data !== null && data !== false ? (
-        <details className="k-chart-data">
+        <details className="g-chart-data">
           <summary>{dataLabel ?? labels.chartData}</summary>
-          <div className="k-chart-data-body">{data}</div>
+          <div className="g-chart-data-body">{data}</div>
         </details>
       ) : null}
     </figure>

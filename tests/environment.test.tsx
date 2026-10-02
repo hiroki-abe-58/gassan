@@ -286,28 +286,28 @@ describe('virtual keyboard / M-04', () => {
     Reflect.deleteProperty(window, 'visualViewport');
   });
 
-  it('visualViewport が縮むと --k-keyboard-inset に差分が出る', () => {
+  it('visualViewport が縮むと --g-keyboard-inset に差分が出る', () => {
     const { viewport, emit } = installViewport(window.innerHeight);
     const { dialog } = renderModal();
-    expect(dialog().style.getPropertyValue('--k-keyboard-inset')).toBe('0px');
+    expect(dialog().style.getPropertyValue('--g-keyboard-inset')).toBe('0px');
 
     viewport.height = window.innerHeight - 320;
     act(() => {
       emit();
     });
-    expect(dialog().style.getPropertyValue('--k-keyboard-inset')).toBe('320px');
+    expect(dialog().style.getPropertyValue('--g-keyboard-inset')).toBe('320px');
   });
 
   it('ページがスクロールして offsetTop が動いても余白を取り違えない', () => {
     const { viewport, emit } = installViewport(window.innerHeight - 300);
     const { dialog } = renderModal();
-    expect(dialog().style.getPropertyValue('--k-keyboard-inset')).toBe('300px');
+    expect(dialog().style.getPropertyValue('--g-keyboard-inset')).toBe('300px');
 
     viewport.offsetTop = 100;
     act(() => {
       emit();
     });
-    expect(dialog().style.getPropertyValue('--k-keyboard-inset')).toBe('200px');
+    expect(dialog().style.getPropertyValue('--g-keyboard-inset')).toBe('200px');
   });
 
   it('負の余白にはならない（アドレスバーの伸縮で下駄を履かせない）', () => {
@@ -317,7 +317,7 @@ describe('virtual keyboard / M-04', () => {
     act(() => {
       emit();
     });
-    expect(dialog().style.getPropertyValue('--k-keyboard-inset')).toBe('0px');
+    expect(dialog().style.getPropertyValue('--g-keyboard-inset')).toBe('0px');
   });
 
   it('閉じると購読も CSS 変数も残さない', async () => {
@@ -331,7 +331,7 @@ describe('virtual keyboard / M-04', () => {
     await waitFor(() => {
       expect(listeners()).toBe(0);
     });
-    expect(dialog().style.getPropertyValue('--k-keyboard-inset')).toBe('');
+    expect(dialog().style.getPropertyValue('--g-keyboard-inset')).toBe('');
   });
 
   it('visualViewport が無い環境でも落ちない', () => {
@@ -349,12 +349,12 @@ describe('back gesture / M-07', () => {
     window.history.replaceState(null, '');
   });
 
-  const state = (): { __kasane?: string } | null =>
-    window.history.state as { __kasane?: string } | null;
+  const state = (): { __gassan?: string } | null =>
+    window.history.state as { __gassan?: string } | null;
 
   it('closeOnBack で開くと履歴に印を積む', () => {
     renderModal({ closeOnBack: true });
-    expect(typeof state()?.__kasane).toBe('string');
+    expect(typeof state()?.__gassan).toBe('string');
   });
 
   it('戻ると back-button として閉じる', async () => {
@@ -372,7 +372,7 @@ describe('back gesture / M-07', () => {
 
   it('既定では履歴を触らない', () => {
     renderModal();
-    expect(state()?.__kasane).toBeUndefined();
+    expect(state()?.__gassan).toBeUndefined();
   });
 
   it('閉じた後の popstate はもう拾わない（二重に閉じない）', async () => {
@@ -408,7 +408,7 @@ describe('back gesture / M-07', () => {
 describe('no long-press on title / T-06', () => {
   it('長押ししてもタイトルは展開しない（OS のコンテキストメニューと衝突させない）', () => {
     renderModal();
-    const text = document.querySelector<HTMLElement>('.k-title-text');
+    const text = document.querySelector<HTMLElement>('.g-title-text');
     if (!text) throw new Error('title missing');
     mockScrollMetrics(text, { scrollHeight: 96, clientHeight: 40 });
     act(() => {
@@ -439,7 +439,7 @@ describe('no long-press on title / T-06', () => {
 
   it('タイトルは contextmenu を奪わない', () => {
     renderModal();
-    const text = document.querySelector<HTMLElement>('.k-title-text');
+    const text = document.querySelector<HTMLElement>('.g-title-text');
     if (!text) throw new Error('title missing');
     const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
     text.dispatchEvent(event);
@@ -448,7 +448,7 @@ describe('no long-press on title / T-06', () => {
 
   it('タイトルは user-select も touch-action も奪わない（選択とスクロールを残す）', () => {
     renderModal();
-    const text = document.querySelector<HTMLElement>('.k-title-text');
+    const text = document.querySelector<HTMLElement>('.g-title-text');
     if (!text) throw new Error('title missing');
     expect(text.style.getPropertyValue('user-select')).toBe('');
     expect(text.style.getPropertyValue('-webkit-user-select')).toBe('');
@@ -457,7 +457,7 @@ describe('no long-press on title / T-06', () => {
 
   it('全文表示の入口は明示トグルだけ（クリックでは開かない）', () => {
     renderModal();
-    const text = document.querySelector<HTMLElement>('.k-title-text');
+    const text = document.querySelector<HTMLElement>('.g-title-text');
     if (!text) throw new Error('title missing');
     mockScrollMetrics(text, { scrollHeight: 96, clientHeight: 40 });
     act(() => {

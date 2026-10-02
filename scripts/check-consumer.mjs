@@ -19,7 +19,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 const repo = process.cwd();
-const work = mkdtempSync(join(tmpdir(), 'kasane-consumer-'));
+const work = mkdtempSync(join(tmpdir(), 'gassan-consumer-'));
 
 let failed = false;
 const fail = (message) => {
@@ -52,7 +52,7 @@ try {
   writeFileSync(
     join(work, 'runtime.mjs'),
     `import { Modal, ModalRoot, ModalChart, ModalHandle, useModals, englishLabels,
-              resolveDetents, snapToDetent } from '@genelab/kasane';
+              resolveDetents, snapToDetent } from '@genelab/gassan';
      if (!Modal?.Root || !ModalRoot || !useModals || !englishLabels) throw new Error('esm export missing');
      if (!Modal.Chart || Modal.Chart !== ModalChart) throw new Error('Modal.Chart export missing');
      if (!Modal.Handle || Modal.Handle !== ModalHandle) throw new Error('Modal.Handle export missing');
@@ -62,9 +62,9 @@ try {
                         viewportHeight: 800, dismissible: true }).type !== 'snap') throw new Error('snapToDetent broken');
      const { createRequire } = await import('node:module');
      const require = createRequire(import.meta.url);
-     if (!require('@genelab/kasane').Modal?.Root) throw new Error('cjs export missing');
-     require('node:fs').accessSync(require.resolve('@genelab/kasane/styles.css'));
-     require('node:fs').accessSync(require.resolve('@genelab/kasane/styles.source.css'));
+     if (!require('@genelab/gassan').Modal?.Root) throw new Error('cjs export missing');
+     require('node:fs').accessSync(require.resolve('@genelab/gassan/styles.css'));
+     require('node:fs').accessSync(require.resolve('@genelab/gassan/styles.source.css'));
      console.log('  ok    ESM / CJS / styles.css / styles.source.css all resolve');
     `,
   );
@@ -73,7 +73,7 @@ try {
   // --- 3. 3つの解決方式すべてで型が通るか -----------------------------------
   writeFileSync(
     join(work, 'types.tsx'),
-    `import { Modal, type CloseReason, type ModalKind, type ModalChartProps } from '@genelab/kasane';
+    `import { Modal, type CloseReason, type ModalKind, type ModalChartProps } from '@genelab/gassan';
      const chart: ModalChartProps = { label: 'sales', summary: 'peaks in March', children: null };
      const kind: ModalKind = 'consent';
      export function App() {
@@ -108,7 +108,7 @@ try {
   // 文書に載せた API が、外からインストールした状態で本当に型が通るかを確かめる。
   writeFileSync(
     join(work, 'sheet.tsx'),
-    `import { Modal, type DetentToken } from '@genelab/kasane';
+    `import { Modal, type DetentToken } from '@genelab/gassan';
      export function Sheet({ open, setOpen }: { open: boolean; setOpen: (v: boolean) => void }) {
        return (
          <Modal.Root

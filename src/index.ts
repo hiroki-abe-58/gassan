@@ -1,5 +1,5 @@
 /**
- * kasane — native <dialog> based modal shell for React.
+ * gassan — native <dialog> based modal shell for React.
  *
  * 設計仕様は modal.skill.md を参照。
  * このファイルは公開面だけを定義する。
@@ -35,7 +35,7 @@ export { ModalField, ModalChips, ModalSwitch, ModalTable, ModalAlert } from './f
 export { ModalChart } from './chart';
 export { ModalHandle } from './sheet';
 export { ModalHost, useModals, confirm, resetModalQueue } from './imperative';
-export { KasaneProvider, japaneseLabels, englishLabels, useLabels } from './labels';
+export { GassanProvider, japaneseLabels, englishLabels, useLabels } from './labels';
 
 /* --------------------------------------------------------------------- types */
 
@@ -79,7 +79,7 @@ export type {
 } from './fields';
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';
-export type { KasaneLabels, KasaneProviderProps } from './labels';
+export type { GassanLabels, GassanProviderProps } from './labels';
 
 /* ------------------------------------------------------------------ internals */
 

@@ -47,7 +47,7 @@ export function ModalField({
 }: ModalFieldProps): ReactNode {
   const labels = useLabels();
   const reactId = useId();
-  const fieldId = id ?? `kasane-field-${reactId}`;
+  const fieldId = id ?? `gassan-field-${reactId}`;
   const helpId = `${fieldId}-help`;
   const errorId = `${fieldId}-error`;
 
@@ -57,12 +57,12 @@ export function ModalField({
   return (
     <div
       {...domPassthrough(rest, 'Modal.Field')}
-      className={className ? `k-field ${className}` : 'k-field'}
+      className={className ? `g-field ${className}` : 'g-field'}
       data-invalid={error ? '' : undefined}
     >
-      <label className="k-label" htmlFor={fieldId}>
-        <span className="k-label-text">{label}</span>
-        <span className="k-label-badge" data-required={required ? '' : undefined}>
+      <label className="g-label" htmlFor={fieldId}>
+        <span className="g-label-text">{label}</span>
+        <span className="g-label-badge" data-required={required ? '' : undefined}>
           {required ? labels.required : labels.optional}
         </span>
       </label>
@@ -75,12 +75,12 @@ export function ModalField({
       })}
 
       {help ? (
-        <p className="k-help" id={helpId}>
+        <p className="g-help" id={helpId}>
           {help}
         </p>
       ) : null}
       {error ? (
-        <p className="k-error" id={errorId}>
+        <p className="g-error" id={errorId}>
           {error}
         </p>
       ) : null}
@@ -130,7 +130,7 @@ export function ModalChips({
   return (
     <div
       {...domPassthrough(rest, 'Modal.Chips')}
-      className={className ? `k-chips ${className}` : 'k-chips'}
+      className={className ? `g-chips ${className}` : 'g-chips'}
       role="group"
       aria-label={label}
     >
@@ -140,7 +140,7 @@ export function ModalChips({
           <button
             key={option.value}
             type="button"
-            className="k-chip"
+            className="g-chip"
             aria-pressed={isOn}
             onClick={() => {
               const next = new Set(selected);
@@ -149,7 +149,7 @@ export function ModalChips({
               onChange([...next]);
             }}
           >
-            <span className="k-chip-mark" aria-hidden="true">
+            <span className="g-chip-mark" aria-hidden="true">
               {isOn ? '×' : '+'}
             </span>
             <span>{option.label}</span>
@@ -188,13 +188,13 @@ export function ModalSwitch({
       id={id}
       role="switch"
       aria-checked={checked}
-      className={className ? `k-switch ${className}` : 'k-switch'}
+      className={className ? `g-switch ${className}` : 'g-switch'}
       onClick={() => onCheckedChange(!checked)}
     >
-      <span className="k-switch-track" aria-hidden="true">
-        <span className="k-switch-thumb" />
+      <span className="g-switch-track" aria-hidden="true">
+        <span className="g-switch-thumb" />
       </span>
-      <span className="k-switch-label">{children}</span>
+      <span className="g-switch-label">{children}</span>
     </button>
   );
 }
@@ -223,7 +223,7 @@ export function ModalTable({
   return (
     <div
       {...domPassthrough(rest, 'Modal.Table')}
-      className={className ? `k-table-wrap ${className}` : 'k-table-wrap'}
+      className={className ? `g-table-wrap ${className}` : 'g-table-wrap'}
       role="group"
       tabIndex={0}
       aria-label={label}
@@ -256,7 +256,7 @@ export function ModalAlert({
   return (
     <div
       {...domPassthrough(rest, 'Modal.Alert')}
-      className={className ? `k-alert ${className}` : 'k-alert'}
+      className={className ? `g-alert ${className}` : 'g-alert'}
       data-tone={tone}
       role={assertive ? 'alert' : 'status'}
     >

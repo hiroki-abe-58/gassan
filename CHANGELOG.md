@@ -9,6 +9,22 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
 
 ## [Unreleased]
 
+### 変更（名前を kasane から gassan へ）
+
+npm に一度も出していないので、利用者への影響は無い。名残を残さないよう全面的に改めた。
+
+| 対象 | 旧 | 新 |
+|---|---|---|
+| パッケージ | `@genelab/kasane` | `@genelab/gassan` |
+| Provider / 文言の型 | `KasaneProvider` / `KasaneProviderProps` / `KasaneLabels` | `GassanProvider` / `GassanProviderProps` / `GassanLabels` |
+| CSS のクラス・カスタムプロパティ・状態属性 | `.k-*` / `--k-*` / `data-k-*` | `.g-*` / `--g-*` / `data-g-*` |
+| カスケードレイヤ | `@layer kasane` | `@layer gassan` |
+| 開発時警告の接頭辞 | `[kasane]` | `[gassan]` |
+| リポジトリ | `github.com/hiroki-abe-58/kasane`（仮置き） | `github.com/hiroki-abe-58/gassan` |
+
+`data-kind` のように `data-k` で始まるだけの名前は対象外（`data-k-` の接頭辞だけを改めた）。
+置換後も `npm run verify` は全段通り、配布物の raw サイズは 1 バイトも変わっていない。
+
 ### 追加（v0.2.0 に向けて先行着手）
 
 - **`Modal.Handle`（H-09）** — シートのつまみ。段を指定していなければ `aria-hidden` の飾り、
@@ -70,7 +86,7 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
   **ゲートが完全に壊れていても緑のままだった。** 当該ボタンを `data-probe` で名指しし、
   ゲートを参照しない側が巻き込まれていないことまで見るようにした。
   空振りするアサーションは、守られている証拠として数えられるぶん、無いより悪い。
-- **未登録ゲートの理由が `KasaneLabels` を通っていなかった** — 日本語のベタ書きだったため、
+- **未登録ゲートの理由が `GassanLabels` を通っていなかった** — 日本語のベタ書きだったため、
   `englishLabels` を入れていてもそこだけ日本語が出ていた。
   `unresolvedReason` を追加し、既定値を `DEFAULT_UNRESOLVED_GATE_MESSAGE` として公開した。
 - `selectBlockers` に第 3 引数 `SelectBlockersOptions`（`ready` / `unresolvedReason`）を足した。
@@ -123,7 +139,7 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
   **React は `scroll` 以外の非バブルイベントでも fiber ツリーを遡り、祖先の `onCancel` を呼ぶ。**
   内側で Esc を押すと外側まで閉じていた。`close` も同じ経路で漏れていた
   （こちらは `el.open` の早期 return に偶然救われていた）。
-  最も近い `dialog.k-dialog` が自分自身のときだけ通すようにして、両方塞いだ。
+  最も近い `dialog.g-dialog` が自分自身のときだけ通すようにして、両方塞いだ。
 - **内側の Cmd/Ctrl + Enter が外側の primary まで押していた（F-10）** — `keydown` は
   ネイティブでバブルするため、外側の `<dialog>` のハンドラにも届いていた。
 - **外側の Cmd/Ctrl + Enter が内側の primary を押していた（F-10）** — `panel.querySelector` は
@@ -141,7 +157,7 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
 
 ### 修正（`data-*` が黙って消えていた。D-11）
 
-kasane の props はすべて閉じた interface で、宣言していない prop は捨てていた。
+gassan の props はすべて閉じた interface で、宣言していない prop は捨てていた。
 ところが **TypeScript は、ハイフンを含む JSX 属性名を過剰プロパティ検査から外す。**
 つまり `<Modal.Root data-testid="x">` は型エラーにならず、実行時に黙って消える。
 型が「通る」と言い、実装が「捨てる」。利用者からは観測できない。
@@ -150,8 +166,8 @@ v0.4.0 で入れる Playwright は `data-testid` でしか要素を掴めない�
 公開面を総なめにしたところ、**23 個中 22 個が落としていた**
 （唯一通っていたのは `ButtonHTMLAttributes` を継承していた `Modal.Button`）。
 
-- `data-*` はホスト要素へそのまま渡す。kasane 自身が書く名前（`RESERVED_DATA` 22 個）は
-  上書きさせず、渡されたら DEV で警告して kasane の値を優先する。
+- `data-*` はホスト要素へそのまま渡す。gassan 自身が書く名前（`RESERVED_DATA` 22 個）は
+  上書きさせず、渡されたら DEV で警告して gassan の値を優先する。
 - `aria-*` など他のハイフン付き prop は受け取らない。**黙って落とすのが問題なのであって、
   落とすこと自体が問題なのではない**ので、警告して落とす。名前は `label` / `Modal.Title`、
   説明は `aria-describedby` と、すでに専用の入口がある。
@@ -159,7 +175,7 @@ v0.4.0 で入れる Playwright は `data-testid` でしか要素を掴めない�
 
 **実効的な防御はスプレッドの順序のほうだった。** 予約ガードを丸ごと外しても
 「上書きされない」ことを見るテストは通ってしまう。JSX が後勝ちなので、
-`{...domPassthrough(rest, ...)}` が自分の `data-*` より前にある限り kasane の値が勝つからである。
+`{...domPassthrough(rest, ...)}` が自分の `data-*` より前にある限り gassan の値が勝つからである。
 予約表が担っているのは警告の層だけ、と役割を切り分けた上で、
 順序そのものと「生の `{...rest}` を増やさないこと」を静的に固定した（経緯は `modal.skill.md` §10-18）。
 
@@ -223,11 +239,11 @@ import するので、tsup の変換で壊れても気づけない。消費者�
   React プロパティなので、ポインタが外へ出た時点で `pointermove` も `pointerup` も届かない。
   マウスには暗黙の捕捉が無く、縮んだ姿で固まる。`setPointerCapture` で捕捉し、
   `lostpointercapture` を中断として扱う。捕捉 API が無い環境では従来どおり動く。
-- **同じ段に戻ると高さの指定が消えていた（C-08）** — `--k-sheet-detent` は React が
+- **同じ段に戻ると高さの指定が消えていた（C-08）** — `--g-sheet-detent` は React が
   style prop として書いている。ドラッグ終了時に `removeProperty` すると、吸い付く先が
   元と同じ段のときは再レンダーが起きず、`block-size` が `auto` に落ちてシートが縮んだ。
   書式を `detentCssValue()` に 1 本化し、終了時は**消すのではなく React が持つ値へ戻す**。
-- **掴んだまま閉じると次に開いたとき縮んでいた（M-03）** — `data-k-dragging` と px の高さが
+- **掴んだまま閉じると次に開いたとき縮んでいた（M-03）** — `data-g-dragging` と px の高さが
   パネルに残っていた。`open` が false になった時点でドラッグを畳む。
 - **段を減らすと `aria-valuenow` が `aria-valuemax` を超えた（M-03）** — `detents` は prop なので
   開いている最中に減りうる。読み取り時に丸め、state と ref も揃え直す。
@@ -294,7 +310,7 @@ import するので、tsup の変換で壊れても気づけない。消費者�
   `label`（図の名前 → `figcaption` / `aria-labelledby`）と `summary`（傾向のテキスト代替 → `aria-describedby`）が必須。
   `data` を渡すと元データを `<details>` で開閉できる。視覚チャートは既定で `aria-hidden`、
   `visualAccessible` で開放する。チャートの描画は持たない。
-- `KasaneLabels.chartData`（既定「元データを表示」/ 英語「Show data」）。
+- `GassanLabels.chartData`（既定「元データを表示」/ 英語「Show data」）。
 - 文書 3 本: [`docs/requirements-audit.md`](./docs/requirements-audit.md) /
   [`docs/control-recipes.md`](./docs/control-recipes.md) / [`docs/library-landscape.md`](./docs/library-landscape.md)。
   tarball にも同梱する（`files` に `docs` を追加）。
@@ -303,7 +319,7 @@ import するので、tsup の変換で壊れても気づけない。消費者�
 **修正**
 
 - **`overlay` 非対応ブラウザで退出アニメが一瞬で消える。** `data-exiting` を付けた直後に `close()` していた。
-  今は dialog を open のまま退出状態へ遷移させ、`--k-dur-out`（`prefers-reduced-motion` なら 0）待ってから `close()` する。
+  今は dialog を open のまま退出状態へ遷移させ、`--g-dur-out`（`prefers-reduced-motion` なら 0）待ってから `close()` する。
   途中で開き直されたらタイマーを取り消して open のまま戻す。`onExited` / 中身のリセット / フォーカス復帰 /
   スクロールロック解除は `close()` の後。CSS に center / top / sheet の退出状態を追加し、
   `[data-exiting]` の間は dialog の discrete transition を止めて、`overlay` 対応環境での二重待ちを防ぐ。
@@ -313,7 +329,7 @@ import するので、tsup の変換で壊れても気づけない。消費者�
   スタック・スクロールロック・`onExited`・リセットが漏れていた。
 - **狭幅のフッタで視覚順と Tab 順が逆になる。** `column-reverse` を廃止し、DOM 順のまま縦に積む。
 - **最初の tertiary が左へ分離されていなかった。** 規則のセレクタが一度も一致していなかった。
-  `.k-footer-actions` を `flex: 1` にし、その直下の最初の tertiary に `margin-inline-end: auto`。
+  `.g-footer-actions` を `flex: 1` にし、その直下の最初の tertiary に `margin-inline-end: auto`。
 - 命令的 `confirm()` の2枚目で、名前なし警告（A-01）が誤検知される。
 - `Modal.Gallery` が幅を測れない間（`clientWidth` 0）に位置を 0 と誤算し、ボタンやキーで進めた位置を巻き戻す。
 - 閉じた dialog の内側にフォーカスが取り残された場合も、トリガーへ戻すようにした。
@@ -353,7 +369,7 @@ import するので、tsup の変換で壊れても気づけない。消費者�
 - 内容部品 — `Media` / `Gallery` / `Field` / `Chips` / `Switch` / `Table` / `Alert`。
   `Field` は render prop で、中身はネイティブ入力でも Base UI でも差し替えられる。
 - **命令的 API** — `ModalHost` と `useModals().confirm()`。同時要求は FIFO で1枚ずつ出る。
-- **`KasaneProvider`** — 全文言の差し替え。既定は日本語、`englishLabels` を同梱。
+- **`GassanProvider`** — 全文言の差し替え。既定は日本語、`englishLabels` を同梱。
 - モバイル — `placement="sheet"`、スワイプで閉じる、safe-area、仮想キーボードの回避。
 - `modal.skill.md` を同梱。AI コーディング時にそのままコンテキストへ入れられる。
 
@@ -371,5 +387,5 @@ import するので、tsup の変換で壊れても気づけない。消費者�
 jsdom で保証されない項目（0.1.0 時点で 17、現在は 18）は `VERIFICATION.md` 第3節に分けて記載し、
 `examples/css-check.html` で目視できるようにしてある。
 
-[Unreleased]: https://github.com/hiroki-abe-58/kasane/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/hiroki-abe-58/kasane/releases/tag/v0.1.0
+[Unreleased]: https://github.com/hiroki-abe-58/gassan/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/hiroki-abe-58/gassan/releases/tag/v0.1.0

@@ -12,7 +12,7 @@ import { Fragment, createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
 import {
-  KasaneProvider,
+  GassanProvider,
   Modal,
   ModalHost,
   englishLabels,
@@ -111,23 +111,23 @@ try {
 }
 
 try {
-  renderToString(h(KasaneProvider, { labels: englishLabels }, buildTree(false)));
-  ok('renders inside KasaneProvider (english labels)');
+  renderToString(h(GassanProvider, { labels: englishLabels }, buildTree(false)));
+  ok('renders inside GassanProvider (english labels)');
 } catch (error) {
-  fail(`threw inside KasaneProvider: ${error.message}`);
+  fail(`threw inside GassanProvider: ${error.message}`);
 }
 
 const expectations = [
   ['<dialog', 'dialog element'],
-  ['class="k-panel"', 'panel'],
-  ['class="k-scrim"', 'scrim'],
+  ['class="g-panel"', 'panel'],
+  ['class="g-scrim"', 'scrim'],
   ['role="status"', 'live region'],
   ['aria-labelledby=', 'accessible name wiring'],
   ['aria-describedby=', 'description wiring'],
   ['data-placement="center"', 'placement resolved without matchMedia'],
-  ['class="k-chart"', 'chart figure'],
-  ['class="k-chart-visual" aria-hidden="true"', 'chart visual hidden by default'],
-  ['<details class="k-chart-data">', 'chart data disclosure'],
+  ['class="g-chart"', 'chart figure'],
+  ['class="g-chart-visual" aria-hidden="true"', 'chart visual hidden by default'],
+  ['<details class="g-chart-data">', 'chart data disclosure'],
 ];
 
 for (const [needle, label] of expectations) {
@@ -176,21 +176,21 @@ if (html.includes('この操作にはまだ満たしていない条件があり�
   fail('gated button references a reason that is not in the markup');
 }
 
-// 文言は KasaneLabels を通ること。英語ラベル下で日本語が出ないことを確かめる。
+// 文言は GassanLabels を通ること。英語ラベル下で日本語が出ないことを確かめる。
 const englishHtml = renderToString(
-  h(KasaneProvider, { labels: englishLabels }, buildTree(true)),
+  h(GassanProvider, { labels: englishLabels }, buildTree(true)),
 );
 if (
   englishHtml.includes('This action still has conditions that are not met.') &&
   !englishHtml.includes('この操作にはまだ満たしていない条件があります。')
 ) {
-  ok('unresolved reason follows KasaneLabels');
+  ok('unresolved reason follows GassanLabels');
 } else {
-  fail('unresolved reason ignored KasaneLabels and fell back to Japanese');
+  fail('unresolved reason ignored GassanLabels and fell back to Japanese');
 }
 
 // 命令的ホストはサーバーでは何も出さない。
-if (!html.includes('kasane-confirm')) ok('ModalHost renders nothing on the server');
+if (!html.includes('gassan-confirm')) ok('ModalHost renders nothing on the server');
 
 // ---------------------------------------------------------------------------
 // data-* の受け渡し（D-11）を、ビルド済みの dist で確かめる。

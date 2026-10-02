@@ -55,19 +55,19 @@ export function ModalMedia({
     }
   }, [kind, alt, src]);
 
-  const style = ratio ? ({ '--k-ratio': ratio } as CSSProperties) : undefined;
-  const classes = className ? `k-media ${className}` : 'k-media';
+  const style = ratio ? ({ '--g-ratio': ratio } as CSSProperties) : undefined;
+  const classes = className ? `g-media ${className}` : 'g-media';
 
   let element: ReactNode;
   if (kind === 'video') {
     element = (
-      <video className="k-media-el" src={src} poster={poster} controls preload="metadata" />
+      <video className="g-media-el" src={src} poster={poster} controls preload="metadata" />
     );
   } else if (kind === 'audio') {
-    element = <audio className="k-media-el k-media-audio" src={src} controls preload="metadata" />;
+    element = <audio className="g-media-el g-media-audio" src={src} controls preload="metadata" />;
   } else {
     element = (
-      <img className="k-media-el" src={src} alt={alt ?? ''} loading={loading} decoding="async" />
+      <img className="g-media-el" src={src} alt={alt ?? ''} loading={loading} decoding="async" />
     );
   }
 
@@ -92,7 +92,7 @@ export function ModalMedia({
       style={style}
     >
       {element}
-      <figcaption className="k-media-caption">{caption}</figcaption>
+      <figcaption className="g-media-caption">{caption}</figcaption>
     </figure>
   );
 }
@@ -256,10 +256,10 @@ export function ModalGallery({
   return (
     <div
       {...domPassthrough(rest, 'Modal.Gallery')}
-      className={className ? `k-gallery ${className}` : 'k-gallery'}
+      className={className ? `g-gallery ${className}` : 'g-gallery'}
     >
       <div
-        className="k-gallery-track"
+        className="g-gallery-track"
         ref={trackRef}
         // 横スクロール領域はキーボードでも動かせなければならない。B-02。
         tabIndex={0}
@@ -271,7 +271,7 @@ export function ModalGallery({
         {items.map((item, i) => (
           <div
             key={item.id}
-            className="k-slide"
+            className="g-slide"
             role="group"
             aria-label={labels.galleryPosition(i + 1, total)}
             aria-current={i === index ? 'true' : undefined}
@@ -281,10 +281,10 @@ export function ModalGallery({
         ))}
       </div>
 
-      <div className="k-gallery-nav">
+      <div className="g-gallery-nav">
         <button
           type="button"
-          className="k-iconbtn"
+          className="g-iconbtn"
           aria-label={labels.previous}
           aria-disabled={index === 0 ? true : undefined}
           onClick={() => go(index - 1)}
@@ -300,19 +300,19 @@ export function ModalGallery({
           </svg>
         </button>
 
-        <p className="k-gallery-count">
+        <p className="g-gallery-count">
           <span aria-hidden="true">
             {index + 1} / {total}
           </span>
           {/* 位置の変化は読み上げる。ただし視覚表現の「1 / 5」は読ませない。 */}
-          <span className="k-sr-only" aria-live="polite">
+          <span className="g-sr-only" aria-live="polite">
             {labels.galleryPosition(index + 1, total)}
           </span>
         </p>
 
         <button
           type="button"
-          className="k-iconbtn"
+          className="g-iconbtn"
           aria-label={labels.next}
           aria-disabled={index === total - 1 ? true : undefined}
           onClick={() => go(index + 1)}

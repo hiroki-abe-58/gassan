@@ -23,7 +23,7 @@ interface Registry {
 }
 
 function registry(): Registry {
-  return (globalThis as unknown as { __kasaneObservers: Registry }).__kasaneObservers;
+  return (globalThis as unknown as { __gassanObservers: Registry }).__gassanObservers;
 }
 
 /** テストから交差を起こす。観測されていなければ false。 */
@@ -154,9 +154,9 @@ export function renderModal(options: RenderModalOptions = {}): RenderModalResult
   return {
     ...result,
     onOpenChange,
-    dialog: () => query<HTMLDialogElement>('dialog.k-dialog'),
-    panel: () => query<HTMLElement>('.k-panel'),
-    scrim: () => query<HTMLElement>('.k-scrim'),
+    dialog: () => query<HTMLDialogElement>('dialog.g-dialog'),
+    panel: () => query<HTMLElement>('.g-panel'),
+    scrim: () => query<HTMLElement>('.g-scrim'),
     trigger: () => query<HTMLButtonElement>('[data-testid="trigger"]'),
     setOpen: (open: boolean) => external?.(open),
   };

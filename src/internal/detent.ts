@@ -13,7 +13,7 @@ export type DetentToken = 'peek' | 'half' | 'full';
 
 /**
  * ディテントとビューポート比の対応。
- * full は `--k-sheet-max-block: 92dvh` と揃えてある。ここを変えるなら CSS も変える。
+ * full は `--g-sheet-max-block: 92dvh` と揃えてある。ここを変えるなら CSS も変える。
  */
 export const DETENT_FRACTION: Record<DetentToken, number> = {
   peek: 0.3,
@@ -60,7 +60,7 @@ export function detentHeight(token: DetentToken, viewportHeight: number): number
 }
 
 /**
- * 段を CSS の値にする。`--k-sheet-detent` に入る唯一の正。
+ * 段を CSS の値にする。`--g-sheet-detent` に入る唯一の正。
  *
  * React が style prop として書く値と、ドラッグ終了時に JS が戻す値が
  * 1 文字でも違うと、React は「自分が書いたものと違う」と気づけないまま

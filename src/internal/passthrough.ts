@@ -3,7 +3,7 @@
  *
  * ## なぜ要るか
  *
- * kasane の props はすべて閉じた interface で、宣言していない prop は捨てていた。
+ * gassan の props はすべて閉じた interface で、宣言していない prop は捨てていた。
  * ところが **TypeScript は、ハイフンを含む JSX 属性名を過剰プロパティ検査から除外する。**
  * つまり
  *
@@ -16,9 +16,9 @@
  * ## 決めた契約
  *
  * - `data-*` は**ホスト要素へそのまま付ける**。
- * - ただし kasane 自身が書く名前（`RESERVED_DATA`）は上書きさせない。
+ * - ただし gassan 自身が書く名前（`RESERVED_DATA`）は上書きさせない。
  *   内部状態が消費者の文字列で壊れると、CSS もテストも静かに嘘をつき始める。
- *   衝突したら DEV で警告し、kasane の値を優先する。
+ *   衝突したら DEV で警告し、gassan の値を優先する。
  * - `aria-*` など他のハイフン付き prop は**受け取らない**。DEV で警告して落とす。
  *   黙って落とすのが問題なのであって、落とすこと自体が問題なのではない。
  *   名前は `label` / `Modal.Title`、説明は `aria-describedby` と、
@@ -28,7 +28,7 @@
 import { warnOnce } from './dom';
 
 /**
- * kasane 自身がホスト要素に書く data-*。
+ * gassan 自身がホスト要素に書く data-*。
  *
  * この集合の網羅性は `tests/passthrough.test.tsx` が
  * `src/` を走査して検証する（新しい data-* を足して登録を忘れると落ちる）。
@@ -41,12 +41,12 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-exiting',
   'data-gated',
   'data-invalid',
-  'data-k-blocked',
-  'data-k-control',
-  'data-k-covered',
-  'data-k-dragging',
-  'data-k-locked',
-  'data-k-swipe-origin',
+  'data-g-blocked',
+  'data-g-control',
+  'data-g-covered',
+  'data-g-dragging',
+  'data-g-locked',
+  'data-g-swipe-origin',
   'data-kind',
   'data-loading',
   'data-placement',
@@ -59,10 +59,10 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * 消費者が置く側の data-*（kasane が読む）。予約ではない。
- * 例: `data-k-no-swipe` を付けた要素の上ではスワイプを始めない。
+ * 消費者が置く側の data-*（gassan が読む）。予約ではない。
+ * 例: `data-g-no-swipe` を付けた要素の上ではスワイプを始めない。
  */
-export const CONSUMER_DATA: readonly string[] = ['data-k-no-swipe'];
+export const CONSUMER_DATA: readonly string[] = ['data-g-no-swipe'];
 
 /**
  * 各コンポーネントの props に混ぜる、data-* の受け口。
@@ -93,7 +93,7 @@ export function domPassthrough(rest: Record<string, unknown>, component: string)
       if (RESERVED_DATA.has(key)) {
         warnOnce(
           `reserved-data:${component}:${key}`,
-          `${component}: ${key} は kasane が内部で使う属性なので、渡された値は無視した。別の名前を使うこと。`,
+          `${component}: ${key} は gassan が内部で使う属性なので、渡された値は無視した。別の名前を使うこと。`,
         );
         continue;
       }
@@ -139,7 +139,7 @@ export function stripReservedData(
     if (RESERVED_DATA.has(key)) {
       warnOnce(
         `reserved-data:${component}:${key}`,
-        `${component}: ${key} は kasane が内部で使う属性なので、渡された値は無視した。別の名前を使うこと。`,
+        `${component}: ${key} は gassan が内部で使う属性なので、渡された値は無視した。別の名前を使うこと。`,
       );
       continue;
     }

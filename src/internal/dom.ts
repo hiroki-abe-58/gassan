@@ -23,7 +23,7 @@ const warned = new Set<string>();
 export function warnOnce(key: string, message: string): void {
   if (!isDev || warned.has(key)) return;
   warned.add(key);
-  console.warn(`[kasane] ${message}`);
+  console.warn(`[gassan] ${message}`);
 }
 
 /**
@@ -173,7 +173,7 @@ export function isFocusable(el: Element | null | undefined): el is HTMLElement {
  *        祖先の onCancel / onClose を呼ぶ。ネイティブは最前面にしか飛ばさないのに、
  *        React 経由で外側まで伝わる。
  *
- * どちらも「Esc 一回で2枚とも閉じる」になる。最も近い dialog.k-dialog が
+ * どちらも「Esc 一回で2枚とも閉じる」になる。最も近い dialog.g-dialog が
  * 自分自身のときだけ通す、で両方塞げる。
  */
 export function isOwnDialogEvent(
@@ -184,7 +184,7 @@ export function isOwnDialogEvent(
   if (target === dialog) return true;
   const el = target as Element;
   if (typeof el.closest !== 'function') return false;
-  return el.closest('dialog.k-dialog') === dialog;
+  return el.closest('dialog.g-dialog') === dialog;
 }
 
 /**

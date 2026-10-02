@@ -6,7 +6,7 @@ import {
   useModals,
   type CloseReason,
   type DetentToken,
-} from '@genelab/kasane';
+} from '@genelab/gassan';
 
 /* -------------------------------------------------------------------------- */
 /* 1. 確認 — 破壊的な操作                                                      */
@@ -494,7 +494,7 @@ function DemoControls(): ReactNode {
 
           {/* 選択肢のグループは label ではなく fieldset / legend で名前を付ける。 */}
           <fieldset className="demo-fieldset">
-            <legend className="k-label">配送方法</legend>
+            <legend className="g-label">配送方法</legend>
             {SHIPPING.map((option) => (
               <label key={option.value} className="demo-choice">
                 <input
@@ -705,7 +705,7 @@ function DemoSheet(): ReactNode {
 export function App(): ReactNode {
   return (
     <div className="wrap">
-      <h1>kasane</h1>
+      <h1>gassan</h1>
       <p className="lead">
         ネイティブ &lt;dialog&gt; を土台にしたモーダルシェル。 フォーカストラップも Esc も inert
         もブラウザに任せ、情報構造とゲートに集中する。

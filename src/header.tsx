@@ -56,7 +56,7 @@ export function ModalHeader({ children, className, ...rest }: ModalHeaderProps):
   return (
     <header
       {...domPassthrough(rest, 'Modal.Header')}
-      className={className ? `k-header ${className}` : 'k-header'}
+      className={className ? `g-header ${className}` : 'g-header'}
     >
       {children}
     </header>
@@ -94,15 +94,15 @@ export function ModalControls({
   return (
     <div
       {...domPassthrough(rest, 'Modal.Controls')}
-      className={className ? `k-controls ${className}` : 'k-controls'}
+      className={className ? `g-controls ${className}` : 'g-controls'}
     >
-      <div className="k-controls-slot" data-slot="start">
+      <div className="g-controls-slot" data-slot="start">
         {start}
       </div>
-      <div className="k-controls-slot" data-slot="center">
+      <div className="g-controls-slot" data-slot="center">
         {center}
       </div>
-      <div className="k-controls-slot" data-slot="end">
+      <div className="g-controls-slot" data-slot="end">
         {end}
       </div>
     </div>
@@ -132,8 +132,8 @@ export function ModalBack({
     <button
       {...domPassthrough(rest, 'Modal.Back')}
       type="button"
-      className={className ? `k-iconbtn ${className}` : 'k-iconbtn'}
-      data-k-control="back"
+      className={className ? `g-iconbtn ${className}` : 'g-iconbtn'}
+      data-g-control="back"
       aria-label={label ?? labels.back}
       onClick={onClick}
     >
@@ -155,8 +155,8 @@ export function ModalClose({
     <button
       {...domPassthrough(rest, 'Modal.Close')}
       type="button"
-      className={className ? `k-iconbtn ${className}` : 'k-iconbtn'}
-      data-k-control="close"
+      className={className ? `g-iconbtn ${className}` : 'g-iconbtn'}
+      data-g-control="close"
       aria-label={label ?? labels.close}
       onClick={() => {
         onClick?.();
@@ -206,12 +206,12 @@ export function ModalIndicator({
   return (
     <p
       {...domPassthrough(rest, 'Modal.Indicator')}
-      className={className ? `k-indicator ${className}` : 'k-indicator'}
+      className={className ? `g-indicator ${className}` : 'g-indicator'}
     >
       <span aria-hidden="true">
         {current} / {total}
       </span>
-      <span className="k-sr-only">{labels.step(current, total)}</span>
+      <span className="g-sr-only">{labels.step(current, total)}</span>
     </p>
   );
 }
@@ -271,17 +271,17 @@ export function ModalTitle({ children, lines = 2, className, ...rest }: ModalTit
   }, [lines, expanded, children]);
 
   const clamped = lines > 0 && !expanded;
-  const style = { '--k-title-lines': String(lines) } as CSSProperties;
+  const style = { '--g-title-lines': String(lines) } as CSSProperties;
 
   return (
     <h2
       {...domPassthrough(rest, 'Modal.Title')}
-      className={className ? `k-title ${className}` : 'k-title'}
+      className={className ? `g-title ${className}` : 'g-title'}
     >
       <span
         id={ids.title}
         ref={textRef}
-        className="k-title-text"
+        className="g-title-text"
         data-clamped={clamped ? '' : undefined}
         style={style}
       >
@@ -290,7 +290,7 @@ export function ModalTitle({ children, lines = 2, className, ...rest }: ModalTit
       {overflowing ? (
         <button
           type="button"
-          className="k-title-toggle"
+          className="g-title-toggle"
           aria-expanded={expanded}
           aria-controls={ids.title}
           onClick={() => setExpanded((value) => !value)}
@@ -324,7 +324,7 @@ export function ModalDescription({ children, className, ...rest }: ModalDescript
     <p
       {...domPassthrough(rest, 'Modal.Description')}
       id={ids.description}
-      className={className ? `k-desc ${className}` : 'k-desc'}
+      className={className ? `g-desc ${className}` : 'g-desc'}
     >
       {children}
     </p>

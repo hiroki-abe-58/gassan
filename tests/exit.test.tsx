@@ -4,11 +4,11 @@
  * overlay transition は MDN 上 Limited availability（not Baseline）。
  * 未対応ブラウザでも退出が見えるよう、Root は
  *   1. data-exiting を付ける（dialog は open のまま）
- *   2. --k-dur-out（reduced-motion なら最短）待つ
+ *   2. --g-dur-out（reduced-motion なら最短）待つ
  *   3. close() し、その後で onExited / reset / focus 復帰 / scroll unlock
  * の順で動く。ここではその順序を fake timers で固定する。
  *
- * jsdom は CSS を読まない（vitest の css: false）ので、--k-dur-out は
+ * jsdom は CSS を読まない（vitest の css: false）ので、--g-dur-out は
  * readCssDurationMs の fallback 値 120ms、待ちは 120 + 20(grace) = 140ms になる。
  */
 import { act, fireEvent, render, screen } from '@testing-library/react';
@@ -158,19 +158,19 @@ describe('exit fallback / L-07', () => {
     trigger().focus();
     fireEvent.click(trigger());
     expect(dialog().open).toBe(true);
-    expect(html()).toHaveAttribute('data-k-locked');
+    expect(html()).toHaveAttribute('data-g-locked');
     expect(document.activeElement).toBe(panel());
 
     act(() => setOpen(false));
     // 退出中はまだモーダル。背景は動かず、フォーカスもトリガーへ飛ばない。
-    expect(html()).toHaveAttribute('data-k-locked');
+    expect(html()).toHaveAttribute('data-g-locked');
     expect(document.activeElement).not.toBe(trigger());
 
     act(() => {
       vi.advanceTimersByTime(EXIT_MS);
     });
     expect(dialog().open).toBe(false);
-    expect(html()).not.toHaveAttribute('data-k-locked');
+    expect(html()).not.toHaveAttribute('data-g-locked');
     expect(document.activeElement).toBe(trigger());
   });
 
@@ -240,7 +240,7 @@ describe('native close / F-11', () => {
       ),
     });
     fireEvent.click(screen.getByRole('checkbox'));
-    expect(html()).toHaveAttribute('data-k-locked');
+    expect(html()).toHaveAttribute('data-g-locked');
 
     // <form method="dialog"> の送信や外部の el.close() に相当する。
     act(() => {
@@ -249,8 +249,8 @@ describe('native close / F-11', () => {
     await flushMicrotasks();
 
     expect(onExited).toHaveBeenCalledTimes(1);
-    expect(html()).not.toHaveAttribute('data-k-locked');
-    const raw = document.querySelector<HTMLInputElement>('.k-consent input');
+    expect(html()).not.toHaveAttribute('data-g-locked');
+    const raw = document.querySelector<HTMLInputElement>('.g-consent input');
     expect(raw).not.toBeChecked();
   });
 });

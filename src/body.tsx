@@ -144,7 +144,7 @@ export function ModalBody({
   return (
     <div
       {...domPassthrough(rest, 'Modal.Body')}
-      className={className ? `k-body ${className}` : 'k-body'}
+      className={className ? `g-body ${className}` : 'g-body'}
       ref={bodyRef}
       id={ids.body}
       // スクロール領域はキーボードでも操作できなければならない。B-02。
@@ -155,14 +155,14 @@ export function ModalBody({
       data-at-end={atEnd ? '' : undefined}
       onScroll={handleScroll}
     >
-      <div className="k-body-inner" ref={innerRef}>
+      <div className="g-body-inner" ref={innerRef}>
         {children}
         {readGate ? (
           <>
             {/* 交差観測用。視覚にも支援技術にも出さない。 */}
-            <div ref={sentinelRef} className="k-sentinel" aria-hidden="true" />
+            <div ref={sentinelRef} className="g-sentinel" aria-hidden="true" />
             {/* フォーカス到達用。フォーカスされたときだけ可視になる。 */}
-            <span className="k-end-marker" tabIndex={0} onFocus={markRead}>
+            <span className="g-end-marker" tabIndex={0} onFocus={markRead}>
               {labels.endOfContent}
             </span>
           </>
@@ -198,8 +198,8 @@ export function ModalSection({
   ...rest
 }: ModalSectionProps): ReactNode {
   const reactId = useId();
-  const headingId = `kasane-section-${reactId}`;
-  const classes = className ? `k-section ${className}` : 'k-section';
+  const headingId = `gassan-section-${reactId}`;
+  const classes = className ? `g-section ${className}` : 'g-section';
 
   if (title === undefined || title === null || title === false) {
     return (
@@ -217,7 +217,7 @@ export function ModalSection({
       className={classes}
       aria-labelledby={headingId}
     >
-      <Heading id={headingId} className="k-section-title">
+      <Heading id={headingId} className="g-section-title">
         {title}
       </Heading>
       {children}

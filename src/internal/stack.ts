@@ -3,7 +3,7 @@
  *
  * ネイティブの top layer は積み重なるので、モーダルを2枚重ねるとスクリムも2枚重なり、
  * 背景が意図の倍暗くなる。ブラウザは「いま最前面がどれか」を CSS に教えてくれないので、
- * 自前で順序を持ち、最前面以外に data-k-covered を付けて下のスクリムを消す。
+ * 自前で順序を持ち、最前面以外に data-g-covered を付けて下のスクリムを消す。
  */
 
 const stack: HTMLDialogElement[] = [];
@@ -13,8 +13,8 @@ const listeners = new Set<Listener>();
 function sync(): void {
   const top = stack[stack.length - 1];
   for (const el of stack) {
-    if (el === top) el.removeAttribute('data-k-covered');
-    else el.setAttribute('data-k-covered', '');
+    if (el === top) el.removeAttribute('data-g-covered');
+    else el.setAttribute('data-g-covered', '');
   }
   for (const listener of listeners) listener(stack.length);
 }
@@ -30,7 +30,7 @@ export function popModal(el: HTMLDialogElement): void {
   const index = stack.indexOf(el);
   if (index === -1) return;
   stack.splice(index, 1);
-  el.removeAttribute('data-k-covered');
+  el.removeAttribute('data-g-covered');
   sync();
 }
 

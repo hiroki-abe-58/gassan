@@ -19,7 +19,7 @@ const FOCUSABLE =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 interface DialogInternals {
-  __kasaneModal?: boolean;
+  __gassanModal?: boolean;
 }
 
 if (typeof HTMLDialogElement !== 'undefined') {
@@ -29,7 +29,7 @@ if (typeof HTMLDialogElement !== 'undefined') {
     proto.showModal = function showModal(this: HTMLDialogElement & DialogInternals) {
       if (this.open) return;
       this.setAttribute('open', '');
-      this.__kasaneModal = true;
+      this.__gassanModal = true;
       // ネイティブと同じく autofocus を優先し、無ければ最初のフォーカサブル。
       const target =
         this.querySelector<HTMLElement>('[autofocus]') ?? this.querySelector<HTMLElement>(FOCUSABLE);
@@ -41,7 +41,7 @@ if (typeof HTMLDialogElement !== 'undefined') {
     proto.show = function show(this: HTMLDialogElement & DialogInternals) {
       if (this.open) return;
       this.setAttribute('open', '');
-      this.__kasaneModal = false;
+      this.__gassanModal = false;
     };
   }
 
@@ -49,7 +49,7 @@ if (typeof HTMLDialogElement !== 'undefined') {
     proto.close = function close(this: HTMLDialogElement & DialogInternals, returnValue?: string) {
       if (!this.open) return;
       this.removeAttribute('open');
-      this.__kasaneModal = false;
+      this.__gassanModal = false;
       if (returnValue !== undefined) this.returnValue = returnValue;
       // 実ブラウザでは task としてキューされる（＝非同期）。
       // ここを同期にするとテストは書きやすいが、実挙動と乖離する。
@@ -248,7 +248,7 @@ export const registry: ObserverRegistry = {
 (globalThis as unknown as { IntersectionObserver: unknown }).IntersectionObserver =
   MockIntersectionObserver;
 (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = MockResizeObserver;
-(globalThis as unknown as { __kasaneObservers: ObserverRegistry }).__kasaneObservers = registry;
+(globalThis as unknown as { __gassanObservers: ObserverRegistry }).__gassanObservers = registry;
 
 /* -------------------------------------------------------------------------- */
 /* matchMedia                                                                 */
@@ -296,5 +296,5 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   document.body.innerHTML = '';
-  document.documentElement.removeAttribute('data-k-locked');
+  document.documentElement.removeAttribute('data-g-locked');
 });

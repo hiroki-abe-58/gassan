@@ -1,7 +1,7 @@
 /**
  * iOS 向けの opt-in スクロールロック。M-06。
  *
- * 既定のロックは CSS の html:has(dialog.k-dialog:modal){overflow:hidden} で足りる。
+ * 既定のロックは CSS の html:has(dialog.g-dialog:modal){overflow:hidden} で足りる。
  * ただし iOS Safari では overflow:hidden だけでは body のスクロールが止まらない場面があるため、
  * 必要なときだけ JS でスクロール位置を保存 → position:fixed → 復帰する手を用意しておく。
  *
@@ -33,7 +33,7 @@ export function lockBodyScroll(): void {
   body.style.left = '0';
   body.style.right = '0';
   body.style.width = '100%';
-  document.documentElement.setAttribute('data-k-locked', '');
+  document.documentElement.setAttribute('data-g-locked', '');
 }
 
 export function unlockBodyScroll(): void {
@@ -51,7 +51,7 @@ export function unlockBodyScroll(): void {
     body.style.width = saved.width;
     saved = null;
   }
-  document.documentElement.removeAttribute('data-k-locked');
+  document.documentElement.removeAttribute('data-g-locked');
   if (typeof window.scrollTo === 'function') window.scrollTo(0, savedScrollY);
 }
 
@@ -61,6 +61,6 @@ export function resetScrollLock(): void {
   saved = null;
   savedScrollY = 0;
   if (typeof document !== 'undefined') {
-    document.documentElement.removeAttribute('data-k-locked');
+    document.documentElement.removeAttribute('data-g-locked');
   }
 }

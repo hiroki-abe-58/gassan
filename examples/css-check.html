@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>kasane — CSS 検品ページ</title>
+<title>gassan — CSS 検品ページ</title>
 
 <!--
   jsdom では検証できない層を、実ブラウザで目視確認するためのページ。
-  React は使わない。素の <dialog> に kasane の DOM 構造を手書きしてある。
+  React は使わない。素の <dialog> に gassan の DOM 構造を手書きしてある。
 
   確認する項目（VERIFICATION.md の「ブラウザでしか確かめられないもの」と対応）:
     1. showModal() で top layer に載り、背景が inert になる（背後のボタンが押せない）
     2. @starting-style による入場
     3. 退出アニメ（L-07）。React 版と同じ手順を下の closeWithExit() が再現する:
-       data-exiting を付ける → dialog は open のまま退出状態へ遷移 → --k-dur-out 後に close()
+       data-exiting を付ける → dialog は open のまま退出状態へ遷移 → --g-dur-out 後に close()
        → overlay 非対応ブラウザ（MDN 上 Limited availability）でも退出が見えることを確認する
     4. scrim 4段階の見え方（黒 60% が濃すぎることの確認）
     5. Esc / 背景クリック / フォーカストラップ（Tab がモーダル内で循環する）
@@ -97,7 +97,7 @@
 </head>
 <body>
 
-<h1>kasane — CSS 検品ページ</h1>
+<h1>gassan — CSS 検品ページ</h1>
 <p class="lead">実ブラウザでしか確かめられない層を目視する。React は介在していない。</p>
 
 <div class="panel">
@@ -270,7 +270,7 @@
         <span class="id">B-14</span>
         <span>
           <label class="what" id="lbl-B-14" for="chk-B-14"><strong>仮想キーボード</strong> — 入力にフォーカスしても本文が隠れない</label>
-          <span class="fail">落ちていたら: --k-keyboard-inset が実機で反映されていない</span>
+          <span class="fail">落ちていたら: --g-keyboard-inset が実機で反映されていない</span>
         </span>
       </li>
       <li data-item="スワイプで閉じる">
@@ -294,7 +294,7 @@
         <span class="id">B-17</span>
         <span>
           <label class="what" id="lbl-B-17" for="chk-B-17"><strong>長押し</strong> — タイトルを長押しすると OS のコンテキストメニューが出る</label>
-          <span class="fail">落ちていたら: kasane が長押しを奪っている</span>
+          <span class="fail">落ちていたら: gassan が長押しを奪っている</span>
         </span>
       </li>
       <li data-item="段の吸い付き">
@@ -314,62 +314,62 @@
 
 <!-- ===================================================================== -->
 
-<dialog class="k-dialog" id="dlg" data-scrim="default" data-size="md" data-placement="center">
-  <div class="k-scrim" aria-hidden="true"></div>
-  <div class="k-panel" tabindex="-1">
-    <header class="k-header">
-      <div class="k-controls">
-        <div class="k-controls-slot" data-slot="start">
-          <button type="button" class="k-iconbtn" aria-label="戻る">
+<dialog class="g-dialog" id="dlg" data-scrim="default" data-size="md" data-placement="center">
+  <div class="g-scrim" aria-hidden="true"></div>
+  <div class="g-panel" tabindex="-1">
+    <header class="g-header">
+      <div class="g-controls">
+        <div class="g-controls-slot" data-slot="start">
+          <button type="button" class="g-iconbtn" aria-label="戻る">
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
-        <div class="k-controls-slot" data-slot="center">
-          <p class="k-indicator"><span aria-hidden="true">2 / 5</span><span class="k-sr-only">5ステップ中2ステップ目</span></p>
+        <div class="g-controls-slot" data-slot="center">
+          <p class="g-indicator"><span aria-hidden="true">2 / 5</span><span class="g-sr-only">5ステップ中2ステップ目</span></p>
         </div>
-        <div class="k-controls-slot" data-slot="end">
-          <button type="button" class="k-iconbtn" aria-label="閉じる" data-close>
+        <div class="g-controls-slot" data-slot="end">
+          <button type="button" class="g-iconbtn" aria-label="閉じる" data-close>
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           </button>
         </div>
       </div>
-      <h2 class="k-title">
-        <span class="k-title-text" data-clamped id="dlg-title" style="--k-title-lines:2">配送先の住所を変更する</span>
+      <h2 class="g-title">
+        <span class="g-title-text" data-clamped id="dlg-title" style="--g-title-lines:2">配送先の住所を変更する</span>
       </h2>
     </header>
 
-    <div class="k-body" tabindex="0" role="group" aria-label="本文" data-at-start data-at-end id="dlg-body">
-      <div class="k-body-inner" id="dlg-content">
+    <div class="g-body" tabindex="0" role="group" aria-label="本文" data-at-start data-at-end id="dlg-body">
+      <div class="g-body-inner" id="dlg-content">
         <p>短い本文。ここでは端の影は出ない（上下とも端にいるため）。</p>
-        <label class="k-consent"><input type="checkbox"><span>内容を確認しました</span></label>
+        <label class="g-consent"><input type="checkbox"><span>内容を確認しました</span></label>
       </div>
     </div>
 
-    <footer class="k-footer">
-      <p class="k-footer-note">あとから変更できます</p>
-      <div class="k-footer-actions">
-        <button type="button" class="k-btn" data-variant="tertiary" data-close>キャンセル</button>
-        <button type="button" class="k-btn" data-variant="primary">保存する</button>
+    <footer class="g-footer">
+      <p class="g-footer-note">あとから変更できます</p>
+      <div class="g-footer-actions">
+        <button type="button" class="g-btn" data-variant="tertiary" data-close>キャンセル</button>
+        <button type="button" class="g-btn" data-variant="primary">保存する</button>
       </div>
     </footer>
   </div>
-  <p class="k-sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+  <p class="g-sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
 </dialog>
 
-<dialog class="k-dialog" id="dlg2" data-scrim="default" data-size="sm" data-placement="center">
-  <div class="k-scrim" aria-hidden="true"></div>
-  <div class="k-panel" tabindex="-1">
-    <header class="k-header">
-      <h2 class="k-title"><span class="k-title-text">2枚目。下のスクリムが消えているか</span></h2>
+<dialog class="g-dialog" id="dlg2" data-scrim="default" data-size="sm" data-placement="center">
+  <div class="g-scrim" aria-hidden="true"></div>
+  <div class="g-panel" tabindex="-1">
+    <header class="g-header">
+      <h2 class="g-title"><span class="g-title-text">2枚目。下のスクリムが消えているか</span></h2>
     </header>
-    <div class="k-body" tabindex="0" role="group" aria-label="本文" data-at-start data-at-end>
-      <div class="k-body-inner">
-        <p>下のダイアログに <code>data-k-covered</code> が付き、スクリムが1枚ぶんだけ見えていれば正しい。</p>
+    <div class="g-body" tabindex="0" role="group" aria-label="本文" data-at-start data-at-end>
+      <div class="g-body-inner">
+        <p>下のダイアログに <code>data-g-covered</code> が付き、スクリムが1枚ぶんだけ見えていれば正しい。</p>
       </div>
     </div>
-    <footer class="k-footer">
-      <div class="k-footer-actions">
-        <button type="button" class="k-btn" data-variant="primary" data-close>閉じる</button>
+    <footer class="g-footer">
+      <div class="g-footer-actions">
+        <button type="button" class="g-btn" data-variant="primary" data-close>閉じる</button>
       </div>
     </footer>
   </div>
@@ -396,7 +396,7 @@
       title.textContent = '配送先の住所と、受け取り日時、それから置き配の可否についての設定をまとめて変更する';
     } else {
       content.innerHTML = '<p>短い本文。ここでは端の影は出ない（上下とも端にいるため）。</p>' +
-        '<label class="k-consent"><input type="checkbox"><span>内容を確認しました</span></label>';
+        '<label class="g-consent"><input type="checkbox"><span>内容を確認しました</span></label>';
       title.textContent = '配送先の住所を変更する';
     }
     updateEdges();
@@ -433,7 +433,7 @@
     applyState();
     applyContent();
     dlg.showModal();
-    dlg.querySelector('.k-panel').focus();
+    dlg.querySelector('.g-panel').focus();
     requestAnimationFrame(updateEdges);
   });
 
@@ -441,15 +441,15 @@
     if (!dlg.open) dlg.showModal();
     dlg2.showModal();
     // 最前面以外のスクリムを消す。React 版では stack.ts がこれをやる。
-    dlg.setAttribute('data-k-covered', '');
+    dlg.setAttribute('data-g-covered', '');
   });
 
   document.getElementById('shake').addEventListener('click', () => {
     if (!dlg.open) dlg.showModal();
-    const panel = dlg.querySelector('.k-panel');
-    panel.setAttribute('data-k-blocked', '');
+    const panel = dlg.querySelector('.g-panel');
+    panel.setAttribute('data-g-blocked', '');
     dlg.querySelector('[role="status"]').textContent = 'このダイアログはまだ閉じられません。';
-    setTimeout(() => panel.removeAttribute('data-k-blocked'), 420);
+    setTimeout(() => panel.removeAttribute('data-g-blocked'), 420);
   });
 
   for (const dialog of [dlg, dlg2]) {
@@ -459,15 +459,15 @@
     // 背景クリック。押下と解放の両方がスクリム上のときだけ閉じる。
     let downOnScrim = false;
     dialog.addEventListener('pointerdown', (event) => {
-      downOnScrim = event.target === dialog.querySelector('.k-scrim');
+      downOnScrim = event.target === dialog.querySelector('.g-scrim');
     });
     dialog.addEventListener('pointerup', (event) => {
-      const ok = downOnScrim && event.target === dialog.querySelector('.k-scrim');
+      const ok = downOnScrim && event.target === dialog.querySelector('.g-scrim');
       downOnScrim = false;
       if (ok) closeWithExit(dialog);
     });
     dialog.addEventListener('close', () => {
-      if (dialog === dlg2) dlg.removeAttribute('data-k-covered');
+      if (dialog === dlg2) dlg.removeAttribute('data-g-covered');
     });
   }
 
@@ -476,7 +476,7 @@
     if (dialog.hasAttribute('data-exiting')) return;
     dialog.setAttribute('data-exiting', '');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const out = parseFloat(getComputedStyle(dialog).getPropertyValue('--k-dur-out')) || 120;
+    const out = parseFloat(getComputedStyle(dialog).getPropertyValue('--g-dur-out')) || 120;
     setTimeout(() => {
       dialog.close();
       // data-exiting が付いたままスタイルを確定させ、discrete transition の二周目を起こさない。
@@ -488,7 +488,7 @@
 <script>
 /* 検品チェックリストの進捗。localStorage に残す。 */
 (() => {
-  const KEY = 'kasane.css-check.v1';
+  const KEY = 'gassan.css-check.v1';
   const boxes = [...document.querySelectorAll('.checklist input[type="checkbox"]')];
   const out = document.getElementById('progress');
   const saved = JSON.parse(localStorage.getItem(KEY) ?? '{}');

@@ -40,4 +40,4 @@ export const CLICK_SUPPRESS_WINDOW = 400;
 
 /** ドラッグ開始を許さない要素か。ここを握ると中身の操作ができなくなる。 */
 export const SWIPE_BLOCKING_SELECTOR =
-  'input, textarea, select, button, a[href], [role="slider"], [role="tablist"], [contenteditable="true"], [data-k-no-swipe]';
+  'input, textarea, select, button, a[href], [role="slider"], [role="tablist"], [contenteditable="true"], [data-g-no-swipe]';

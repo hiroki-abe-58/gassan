@@ -27,7 +27,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_UNRESOLVED_GATE_MESSAGE,
-  KasaneProvider,
+  GassanProvider,
   Modal,
   englishLabels,
   selectBlockers,
@@ -197,9 +197,9 @@ describe('サーバーレンダー時のゲート / G-12', () => {
     expect(markup).toContain(DEFAULT_UNRESOLVED_GATE_MESSAGE);
   });
 
-  it('理由テキストは KasaneLabels を通る', () => {
+  it('理由テキストは GassanLabels を通る', () => {
     const markup = renderToStaticMarkup(
-      <KasaneProvider labels={englishLabels}>{tree(gatedTree)}</KasaneProvider>,
+      <GassanProvider labels={englishLabels}>{tree(gatedTree)}</GassanProvider>,
     );
     expect(markup).toContain('This action still has conditions that are not met.');
     expect(markup).not.toContain(DEFAULT_UNRESOLVED_GATE_MESSAGE);

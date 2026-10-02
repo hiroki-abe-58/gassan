@@ -51,7 +51,7 @@ const REQUIRED_EXPORTS = [
   'useModals',
   'confirm',
   'Modal',
-  'KasaneProvider',
+  'GassanProvider',
   // fail-closed の契約そのもの。dist から消えたら G-12 が黙って壊れる。
   'selectBlockers',
   'DEFAULT_UNRESOLVED_GATE_MESSAGE',
@@ -111,7 +111,7 @@ if (existsSync('dist/index.js')) {
 if (existsSync('dist/styles.css')) {
   const css = readFileSync('dist/styles.css', 'utf8');
   const required = [
-    '@layer kasane.reset',
+    '@layer gassan.reset',
     '@starting-style',
     'allow-discrete',
     'overlay',
@@ -120,7 +120,7 @@ if (existsSync('dist/styles.css')) {
     'forced-colors',
     // L-07。overlay 非対応環境の退出 fallback。落ちると退出が一瞬で消える。
     '[data-exiting]',
-    '.k-chart',
+    '.g-chart',
   ];
   const missing = required.filter((token) => !css.includes(token));
   if (missing.length > 0) fail(`styles.css is missing: ${missing.join(', ')}`);
