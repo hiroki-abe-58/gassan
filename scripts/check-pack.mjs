@@ -32,15 +32,18 @@ console.log('checking publishable package');
 
 // --- 1. tarball に何が入るかを npm 自身に聞く -------------------------------
 // --dry-run なので実際には publish も pack もしない。
-// --ignore-scripts: dist は verify の前段（npm run build）で作ってある。ここで prepare（tsup）を
-// 走らせると、そのログが標準出力に混ざって JSON が壊れる。見たいのは同梱物だけである。
+// --ignore-scripts: dist は verify の前段（npm run build）で作ってある。見たいのは同梱物だけである。
+// ただし npm 10 は --ignore-scripts を付けても pack で prepare（tsup）を走らせ、そのログが
+// 標準出力の先頭に混ざる（npm 11 では起きない。CI の Node 20 / 22 は npm 10）。
+// JSON は出力の末尾にあるので、行頭の '[' から読む。
 let files = [];
 try {
   const raw = execFileSync('npm', ['pack', '--dry-run', '--json', '--ignore-scripts'], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'ignore'],
   });
-  const report = JSON.parse(raw);
+  const start = raw.search(/^\[/m);
+  const report = JSON.parse(start >= 0 ? raw.slice(start) : raw);
   files = (report[0]?.files ?? []).map((entry) => entry.path);
 } catch (error) {
   fail(`npm pack --dry-run failed: ${error.message}`);

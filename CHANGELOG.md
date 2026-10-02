@@ -43,6 +43,9 @@ npm に一度も出していないので、利用者への影響は無い。名�
 - `npm run site:dev` / `site:build` / `site:preview`。`npm run typecheck` はサイトも型検査する。CI でサイトをビルドし、
   `.github/workflows/pages.yml` が `main` への push で公開する。
 - `prepare` を追加。`npm install github:hiroki-abe-58/gassan` で入れたとき、配布物をその場でビルドする。
+  `check:pack` は `npm pack --dry-run --json --ignore-scripts` の出力を行頭の `[` から読むようにした。
+  npm 10（CI の Node 20 / 22）は `--ignore-scripts` を付けても pack で `prepare` を走らせ、tsup のログが
+  JSON の前に混ざる（npm 11 では起きない）。最初の CI 実行で落ちて分かった。
 - `@types/node` を devDependencies に追加。`vite.config.ts` の `node:url` の型は、これまで開発機のホームにあった
   `~/node_modules/@types/node` を偶然拾って通っていただけで、クリーンな CI では落ちるはずだった。
 
