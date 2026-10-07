@@ -55,6 +55,9 @@ if (files.length === 0) {
   const REQUIRED = [
     'package.json',
     'README.md',
+    // README.md の言語切り替えリンクの行き先。npm のパッケージページで 404 にしない。
+    'README_ja.md',
+    'README_zh.md',
     'LICENSE',
     'CHANGELOG.md',
     'ROADMAP.md',
