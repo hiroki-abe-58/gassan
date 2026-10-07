@@ -17,11 +17,11 @@ npm run verify                        … EXIT 0
   ├─ eslint .                         … エラー 0 / 警告 0
   ├─ vitest run                       … 395 passed (17 files)
   ├─ node scripts/check-trace.mjs     … 8 項目すべて ok（135 項目が追跡表に実在、395 件のテストが根拠として結線）
-  ├─ node scripts/check-docs.mjs      … 文書のコード例 20 件が公開 API でコンパイル（外部依存の 3 件は対象外と明示）
+  ├─ node scripts/check-docs.mjs      … 文書のコード例 36 件が公開 API でコンパイル（README は英語・日本語・簡体字中国語の 3 言語ぶん。外部依存の 3 件は対象外と明示）
   ├─ tsup                             … ESM / CJS / d.ts / d.cts 生成成功
   ├─ node scripts/check-dist.mjs      … 8 項目すべて ok（公開 API 33 個、文書の実測サイズ 4 箇所がビルドと一致）
   ├─ node scripts/ssr-smoke.mjs       … 23 項目すべて ok（dist 経由の data-* 透過 8 項目を含む）
-  └─ node scripts/check-pack.mjs      … 11 項目すべて ok（同梱必須 16 ファイル、同梱 Markdown 9 本のリンク）
+  └─ node scripts/check-pack.mjs      … 11 項目すべて ok（同梱必須 18 ファイル、同梱 Markdown 11 本のリンク）
 
 npm run check:consumer                … 5 項目すべて ok（ネットワークが要るため verify とは別。Modal.Chart の型と export も検査）
 npm run build:demo                    … EXIT 0（48 モジュール、JS gzip 83.70 KB / CSS gzip 4.73 KB）

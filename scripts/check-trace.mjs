@@ -418,7 +418,8 @@ const testFileCount = readdirSync(testDir).filter((f) => /\.test\.tsx?$/.test(f)
  * 片方だけ動かしたときに気づけるよう、ここでも独立に実測する。
  */
 let docExampleCount = 0;
-for (const f of ['README.md', ...readdirSync(join(root, 'docs')).filter((n) => n.endsWith('.md')).map((n) => join('docs', n))]) {
+const READMES = ['README.md', 'README_ja.md', 'README_zh.md'];
+for (const f of [...READMES, ...readdirSync(join(root, 'docs')).filter((n) => n.endsWith('.md')).map((n) => join('docs', n))]) {
   const md = read(f);
   for (const m of md.matchAll(/```(?:tsx|ts|jsx)\n([\s\S]*?)```/g)) {
     if (/^import .*from '(?!@genelab\/gassan)/m.test(m[1])) continue; // 外部依存は対象外
@@ -439,8 +440,13 @@ const CLAIMS = [
   ['VERIFICATION.md', /check-trace\.mjs.*?（(\d+) 項目が追跡表に実在/, TOTAL, '振る舞いの項目数'],
   ['VERIFICATION.md', /項目が追跡表に実在、(\d+) 件のテストが根拠/, testCount, 'テスト件数'],
   ['VERIFICATION.md', /コード例 (\d+) 件が公開 API/, docExampleCount, '文書のコード例の件数'],
-  ['README.md', /(\d+)項目の振る舞い表/, TOTAL, '振る舞いの項目数'],
-  ['README.md', /`modal\.skill\.md` の(\d+)項目が/, TOTAL, '振る舞いの項目数'],
+  // README は 3 言語。どれか 1 つだけ直して他が古いまま、を落とす。
+  ['README.md', /a table of (\d+) behaviors/, TOTAL, '振る舞いの項目数'],
+  ['README.md', /each of the (\d+) behaviors in `modal\.skill\.md`/, TOTAL, '振る舞いの項目数'],
+  ['README_ja.md', /(\d+)項目の振る舞い表/, TOTAL, '振る舞いの項目数'],
+  ['README_ja.md', /`modal\.skill\.md` の(\d+)項目が/, TOTAL, '振る舞いの項目数'],
+  ['README_zh.md', /(\d+) 项行为表/, TOTAL, '振る舞いの項目数'],
+  ['README_zh.md', /`modal\.skill\.md` 的 (\d+) 项行为/, TOTAL, '振る舞いの項目数'],
 ];
 
 let claimsChecked = 0;

@@ -49,6 +49,8 @@
   "files": [
     "dist",
     "README.md",
+    "README_ja.md",
+    "README_zh.md",
     "CHANGELOG.md",
     "ROADMAP.md",
     "VERIFICATION.md",

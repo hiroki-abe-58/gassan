@@ -12,7 +12,8 @@
  * で落ちた。公開してから利用者が踏む類の壊れ方で、既存のどのゲートにも引っかからない。
  *
  * やること。
- *   1. README.md と docs/*.md から tsx / ts / jsx のコードブロックを抜く
+ *   1. README（英語・日本語・簡体字中国語）と docs/*.md から tsx / ts / jsx のコードブロックを抜く
+ *      — 翻訳でコードの中の文言も訳しているので、言語ごとに別のコードとして検査する
  *   2. gassan 以外のパッケージを import しているブロックは対象外にする（未インストールのため）
  *      — ただし黙って飛ばさず、件数と場所を必ず出す
  *   3. 残りを 1 ブロック 1 ファイルに展開し、tsc に通す
@@ -29,7 +30,8 @@ const MIN_BLOCKS = 18;
 
 const OUT = '.tmp-doccheck';
 
-const sources = ['README.md', ...readdirSync('docs').filter((f) => f.endsWith('.md')).map((f) => join('docs', f))];
+const READMES = ['README.md', 'README_ja.md', 'README_zh.md'];
+const sources = [...READMES, ...readdirSync('docs').filter((f) => f.endsWith('.md')).map((f) => join('docs', f))];
 
 /**
  * 文書が省いている変数。gassan の API ではないので、ここで宣言だけ与える。
