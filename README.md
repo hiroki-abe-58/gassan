@@ -29,11 +29,10 @@ AI コーディング時はそのファイルをコンテキストに入れる�
 
 ## インストール
 
-npm にはまだ公開していない。当面は GitHub から直接入れる。
-インストール時に `prepare` が走り、配布物（ESM / CJS / 型 / CSS）がその場でビルドされる。
+npm で公開している（[`@genelab/gassan`](https://www.npmjs.com/package/@genelab/gassan)）。
 
 ```bash
-npm install github:hiroki-abe-58/gassan
+npm install @genelab/gassan
 ```
 
 ```tsx

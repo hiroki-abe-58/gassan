@@ -62,7 +62,7 @@ npm publish               # publishConfig.access: public 済み
 ```
 
 `repository` / `homepage` / `bugs` は実在するリポジトリ `github.com/hiroki-abe-58/gassan` を指している。
-npm にはまだ出していない（`@genelab/gassan` は 2026-10-02 時点で未使用）。
+npm には `@genelab/gassan@0.1.0` として公開済み（latest）。
 
 ---
 

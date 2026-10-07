@@ -227,7 +227,7 @@ export function Home(): ReactNode {
       </Section>
 
       <Section id="install" title="入れる">
-        <CodeBlock code={`npm install github:hiroki-abe-58/gassan`} lang="bash" caption="インストール（npm 公開前のため GitHub から）" />
+        <CodeBlock code={`npm install @genelab/gassan`} lang="bash" caption="インストール" />
         <p className="s-more">
           <a href={to('/start')}>最小の例とブラウザ要件 →</a>
         </p>
