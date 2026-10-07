@@ -26,11 +26,10 @@ export function GetStarted(): ReactNode {
       <Section id="install" title="インストール">
         <Prose>
           <p>
-            npm にはまだ公開していない。当面は GitHub から直接入れる。インストール時に <code>prepare</code> が走り、
-            配布物（ESM / CJS / 型 / CSS）がその場でビルドされる。peer は React 18.2 以上（19 でも動く）。
+            npm で公開している（<code>@genelab/gassan</code>）。peer は React 18.2 以上（19 でも動く）。
           </p>
         </Prose>
-        <CodeBlock code="npm install github:hiroki-abe-58/gassan" lang="bash" caption="shell" />
+        <CodeBlock code="npm install @genelab/gassan" lang="bash" caption="shell" />
         <CodeBlock
           code={`import { Modal } from '@genelab/gassan';\nimport '@genelab/gassan/styles.css';`}
           lang="tsx"
