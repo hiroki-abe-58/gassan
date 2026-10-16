@@ -1,32 +1,34 @@
 import { useState, type ReactNode } from 'react';
 
 import { Modal } from '@genelab/gassan';
-
-const RELEASES = [
-  { version: 'v3.2', notes: ['共有リンクに有効期限を付けられるようになった', '検索が 2 倍速くなった'] },
-  { version: 'v3.1', notes: ['ダークテーマの境界線を見直した', '通知の既定をオフにした'] },
-  { version: 'v3.0', notes: ['ワークスペースを分けられるようになった', '古い API を廃止した'] },
-  { version: 'v2.9', notes: ['CSV の書き出しで列を選べるようになった', 'ショートカットを追加した'] },
-  { version: 'v2.8', notes: ['画像の貼り付けに対応した', '大きな表の描画を軽くした'] },
-];
+import { useDemoText } from '../i18n';
 
 export default function BodyScroll(): ReactNode {
+  const t = useDemoText('bodyScroll');
   const [open, setOpen] = useState(false);
+
+  const RELEASES = [
+    { version: 'v3.2', notes: [t.linkExpiry, t.fasterSearch] },
+    { version: 'v3.1', notes: [t.darkBorders, t.notifyOff] },
+    { version: 'v3.0', notes: [t.workspaces, t.legacyApi] },
+    { version: 'v2.9', notes: [t.csvColumns, t.shortcuts] },
+    { version: 'v2.8', notes: [t.imagePaste, t.largeTables] },
+  ];
 
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        更新履歴を見る
+        {t.open}
       </button>
 
       <Modal.Root kind="view" open={open} onOpenChange={setOpen}>
         <Modal.Header>
           <Modal.Controls end={<Modal.Close />} />
-          <Modal.Title>更新履歴</Modal.Title>
+          <Modal.Title>{t.title}</Modal.Title>
         </Modal.Header>
 
-        {/* スクロールするのはここだけ。tabIndex と名前を持つので、キーボードでも読める（B-01〜B-03） */}
-        <Modal.Body label="更新履歴の本文">
+        {/* t:scroll */}
+        <Modal.Body label={t.bodyLabel}>
           {RELEASES.map((release) => (
             <Modal.Section key={release.version} title={release.version}>
               <ul>
@@ -40,7 +42,7 @@ export default function BodyScroll(): ReactNode {
 
         <Modal.Footer>
           <Modal.Button variant="primary" closeOnClick="close-button">
-            閉じる
+            {t.close}
           </Modal.Button>
         </Modal.Footer>
       </Modal.Root>

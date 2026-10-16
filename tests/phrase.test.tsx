@@ -12,7 +12,7 @@ import { render, screen } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import { GassanProvider, Modal, Phrase, splitPhrases } from '../src';
+import { GassanProvider, Modal, Phrase, englishLabels, splitPhrases } from '../src';
 import { renderModal } from './utils';
 
 const noop = (): void => {};
@@ -66,10 +66,49 @@ describe('W-01 文節に分ける（splitPhrases）', () => {
     for (const text of texts) expect(splitPhrases(text).join('')).toBe(text);
   });
 
-  it('W-04: かなを含まない文字列（英語・中国語）には手を出さない', () => {
-    expect(splitPhrases('Agree and continue')).toEqual(['Agree and continue']);
-    expect(splitPhrases('编辑个人资料')).toEqual(['编辑个人资料']);
-    expect(splitPhrases('12,345')).toEqual(['12,345']);
+  it('W-04: 空白で区切る言語・タイ語・数字だけの文字列は分けない', () => {
+    for (const text of ['Agree and continue', 'แก้ไขโปรไฟล์', 'ແກ້ໄຂໂປຣໄຟລ໌', 'កែសម្រួលប្រវត្តិរូប', '프로필 편집', '12,345']) {
+      expect(splitPhrases(text)).toEqual([text]);
+    }
+  });
+});
+
+describe('W-04 中国語は語の切れ目で分ける（splitPhrases）', () => {
+  const cases: readonly [string, string[]][] = [
+    ['编辑个人资料', ['编辑', '个人', '资料']],
+    ['编辑個人資料', ['编辑', '個人', '資料']],
+    ['保存更改并关闭', ['保存', '更改', '并关闭']],
+    ['删除此文件后将无法恢复。', ['删除', '此文件后', '将无法', '恢复。']],
+    ['刪除此檔案後將無法復原。', ['刪除', '此檔案後', '將無法', '復原。']],
+    ['我的文件', ['我的', '文件']],
+    ['请输入验证码', ['请输入', '验证码']],
+  ];
+
+  it('UI の文言を、語の途中ではない位置で分ける（「编辑个人资｜料」にしない）', () => {
+    expect(cases.map(([input]) => splitPhrases(input))).toEqual(cases.map(([, expected]) => expected));
+  });
+
+  it('辞書に無い語が 1 文字ずつに割れても、その中では折らない（上｜传・验证｜码）', () => {
+    expect(splitPhrases('上传文件')).toEqual(['上传文件']);
+    expect(splitPhrases('重新发送验证码').at(-1)).toBe('验证码');
+  });
+
+  it('「的・了・后」などは前の語に付け、行頭に置かない', () => {
+    const texts = ['这是我的文件', '支付成功后将自动跳转', '请阅读《用户协议》后继续', '确定要删除这条评论吗？'];
+    for (const text of texts) {
+      for (const phrase of splitPhrases(text).slice(1)) expect(phrase).not.toMatch(/^[的了后吗呢，。？》]/);
+    }
+  });
+
+  it('数と量詞・漢字と英数字の間では折らない（3个・版本2）', () => {
+    expect(splitPhrases('共有3个文件')).toEqual(['共有3个文件']);
+    expect(splitPhrases('版本2更新说明')[0]).toBe('版本2更新');
+  });
+
+  it('つなぎ直すと必ず元の文字列に戻る', () => {
+    for (const text of ['只允许上传 JPG、PNG 格式的图片', '3月份最高，为120万元。4月以后持平。', '將此頁面加入書籤']) {
+      expect(splitPhrases(text).join('')).toBe(text);
+    }
   });
 });
 
@@ -212,16 +251,33 @@ describe('W-05 効かせる場所', () => {
     }
   });
 
-  it('英語と中国語の文言には span も <wbr> も足さない', () => {
+  it('英語・タイ語の文言には span も <wbr> も足さない（タイ語に keep-all を掛けると、ブラウザの辞書の切れ目が消える）', () => {
     const { container } = renderModal({
       children: (
         <Modal.Footer>
           <Modal.Button variant="secondary">Agree and continue</Modal.Button>
-          <Modal.Button variant="primary">编辑个人资料</Modal.Button>
+          <Modal.Button variant="primary">บันทึกการเปลี่ยนแปลง</Modal.Button>
         </Modal.Footer>
       ),
     });
     expect(container.querySelector('.g-phrase')).toBeNull();
+  });
+
+  it('中国語のボタンは語の切れ目に <wbr> を置く。名前は元のまま', () => {
+    const { container } = renderModal({
+      children: (
+        <Modal.Footer>
+          <Modal.Button variant="primary">编辑个人资料</Modal.Button>
+        </Modal.Footer>
+      ),
+    });
+    expect(container.querySelectorAll('.g-btn-label .g-phrase wbr[aria-hidden="true"]')).toHaveLength(2);
+    expect(screen.getByRole('button', { name: '编辑个人资料' })).toBeInTheDocument();
+  });
+
+  it('韓国語は器（keep-all）だけを付け、<wbr> は足さない（空白でだけ折る）', () => {
+    const html = renderToString(<Phrase>변경 사항을 저장하고 닫기</Phrase>);
+    expect(html).toBe('<span class="g-phrase">변경 사항을 저장하고 닫기</span>');
   });
 });
 
@@ -249,6 +305,23 @@ describe('W-06 折り返し方の切り替え', () => {
       </GassanProvider>,
     );
     expect(container.querySelector('.g-phrase')).toBeNull();
+  });
+
+  it('内側の Provider が labels を省略したら、外側の文言に従う（lineBreak だけ指定しても日本語に戻らない）', () => {
+    render(
+      <GassanProvider labels={englishLabels}>
+        <GassanProvider lineBreak="browser">
+          <GassanProvider labels={{ required: 'Must' }}>
+            <Modal.Root open onOpenChange={noop} label="Settings">
+              <Modal.Header>
+                <Modal.Controls end={<Modal.Close />} />
+              </Modal.Header>
+            </Modal.Root>
+          </GassanProvider>
+        </GassanProvider>
+      </GassanProvider>,
+    );
+    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
   });
 
   it('Phrase で、gassan の外の UI にも同じ折り返しを効かせられる', () => {
@@ -282,5 +355,13 @@ describe('W-02 器より長い文節の扱い（CSS）', () => {
 
   it('文字単位で折るときも、小書きのかなや長音符を行頭に置かない（line-break: strict）', () => {
     expect(rule()).toMatch(/line-break:\s*strict;/);
+  });
+
+  it('ボタンのラベルは、ボタンより長い文節があってもボタンの外へはみ出さない（中央寄せの grid 項目の最小幅を外す）', () => {
+    // 実測: .g-btn は inline-grid + place-items: center なので、ラベルの幅は fit-content になり最長の文節より縮まない。
+    // 縦積みのフッタや狭い器でボタンが押し込まれると、文節がボタンの外へはみ出していた（§10-29）
+    const label = /\.g-btn-label\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    expect(label).toMatch(/min-inline-size:\s*0;/);
+    expect(label).toMatch(/max-inline-size:\s*100%;/);
   });
 });

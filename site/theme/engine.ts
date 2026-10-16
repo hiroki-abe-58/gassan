@@ -170,9 +170,24 @@ const ON_DARK_ACCENT = '#ffffff';
 /* プリセット                                                                 */
 /* -------------------------------------------------------------------------- */
 
+export type PresetId =
+  | 'default'
+  | 'magenta'
+  | 'red'
+  | 'salmon'
+  | 'vermilion'
+  | 'amber'
+  | 'yellow'
+  | 'lime-yellow'
+  | 'lime'
+  | 'green'
+  | 'teal'
+  | 'blue'
+  | 'indigo';
+
+/** 表示名は i18n の common.theme.presets にある（キーは id）。 */
 export interface Preset {
-  id: string;
-  label: string;
+  id: PresetId;
   /** 種の色。ここから明度を調整して実際のアクセントを導く。 */
   seed: string;
   /** false なら gassan のモーダルは既定の墨色のまま（サイトだけ色を変える）。 */
@@ -180,24 +195,29 @@ export interface Preset {
 }
 
 export const PRESETS: readonly Preset[] = [
-  { id: 'default', label: '既定', seed: '#3346d3', themesGassan: false },
-  { id: 'magenta', label: '赤紫', seed: '#d6336c', themesGassan: true },
-  { id: 'red', label: '赤', seed: '#e03131', themesGassan: true },
-  // #f2552c だと、ライトで暗くしたときに「赤」とほぼ同じ色になった（tests/theme.test.ts が検出）。
-  { id: 'vermilion', label: '赤寄りのオレンジ', seed: '#f76707', themesGassan: true },
-  { id: 'amber', label: '黄色寄りのオレンジ', seed: '#f59f00', themesGassan: true },
-  // #fcc419 だと、ライトで暗くしたときに「黄色寄りのオレンジ」と見分けにくかった。色相を約 101° に寄せる。
-  { id: 'yellow', label: '黄色', seed: '#e8d000', themesGassan: true },
-  // 黄緑〜青は、ライトとダークの両方で「隣り合うプリセットのアクセントが最も離れる」色相を
-  // 総当たりで選んだ（OKLCH の色相 130 / 155 / 180 / 240）。勘で選ぶと、暗くした後に隣と見分けられなくなる。
-  { id: 'lime', label: '黄緑', seed: '#71ad00', themesGassan: true },
-  { id: 'green', label: '緑', seed: '#00a05b', themesGassan: true },
-  { id: 'teal', label: 'ティール', seed: '#009c89', themesGassan: true },
-  { id: 'blue', label: '青', seed: '#0089c9', themesGassan: true },
-  { id: 'indigo', label: '青紫', seed: '#6741d9', themesGassan: true },
+  { id: 'default', seed: '#3346d3', themesGassan: false },
+  { id: 'magenta', seed: '#d6336c', themesGassan: true },
+  { id: 'red', seed: '#e03131', themesGassan: true },
+  // サーモンピンク。色相は「赤」とほぼ同じ（28°）だが、彩度が低い（0.11）ので、ライトで暗くしても赤とは離れる（くすんだ赤茶になる）。
+  { id: 'salmon', seed: '#f69c90', themesGassan: true },
+  // 赤寄りのオレンジ。#f2552c だと、ライトで暗くしたときに「赤」とほぼ同じ色になった（tests/theme.test.ts が検出）。
+  { id: 'vermilion', seed: '#f76707', themesGassan: true },
+  { id: 'amber', seed: '#f59f00', themesGassan: true },
+  // 黄色〜青は、ライトとダークの両方で「隣り合うプリセットのアクセントが最も離れる」色相を
+  // 総当たりで選んだ（OKLCH の色相 98 / 123 / 140 / 155 / 180 / 240）。黄色〜黄緑は、ライトで白い面に 4.5:1 を取ると
+  // どれもオリーブの狭い帯に寄るので、勘で選ぶと隣と見分けられなくなる。
+  // #fcc419 だと「黄色寄りのオレンジ」と見分けにくかった。ライムイエローを足すときは、黄色を 101° から 98° へ、
+  // 黄緑を 130° から 140° へ動かして間を空けた（黄緑が 130° のままだと、ライトで隣との距離が 0.035 しか取れない）。
+  { id: 'yellow', seed: '#f0d100', themesGassan: true },
+  { id: 'lime-yellow', seed: '#bfec36', themesGassan: true },
+  { id: 'lime', seed: '#53b93a', themesGassan: true },
+  { id: 'green', seed: '#00a05b', themesGassan: true },
+  { id: 'teal', seed: '#009c89', themesGassan: true },
+  { id: 'blue', seed: '#0089c9', themesGassan: true },
+  { id: 'indigo', seed: '#6741d9', themesGassan: true },
 ];
 
-export const CUSTOM_PRESET_ID = 'custom';
+export const CUSTOM_PRESET_ID = 'custom' as const;
 
 /* -------------------------------------------------------------------------- */
 /* テーマ                                                                     */
@@ -214,8 +234,24 @@ export interface Accent {
   onSoft: string;
 }
 
+/** コントラストを確かめる組。表示名は i18n の common.theme.checks にある（エンジンは文言を持たない）。 */
+export type CheckId =
+  | 'linkBg'
+  | 'linkSurface'
+  | 'linkSurface1'
+  | 'linkSurface2'
+  | 'linkSoft'
+  | 'onAccent'
+  | 'onSoft'
+  | 'gassanPrimary'
+  | 'gassanGated'
+  | 'gassanBody'
+  | 'gassanMuted'
+  | 'focusRing'
+  | 'fill';
+
 export interface ContrastCheck {
-  what: string;
+  id: CheckId;
   fg: string;
   bg: string;
   /** WCAG の基準。文字は 4.5、非テキスト（輪郭・塗りの境界）は 3 */
@@ -250,9 +286,9 @@ export function deriveAccent(seedHex: string, scheme: Scheme, backgrounds: reado
   return { accent, onAccent: scheme === 'light' ? ON_DARK_ACCENT : ON_LIGHT_ACCENT, soft, onSoft };
 }
 
-const check = (what: string, fg: string, bg: string, min: number): ContrastCheck => {
+const check = (id: CheckId, fg: string, bg: string, min: number): ContrastCheck => {
   const ratio = contrastRatio(fg, bg);
-  return { what, fg, bg, min, ratio, pass: ratio >= min };
+  return { id, fg, bg, min, ratio, pass: ratio >= min };
 };
 
 /**
@@ -289,19 +325,20 @@ export function buildTheme(
 
   const s = (name: string): string => vars[name] ?? '#000000';
   const checks: ContrastCheck[] = [
-    check('リンク・選択中の文字（ページの背景）', s('--s-accent'), s('--s-bg'), 4.5),
-    check('リンク・選択中の文字（面）', s('--s-accent'), s('--s-surface'), 4.5),
-    check('リンク・選択中の文字（一段沈んだ面）', s('--s-accent'), s('--s-surface-1'), 4.5),
-    check('リンク・選択中の文字（二段沈んだ面）', s('--s-accent'), s('--s-surface-2'), 4.5),
-    check('リンク（淡い面の上）', s('--s-accent'), s('--s-accent-soft'), 4.5),
-    check('塗りのボタンの文字', s('--s-on-accent'), s('--s-accent'), 4.5),
-    check('淡い面の文字（AAA を目標）', s('--s-on-accent-soft'), s('--s-accent-soft'), 7),
-    check('モーダルの primary の文字', s('--g-on-accent'), s('--g-accent'), 4.5),
-    check('モーダルのゲート中の primary の文字', s('--g-on-accent-muted'), s('--g-accent-muted'), 4.5),
-    check('モーダルの本文', s('--g-fg'), s('--g-surface'), 4.5),
-    check('モーダルの補足・tertiary', s('--g-fg-muted'), s('--g-surface'), 4.5),
-    check('フォーカスリング（非テキスト）', s('--g-focus'), s('--g-surface'), 3),
-    check('スイッチ・選択中のチップの塗り（非テキスト）', s('--g-accent'), s('--g-surface'), 3),
+    check('linkBg', s('--s-accent'), s('--s-bg'), 4.5),
+    check('linkSurface', s('--s-accent'), s('--s-surface'), 4.5),
+    check('linkSurface1', s('--s-accent'), s('--s-surface-1'), 4.5),
+    check('linkSurface2', s('--s-accent'), s('--s-surface-2'), 4.5),
+    check('linkSoft', s('--s-accent'), s('--s-accent-soft'), 4.5),
+    check('onAccent', s('--s-on-accent'), s('--s-accent'), 4.5),
+    // 淡い面の上の文字は AAA（7）を目標にする
+    check('onSoft', s('--s-on-accent-soft'), s('--s-accent-soft'), 7),
+    check('gassanPrimary', s('--g-on-accent'), s('--g-accent'), 4.5),
+    check('gassanGated', s('--g-on-accent-muted'), s('--g-accent-muted'), 4.5),
+    check('gassanBody', s('--g-fg'), s('--g-surface'), 4.5),
+    check('gassanMuted', s('--g-fg-muted'), s('--g-surface'), 4.5),
+    check('focusRing', s('--g-focus'), s('--g-surface'), 3),
+    check('fill', s('--g-accent'), s('--g-surface'), 3),
   ];
 
   return { scheme, accent, vars, checks };

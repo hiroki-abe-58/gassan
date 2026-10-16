@@ -1,16 +1,17 @@
 import { useState, type ReactNode } from 'react';
 
 import { Modal, type ScrimToken } from '@genelab/gassan';
-
-const LEVELS: readonly { token: ScrimToken; use: string }[] = [
-  { token: 'subtle', use: '非破壊・短命の確認' },
-  { token: 'default', use: '既定。確認・入力・閲覧・フロー' },
-  { token: 'strong', use: '同意・破壊的な確認' },
-  { token: 'immersive', use: 'ライトボックス（明示 opt-in）' },
-];
+import { useDemoText } from '../i18n';
 
 export default function ScrimLevels(): ReactNode {
+  const t = useDemoText('scrimLevels');
   const [token, setToken] = useState<ScrimToken | null>(null);
+  const LEVELS: readonly { token: ScrimToken; use: string }[] = [
+    { token: 'subtle', use: t.subtle },
+    { token: 'default', use: t.default },
+    { token: 'strong', use: t.strong },
+    { token: 'immersive', use: t.immersive },
+  ];
 
   return (
     <>

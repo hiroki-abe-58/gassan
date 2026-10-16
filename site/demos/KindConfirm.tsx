@@ -1,15 +1,17 @@
 import { useState, type ReactNode } from 'react';
 
 import { Modal } from '@genelab/gassan';
+import { fmt, useDemoText } from '../i18n';
 
 export default function KindConfirm(): ReactNode {
+  const t = useDemoText('kindConfirm');
   const [open, setOpen] = useState(false);
   const [log, setLog] = useState('');
 
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        下書きを削除
+        {t.open}
       </button>
       <output className="s-demo-log">{log}</output>
 
@@ -19,27 +21,27 @@ export default function KindConfirm(): ReactNode {
         open={open}
         onOpenChange={(next, reason) => {
           setOpen(next);
-          if (!next) setLog(`閉じた理由: ${reason}`);
+          if (!next) setLog(fmt(t.closedReason, reason));
         }}
       >
         <Modal.Header>
           <Modal.Controls end={<Modal.Close />} />
-          <Modal.Title>下書きを削除しますか</Modal.Title>
+          <Modal.Title>{t.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Modal.Description>削除すると元に戻せません。共同編集者の画面からも消えます。</Modal.Description>
+          <Modal.Description>{t.description}</Modal.Description>
         </Modal.Body>
         <Modal.Footer>
           <Modal.Button variant="tertiary" closeOnClick="close-button">
-            やめる
+            {t.cancel}
           </Modal.Button>
-          {/* 位置は primary のまま、色だけ danger にする（F-06） */}
+          {/* t:danger */}
           <Modal.Button
             variant="danger"
             closeOnClick="submit"
             onAction={() => new Promise((resolve) => setTimeout(resolve, 700))}
           >
-            削除する
+            {t.confirm}
           </Modal.Button>
         </Modal.Footer>
       </Modal.Root>

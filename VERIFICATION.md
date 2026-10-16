@@ -15,13 +15,13 @@
 npm run verify                        … EXIT 0
   ├─ tsc --noEmit                     … エラー 0
   ├─ eslint .                         … エラー 0 / 警告 0
-  ├─ vitest run                       … 429 passed (19 files)
-  ├─ node scripts/check-trace.mjs     … 8 項目すべて ok（141 項目が追跡表に実在、429 件のテストが根拠として名前で引ける。項目から引かれていないのはサイトのテーマの 7 件）
-  ├─ node scripts/check-docs.mjs      … 文書のコード例 39 件が公開 API でコンパイル（README は英語・日本語・簡体字中国語の 3 言語ぶん。外部依存の 3 件は対象外と明示）
+  ├─ vitest run                       … 442 passed (20 files)
+  ├─ node scripts/check-trace.mjs     … 8 項目すべて ok（141 項目が追跡表に実在、442 件のテストが根拠として名前で引ける。項目から引かれていないのはサイトのテーマの 7 件とサイトの多言語化の 4 件）
+  ├─ node scripts/check-docs.mjs      … 文書のコード例 66 件が公開 API でコンパイル（README は英語・日本語・簡体字中国語・繁体字中国語・韓国語・タイ語の 6 言語ぶん。外部依存の 3 件は対象外と明示）
   ├─ tsup                             … ESM / CJS / d.ts / d.cts 生成成功
   ├─ node scripts/check-dist.mjs      … 8 項目すべて ok（公開 API 35 個、文書の実測サイズ 4 箇所がビルドと一致）
   ├─ node scripts/ssr-smoke.mjs       … 30 項目すべて ok（dist 経由の data-* 透過 8 項目と、サーバーでの文節折り返し 2 項目を含む）
-  └─ node scripts/check-pack.mjs      … 11 項目すべて ok（同梱必須 18 ファイル、同梱 Markdown 11 本のリンク）
+  └─ node scripts/check-pack.mjs      … 11 項目すべて ok（同梱必須 21 ファイル、同梱 Markdown 14 本のリンク）
 
 npm run check:consumer                … 5 項目すべて ok（ネットワークが要るため verify とは別。Modal.Chart の型と export も検査）
 npm run build:demo                    … EXIT 0（48 モジュール、JS gzip 83.70 KB / CSS gzip 4.73 KB）
@@ -49,17 +49,17 @@ SSR 時点でゲートが fail-closed になっていること、`Modal.Chart` �
 
 | ファイル | raw | gzip | 予算 |
 |---|---:|---:|---:|
-| `dist/index.js` (ESM) | 87,112 B | 21,525 B | 22,528 B |
-| `dist/index.cjs` | 90,119 B | 21,747 B | 22,528 B |
-| `dist/styles.css` | 24,269 B | 5,022 B | 6,144 B |
+| `dist/index.js` (ESM) | 88,283 B | 21,840 B | 22,528 B |
+| `dist/index.cjs` | 91,296 B | 22,064 B | 22,528 B |
+| `dist/styles.css` | 24,341 B | 5,035 B | 6,144 B |
 
 追補前（13,495 B / 13,659 B / 4,503 B）からの増分は、退出 fallback・`Modal.Chart`・フッタ規則のぶん。
-2026-10-16 の増分（ESM gzip 19,551 B → 21,525 B）は、日本語の文節折り返し（`Phrase` と文字種の規則）のぶん。
-予算の残りは約 1 KB なので、次に大きな機能を足すときは予算の見直しか分割を先に決める。
+2026-10-16 の増分（ESM gzip 19,551 B → 21,840 B）は、日本語・中国語・韓国語の折り返し（`Phrase` と文字種の規則）のぶん。
+予算の残りは ESM で約 0.7 KB、CJS で約 0.5 KB なので、次に大きな機能を足すときは予算の見直しか分割を先に決める。
 
 `styles.css` は配布用にコメントを落としてある。設計意図つきの原文は `dist/styles.source.css`。
 
-### テストの内訳（429件 = 追補前 103件 + 25件 + 構造 8件 + 環境 28件 + トークン 45件 + シート 42件 + シートの指離し 16件 + 入れ子 13件 + 受け渡しの静的検査 3件 + 構造コンテナの空入力 8件 + ゲートの多重登録と命令的 API の出口 24件 + 登録が出揃う前のゲート 19件 + props の契約 22件 + 色のコントラスト 3件 + 止められない Esc 2件 + 実ブラウザで見つけた配置の規則 3件 + 日本語の折り返し 23件 + サイトのテーマ 7件 + CSS の取りこぼし 4件）
+### テストの内訳（442件 = 追補前 103件 + 25件 + 構造 8件 + 環境 28件 + トークン 45件 + シート 42件 + シートの指離し 16件 + 入れ子 13件 + 受け渡しの静的検査 3件 + 構造コンテナの空入力 8件 + ゲートの多重登録と命令的 API の出口 24件 + 登録が出揃う前のゲート 19件 + props の契約 22件 + 色のコントラスト 3件 + 止められない Esc 2件 + 実ブラウザで見つけた配置の規則 3件 + 折り返し 32件 + サイトのテーマ 7件 + CSS の取りこぼし 4件 + サイトの多言語化 4件）
 
 追補3 で 65 件足し、**追跡表の「未検証」を 6 件から 0 件にした。**
 
@@ -87,8 +87,9 @@ SSR 時点でゲートが fail-closed になっていること、`Modal.Chart` �
 | `tests/tokens.test.ts` | 54 | +54（新規） | トークンの値と CSS 不変条件（スクリム濃度・タップ寸法・`100vh` 禁止・ゲート中の当たり判定・`@layer` の閉じ込め・つまみの寸法・ディテントの割合・ライト / ダークの色の組のコントラスト比・参照するカスタムプロパティの定義・使用不可と hover の見た目・既定のフォーカスリングの詳細度） |
 | `tests/detent.test.tsx` | 42 | +42（新規） | つまみ（H-09）・ディテントの解決とスナップ（M-03）・ドラッグの開始条件と後始末（M-02） |
 | `tests/props-contract.test.tsx` | 22 | +22（新規） | 制御 `loading` と内部 pending の論理和（F-08）・リストの識別子重複（D-13）・変化通知の条件（D-14）・`Modal.Button` の予約名（D-11）・空のリスト |
-| `tests/phrase.test.tsx` | 23 | +23（新規） | 日本語の文節折り返し（W-01〜W-06）。文節の切れ目の代表例・送り仮名・接頭辞・禁則・往復で文字が変わらないこと・読み上げの名前・SSR の出力・Provider の切り替え |
+| `tests/phrase.test.tsx` | 32 | +32（新規） | 日本語・中国語・韓国語の折り返し（W-01〜W-06）。文節の切れ目の代表例・送り仮名・接頭辞・禁則・中国語の語の切れ目と 1 文字の語・韓国語は器だけ・タイ語と英語には手を出さない・往復で文字が変わらないこと・読み上げの名前・SSR の出力・Provider の切り替えと文言の継承・ボタンのラベルを器に収める |
 | `tests/theme.test.ts` | 7 | +7（新規） | ドキュメントサイトのテーマ。全プリセットと任意の色（色相 24 × 明度 5 × 彩度 4）で、ライトとダークの 13 の組が WCAG の基準を満たす・色相が転ばない・隣り合うプリセットが見分けられる |
+| `tests/site-i18n.test.ts` | 4 | +4（新規） | ドキュメントサイトの多言語化。表示用のデモのコードを全言語で文字列に戻せること・日本語以外の文言に訳し忘れのかなが残っていないこと |
 
 追加 25 件の内訳:
 
@@ -306,7 +307,7 @@ CDP の `Runtime.evaluate` で `getComputedStyle` / `getBoundingClientRect` / `g
 |---|---|
 | `npm run typecheck` | 型 |
 | `npm run lint` | 静的解析 |
-| `npm run test` | 429 件の単体・結合テスト |
+| `npm run test` | 442 件の単体・結合テスト |
 | `npm run build` | ESM / CJS / `.d.ts` / `.d.cts` / CSS |
 | `npm run check:dist` | `"use client"`・公開 API・サイズ予算 |
 | `npm run check:ssr` | SSR で落ちないか（Next.js App Router 互換） |

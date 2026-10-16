@@ -585,6 +585,15 @@
     cursor: not-allowed;
   }
 
+  /* ラベルは grid の項目で、中央寄せ（place-items: center）なので幅は fit-content になり、
+   * 最長の文節より縮まない。ボタンが器いっぱい（縦積みのフッタ・狭い器）まで縮められると、
+   * 文節がボタンの外へはみ出していた。min 0 で列が縮めるようにし、max 100% でラベルを列に収める。
+   * ボタン自身の最小幅（最長の文節）は変わらないので、横並びのフッタで押し潰されることはなく、
+   * 器より狭く押し込まれたときだけ .g-phrase の break-word で文字単位に折れる（W-02）。 */
+  .g-btn-label {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
   .g-btn[data-loading] { cursor: progress; }
   .g-btn[data-loading] .g-btn-label { opacity: 0; }
   .g-btn-spinner {
@@ -598,8 +607,9 @@
   }
   @keyframes g-spin { to { rotate: 360deg; } }
 
-  /* --- 3.8b phrase（日本語の文節折り返し） -------------------------------
-   * W-01〜W-03。Phrase / 各部品が文節の切れ目に <wbr> を入れ、ここで「そこでだけ折る」にする。
+  /* --- 3.8b phrase（日本語・中国語・韓国語の折り返し） ---------------------
+   * W-01〜W-04。Phrase / 各部品が文節（中国語は語）の切れ目に <wbr> を入れ、ここで「そこでだけ折る」にする。
+   * 韓国語は <wbr> を足さず、この器だけで空白でだけ折れる。タイ語などには器を付けない（W-04）。
    *   keep-all   … 文字の間では折らない。改行は <wbr> と空白の位置だけ
    *   break-word … 1 文節が器より長いときだけ文字単位で折る（はみ出させない）。
    *                anywhere にしないこと。anywhere は最小幅の計算にも効くので、

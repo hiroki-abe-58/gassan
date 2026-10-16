@@ -17,6 +17,14 @@
  *
  * 機械学習の分割器（BudouX など）ほど賢くはないが、規則が読めて、依存が無く、
  * サーバーとクライアントで同じ結果を返す（hydration がずれない）。
+ *
+ * 日本語以外は、文字の種類で扱いを分ける（W-04）。
+ *
+ *   中国語（かなを含まず漢字を含む） … 語の切れ目で折る。ブラウザは「编辑个人资｜料」と語の途中で折る
+ *   韓国語（ハングルを含む）         … 空白でだけ折る。ブラウザは「프로필 편｜집」と語の途中で折る
+ *   タイ語・ラオ語・クメール語・ビルマ語 … 手を出さない。ブラウザが辞書で語の切れ目を見つけて折る。
+ *                                      keep-all を掛けると、その辞書の切れ目まで消える（実測）
+ *   英語など空白で区切る言語          … 手を出さない。空白で折れる
  */
 
 type CharClass = 'hira' | 'kata' | 'han' | 'alnum' | 'open' | 'close' | 'space' | 'other';
@@ -30,8 +38,22 @@ const SPACE = /\s/u;
 const OPEN = /[「『（(［[｛{〈《【〔“‘]/u;
 /** 閉じ括弧・句読点・中黒など、行頭に来てはいけない記号。前の語に付ける。 */
 const CLOSE = /[」』）)］\]｝}〉》】〕”’、。，．,.!！?？…‥・:：;；〜~]/u;
-/** かな（ひらがな・カタカナ）を含むか。含まない文字列（中国語・英語）には手を出さない。W-04。 */
 const KANA = /[\p{Script=Hiragana}\p{Script=Katakana}]/u;
+const HANGUL = /\p{Script=Hangul}/u;
+
+/**
+ * 折り返しを整える対象の言語。null は手を出さない文字列（英語・タイ語・数字だけ など）。
+ * かなを含めば日本語、ハングルを含めば韓国語、どちらも無く漢字を含めば中国語とみなす。
+ * 漢字だけの日本語（「利用規約」）は中国語の規則で語の切れ目に折れるが、日本語としても自然な位置になる。
+ */
+export type PhraseScript = 'ja' | 'zh' | 'ko';
+
+export function scriptOf(text: string): PhraseScript | null {
+  if (KANA.test(text)) return 'ja';
+  if (HANGUL.test(text)) return 'ko';
+  if (HAN.test(text)) return 'zh';
+  return null;
+}
 
 function classOf(ch: string): CharClass {
   if (SPACE.test(ch)) return 'space';
@@ -110,6 +132,39 @@ function canBreak(a: string, b: string, before: string): boolean {
   return false;
 }
 
+/**
+ * 前の語に付く 1 文字の語（助詞・語気詞・後置の「後・時・中」）。行頭に立たせない
+ * （「我的｜文件」にして「我｜的文件」にしない。「删除此文件后｜将无法恢复」）。
+ */
+const ZH_SUFFIXES = new Set([...'的地得了着著过過们們吗嗎呢吧啊么麼后後时時中里裡内內']);
+
+const isSingleHan = (w: string): boolean => w.length === 1 && classOf(w) === 'han';
+
+/**
+ * 中国語の語 a と語 b の間で改行してよいか。after は b の次の語（b が末尾なら空）。
+ *
+ * 語の切れ目は ICU の辞書による。辞書に無い語は 1 文字ずつに割れる（「上传」→「上｜传」）ので、
+ * 1 文字の語は後ろの語に付けて、その中では折らない。前置詞・指示詞（「并｜关闭」「此｜文件」）も
+ * 後ろに付くので、同じ規則で自然な位置になる。ただし次の場合は前の語に付ける。
+ *
+ *   - ZH_SUFFIXES の語（「我的」「文件后」）
+ *   - 後ろに漢字が続かない 1 文字（「验证码」→「验证｜码」の「码」が行頭に落ちない）
+ *   - 後ろに ZH_SUFFIXES が続く 1 文字（「销售额的」→「销售｜额的」にしない）
+ */
+function canBreakZh(a: string, b: string, after: string): boolean {
+  const left = classOf(lastChar(a));
+  const right = classOf(b.charAt(0));
+  if (left === 'space' || right === 'space') return false;
+  if (right === 'close' || left === 'open') return false;
+  if (isSingleHan(b) && (ZH_SUFFIXES.has(b) || classOf(after.charAt(0)) !== 'han' || ZH_SUFFIXES.has(after))) {
+    return false;
+  }
+  if (left === 'close') return right === 'han' || right === 'alnum' || right === 'open';
+  if (right === 'open') return left === 'han' || left === 'alnum';
+  if (left !== 'han' || right !== 'han') return false; // 数と量詞（3个）、漢字と英数字（版本2）では折らない
+  return !(isSingleHan(a) && !ZH_SUFFIXES.has(a));
+}
+
 interface SegmenterLike {
   segment: (input: string) => Iterable<{ segment: string }>;
 }
@@ -137,23 +192,21 @@ function words(text: string): string[] {
   return out;
 }
 
-/** 日本語として文節分割すべき文字列か（かなを含むか）。 */
-export function hasKana(text: string): boolean {
-  return KANA.test(text);
-}
-
 const cache = new Map<string, readonly string[]>();
 const CACHE_LIMIT = 1000;
 
 /**
- * 文字列を文節の並びに分ける。連結すると必ず元の文字列に戻る。
- * かなを含まない文字列（英語・中国語・数字だけ）は 1 要素のまま返す。
+ * 文字列を、改行してよい位置で分ける。連結すると必ず元の文字列に戻る。
+ * 日本語は文節、中国語は語の切れ目で分ける。韓国語は空白で折れるので 1 要素のまま返し、
+ * それ以外の文字列（英語・タイ語・数字だけ）にも手を出さない。
  *
  *   splitPhrases('プロフィールを編集') → ['プロフィールを', '編集']
  *   splitPhrases('最後までお読みください。') → ['最後まで', 'お読みください。']
+ *   splitPhrases('编辑个人资料') → ['编辑', '个人', '资料']
  */
 export function splitPhrases(text: string): readonly string[] {
-  if (!hasKana(text)) return [text];
+  const script = scriptOf(text);
+  if (script !== 'ja' && script !== 'zh') return [text];
   const cached = cache.get(text);
   if (cached) return cached;
 
@@ -164,7 +217,7 @@ export function splitPhrases(text: string): readonly string[] {
     const prev = ws[i - 1] ?? '';
     const next = ws[i] ?? '';
     const before = lastChar(ws[i - 2] ?? '');
-    if (canBreak(prev, next, before)) {
+    if (script === 'ja' ? canBreak(prev, next, before) : canBreakZh(prev, next, ws[i + 1] ?? '')) {
       phrases.push(current);
       current = next;
     } else {

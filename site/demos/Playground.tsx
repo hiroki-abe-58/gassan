@@ -9,13 +9,14 @@ import {
   type ScrimToken,
   type SizeToken,
 } from '@genelab/gassan';
+import { fmt, useDemoText } from '../i18n';
 
 const KINDS: readonly ModalKind[] = ['confirm', 'form', 'view', 'consent', 'flow'];
 const SIZES: readonly SizeToken[] = ['sm', 'md', 'lg', 'xl', 'full'];
 const PLACEMENTS: readonly PlacementOption[] = ['auto', 'center', 'top', 'sheet'];
 const SCRIMS: readonly ScrimToken[] = ['none', 'subtle', 'default', 'strong', 'immersive'];
 
-/** select の 1 行。「kind の既定」を空文字で表す。 */
+/** t:choice */
 function Choice<T extends string>(props: {
   label: string;
   value: T | '';
@@ -39,6 +40,7 @@ function Choice<T extends string>(props: {
 }
 
 export default function Playground(): ReactNode {
+  const t = useDemoText('playground');
   const [kind, setKind] = useState<ModalKind>('form');
   const [size, setSize] = useState<SizeToken>('md');
   const [placement, setPlacement] = useState<PlacementOption | ''>('');
@@ -57,35 +59,35 @@ export default function Playground(): ReactNode {
           label="placement"
           value={placement}
           options={PLACEMENTS}
-          fallback={`kind の既定（${defaults.placement}）`}
+          fallback={fmt(t.kindDefault, defaults.placement)}
           onChange={setPlacement}
         />
         <Choice
           label="scrim"
           value={scrim}
           options={SCRIMS}
-          fallback={`kind の既定（${defaults.scrim}）`}
+          fallback={fmt(t.kindDefault, defaults.scrim)}
           onChange={setScrim}
         />
       </div>
 
       <dl className="s-playground-defaults">
         <div>
-          <dt>Esc で閉じる</dt>
-          <dd>{defaults.dismiss.esc ? '閉じる' : '拒否して理由を読み上げる'}</dd>
+          <dt>{t.esc}</dt>
+          <dd>{defaults.dismiss.esc ? t.closes : t.refuses}</dd>
         </div>
         <div>
-          <dt>背景クリック</dt>
-          <dd>{defaults.dismiss.backdrop ? '閉じる' : '拒否して理由を読み上げる'}</dd>
+          <dt>{t.backdrop}</dt>
+          <dd>{defaults.dismiss.backdrop ? t.closes : t.refuses}</dd>
         </div>
       </dl>
 
       <div className="s-playground-run">
         <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-          この設定で開く
+          {t.open}
         </button>
         <output className="s-demo-log">
-          {log.length > 0 ? `閉じた理由: ${log.join(' → ')}` : 'Esc・背景・× のどれで閉じたかを記録する'}
+          {log.length > 0 ? fmt(t.closedBy, log.join(' → ')) : t.logEmpty}
         </output>
       </div>
 
@@ -106,12 +108,12 @@ export default function Playground(): ReactNode {
         </Modal.Header>
         <Modal.Body>
           <Modal.Description>
-            Esc・背景クリック・× ボタンを試す。閉じない設定のときは、パネルが揺れて理由が読み上げられる。
+            {t.description}
           </Modal.Description>
         </Modal.Body>
         <Modal.Footer>
           <Modal.Button variant="primary" closeOnClick="submit">
-            完了
+            {t.done}
           </Modal.Button>
         </Modal.Footer>
       </Modal.Root>

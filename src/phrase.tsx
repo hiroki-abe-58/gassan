@@ -10,12 +10,12 @@ import {
   type ReactNode,
 } from 'react';
 
-import { hasKana, splitPhrases } from './internal/phrase';
+import { scriptOf, splitPhrases } from './internal/phrase';
 
 /**
- * 日本語の折り返し方。W-01〜W-05。
+ * 日本語・中国語・韓国語の折り返し方。W-01〜W-05。
  *
- *   'phrase'  … 文節の切れ目でだけ改行する（既定）
+ *   'phrase'  … 文節（中国語は語、韓国語は空白）の切れ目でだけ改行する（既定）
  *   'browser' … ブラウザに任せる（文字単位で折れる）
  */
 export type LineBreakMode = 'phrase' | 'browser';
@@ -36,9 +36,13 @@ const SKIP = new Set(['code', 'pre', 'kbd', 'samp', 'textarea', 'script', 'style
  *
  * 文節ごとの span に white-space: nowrap を付ける方式も実測したが、名前は汚れない代わりに、
  * 器より長い文節がはみ出す。keep-all の span を並べる方式は、文字単位で折れてしまい効かない。
+ *
+ * 韓国語は語を空白で区切るので <wbr> は要らず、器（keep-all）だけで空白でだけ折れる。
+ * 英語・タイ語などは器も付けない。タイ語に keep-all を掛けると、ブラウザが辞書で見つけた
+ * 語の切れ目まで消え、語の途中で折れる（W-04）。
  */
 function phraseText(text: string, key?: string): ReactNode {
-  if (!hasKana(text)) return text;
+  if (!scriptOf(text)) return text;
   const parts = splitPhrases(text);
   return (
     <span key={key} className="g-phrase">
@@ -91,7 +95,7 @@ export interface PhraseProps {
  *   <button><Phrase>プロフィールを編集</Phrase></button>
  *
  * `GassanProvider` の `lineBreak="browser"` の下では何もしない。
- * かなを含まない文字列（英語・中国語）はそのまま返す。
+ * 日本語は文節、中国語は語の切れ目、韓国語は空白でだけ折る。英語・タイ語などはそのまま返す。
  */
 export function Phrase({ children }: PhraseProps): ReactNode {
   const phrase = usePhrase();

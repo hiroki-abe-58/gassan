@@ -34,7 +34,7 @@
 - [x] 要件監査・コントロールの合成レシピ・ライブラリ比較の3文書（`docs/`）
 - [x] `data-*` の受け渡し（D-11。E2E の選択子が通る。予約名は守り、落とすときは警告する）
 - [x] 141 項目の追跡表（`docs/traceability.md`）と、それを機械検証する `check:trace`
-- [x] 429 テスト / 型チェック / lint / dist 検品が CI で通る
+- [x] 442 テスト / 型チェック / lint / dist 検品が CI で通る
 - [x] 公開形態の整備（LICENSE / CHANGELOG / `publishConfig.access` / dual-package の型条件）
 
 **受け入れ条件（すべて満たした）**
@@ -42,9 +42,9 @@
 数値はこの木で `npm run verify` / `npm run check:dist` が出す実測値であり、
 `npm run check:trace` が文書との食い違いを落とす。v0.2.0 で先行着手したシート分を含む。
 
-- `npm run verify` が緑（typecheck → lint → 429 tests → trace → docs → build → dist → SSR → pack）
+- `npm run verify` が緑（typecheck → lint → 442 tests → trace → docs → build → dist → SSR → pack）
 - `dist/index.js` が gzip 22 KB 未満、`styles.css` が gzip 6 KB 未満
-  … 実測 21,525 B / 5,022 B（2026-10-16 再計測。v0.2.0 のシート分・入れ子の修正・data-* の受け渡し・ゲートの登録まわり・props の契約の修正・日本語の文節折り返しを含む）
+  … 実測 21,840 B / 5,035 B（2026-10-16 再計測。v0.2.0 のシート分・入れ子の修正・data-* の受け渡し・ゲートの登録まわり・props の契約の修正・日本語・中国語・韓国語の折り返しを含む）
 - `"use client"` が両フォーマットの先頭にある
 - 公開 API 35 個が dist に存在する
 - `modal.skill.md` の 141 項目が 1 件残らず `docs/traceability.md` に現れ、
@@ -88,8 +88,10 @@ npm には `@genelab/gassan@0.1.0` として公開済み（latest）。
 - [x] `Modal.Handle`（シートのつまみ。スワイプ領域を明示する。段があれば `role="slider"`、無ければ飾り）
 - [x] シートのディテント（peek / half / full）とスワイプでのスナップ（M-03。判定は `src/internal/detent.ts` の純粋関数）
 - [x] パネルの高さ変化のアニメーション（`interpolate-size: allow-keywords`。フロー型で本文が差し替わるとき。C-08）
-- [x] 日本語の文節折り返し（W-01〜W-06。部品の中は既定で効き、外の UI には `Phrase`。`GassanProvider` の `lineBreak` で切り替え）。
-      狭い画面のボタン・タイトル・表・グラフの要約で起きていた「プロフィールを編｜集」を、実機の幅を待たずに直せたので先に入れた
+- [x] 日本語・中国語・韓国語の折り返し（W-01〜W-06。部品の中は既定で効き、外の UI には `Phrase`。`GassanProvider` の `lineBreak` で切り替え）。
+      狭い画面のボタン・タイトル・表・グラフの要約で起きていた「プロフィールを編｜集」を、実機の幅を待たずに直せたので先に入れた。
+      中国語は語の切れ目、韓国語は空白でだけ折る。タイ語などブラウザが辞書で折る言語には手を出さない（Chrome で実測）
+- [ ] 折り返しの Safari / Firefox での確認（`Intl.Segmenter` の語の切れ目が Node・Chrome と同じか。違うと SSR の hydration がずれる）
 - [ ] ネストしたモーダルの実機確認（スクリムの二重掛け、フォーカス復帰の連鎖）
 - [ ] `closeOnBack` の実挙動と、Next.js App Router での相互作用
 

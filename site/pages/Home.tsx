@@ -8,141 +8,137 @@ import KindConsent from '../demos/KindConsent';
 import KindFlow from '../demos/KindFlow';
 import KindForm from '../demos/KindForm';
 import KindView from '../demos/KindView';
+import { useT } from '../i18n';
 import { to } from '../router';
 import { PRESETS } from '../theme/engine';
 import { BreakCompare, ButtonSamples, type SampleButton } from '../ui/BreakCompare';
 import { CodeBlock } from '../ui/Code';
 import { MockPanel, MockScreen } from '../ui/Guidelines';
 import { LayerStack } from '../ui/LayerStack';
+import { md } from '../ui/Markdown';
 import { Section, Stats } from '../ui/Page';
-import { STATUS_ORDER, StatusBadge } from '../ui/Spec';
+import { STATUS_ORDER, StatusBadge, useStatusLabel } from '../ui/Spec';
 
-const PROMISES: readonly {
-  title: string;
-  body: ReactNode;
-  href: string;
-  visual: ReactNode;
-}[] = [
-  {
-    title: '活性化ゲート',
-    body: '「最後まで読んだら」「チェックしたら」押せるボタンを、disabled を使わずに作る。押せば、何が足りないかを読み上げてそこへ連れて行く。',
-    href: '/components/gate',
-    visual: (
-      <MockPanel title="利用規約の更新" lines={2} buttons={[{ label: '同意して続ける', variant: 'gated' }]}>
-        <span className="s-mock-note">本文を最後まで読んでください</span>
-      </MockPanel>
-    ),
-  },
-  {
-    title: 'タイトルの省略',
-    body: 'DOM の文字列を切らず、CSS の line-clamp だけで省略する。読み上げられる名前は常に完全。溢れたときだけ「全文を表示」が出る。',
-    href: '/components/title',
-    visual: (
-      <MockPanel
-        title={
-          <>
-            <span className="s-mock-clamp">2026年度 第3四半期 東北エリア 店舗別売上レポートの共有設定を変更する</span>
-            <span className="s-mock-toggle">全文を表示</span>
-          </>
-        }
-        lines={2}
-      />
-    ),
-  },
-  {
-    title: '閉じる理由',
-    body: 'Esc・背景・×・送信・スワイプ・戻る・ページ遷移・外部からの close()。8 種を区別し、拒否するときも無言にしない。',
-    href: '/components/root',
-    visual: (
-      <span className="s-mock-reasons">
-        {['esc', 'backdrop', 'close-button', 'back-button', 'submit', 'programmatic', 'swipe', 'route-change'].map(
-          (reason) => (
-            <code key={reason}>{reason}</code>
-          ),
-        )}
-      </span>
-    ),
-  },
-  {
-    title: 'スクリムのトークン',
-    body: '黒 60% の決め打ちをやめ、意図別の 4 段階にする。既定は 32%・blur なし。モーダル唯一の強みである「文脈」を消さない。',
-    href: '/styles/scrim',
-    visual: (
-      <span className="s-mock-scrims">
-        {[0.2, 0.32, 0.5, 0.72].map((a) => (
-          <span key={a} className="s-mock-scrim-swatch" style={{ background: `rgb(0 0 0 / ${String(a)})` }}>
-            {Math.round(a * 100)}%
-          </span>
-        ))}
-      </span>
-    ),
-  },
+/**
+ * 言語の見本。サイトの言語に関わらず、この 3 つを並べる（訳さない。見本そのものが言語の例）。
+ * 幅 9.5em では、ブラウザ任せだと 3 つとも語の途中で割れる。
+ */
+const LANGUAGE_BUTTONS: readonly SampleButton[] = [
+  { label: '利用規約に同意して続ける', variant: 'primary', lang: 'ja' },
+  { label: '取消订阅邮件通知', variant: 'secondary', lang: 'zh-Hans' },
+  { label: '변경 사항을 저장하고 닫기', variant: 'secondary', lang: 'ko' },
 ];
 
-const JAPANESE_BUTTONS: readonly SampleButton[] = [
-  { label: 'プロフィールを編集', variant: 'primary' },
-  { label: '利用規約に同意して続ける', variant: 'secondary' },
+const KIND_DEMOS: readonly { kind: ModalKind; Demo: () => ReactNode }[] = [
+  { kind: 'confirm', Demo: KindConfirm },
+  { kind: 'form', Demo: KindForm },
+  { kind: 'view', Demo: KindView },
+  { kind: 'consent', Demo: KindConsent },
+  { kind: 'flow', Demo: KindFlow },
 ];
-
-const DETAILS: readonly { title: string; body: string; href: string }[] = [
-  {
-    title: '日本語の折り返し',
-    body: 'ボタン・タイトル・表のセル・グラフの要約まで、文節の切れ目でだけ改行する。読み上げの名前とコピーされる文字列は変えない。',
-    href: '/styles/line-break',
-  },
-  {
-    title: 'テーマ',
-    body: `ライトとダーク、${String(PRESETS.length)} のプリセットと任意の色。どの色を選んでも、文字と塗りが WCAG の基準を満たすように色を導く。`,
-    href: '/styles/theme',
-  },
-  {
-    title: 'ボタンの種類と状態',
-    body: 'primary・secondary・tertiary と danger。押せる・処理中・ゲート中・使用不可を、色だけに頼らず形で見分けられる。',
-    href: '/components/button',
-  },
-];
-
-const KIND_DEMOS: readonly { kind: ModalKind; label: string; use: string; Demo: () => ReactNode }[] = [
-  { kind: 'confirm', label: '確認', use: '取り消せない操作の確認', Demo: KindConfirm },
-  { kind: 'form', label: '入力', use: '文脈を保ったままの副次入力', Demo: KindForm },
-  { kind: 'view', label: '閲覧', use: '詳細・メディアの拡大', Demo: KindView },
-  { kind: 'consent', label: '同意', use: '規約・権限の明示同意', Demo: KindConsent },
-  { kind: 'flow', label: 'フロー', use: '複数ステップの手続き', Demo: KindFlow },
-];
-
-const yesNo = (allowed: boolean): string => (allowed ? '閉じる' : '閉じない');
 
 export function Home(): ReactNode {
+  const { home: t } = useT();
+  const statusLabel = useStatusLabel();
   const { meta } = data;
   const byStatus = STATUS_ORDER.map((status) => ({
     status,
     count: allItems.filter((item) => item.status === status).length,
   })).filter((entry) => entry.count > 0);
   const proven = byStatus.find((entry) => entry.status === '実装')?.count ?? 0;
+  const yesNo = (allowed: boolean): string => (allowed ? t.kinds.closes : t.kinds.stays);
+
+  const promises: readonly { key: string; title: string; body: string; href: string; visual: ReactNode }[] = [
+    {
+      key: 'gate',
+      ...t.promises.gate,
+      href: '/components/gate',
+      visual: (
+        <MockPanel
+          title={t.promises.gate.mockTitle}
+          lines={2}
+          buttons={[{ label: t.promises.gate.mockButton, variant: 'gated' }]}
+        >
+          <span className="s-mock-note">{t.promises.gate.mockNote}</span>
+        </MockPanel>
+      ),
+    },
+    {
+      key: 'clamp',
+      ...t.promises.clamp,
+      href: '/components/title',
+      visual: (
+        <MockPanel
+          title={
+            <>
+              <span className="s-mock-clamp">{t.promises.clamp.mockTitle}</span>
+              <span className="s-mock-toggle">{t.promises.clamp.mockToggle}</span>
+            </>
+          }
+          lines={2}
+        />
+      ),
+    },
+    {
+      key: 'reasons',
+      ...t.promises.reasons,
+      href: '/components/root',
+      visual: (
+        <span className="s-mock-reasons">
+          {['esc', 'backdrop', 'close-button', 'back-button', 'submit', 'programmatic', 'swipe', 'route-change'].map(
+            (reason) => (
+              <code key={reason}>{reason}</code>
+            ),
+          )}
+        </span>
+      ),
+    },
+    {
+      key: 'scrim',
+      ...t.promises.scrim,
+      href: '/styles/scrim',
+      visual: (
+        <span className="s-mock-scrims">
+          {[0.2, 0.32, 0.5, 0.72].map((a) => (
+            <span key={a} className="s-mock-scrim-swatch" style={{ background: `rgb(0 0 0 / ${String(a)})` }}>
+              {Math.round(a * 100)}%
+            </span>
+          ))}
+        </span>
+      ),
+    },
+  ];
+
+  const details: readonly { title: string; body: string; href: string }[] = [
+    { ...t.languages.details.lineBreak, href: '/styles/line-break' },
+    { title: t.languages.details.theme.title, body: t.languages.details.theme.body(PRESETS.length), href: '/styles/theme' },
+    { ...t.languages.details.button, href: '/components/button' },
+  ];
 
   return (
     <div className="s-home">
       <section className="s-hero" aria-labelledby="page-title">
         <div className="s-hero-copy">
-          <p className="s-eyebrow">React のモーダルシェル</p>
+          <p className="s-eyebrow">{t.eyebrow}</p>
           <h1 id="page-title" tabIndex={-1}>
             <Phrase>
-              層 1 は、
-              <br />
-              ブラウザに任せる。
+              {t.heroTitle.map((line, i) => (
+                <span key={i}>
+                  {i > 0 ? <br /> : null}
+                  {line}
+                </span>
+              ))}
             </Phrase>
           </h1>
           <p className="s-lead">
-            <Phrase>
-              gassan はネイティブの <code>&lt;dialog&gt;</code> を土台にした React のモーダルシェル。フォーカストラップも Esc も背景の inert 化も、一行も実装していない。その代わり、既存のライブラリがほとんど手を付けてこなかった層——情報構造、活性化ゲート、閉じる理由——に全部を注ぐ。
-            </Phrase>
+            <Phrase>{md(t.lead)}</Phrase>
           </p>
           <div className="s-hero-actions">
             <a className="s-btn s-btn-lg" href={to('/start')}>
-              はじめる
+              {t.start}
             </a>
             <a className="s-btn s-btn-lg s-btn-tonal" href={to('/foundations/layers')}>
-              設計思想を読む
+              {t.philosophy}
             </a>
           </div>
         </div>
@@ -151,23 +147,19 @@ export function Home(): ReactNode {
 
       <Stats
         items={[
-          { value: meta.items, label: '列挙した振る舞い' },
-          { value: meta.tests, label: '自動テスト' },
-          { value: `${String(Math.round((proven / meta.items) * 100))}%`, label: 'テストで証明済みの振る舞い' },
-          { value: 0, label: '自前のフォーカストラップ' },
+          { value: meta.items, label: t.stats.items },
+          { value: meta.tests, label: t.stats.tests },
+          { value: `${String(Math.round((proven / meta.items) * 100))}%`, label: t.stats.proven },
+          { value: 0, label: t.stats.trap },
         ]}
       />
 
-      <Section
-        id="japanese"
-        title="日本語の画面のために"
-        intro="狭い画面で「プロフィールを編｜集」と割れるボタンを、もう出さない。右上の「テーマ」で色を変えても、文字は読めるまま。"
-      >
-        <BreakCompare width={8.5}>
-          <ButtonSamples buttons={JAPANESE_BUTTONS} />
+      <Section id="languages" title={t.languages.title} intro={t.languages.intro}>
+        <BreakCompare width={9.5} browserNote={t.languages.browserNote} phraseNote={t.languages.phraseNote}>
+          <ButtonSamples buttons={LANGUAGE_BUTTONS} />
         </BreakCompare>
         <ul className="s-cards s-cards-3 s-feature-cards">
-          {DETAILS.map((detail) => (
+          {details.map((detail) => (
             <li key={detail.href} className="s-card s-card-plain">
               <h3>
                 <a href={to(detail.href)} className="s-card-link">
@@ -182,14 +174,10 @@ export function Home(): ReactNode {
         </ul>
       </Section>
 
-      <Section
-        id="promises"
-        title="ほかのライブラリが解いていない 4 つ"
-        intro="層 1（top layer・フォーカス・Esc）はブラウザがもう解いている。gassan が時間を使うのは、その上の設計の仕事である。"
-      >
+      <Section id="promises" title={t.promises.title} intro={t.promises.intro}>
         <ul className="s-cards s-cards-2">
-          {PROMISES.map((promise) => (
-            <li key={promise.title} className="s-card">
+          {promises.map((promise) => (
+            <li key={promise.key} className="s-card">
               <div className="s-card-visual" aria-hidden="true">
                 <MockScreen scrim={0.12}>{promise.visual}</MockScreen>
               </div>
@@ -206,34 +194,30 @@ export function Home(): ReactNode {
         </ul>
       </Section>
 
-      <Section
-        id="kinds"
-        title="5 つの類型から選ぶ"
-        intro="kind を 1 つ決めると、スクリムの濃さ・Esc と背景クリックの可否・配置の既定が決まる。複数に当てはまるなら、それは分割すべき 2 つのモーダルである。ボタンを押すと本物が開く。"
-      >
+      <Section id="kinds" title={t.kinds.title} intro={t.kinds.intro}>
         <ul className="s-kinds">
-          {KIND_DEMOS.map(({ kind, label, use, Demo }) => {
+          {KIND_DEMOS.map(({ kind, Demo }) => {
             const defaults = KIND_DEFAULTS[kind];
             return (
               <li key={kind} className="s-kind">
                 <p className="s-kind-name">
                   <code>{kind}</code>
-                  <span>{label}</span>
+                  <span>{t.kinds.items[kind].label}</span>
                 </p>
                 <p className="s-kind-use">
-                  <Phrase>{use}</Phrase>
+                  <Phrase>{t.kinds.items[kind].use}</Phrase>
                 </p>
                 <dl className="s-kind-defaults">
                   <div>
-                    <dt>スクリム</dt>
+                    <dt>{t.kinds.scrim}</dt>
                     <dd>{defaults.scrim}</dd>
                   </div>
                   <div>
-                    <dt>Esc</dt>
+                    <dt>{t.kinds.esc}</dt>
                     <dd>{yesNo(defaults.dismiss.esc)}</dd>
                   </div>
                   <div>
-                    <dt>背景</dt>
+                    <dt>{t.kinds.backdrop}</dt>
                     <dd>{yesNo(defaults.dismiss.backdrop)}</dd>
                   </div>
                 </dl>
@@ -245,16 +229,16 @@ export function Home(): ReactNode {
           })}
         </ul>
         <p className="s-more">
-          <a href={to('/foundations/kinds')}>類型の決め方と意思決定マトリクス →</a>
+          <a href={to('/foundations/kinds')}>{t.kinds.more}</a>
         </p>
       </Section>
 
-      <Section
-        id="verified"
-        title="主張ではなく、検査結果として"
-        intro={`仕様書の ${String(meta.items)} 項目は、1 件残らずテスト名・CSS・ロードマップのどれかに結び付いている。存在しないテスト名を根拠に書くと CI が落ちる。`}
-      >
-        <div className="s-status-bar" role="img" aria-label={byStatus.map((e) => `${e.status} ${String(e.count)} 項目`).join('、')}>
+      <Section id="verified" title={t.verified.title} intro={t.verified.intro(meta.items)}>
+        <div
+          className="s-status-bar"
+          role="img"
+          aria-label={t.verified.bar(byStatus.map((e) => `${statusLabel(e.status)} ${t.verified.count(e.count)}`))}
+        >
           {byStatus.map((entry) => (
             <span
               key={entry.status}
@@ -267,24 +251,24 @@ export function Home(): ReactNode {
         <ul className="s-status-legend">
           {byStatus.map((entry) => (
             <li key={entry.status}>
-              <StatusBadge status={entry.status} /> {entry.count} 項目
+              <StatusBadge status={entry.status} /> {t.verified.count(entry.count)}
             </li>
           ))}
         </ul>
         <div className="s-home-links">
           <a className="s-btn s-btn-tonal" href={to('/spec')}>
-            {meta.items} 項目の振る舞い仕様を見る
+            {t.verified.spec(meta.items)}
           </a>
           <a className="s-btn s-btn-text" href={to('/verification')}>
-            何を検証し、何を検証していないか →
+            {t.verified.verification}
           </a>
         </div>
       </Section>
 
-      <Section id="install" title="入れる">
-        <CodeBlock code={`npm install @genelab/gassan`} lang="bash" caption="インストール" />
+      <Section id="install" title={t.install.title}>
+        <CodeBlock code={`npm install @genelab/gassan`} lang="bash" caption={t.install.caption} />
         <p className="s-more">
-          <a href={to('/start')}>最小の例とブラウザ要件 →</a>
+          <a href={to('/start')}>{t.install.more}</a>
         </p>
       </Section>
     </div>

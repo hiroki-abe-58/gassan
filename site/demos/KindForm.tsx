@@ -1,15 +1,16 @@
 import { useState, type ReactNode } from 'react';
 
 import { Modal, useModals, type CloseReason } from '@genelab/gassan';
-
-const GENRES = [
-  { value: 'jazz', label: 'ジャズ' },
-  { value: 'ambient', label: 'アンビエント' },
-  { value: 'classic', label: 'クラシック' },
-  { value: 'techno', label: 'テクノ' },
-];
+import { useDemoText } from '../i18n';
 
 export default function KindForm(): ReactNode {
+  const t = useDemoText('kindForm');
+  const GENRES = [
+    { value: 'jazz', label: t.jazz },
+    { value: 'ambient', label: t.ambient },
+    { value: 'classic', label: t.classic },
+    { value: 'techno', label: t.techno },
+  ];
   const modals = useModals();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
@@ -18,23 +19,23 @@ export default function KindForm(): ReactNode {
   const [submitted, setSubmitted] = useState(false);
 
   const dirty = name !== '' || genres.length > 0;
-  const nameError = submitted && name.trim() === '' ? '表示名を入力してください' : undefined;
+  const nameError = submitted && name.trim() === '' ? t.nameRequired : undefined;
 
-  // 書きかけなら引き止める。確認は命令的 API で、フォームの上にもう 1 枚重ねる。
+  // t:leaveGuard
   const guard = async (reason: CloseReason): Promise<boolean> => {
     if (!dirty || reason === 'submit') return true;
     return modals.confirm({
-      title: '入力中の内容を破棄しますか',
+      title: t.discardTitle,
       tone: 'danger',
-      confirmLabel: '破棄する',
-      cancelLabel: '編集に戻る',
+      confirmLabel: t.discard,
+      cancelLabel: t.backToEdit,
     });
   };
 
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        プロフィールを編集
+        {t.open}
       </button>
 
       <Modal.Root
@@ -51,24 +52,24 @@ export default function KindForm(): ReactNode {
       >
         <Modal.Header>
           <Modal.Controls end={<Modal.Close />} />
-          <Modal.Title>プロフィールを編集</Modal.Title>
+          <Modal.Title>{t.title}</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          <Modal.Field label="表示名" required error={nameError} help="全角20文字まで">
+          <Modal.Field label={t.name} required error={nameError} help={t.nameHelp}>
             {(control) => (
               <input {...control} type="text" value={name} onChange={(event) => setName(event.target.value)} />
             )}
           </Modal.Field>
-          <Modal.Chips label="好きなジャンル" options={GENRES} value={genres} onChange={setGenres} />
+          <Modal.Chips label={t.genres} options={GENRES} value={genres} onChange={setGenres} />
           <Modal.Switch checked={notify} onCheckedChange={setNotify}>
-            新着があれば知らせる
+            {t.notify}
           </Modal.Switch>
         </Modal.Body>
 
-        <Modal.Footer note="⌘ / Ctrl + Enter でも保存できます">
+        <Modal.Footer note={t.shortcut}>
           <Modal.Button variant="tertiary" closeOnClick="close-button">
-            キャンセル
+            {t.cancel}
           </Modal.Button>
           <Modal.Button
             variant="primary"
@@ -79,7 +80,7 @@ export default function KindForm(): ReactNode {
               setOpen(false);
             }}
           >
-            保存する
+            {t.save}
           </Modal.Button>
         </Modal.Footer>
       </Modal.Root>

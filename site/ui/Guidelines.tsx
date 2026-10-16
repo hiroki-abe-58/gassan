@@ -2,13 +2,13 @@ import type { CSSProperties, ReactNode } from 'react';
 
 import { Phrase } from '@genelab/gassan';
 
+import { useT } from '../i18n';
+
 /* -------------------------------------------------------------------------- */
 /* Do / Don't                                                                 */
 /* -------------------------------------------------------------------------- */
 
 export type GuidelineTone = 'do' | 'dont' | 'caution';
-
-const LABEL: Record<GuidelineTone, string> = { do: 'Do', dont: "Don't", caution: 'Caution' };
 
 export function Guidelines({ children }: { children: ReactNode }): ReactNode {
   return <div className="s-guidelines">{children}</div>;
@@ -27,6 +27,7 @@ export function Guideline({
   visual: ReactNode;
   children: ReactNode;
 }): ReactNode {
+  const t = useT();
   return (
     <figure className="s-guideline" data-tone={tone}>
       <div className="s-guideline-visual" aria-hidden="true">
@@ -37,7 +38,7 @@ export function Guideline({
           <span className="s-guideline-icon" aria-hidden="true">
             {tone === 'do' ? '✓' : tone === 'dont' ? '✕' : '!'}
           </span>
-          {LABEL[tone]}
+          {t.common.guideline[tone]}
         </p>
         <div className="s-guideline-text">
           <Phrase>{children}</Phrase>
@@ -63,12 +64,13 @@ export function MockScreen({
   align?: 'center' | 'top' | 'bottom';
   children?: ReactNode;
 }): ReactNode {
+  const t = useT();
   const style = { '--s-mock-scrim': scrim, '--s-mock-blur': `${String(blur)}px` } as CSSProperties;
   return (
     <div className="s-mock-screen" style={style} data-align={align}>
       <div className="s-mock-app">
         <span className="s-mock-appbar" />
-        <span className="s-mock-heading">今月の売上</span>
+        <span className="s-mock-heading">{t.common.mock.heading}</span>
         <span className="s-mock-grid">
           <i />
           <i />

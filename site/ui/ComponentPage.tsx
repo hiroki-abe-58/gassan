@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { useT } from '../i18n';
 import { PageHeader } from './Page';
 import { Tabs } from './Tabs';
 
@@ -16,17 +17,18 @@ export interface ComponentPageProps {
 
 /** 部品ページの共通の骨格。「概要 / API / アクセシビリティ」の 3 タブ。 */
 export function ComponentPage({ path, rest, title, lead, ids, overview, api, a11y }: ComponentPageProps): ReactNode {
+  const t = useT().common.component;
   return (
     <>
-      <PageHeader eyebrow="コンポーネント" title={title} lead={lead} ids={ids} />
+      <PageHeader eyebrow={t.eyebrow} title={title} lead={lead} ids={ids} />
       <Tabs
-        label="このページの内容"
+        label={t.tabs}
         basePath={path}
         current={rest[0]}
         tabs={[
-          { id: 'overview', label: '概要', render: overview },
-          { id: 'api', label: 'API', render: api },
-          { id: 'a11y', label: 'アクセシビリティ', render: a11y },
+          { id: 'overview', label: t.overview, render: overview },
+          { id: 'api', label: t.api, render: api },
+          { id: 'a11y', label: t.a11y, render: a11y },
         ]}
       />
     </>

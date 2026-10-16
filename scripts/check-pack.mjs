@@ -58,6 +58,9 @@ if (files.length === 0) {
     // README.md の言語切り替えリンクの行き先。npm のパッケージページで 404 にしない。
     'README_ja.md',
     'README_zh.md',
+    'README_zh-Hant.md',
+    'README_ko.md',
+    'README_th.md',
     'LICENSE',
     'CHANGELOG.md',
     'ROADMAP.md',

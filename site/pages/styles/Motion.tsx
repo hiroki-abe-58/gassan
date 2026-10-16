@@ -1,8 +1,12 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import { bezier, durationMs, token } from '../../data/tokens';
+import { SPEC_LANG, useT } from '../../i18n';
 import { CodeBlock } from '../../ui/Code';
+import { md, Paras } from '../../ui/Markdown';
 import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
@@ -25,6 +29,7 @@ function Curve({ value }: { value: string }): ReactNode {
 
 /** 入場と退出を、トークンの時間とイージングで再生する。 */
 function Replay(): ReactNode {
+  const t = useT().motion.durations;
   const [shown, setShown] = useState(true);
   return (
     <div className="s-replay">
@@ -32,13 +37,14 @@ function Replay(): ReactNode {
         <span className="s-replay-panel" data-shown={shown ? '' : undefined} />
       </div>
       <button type="button" className="s-btn s-btn-tonal" onClick={() => setShown((v) => !v)} aria-pressed={!shown}>
-        {shown ? '閉じる（120ms）' : '開く（180ms）'}
+        {shown ? t.replayClose : t.replayOpen}
       </button>
     </div>
   );
 }
 
 export function Motion(): ReactNode {
+  const { nav, motion: t } = useT();
   const durIn = token('--g-dur-in').light;
   const durOut = token('--g-dur-out').light;
   const easeIn = token('--g-ease-in').light;
@@ -49,17 +55,17 @@ export function Motion(): ReactNode {
   return (
     <>
       <PageHeader
-        eyebrow="スタイル"
-        title="モーション"
-        lead="入場も退出も CSS だけで描く。JS のアニメーションライブラリは使わない。JS が担うのは「退出が見えるまで close() を待つ」ことだけ。"
+        eyebrow={nav.sections.styles}
+        title={nav.pages.motion}
+        lead={t.lead}
         ids={['L-04', 'L-05', 'L-07', 'S-03', 'S-05']}
       />
 
-      <Section id="durations" title="時間" intro="退出は入場より速く。人は「開く」を待てるが「閉じる」を待てない。">
+      <Section id="durations" title={t.durations.title} intro={t.durations.intro}>
         <ul className="s-durations">
           {[
-            { label: '入場', name: '--g-dur-in', value: durIn },
-            { label: '退出', name: '--g-dur-out', value: durOut },
+            { label: t.durations.in, name: '--g-dur-in', value: durIn },
+            { label: t.durations.out, name: '--g-dur-out', value: durOut },
           ].map((d) => (
             <li key={d.name}>
               <span className="s-duration-label">{d.label}</span>
@@ -74,15 +80,17 @@ export function Motion(): ReactNode {
         <Replay />
       </Section>
 
-      <Section id="easing" title="イージング">
+      <Section id="easing" title={t.easing.title}>
         <ul className="s-curves">
           {[
-            { label: '入場（減速して止まる）', name: '--g-ease-in', value: easeIn },
-            { label: '退出（加速して去る）', name: '--g-ease-out', value: easeOut },
+            { label: t.easing.in, name: '--g-ease-in', value: easeIn },
+            { label: t.easing.out, name: '--g-ease-out', value: easeOut },
           ].map((c) => (
             <li key={c.name}>
               <Curve value={c.value} />
-              <p>{c.label}</p>
+              <p>
+                <Phrase>{c.label}</Phrase>
+              </p>
               <code>{c.name}</code>
               <code className="s-curve-value">{c.value}</code>
             </li>
@@ -90,24 +98,16 @@ export function Motion(): ReactNode {
         </ul>
       </Section>
 
-      <Section id="exit" title="退出アニメと overlay">
+      <Section id="exit" title={t.exit.title}>
         <Prose>
-          <p>
-            退出を CSS で描く要は <code>transition-behavior: allow-discrete</code> と <code>overlay</code> の 2 つ。ただし <code>overlay</code> はまだ Baseline ではない。対応していないブラウザでは <code>close()</code> した瞬間に top layer から外れて消える。
-          </p>
-          <p>
-            そこで gassan は、閉じる要求を受けたら <code>close()</code> を呼ばずに <code>data-exiting</code> を付け、dialog を開いたまま退出状態へ遷移させる。
-            <code>--g-dur-out</code> だけ待ってから <code>close()</code> する。待ち時間は CSS のトークンから読むので、JS に同じ数値を二重に持たない（L-07）。
-          </p>
+          <Paras items={t.exit.body} />
         </Prose>
-        {core ? <CodeBlock code={core.text} lang="css" caption="modal.skill.md §7" /> : null}
+        {core ? <CodeBlock code={core.text} lang="css" caption="modal.skill.md §7" textLang={SPEC_LANG} /> : null}
       </Section>
 
-      <Section id="reduced" title="動きを減らす設定">
-        <Callout>
-          <code>prefers-reduced-motion: reduce</code> ではフェードを 1ms にする。0 にはしない。0 にすると discrete な遷移（<code>display</code> と <code>overlay</code>）が壊れる（S-05）。退出の待ち時間も 0 になるが、経路は同じコードを通す。
-        </Callout>
-        <SpecTable ids={['L-04', 'L-05', 'L-06', 'L-07', 'S-03', 'S-05']} caption="モーションの仕様" />
+      <Section id="reduced" title={t.reduced.title}>
+        <Callout>{md(t.reduced.callout)}</Callout>
+        <SpecTable ids={['L-04', 'L-05', 'L-06', 'L-07', 'S-03', 'S-05']} caption={t.reduced.tableCaption} />
       </Section>
     </>
   );

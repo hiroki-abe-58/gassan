@@ -1,21 +1,19 @@
 import { useState, type ReactNode } from 'react';
 
 import { Modal } from '@genelab/gassan';
+import { useDemoText } from '../i18n';
 
-const MONTHLY = [
-  { month: '1月', value: 62 },
-  { month: '2月', value: 88 },
-  { month: '3月', value: 120 },
-  { month: '4月', value: 104 },
-  { month: '5月', value: 101 },
-] as const;
+interface MonthlyRow {
+  month: string;
+  value: number;
+}
 
-/** 図は何で描いてもよい。gassan は描画しない。 */
-function Bars(): ReactNode {
-  const max = Math.max(...MONTHLY.map((row) => row.value));
+/** t:bars */
+function Bars({ rows }: { rows: readonly MonthlyRow[] }): ReactNode {
+  const max = Math.max(...rows.map((row) => row.value));
   return (
     <svg className="s-demo-bars" viewBox="0 0 250 140" preserveAspectRatio="xMidYMax meet">
-      {MONTHLY.map((row, i) => {
+      {rows.map((row, i) => {
         const height = Math.round((row.value / max) * 104);
         return (
           <g key={row.month}>
@@ -31,31 +29,40 @@ function Bars(): ReactNode {
 }
 
 export default function ChartReport(): ReactNode {
+  const t = useDemoText('chartReport');
   const [open, setOpen] = useState(false);
+
+  const MONTHLY: readonly MonthlyRow[] = [
+    { month: t.jan, value: 62 },
+    { month: t.feb, value: 88 },
+    { month: t.mar, value: 120 },
+    { month: t.apr, value: 104 },
+    { month: t.may, value: 101 },
+  ];
 
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        月次レポート
+        {t.open}
       </button>
 
       <Modal.Root kind="view" open={open} onOpenChange={setOpen}>
         <Modal.Header>
           <Modal.Controls end={<Modal.Close />} />
-          <Modal.Title>月次レポート（1〜5月）</Modal.Title>
+          <Modal.Title>{t.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* 名前（label）と傾向の要約（summary）は必須。図そのものは既定で aria-hidden（B-14） */}
+          {/* t:chart */}
           <Modal.Chart
-            label="月別の売上（万円）"
-            summary="3月が最大の120万円。4月以降は100万円前後で横ばい。"
+            label={t.label}
+            summary={t.summary}
             data={
-              <Modal.Table label="月別の売上の元データ">
+              <Modal.Table label={t.tableLabel}>
                 <table>
                   <thead>
                     <tr>
-                      <th scope="col">月</th>
-                      <th scope="col">売上（万円）</th>
+                      <th scope="col">{t.month}</th>
+                      <th scope="col">{t.sales}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -70,7 +77,7 @@ export default function ChartReport(): ReactNode {
               </Modal.Table>
             }
           >
-            <Bars />
+            <Bars rows={MONTHLY} />
           </Modal.Chart>
         </Modal.Body>
       </Modal.Root>
