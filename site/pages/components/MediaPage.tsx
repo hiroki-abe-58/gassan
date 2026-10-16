@@ -28,12 +28,10 @@ export function MediaPage({ rest }: PageProps): ReactNode {
           <Section id="media" title="メディアの既定">
             <Prose>
               <p>
-                <code>ratio="16 / 9"</code> を渡すと、読み込み前から場所を確保する。読み込み後に高さが変わると、モーダルが飛び跳ねるからだ（B-10）。
-                比率はキャプションを含む <code>figure</code> ではなく、中の <code>img</code> / <code>video</code> に掛ける（§10-7）。
+                <code>ratio="16 / 9"</code> を渡すと、読み込み前から場所を確保する。読み込み後に高さが変わると、モーダルが飛び跳ねるからだ（B-10）。比率はキャプションを含む <code>figure</code> ではなく、中の <code>img</code> / <code>video</code> に掛ける（§10-7）。
               </p>
               <p>
-                動画と音声は <code>autoplay</code> なし、<code>controls</code> あり、<code>preload="metadata"</code>。
-                モーダルが開いた瞬間に音が出る体験は、「今これに集中してほしい」という意図を裏切る（B-11）。
+                動画と音声は <code>autoplay</code> なし、<code>controls</code> あり、<code>preload="metadata"</code>。モーダルが開いた瞬間に音が出る体験は、「今これに集中してほしい」という意図を裏切る（B-11）。
               </p>
             </Prose>
             <Callout>

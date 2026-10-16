@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { SpecChips } from './Spec';
 
 export interface PageHeaderProps {
@@ -18,10 +20,15 @@ export function PageHeader({ eyebrow, title, lead, ids }: PageHeaderProps): Reac
   return (
     <header className="s-page-header">
       <p className="s-eyebrow">{eyebrow}</p>
+      {/* サイト自身の見出しにも gassan の文節折り返し（W-05）を使う */}
       <h1 id="page-title" tabIndex={-1}>
-        {title}
+        <Phrase>{title}</Phrase>
       </h1>
-      {lead ? <p className="s-lead">{lead}</p> : null}
+      {lead ? (
+        <p className="s-lead">
+          <Phrase>{lead}</Phrase>
+        </p>
+      ) : null}
       {ids && ids.length > 0 ? <SpecChips ids={ids} label="このページが扱う仕様" /> : null}
     </header>
   );
@@ -38,23 +45,33 @@ export interface SectionProps {
 export function Section({ title, children, intro, id }: SectionProps): ReactNode {
   return (
     <section className="s-section" aria-labelledby={id ? `${id}-title` : undefined}>
-      <h2 id={id ? `${id}-title` : undefined}>{title}</h2>
-      {intro ? <p className="s-section-intro">{intro}</p> : null}
+      <h2 id={id ? `${id}-title` : undefined}>
+        <Phrase>{title}</Phrase>
+      </h2>
+      {intro ? (
+        <p className="s-section-intro">
+          <Phrase>{intro}</Phrase>
+        </p>
+      ) : null}
       {children}
     </section>
   );
 }
 
-/** 本文の段落群。長文の行長と行間をそろえる。 */
+/** 本文の段落群。長文の行長と行間をそろえる。段落の中の日本語も文節で折る（W-05）。 */
 export function Prose({ children }: { children: ReactNode }): ReactNode {
-  return <div className="s-prose">{children}</div>;
+  return (
+    <div className="s-prose">
+      <Phrase>{children}</Phrase>
+    </div>
+  );
 }
 
 /** 強調したい 1 文を大きく置く。 */
 export function Callout({ children, tone = 'info' }: { children: ReactNode; tone?: 'info' | 'warn' }): ReactNode {
   return (
     <div className="s-callout" data-tone={tone}>
-      {children}
+      <Phrase>{children}</Phrase>
     </div>
   );
 }
@@ -65,7 +82,9 @@ export function Stats({ items }: { items: readonly { value: ReactNode; label: Re
     <dl className="s-stats">
       {items.map((item, i) => (
         <div key={i} className="s-stat">
-          <dt>{item.label}</dt>
+          <dt>
+            <Phrase>{item.label}</Phrase>
+          </dt>
           <dd>{item.value}</dd>
         </div>
       ))}

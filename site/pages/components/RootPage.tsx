@@ -74,13 +74,11 @@ export function RootPage({ rest }: PageProps): ReactNode {
             <Prose>
               <p>
                 モーダルは常に描いておき、<code>open</code> で開閉する。閉じる要求を受けると <code>data-exiting</code> を付けて退出を描き、
-                <code>--g-dur-out</code> 待ってから <code>close()</code> する。中身のリセット（<code>resetOnClose</code>）・フォーカスの復帰・
-                スクロールロックの解除・<code>onExited</code> は、すべて <code>close()</code> の後に行う。
+                <code>--g-dur-out</code> 待ってから <code>close()</code> する。中身のリセット（<code>resetOnClose</code>）・フォーカスの復帰・スクロールロックの解除・<code>onExited</code> は、すべて <code>close()</code> の後に行う。
               </p>
             </Prose>
             <Callout>
-              入れ子もできる（L-11）。内側の Esc や Cmd/Ctrl + Enter が外側まで届かないよう、イベントは「最も近い dialog が自分のときだけ」通している。
-              2 枚重ねてもスクリムは 1 枚ぶんの濃さのまま（L-12）。
+              入れ子もできる（L-11）。内側の Esc や Cmd/Ctrl + Enter が外側まで届かないよう、イベントは「最も近い dialog が自分のときだけ」通している。2 枚重ねてもスクリムは 1 枚ぶんの濃さのまま（L-12）。
             </Callout>
           </Section>
         </>
@@ -95,8 +93,7 @@ export function RootPage({ rest }: PageProps): ReactNode {
         <>
           <Prose>
             <p>
-              フォーカスの閉じ込め・背景の inert 化・Esc・フォーカスの復帰は <code>showModal()</code> が行う。
-              Root が自分で持つのは、名前の配線、ライブリージョン 1 つ、初期フォーカスの置き場所、閉じる経路の一本化である。
+              フォーカスの閉じ込め・背景の inert 化・Esc・フォーカスの復帰は <code>showModal()</code> が行う。Root が自分で持つのは、名前の配線、ライブリージョン 1 つ、初期フォーカスの置き場所、閉じる経路の一本化である。
             </p>
           </Prose>
           <SpecTable

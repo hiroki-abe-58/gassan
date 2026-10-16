@@ -67,8 +67,7 @@ export function HeaderPage({ rest }: PageProps): ReactNode {
           <Section id="indicator" title="現在地の読み上げ">
             <Prose>
               <p>
-                <code>Modal.Indicator</code> の「2 / 3」は見た目のためのもので、そのまま読むと「2 スラッシュ 3」になる。
-                視覚用は <code>aria-hidden</code> にして、読み上げ用に「3 ステップ中 2 ステップ目」を別に持つ。ステップが変わったら知らせる（H-06）。
+                <code>Modal.Indicator</code> の「2 / 3」は見た目のためのもので、そのまま読むと「2 スラッシュ 3」になる。視覚用は <code>aria-hidden</code> にして、読み上げ用に「3 ステップ中 2 ステップ目」を別に持つ。ステップが変わったら知らせる（H-06）。
               </p>
               <p>
                 アイコンだけのボタンには「戻る」「閉じる」の名前が付く（A-07）。文言は <code>GassanProvider</code> で差し替えられる。

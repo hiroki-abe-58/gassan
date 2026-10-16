@@ -33,13 +33,11 @@ export function FooterPage({ rest }: PageProps): ReactNode {
           <Section id="loading" title="処理中">
             <Prose>
               <p>
-                <code>onAction</code> が Promise を返すと、解決するまでボタンは処理中になる。そのあいだのクリックは握りつぶすので、
-                二重送信は原理的に起きない。外から <code>loading</code> を渡しても、内部の処理中とは<strong>論理和</strong>で合成する。
+                <code>onAction</code> が Promise を返すと、解決するまでボタンは処理中になる。そのあいだのクリックは握りつぶすので、二重送信は原理的に起きない。外から <code>loading</code> を渡しても、内部の処理中とは<strong>論理和</strong>で合成する。
                 <code>loading={'{false}'}</code> は「自分の都合では処理中ではない」であって、「onAction の最中でも押させてよい」ではないからだ（F-08）。
               </p>
               <p>
-                処理中のラベルは <code>opacity: 0</code> で隠してスピナーを重ねる。<code>visibility: hidden</code> にすると名前ごと消え、
-                「名前のないボタン」になる（F-07 / §10-4）。幅も変わらない。
+                処理中のラベルは <code>opacity: 0</code> で隠してスピナーを重ねる。<code>visibility: hidden</code> にすると名前ごと消え、「名前のないボタン」になる（F-07 / §10-4）。幅も変わらない。
               </p>
             </Prose>
             <Callout>

@@ -107,8 +107,7 @@ export function Layout(): ReactNode {
       <Section id="touch" title="触れる大きさ">
         <Prose>
           <p>
-            ボタンとアイコンボタンの的は <code>{token('--g-tap').light}</code>。WCAG 2.5.8 の最低は 24px だが、Apple HIG の 44px を採る。
-            「戻る」と「×」のあいだは 8px 以上空ける。この 2 つの押し間違いが、いちばん高くつく事故だからである（H-03 / H-04）。
+            ボタンとアイコンボタンの的は <code>{token('--g-tap').light}</code>。WCAG 2.5.8 の最低は 24px だが、Apple HIG の 44px を採る。「戻る」と「×」のあいだは 8px 以上空ける。この 2 つの押し間違いが、いちばん高くつく事故だからである（H-03 / H-04）。
           </p>
         </Prose>
         <Callout>

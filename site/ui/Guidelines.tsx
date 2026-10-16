@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 /* -------------------------------------------------------------------------- */
 /* Do / Don't                                                                 */
 /* -------------------------------------------------------------------------- */
@@ -37,7 +39,9 @@ export function Guideline({
           </span>
           {LABEL[tone]}
         </p>
-        <div className="s-guideline-text">{children}</div>
+        <div className="s-guideline-text">
+          <Phrase>{children}</Phrase>
+        </div>
       </figcaption>
     </figure>
   );

@@ -12,30 +12,9 @@
  * tokens
  * -------------------------------------------------------------------------*/
 :root {
-  --s-bg: #fbfbf8;
-  --s-surface: #ffffff;
-  --s-surface-1: #f4f4ef;
-  --s-surface-2: #ecece5;
-  --s-surface-3: #e2e2d9;
-  --s-ink: #17181c;
-  --s-ink-2: #454a54;
-  --s-ink-3: #636975;
-  --s-line: #e2e2da;
-  --s-line-strong: #c8c8bf;
-  --s-accent: #3346d3;
-  --s-on-accent: #ffffff;
-  --s-accent-soft: #e5e8ff;
-  --s-on-accent-soft: #1c288a;
-  --s-do: #12764a;
-  --s-do-soft: #dff3e7;
-  --s-dont: #b42318;
-  --s-dont-soft: #fde6e2;
-  --s-caution: #855800;
-  --s-caution-soft: #fbf0d4;
-  --s-code-bg: #15171c;
-  --s-code-ink: #e6e8ee;
-  --s-shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 10px 30px -14px rgb(0 0 0 / 0.22);
-
+  /* 色の値はここに書かない。site/theme/engine.ts（無彩色の面）と、選ばれたプライマリカラーから
+   * 導いたアクセントを、site/theme/store.ts が documentElement に書く。値の出どころを 1 つにして、
+   * 表示とコントラストの検証（tests/theme.test.ts）を同じ計算に揃えるため。 */
   --s-radius-xl: 28px;
   --s-radius-lg: 20px;
   --s-radius: 14px;
@@ -48,35 +27,6 @@
   --s-topbar: 64px;
   --s-nav: 268px;
   --s-gutter: clamp(16px, 4vw, 48px);
-
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --s-bg: #0f1013;
-    --s-surface: #16181d;
-    --s-surface-1: #1b1d23;
-    --s-surface-2: #22252c;
-    --s-surface-3: #2c3038;
-    --s-ink: #eceef2;
-    --s-ink-2: #c1c6d0;
-    --s-ink-3: #9aa1af;
-    --s-line: #2a2d35;
-    --s-line-strong: #3b3f4a;
-    --s-accent: #a9b6ff;
-    --s-on-accent: #10173f;
-    --s-accent-soft: #262d59;
-    --s-on-accent-soft: #d9deff;
-    --s-do: #74d6a3;
-    --s-do-soft: #11301f;
-    --s-dont: #ff9d92;
-    --s-dont-soft: #3b1714;
-    --s-caution: #f0c463;
-    --s-caution-soft: #33290f;
-    --s-code-bg: #0b0c0f;
-    --s-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 30px -12px rgb(0 0 0 / 0.6);
-  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -1462,14 +1412,8 @@
   font-size: clamp(2.25rem, 1.2rem + 3.2vw, 3.5rem);
   line-height: 1.15;
 }
-/* 和文の見出しは文節で折り返す（「任せ / る。」のような泣き別れを防ぐ）。未対応のブラウザでは無視される */
-.s-page-header h1,
-.s-hero h1,
-.s-section > h2,
-.s-definition p,
-.s-lead {
-  word-break: auto-phrase;
-}
+/* 和文の見出しの折り返しは、CSS の word-break: auto-phrase ではなく gassan の Phrase で行う。
+ * auto-phrase は対応するブラウザが限られ、ブラウザごとに改行位置が変わる。Phrase はどこでも同じ。 */
 .s-hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -2508,6 +2452,554 @@
 @media (max-width: 640px) {
   .s-pipeline li {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * theme（トップバーの切り替えとテーマのページ）
+ * 選択中の印は、塗りの淡さではなくアクセントの輪郭・塗りで示す。
+ * アクセントはどの面に対しても 4.5:1 あるので、非テキストの 3:1（WCAG 1.4.11）を必ず満たす。
+ * -------------------------------------------------------------------------*/
+.s-theme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--s-line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--s-ink);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.s-theme-btn:hover {
+  background: var(--s-surface-2);
+}
+.s-theme-dot {
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: 50%;
+  background: var(--s-theme-dot);
+  box-shadow: inset 0 0 0 1px rgb(127 127 127 / 0.4);
+}
+/* popover は top layer に出る。UA の既定（中央寄せ・枠）を消して、ボタンの下に置く */
+.s-theme-panel {
+  position: fixed;
+  inset: auto;
+  inset-block-start: calc(var(--s-topbar) + 8px);
+  inset-inline-end: 12px;
+  margin: 0;
+  inline-size: min(400px, calc(100vw - 24px));
+  max-block-size: calc(100dvh - var(--s-topbar) - 24px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 12px 20px 20px;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius-lg);
+  background: var(--s-surface);
+  color: var(--s-ink);
+  box-shadow: var(--s-shadow);
+}
+.s-theme-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-block-end: 4px;
+}
+.s-theme-head h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+.s-theme-controls {
+  display: grid;
+  gap: 18px;
+}
+.s-theme-group {
+  display: grid;
+  gap: 8px;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.s-theme-group legend {
+  margin-block-end: 8px;
+  padding: 0;
+  color: var(--s-ink-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.s-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--s-surface-2);
+}
+.s-segmented label,
+.s-swatch-option {
+  position: relative;
+  cursor: pointer;
+}
+/* ラジオは見えなくしても、ラベル全体を覆って押せる範囲と読み上げを残す */
+.s-segmented input,
+.s-swatch-option input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+/* 子結合子にしておく。ラベルの中には Phrase の span.g-phrase が入るので、子孫セレクタだと
+ * 内側の span にも色が当たり、選択中（白い文字）の上で文字だけ濃い色に戻ってしまう */
+.s-segmented label > span {
+  display: grid;
+  place-items: center;
+  min-block-size: 36px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--s-ink-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+}
+.s-segmented label:hover > input:not(:checked) + span {
+  color: var(--s-ink);
+}
+.s-segmented input:checked + span {
+  background: var(--s-accent);
+  color: var(--s-on-accent);
+}
+.s-segmented input:focus-visible + span {
+  outline: 2px solid var(--s-accent);
+  outline-offset: 2px;
+}
+.s-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 4px;
+}
+.s-swatch-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 40px;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--s-radius-sm);
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+.s-swatch-option:hover {
+  background: var(--s-surface-2);
+}
+.s-swatch-option:has(input:checked) {
+  border-color: var(--s-accent);
+  background: var(--s-accent-soft);
+  color: var(--s-on-accent-soft);
+  font-weight: 700;
+}
+.s-swatch-option:has(input:focus-visible) {
+  outline: 2px solid var(--s-accent);
+  outline-offset: 2px;
+}
+.s-swatch-dot {
+  flex: none;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(127 127 127 / 0.4);
+}
+.s-custom-color {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-block-start: 4px;
+  color: var(--s-ink-2);
+  font-size: 0.875rem;
+}
+.s-custom-color input {
+  inline-size: 48px;
+  block-size: 32px;
+  padding: 0;
+  border: 1px solid var(--s-line-strong);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+.s-theme-summary {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--s-radius-sm);
+  background: var(--s-dont-soft);
+  color: var(--s-ink);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+.s-theme-summary[data-pass] {
+  background: var(--s-do-soft);
+}
+.s-theme-more {
+  margin: 14px 0 0;
+  font-size: 0.875rem;
+}
+.s-theme-inline {
+  max-inline-size: 600px;
+  padding: 20px;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius-lg);
+  background: var(--s-surface);
+}
+.s-tones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  margin-block: 16px;
+}
+.s-tone {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.s-tone-chip {
+  display: block;
+  block-size: 64px;
+  border-radius: var(--s-radius);
+  box-shadow: inset 0 0 0 1px rgb(127 127 127 / 0.35);
+}
+.s-tone figcaption {
+  display: grid;
+  color: var(--s-ink-2);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.s-tone code {
+  color: var(--s-ink);
+}
+.s-preset-table td {
+  min-inline-size: 13em;
+}
+.s-preset-current {
+  display: block;
+  inline-size: fit-content;
+  margin-block-start: 4px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--s-accent);
+  color: var(--s-on-accent);
+  font-size: 0.75rem;
+}
+.s-preset-result {
+  display: block;
+  margin-block-start: 4px;
+  white-space: normal;
+}
+
+@media (max-width: 520px) {
+  /* トップバーに収めるため、仕様へのリンクはメニューに任せる */
+  .s-topbar-spec {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 日本語の折り返し
+ * -------------------------------------------------------------------------*/
+.s-field > input[type="range"] {
+  min-block-size: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  accent-color: var(--s-accent);
+}
+.s-field > textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--s-line-strong);
+  border-radius: var(--s-radius-sm);
+  background: var(--s-surface);
+  color: var(--s-ink);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  resize: vertical;
+}
+.s-width-control {
+  max-inline-size: 360px;
+  margin-block-end: 16px;
+}
+.s-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.s-compare-col {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius-lg);
+  background: var(--s-surface);
+}
+.s-compare-col > figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-block-end: 12px;
+  color: var(--s-ink-2);
+  font-size: 0.875rem;
+}
+.s-compare-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.s-compare-badge[data-mode="browser"] {
+  background: var(--s-dont-soft);
+  color: var(--s-dont);
+}
+.s-compare-badge[data-mode="phrase"] {
+  background: var(--s-do-soft);
+  color: var(--s-do);
+}
+.s-samples {
+  display: grid;
+  gap: 14px;
+}
+.s-sample {
+  display: grid;
+  gap: 4px;
+  min-inline-size: 0;
+}
+.s-sample-label {
+  margin: 0;
+  color: var(--s-ink-3);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+/* 破線が「器」。幅は中身の幅そのものにする（padding を含めない） */
+.s-sample-box {
+  box-sizing: content-box;
+  inline-size: calc(var(--s-compare-width, 12em) * var(--s-sample-scale, 1));
+  max-inline-size: calc(100% - 22px);
+  margin: 0;
+  padding: 10px;
+  border: 1px dashed var(--s-line-strong);
+  border-radius: var(--s-radius-sm);
+  background: var(--g-surface);
+  color: var(--g-fg);
+}
+.s-sample-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+/* 見本は span なので、button の UA が持つ中央揃えを補う */
+.s-sample-buttons .g-btn {
+  max-inline-size: 100%;
+  text-align: center;
+}
+.s-sample-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.s-splitter {
+  display: grid;
+  gap: 12px;
+  max-inline-size: 720px;
+}
+.s-splitter-out {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.s-phrase-chip {
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--s-accent-soft);
+  color: var(--s-on-accent-soft);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.s-splitter-note {
+  margin: 0;
+  color: var(--s-ink-2);
+  font-size: 0.875rem;
+}
+
+.s-feature-cards {
+  margin-block-start: 16px;
+}
+
+@media (max-width: 640px) {
+  .s-compare {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * ボタンの種類と状態
+ * 見本の台は gassan のパネルと同じ面（--g-surface）。測る比もこの面に対するもの。
+ * -------------------------------------------------------------------------*/
+.s-variants,
+.s-states {
+  display: grid;
+  gap: 16px;
+}
+.s-variant,
+.s-state {
+  display: grid;
+  gap: 16px 24px;
+  padding: 20px;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius-lg);
+  background: var(--s-surface);
+}
+.s-variant {
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  align-items: start;
+}
+.s-variant-text h3 {
+  margin: 0 0 6px;
+  font-size: 1.125rem;
+}
+.s-variant-role {
+  margin: 0;
+  font-weight: 650;
+}
+.s-variant-look {
+  margin: 4px 0 8px;
+  color: var(--s-ink-2);
+  font-size: 0.9375rem;
+}
+.s-variant-text ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-inline-start: 1.2em;
+  font-size: 0.9375rem;
+}
+.s-btn-stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  padding: 20px 12px;
+  border-radius: var(--s-radius);
+  background: var(--g-surface);
+  color: var(--g-fg);
+  box-shadow: inset 0 0 0 1px var(--s-line);
+}
+.s-btn-stage[data-single] {
+  grid-template-columns: minmax(0, 1fr);
+}
+.s-btn-cell {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 8px;
+  min-inline-size: 0;
+  margin: 0;
+}
+/* リングと影が切れないだけの余白を取る */
+.s-btn-frame {
+  display: grid;
+  place-items: center;
+  min-block-size: 60px;
+  padding: 6px;
+}
+.s-btn-cell > figcaption {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  color: var(--g-fg-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-align: center;
+}
+.s-btn-cell-name {
+  color: var(--g-fg);
+  font-family: var(--s-mono);
+  font-weight: 700;
+}
+.s-btn-cell-ratio {
+  color: var(--g-danger);
+  font-weight: 700;
+}
+.s-btn-cell-ratio[data-pass] {
+  color: var(--g-fg);
+}
+.s-btn-cell-min {
+  color: var(--g-fg-muted);
+  font-weight: 400;
+}
+/* 見本の hover と focus。:hover と :focus-visible は静止画にできないので属性で付ける。
+ * 見た目は src/styles.css の .g-btn の :hover と :where(.g-dialog :focus-visible) に揃えること */
+.s-btn-stage .g-btn {
+  transition: none;
+}
+.s-btn-stage .g-btn[data-preview="hover"]:is([data-variant="secondary"], [data-variant="tertiary"]) {
+  background: var(--g-hover);
+}
+.s-btn-stage .g-btn[data-preview="hover"]:is([data-variant="primary"], [data-variant="danger"]) {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 4px 10px -2px rgb(0 0 0 / 0.3);
+}
+.s-btn-stage .g-btn[data-preview="focus"] {
+  outline: 2px solid var(--g-focus);
+  outline-offset: 2px;
+}
+.s-state-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+.s-state-head h3 {
+  margin: 0;
+  font-size: 1.0625rem;
+}
+.s-state-head code {
+  color: var(--s-ink-2);
+}
+.s-state-text {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.s-state-text > div {
+  display: grid;
+  grid-template-columns: 4em minmax(0, 1fr);
+  gap: 12px;
+}
+.s-state-text dt {
+  color: var(--s-ink-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.75rem;
+}
+.s-state-text dd {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .s-variant,
+  .s-state-text > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .s-state-text > div {
+    gap: 0;
   }
 }
 

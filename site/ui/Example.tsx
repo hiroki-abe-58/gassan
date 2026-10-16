@@ -1,5 +1,7 @@
 import { useId, useState, type ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { CodeBlock } from './Code';
 
 export interface ExampleProps {
@@ -24,8 +26,14 @@ export function Example({ title, description, code, children }: ExampleProps): R
       <div className="s-example-stage">{children}</div>
       <figcaption className="s-example-bar">
         <div className="s-example-text">
-          <span className="s-example-title">{title}</span>
-          {description ? <span className="s-example-desc">{description}</span> : null}
+          <span className="s-example-title">
+            <Phrase>{title}</Phrase>
+          </span>
+          {description ? (
+            <span className="s-example-desc">
+              <Phrase>{description}</Phrase>
+            </span>
+          ) : null}
         </div>
         <button
           type="button"

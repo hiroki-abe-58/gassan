@@ -1,5 +1,7 @@
 import { Fragment, type ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { repoFile } from '../data';
 import { to } from '../router';
 import { CodeBlock } from './Code';
@@ -90,7 +92,8 @@ export function joinLines(lines: readonly string[]): string {
 }
 
 export function InlineMd({ text }: { text: string }): ReactNode {
-  return <>{inline(joinLines(text.split('\n')))}</>;
+  // 仕様の文はセルや段落の中で折り返すので、日本語は文節で折る（W-05）
+  return <Phrase>{inline(joinLines(text.split('\n')))}</Phrase>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -138,15 +141,17 @@ export function MdTable({
           </tr>
         </thead>
         <tbody>
-          {table.rows.map((row, r) => (
-            <tr key={r}>
-              {row.map((cell, c) => (
-                <td key={c} style={align[c] ? { textAlign: align[c] } : undefined}>
-                  {inline(cell, `c${String(r)}-${String(c)}`)}
-                </td>
-              ))}
-            </tr>
-          ))}
+          <Phrase>
+            {table.rows.map((row, r) => (
+              <tr key={r}>
+                {row.map((cell, c) => (
+                  <td key={c} style={align[c] ? { textAlign: align[c] } : undefined}>
+                    {inline(cell, `c${String(r)}-${String(c)}`)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </Phrase>
         </tbody>
       </table>
     </div>
@@ -231,6 +236,8 @@ function blocks(md: string): Block[] {
 export function BlockMd({ text, tableCaption }: { text: string; tableCaption?: string }): ReactNode {
   return (
     <div className="s-prose">
+      {/* 段落・箇条書き・見出しの日本語を文節で折る。コードと表（MdTable）は Phrase が素通りする */}
+      <Phrase>
       {blocks(text).map((block, index) => {
         const key = `b${String(index)}`;
         switch (block.type) {
@@ -275,6 +282,7 @@ export function BlockMd({ text, tableCaption }: { text: string; tableCaption?: s
             return <Fragment key={key} />;
         }
       })}
+      </Phrase>
     </div>
   );
 }

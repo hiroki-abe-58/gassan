@@ -29,8 +29,7 @@ export function BodyPage({ rest }: PageProps): ReactNode {
           <Section id="focusable" title="フォーカスできるスクロール領域">
             <Prose>
               <p>
-                Firefox 以外のブラウザは、スクロールできる要素を自動ではフォーカス可能にしない。マウスを持たない利用者は、
-                本文にたどり着けないまま読むことができなくなる。gassan の本文は <code>tabIndex={'{0}'}</code> と
+                Firefox 以外のブラウザは、スクロールできる要素を自動ではフォーカス可能にしない。マウスを持たない利用者は、本文にたどり着けないまま読むことができなくなる。gassan の本文は <code>tabIndex={'{0}'}</code> と
                 <code>role="group"</code>、そしてアクセシブルネームを持つ。名前の無いフォーカス可能な要素は作らない（B-02 / B-03）。
               </p>
             </Prose>
@@ -65,9 +64,7 @@ export function BodyPage({ rest }: PageProps): ReactNode {
           <Section id="read-gate" title="読了ゲート">
             <Prose>
               <p>
-                <code>readGate="read"</code> を渡すと、本文を読み終えたかどうかが名前付きのゲートとして登録される。
-                判定は「末尾が見えた」「末尾にフォーカスが届いた」「そもそもスクロール不要」の論理和で、一度満たしたら取り消さない。
-                閉じているあいだは寸法が 0 になるので判定しない（§10-1）。使い方は <a href="#/components/gate">活性化ゲート</a> にある。
+                <code>readGate="read"</code> を渡すと、本文を読み終えたかどうかが名前付きのゲートとして登録される。判定は「末尾が見えた」「末尾にフォーカスが届いた」「そもそもスクロール不要」の論理和で、一度満たしたら取り消さない。閉じているあいだは寸法が 0 になるので判定しない（§10-1）。使い方は <a href="#/components/gate">活性化ゲート</a> にある。
               </p>
             </Prose>
           </Section>

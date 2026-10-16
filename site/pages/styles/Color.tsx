@@ -125,16 +125,14 @@ export function Color(): ReactNode {
         <ContrastTable scheme="light" />
         <ContrastTable scheme="dark" />
         <Callout>
-          ゲート中の primary（<code>--g-accent-muted</code>）は、かつて白文字で 3.16:1 しかなかった。コメントには「4.5:1 を維持する」と書いてあり、
-          追跡表でも「値は検査済み」と主張していたが、比そのものは誰も計算していなかった。このページで比を表示しようとして見つかった。
+          ゲート中の primary（<code>--g-accent-muted</code>）は、かつて白文字で 3.16:1 しかなかった。コメントには「4.5:1 を維持する」と書いてあり、追跡表でも「値は検査済み」と主張していたが、比そのものは誰も計算していなかった。このページで比を表示しようとして見つかった。
         </Callout>
       </Section>
 
       <Section id="gated" title="押せないボタンこそ、読めなければならない">
         <Prose>
           <p>
-            <code>disabled</code> の要素は WCAG のコントラスト要件から除外される。だが gassan のゲート中のボタンは <code>aria-disabled</code> で、
-            フォーカスでき、押せば理由を返す「使える」ボタンである。除外規定には頼れない。だから専用のトークンで 4.5:1 を保ち、
+            <code>disabled</code> の要素は WCAG のコントラスト要件から除外される。だが gassan のゲート中のボタンは <code>aria-disabled</code> で、フォーカスでき、押せば理由を返す「使える」ボタンである。除外規定には頼れない。だから専用のトークンで 4.5:1 を保ち、
             <code>opacity</code> で薄くして済ませることはしない（G-10）。
           </p>
           <p>

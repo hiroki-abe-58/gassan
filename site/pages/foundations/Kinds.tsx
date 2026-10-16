@@ -63,8 +63,7 @@ export function Kinds(): ReactNode {
       <Section id="scrim" title="スクリム">
         <Prose>
           <p>
-            既定は黒 32%・blur なし。60〜80% の黒は背後の文脈を殺し、モーダル唯一の優位性を自ら捨てる。
-            意図別の 4 段階と、blur を許す条件は <a href={to('/styles/scrim')}>スクリム</a> のページにまとめた。
+            既定は黒 32%・blur なし。60〜80% の黒は背後の文脈を殺し、モーダル唯一の優位性を自ら捨てる。意図別の 4 段階と、blur を許す条件は <a href={to('/styles/scrim')}>スクリム</a> のページにまとめた。
           </p>
         </Prose>
       </Section>
@@ -73,8 +72,7 @@ export function Kinds(): ReactNode {
         <Section id="placement" title="配置">
           <MdTable table={placement} caption="配置の条件" />
           <Callout>
-            <code>placement="auto"</code> は JS（matchMedia）で <code>center</code> か <code>sheet</code> に解決してから DOM に流す。
-            CSS のメディアクエリで分岐させると、配置ごとの <code>@starting-style</code> を二重に持つことになり、必ず片方が腐る。
+            <code>placement="auto"</code> は JS（matchMedia）で <code>center</code> か <code>sheet</code> に解決してから DOM に流す。CSS のメディアクエリで分岐させると、配置ごとの <code>@starting-style</code> を二重に持つことになり、必ず片方が腐る。
           </Callout>
         </Section>
       ) : null}

@@ -36,8 +36,7 @@ export function GetStarted(): ReactNode {
           caption="app.tsx"
         />
         <Callout>
-          Next.js App Router では、配布物の先頭に <code>"use client"</code> が入っている。そのまま import してよい。
-          ページ遷移で閉じたいときは <code>routeKey={'{usePathname()}'}</code> を渡す（L-13）。
+          Next.js App Router では、配布物の先頭に <code>"use client"</code> が入っている。そのまま import してよい。ページ遷移で閉じたいときは <code>routeKey={'{usePathname()}'}</code> を渡す（L-13）。
         </Callout>
       </Section>
 
@@ -71,8 +70,7 @@ export function GetStarted(): ReactNode {
         <Prose>
           <p>
             <code>kind</code> は <code>confirm</code> / <code>form</code> / <code>view</code> / <code>consent</code> /{' '}
-            <code>flow</code> の 5 つ。決めると、スクリム・Esc と背景クリックの可否・配置の既定が決まる。
-            複数に当てはまるなら、それは分割すべき 2 つのモーダルである。
+            <code>flow</code> の 5 つ。決めると、スクリム・Esc と背景クリックの可否・配置の既定が決まる。複数に当てはまるなら、それは分割すべき 2 つのモーダルである。
           </p>
         </Prose>
         <Guidelines>
@@ -105,8 +103,7 @@ export function GetStarted(): ReactNode {
       <Section id="imperative" title="確認だけなら await で書ける">
         <Prose>
           <p>
-            確認ダイアログを宣言的に書くと state が増える。<code>useModals().confirm()</code> は結果を Promise で返す。
-            アプリのルートに <code>&lt;ModalHost /&gt;</code> を 1 つだけ置く。
+            確認ダイアログを宣言的に書くと state が増える。<code>useModals().confirm()</code> は結果を Promise で返す。アプリのルートに <code>&lt;ModalHost /&gt;</code> を 1 つだけ置く。
           </p>
         </Prose>
         <CodeBlock

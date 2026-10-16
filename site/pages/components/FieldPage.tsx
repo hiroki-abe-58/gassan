@@ -62,16 +62,14 @@ export function FieldPage({ rest }: PageProps): ReactNode {
                 <a href={repoFile('docs/control-recipes.md')} target="_blank" rel="noreferrer">
                   docs/control-recipes.md
                 </a>{' '}
-                にある。モーダルの中のポップアップは、パネルの <code>transform</code> で <code>position: fixed</code> が壊れるので、
-                popover API か dialog 内へのポータルを使う（C-12）。
+                にある。モーダルの中のポップアップは、パネルの <code>transform</code> で <code>position: fixed</code> が壊れるので、popover API か dialog 内へのポータルを使う（C-12）。
               </p>
             </Prose>
           </Section>
 
           <Section id="errors" title="エラーの出し方">
             <Callout>
-              個々のエラーに <code>role="alert"</code> は付けない。入力のたびに読み上げが割り込むと、かえって入力できなくなる。
-              送信時のまとめだけを <code>Modal.Alert</code> に置き、フォーカスは最初のエラー項目へ移す（B-09）。
+              個々のエラーに <code>role="alert"</code> は付けない。入力のたびに読み上げが割り込むと、かえって入力できなくなる。送信時のまとめだけを <code>Modal.Alert</code> に置き、フォーカスは最初のエラー項目へ移す（B-09）。
             </Callout>
           </Section>
         </>

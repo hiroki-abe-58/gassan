@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
-import { Modal, ModalHost } from '@genelab/gassan';
+import { Modal, ModalHost, Phrase } from '@genelab/gassan';
 
 import { data } from './data';
 import { PAGES, SECTIONS, neighbours, resolve } from './routes';
 import { to, useSegments } from './router';
+import { ThemePicker } from './ui/ThemePicker';
 
 export function Logo(): ReactNode {
   // 4 枚の層。いちばん上（層4: Flow）だけが gassan の仕事、という構図。
@@ -40,7 +41,7 @@ function NavList({ current }: { current: string }): ReactNode {
                     href={to(page.path)}
                     aria-current={page.path === current ? 'page' : undefined}
                   >
-                    {page.nav ?? page.title}
+                    <Phrase>{page.nav ?? page.title}</Phrase>
                   </a>
                 </li>
               ))}
@@ -110,7 +111,8 @@ export function App(): ReactNode {
         </a>
         <span className="s-version">v{data.meta.version}</span>
         <span className="s-topbar-spacer" />
-        <a className="s-topbar-link" href={to('/spec')}>
+        <ThemePicker />
+        <a className="s-topbar-link s-topbar-spec" href={to('/spec')}>
           仕様
         </a>
         <a className="s-topbar-link" href={data.meta.repository} target="_blank" rel="noreferrer">
@@ -131,7 +133,9 @@ export function App(): ReactNode {
               {prev ? (
                 <a className="s-pager-link" href={to(prev.path)} data-dir="prev">
                   <span className="s-pager-dir">前へ</span>
-                  <span className="s-pager-title">{prev.title}</span>
+                  <span className="s-pager-title">
+                    <Phrase>{prev.title}</Phrase>
+                  </span>
                 </a>
               ) : (
                 <span />
@@ -139,7 +143,9 @@ export function App(): ReactNode {
               {next ? (
                 <a className="s-pager-link" href={to(next.path)} data-dir="next">
                   <span className="s-pager-dir">次へ</span>
-                  <span className="s-pager-title">{next.title}</span>
+                  <span className="s-pager-title">
+                    <Phrase>{next.title}</Phrase>
+                  </span>
                 </a>
               ) : null}
             </nav>
