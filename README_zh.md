@@ -1,6 +1,6 @@
 # gassan
 
-[English](./README.md) · [日本語](./README_ja.md) · **简体中文**
+[English](./README.md) · [日本語](./README_ja.md) · **简体中文** · [繁體中文](./README_zh-Hant.md) · [한국어](./README_ko.md) · [ไทย](./README_th.md)
 
 基于原生 `<dialog>` 的 React 模态框外壳（modal shell）。
 焦点陷阱、Esc、背景 inert 化、top layer **一行都没有自己实现**，全部交给浏览器。
@@ -11,12 +11,13 @@
 - **标题截断** — 不截断 DOM 文本也能省略显示，可访问名称（accessible name）始终完整
 - **关闭原因** — 区分 8 种 `CloseReason`，拒绝关闭时必定给出理由
 - **遮罩层（scrim）** — 不再写死 60% 的黑色，改为按意图划分的 4 级令牌
-- **日语换行** — 按钮、标题、表格单元格、图表摘要中的日语，只在文节边界处换行：是「プロフィールを｜編集」，而不是「プロフィールを編｜集」
+- **日语、中文、韩语的换行** — 无论按钮、标题、表格单元格还是图表摘要，文字都不会在词的中间换行。日语在文节边界处换行（是「プロフィールを｜編集」，而不是「プロフィールを編｜集」），中文在词的边界处换行，韩语只在空格处换行。泰语和英语交给浏览器处理，浏览器本来就能正确换行
 
-**文档站点：<https://hiroki-abe-58.github.io/gassan/>**
+**文档站点：<https://hiroki-abe-58.github.io/gassan/#/zh-Hans>**
 — 以类似 Material Design 3 指南的形式，阅读设计理念（模态框存在的理由、四层模型、五种类型、无障碍）、
-样式（遮罩层、颜色与对比度、主题、尺寸、日语换行、动效）、所有组件的可运行示例与 API，以及 141 项行为规范。
-站点支持切换浅色 / 深色显示和主色。无论选择哪种颜色，文字与填充色都会被推导为满足 WCAG 对比度要求的颜色。
+样式（遮罩层、颜色与对比度、主题、尺寸、换行、动效）、所有组件的可运行示例与 API，以及 141 项行为规范。
+站点提供简体中文、[English](https://hiroki-abe-58.github.io/gassan/#/en)、[日本語](https://hiroki-abe-58.github.io/gassan/)、[繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant)、[한국어](https://hiroki-abe-58.github.io/gassan/#/ko) 和 [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) 版本（用顶栏的地球图标切换）。
+站点还支持切换浅色 / 深色显示和主色。无论选择哪种颜色，文字与填充色都会被推导为满足 WCAG 对比度要求的颜色。
 站点上的表格、数量和 API 说明全部在构建时从规范文档和类型定义生成，没有任何手写的数字。
 
 完整设计见 [`modal.skill.md`](./modal.skill.md)（141 项行为表、决策矩阵、质量评分标准）。
@@ -29,7 +30,8 @@
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | 在模态框中放置 range / checkbox / radio / toggle / select / text / file / date / time / chips 的最小示例 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 原生 `<dialog>` / Base UI / React Aria / Radix 的比较（截至 2026-09-29，仅引用一手资料） |
 
-规范（`modal.skill.md`）、`docs/` 中的文件以及文档站点目前均为日语。
+规范（`modal.skill.md`）和 `docs/` 中的文件用日语撰写。
+文档站点的说明文字已翻译为全部六种语言；引自规范的段落（行为的名称与要点、实现说明、API 说明）以日语原文显示。
 
 ---
 
@@ -48,8 +50,10 @@ import '@genelab/gassan/styles.css';
 
 peer 依赖为 React 18.2 及以上（19 也可用）。产物已带有 `"use client"`，可在 Next.js App Router 中直接 import。
 
-内置文案（读屏播报、按钮标签）默认是日语。英文可使用随附的 `englishLabels`：`<GassanProvider labels={englishLabels}>`。
-其他语言可通过 `GassanProvider` 的 `labels` 传入自己的文案（支持只覆盖部分条目）。
+内置文案（读屏播报、按钮标签）默认是日语。
+英文请用 `<GassanProvider labels={englishLabels}>` 包裹应用，两者都从包中导出。
+其他语言请把自己的文案传给 `labels`（只覆盖部分条目也可以）。可以把文档站点的中文、韩语和泰语文案
+（[`site/i18n/<lang>/`](https://github.com/hiroki-abe-58/gassan/tree/main/site/i18n) 下的 `gassan.ts`）作为起点。
 
 ---
 
@@ -163,10 +167,22 @@ function Example() {
 
 ---
 
-## 日语换行
+## 换行（日语、中文、韩语）
 
 交给浏览器处理时，日语可以在任意两个字符之间换行，窄按钮就会显示成「プロフィールを編｜集」。
-gassan 只在文节边界处为日语换行（「プロフィールを｜編集」）。标题、说明、按钮、输入框标签、表格单元格、图表摘要等组件渲染文字的地方全部适用。
+中文（「编辑个人资｜料」）和韩语（「프로필 편｜집」）也同样会在词的中间断开。
+gassan 绝不在词的中间换行。标题、说明、按钮、输入框标签、表格单元格、图表摘要等组件渲染文字的地方全部适用。
+
+| 语言 | 交给浏览器 | gassan |
+|---|---|---|
+| 日语 | 在任意两个字符之间换行 | 只在文节边界处换行：「プロフィールを｜編集」 |
+| 中文（简体、繁体） | 在词的中间换行：「编辑个人资｜料」 | 只在词的边界处换行：「编辑个人｜资料」 |
+| 韩语 | 在词的中间换行：「프로필 편｜집」 | 只在空格处换行：「프로필｜편집」 |
+| 泰语、老挝语、高棉语、缅甸语 | 用词典查找词的边界（本来就正确） | 不做处理 |
+| 英语等以空格分词的语言 | 在空格处换行（本来就正确） | 不做处理 |
+
+这些规则是逐种语言在 Chrome 中把文字放进窄框、实测实际换行位置后确定的。
+泰语等语言是有意不做处理的：对它们施加 `word-break: keep-all` 会压制浏览器自身基于词典的断行，反而导致在词的中间换行。
 
 ```tsx
 // gassan 组件内部默认已启用。你自己的 UI 请使用 Phrase
@@ -180,9 +196,10 @@ const edit = (
 const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 ```
 
-- 边界由 `Intl.Segmenter` 加字符类别规则确定（不使用词典，也不增加依赖），并用 `<wbr aria-hidden="true">` 标记，文字设置 `word-break: keep-all`。比容器还长的文节仍会按字符换行，不会溢出。
+- 语言由字符串中的字符决定：含假名即为日语，含谚文即为韩语，两者都不含而含汉字即为中文。即使漏写 `lang` 属性，结果也不会改变。
+- 边界由 `Intl.Segmenter` 加字符类别规则确定（不增加依赖），并用 `<wbr aria-hidden="true">` 标记，文字设置 `word-break: keep-all`。比容器还长的文节仍会按字符换行，不会溢出。韩语不需要标记：仅靠 `keep-all` 就只会在空格处换行。
 - 不向文本添加任何字符，因此可访问名称、复制的文本和搜索都不受影响。在 Chrome 中，普通的 `<wbr>` 会给可访问名称混入空格，所以加上了 `aria-hidden`。
-- 服务端与客户端生成相同的标记。不含假名的字符串（英语、中文）保持不变。
+- 服务端与客户端生成相同的标记。
 
 ---
 
@@ -203,7 +220,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Handle` | 底部面板（sheet）的拖动把手。有档位（detent）时是 `role="slider"` 的控件，没有时只是装饰性的抓取区域 |
 | `ModalHost` `useModals` | 命令式 API（`await confirm()`） |
 | `GassanProvider` | 替换界面文案（默认日语，随附 `englishLabels`），并切换换行方式（`lineBreak`） |
-| `Phrase` `splitPhrases` | 让你自己的 UI 中的日语按文节换行（gassan 组件内部默认已启用） |
+| `Phrase` `splitPhrases` | 让你自己的 UI 中的日语、中文和韩语文字也采用同样的换行方式（gassan 组件内部默认已启用） |
 
 `Modal.Field` 是 render prop，里面可以是原生输入框，也可以是 Base UI 的组件。
 选项组（单选、多选）用 `fieldset` / `legend` 命名，而不是 `label`。

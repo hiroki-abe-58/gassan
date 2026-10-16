@@ -1,6 +1,6 @@
 # gassan
 
-**English** · [日本語](./README_ja.md) · [简体中文](./README_zh.md)
+**English** · [日本語](./README_ja.md) · [简体中文](./README_zh.md) · [繁體中文](./README_zh-Hant.md) · [한국어](./README_ko.md) · [ไทย](./README_th.md)
 
 A modal shell for React, built on the native `<dialog>`.
 Focus trapping, Esc, making the background inert and the top layer are **not implemented here at all, not a single line**. The browser does them.
@@ -11,12 +11,13 @@ Instead, gassan concentrates on the layer that existing libraries have barely to
 - **Title truncation** — truncate without cutting the DOM text, so the accessible name always stays complete
 - **Close reasons** — distinguish 8 kinds of `CloseReason`, and always return a reason when refusing to close
 - **Scrim** — drop the hard-coded 60% black and use four intent-based tokens instead
-- **Japanese line breaking** — Japanese text wraps only at phrase boundaries, in buttons, titles, table cells and chart summaries alike: 「プロフィールを｜編集」, never 「プロフィールを編｜集」
+- **Line breaking for Japanese, Chinese and Korean** — text never breaks in the middle of a word, in buttons, titles, table cells and chart summaries alike. Japanese breaks at phrase boundaries (「プロフィールを｜編集」, never 「プロフィールを編｜集」), Chinese at word boundaries, Korean only at spaces. Thai and English are left to the browser, which already breaks them correctly
 
-**Documentation site: <https://hiroki-abe-58.github.io/gassan/>**
-— design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, Japanese line breaking, motion),
+**Documentation site: <https://hiroki-abe-58.github.io/gassan/#/en>**
+— design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, line breaking, motion),
 live demos and the API of every component, and the specification of 141 behaviors, laid out like the Material Design 3 guidelines.
-The site has a light / dark theme and a choice of primary colors; whichever color you pick, its text and fills are derived to meet the WCAG contrast ratios.
+The site is available in English, [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) and [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) (switch with the globe button in the top bar).
+It has a light / dark theme and a choice of primary colors; whichever color you pick, its text and fills are derived to meet the WCAG contrast ratios.
 Every table, count and API description on the site is generated at build time from the specification and the type definitions; no number is written by hand.
 
 The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 141 behaviors, a decision matrix and a quality rubric).
@@ -29,7 +30,8 @@ Put that file in the context when coding with an AI assistant.
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | Minimal examples of putting range / checkbox / radio / toggle / select / text / file / date / time / chips inside a modal |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | Native `<dialog>` vs Base UI vs React Aria vs Radix (as of 2026-09-29, primary sources only) |
 
-The specification (`modal.skill.md`), the files in `docs/` and the documentation site are currently written in Japanese.
+The specification (`modal.skill.md`) and the files in `docs/` are written in Japanese.
+The documentation site translates its explanations into all six languages; passages quoted from the specification (behavior names and summaries, implementation notes, API descriptions) are shown in the original Japanese.
 
 ---
 
@@ -50,6 +52,8 @@ The peer dependency is React 18.2 or later (19 works too). The bundle already ca
 
 Built-in strings (screen reader announcements, button labels) default to Japanese.
 For English, wrap your app in `<GassanProvider labels={englishLabels}>`; both are exported from the package.
+For other languages, pass your own strings to `labels` (a partial object is fine). The documentation site's Chinese, Korean and Thai strings
+(`gassan.ts` under [`site/i18n/<lang>/`](https://github.com/hiroki-abe-58/gassan/tree/main/site/i18n)) can be used as a starting point.
 
 ---
 
@@ -163,10 +167,22 @@ The reason text can be replaced with `unresolvedReason` on `GassanProvider`.
 
 ---
 
-## Japanese line breaking
+## Line breaking (Japanese, Chinese, Korean)
 
 Left to the browser, Japanese wraps between any two characters, so a narrow button reads 「プロフィールを編｜集」.
-gassan breaks Japanese text only at phrase boundaries — 「プロフィールを｜編集」 — in titles, descriptions, buttons, field labels, table cells, chart summaries and every other place its components render text.
+Chinese (「编辑个人资｜料」) and Korean (「프로필 편｜집」) break in the middle of a word in the same way.
+gassan never breaks inside a word — in titles, descriptions, buttons, field labels, table cells, chart summaries and every other place its components render text.
+
+| Language | Left to the browser | gassan |
+|---|---|---|
+| Japanese | Breaks between any two characters | Breaks only at phrase boundaries: 「プロフィールを｜編集」 |
+| Chinese (Simplified, Traditional) | Breaks inside words: 「编辑个人资｜料」 | Breaks only at word boundaries: 「编辑个人｜资料」 |
+| Korean | Breaks inside words: 「프로필 편｜집」 | Breaks only at spaces: 「프로필｜편집」 |
+| Thai, Lao, Khmer, Burmese | Finds word boundaries with a dictionary (already correct) | Leaves them alone |
+| English and other space-separated languages | Breaks at spaces (already correct) | Leaves them alone |
+
+The rules were chosen by measuring where Chrome actually breaks lines in narrow boxes, language by language.
+Thai and its neighbours are deliberately left alone: applying `word-break: keep-all` to them suppresses the browser's own dictionary breaks and makes them break inside words instead.
 
 ```tsx
 // Inside gassan's components this is on by default. Use Phrase for your own UI
@@ -180,9 +196,10 @@ const edit = (
 const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 ```
 
-- Boundaries come from `Intl.Segmenter` plus character-class rules (no dictionary, no extra dependency), and are marked with `<wbr aria-hidden="true">`. The text gets `word-break: keep-all`, and a phrase longer than its box still wraps instead of overflowing.
+- The language is decided by the characters in the string: kana means Japanese, Hangul means Korean, Han characters without either mean Chinese. A missing `lang` attribute does not change the result.
+- Boundaries come from `Intl.Segmenter` plus character-class rules (no extra dependency), and are marked with `<wbr aria-hidden="true">`. The text gets `word-break: keep-all`, and a phrase longer than its box still wraps instead of overflowing. Korean needs no marks: `keep-all` alone makes it break only at spaces.
 - Nothing is added to the text, so the accessible name, copied text and search are unchanged. A plain `<wbr>` adds a space to the accessible name in Chrome; `aria-hidden` prevents that.
-- The same markup is produced on the server and the client. Strings without kana (English, Chinese) are left alone.
+- The same markup is produced on the server and the client.
 
 ---
 
@@ -203,7 +220,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Handle` | The grip of a sheet. With detents it is a `role="slider"` control; without them, a decorative grab area |
 | `ModalHost` `useModals` | Imperative API (`await confirm()`) |
 | `GassanProvider` | Replaces UI strings (Japanese by default; `englishLabels` is bundled) and switches line breaking (`lineBreak`) |
-| `Phrase` `splitPhrases` | Phrase-boundary line breaking for Japanese text in your own UI (inside gassan's components it is on by default) |
+| `Phrase` `splitPhrases` | The same line breaking for Japanese, Chinese and Korean text in your own UI (inside gassan's components it is on by default) |
 
 `Modal.Field` is a render prop, so the control inside can be a native input or a Base UI component.
 Groups of options (radios, multiple checkboxes) are named with `fieldset` / `legend`, not `label`.

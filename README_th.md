@@ -1,0 +1,358 @@
+# gassan
+
+[English](./README.md) · [日本語](./README_ja.md) · [简体中文](./README_zh.md) · [繁體中文](./README_zh-Hant.md) · [한국어](./README_ko.md) · **ไทย**
+
+Modal shell สำหรับ React ที่สร้างบน `<dialog>` แบบเนทีฟ
+focus trap, Esc, การทำให้พื้นหลังเป็น inert และ top layer **ไม่ได้เขียนเองที่นี่เลย แม้แต่บรรทัดเดียว** เบราว์เซอร์ทำให้ทั้งหมด
+
+gassan จึงทุ่มไปที่เลเยอร์ที่ไลบรารีที่มีอยู่แทบไม่เคยแตะแทน
+
+- **Activation gate** — ปุ่มที่กดได้ “เมื่ออ่านจนจบ” หรือ “เมื่อติ๊กช่องแล้ว” โดยไม่ใช้ `disabled`
+- **การย่อชื่อเรื่อง** — ย่อโดยไม่ตัดข้อความใน DOM ชื่อที่เข้าถึงได้ (accessible name) จึงครบเสมอ
+- **เหตุผลการปิด** — แยกแยะ `CloseReason` ได้ 8 แบบ และเมื่อปฏิเสธการปิดจะคืนเหตุผลกลับมาเสมอ
+- **Scrim** — เลิกใช้สีดำ 60% แบบตายตัว แล้วใช้โทเคน 4 ระดับที่แบ่งตามเจตนาแทน
+- **การตัดบรรทัดภาษาญี่ปุ่น จีน และเกาหลี** — ไม่ว่าจะเป็นปุ่ม ชื่อเรื่อง เซลล์ตาราง หรือข้อความสรุปของกราฟ ข้อความจะไม่ขาดกลางคำ ภาษาญี่ปุ่นตัดที่รอยต่อวลี (「プロフィールを｜編集」 ไม่ใช่ 「プロフィールを編｜集」) ภาษาจีนตัดที่รอยต่อคำ ภาษาเกาหลีตัดเฉพาะที่ช่องว่าง ส่วนภาษาไทยและภาษาอังกฤษปล่อยให้เบราว์เซอร์จัดการ เพราะเบราว์เซอร์ตัดได้ถูกต้องอยู่แล้ว
+
+**เว็บไซต์เอกสาร: <https://hiroki-abe-58.github.io/gassan/#/th>**
+— แนวคิดการออกแบบ (โมดอลมีไว้ทำไม, โมเดล 4 เลเยอร์, 5 ประเภท, การเข้าถึง), สไตล์ (scrim, สีและคอนทราสต์, ธีม, ขนาด, การตัดบรรทัด, โมชัน),
+เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์ และสเปกของพฤติกรรม 141 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
+เว็บไซต์มีให้อ่านเป็นภาษาไทย, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant) และ [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) (สลับภาษาได้ด้วยปุ่มรูปลูกโลกที่แถบด้านบน)
+มีธีมสว่าง / มืด และเลือกสีหลัก (primary color) ได้ ไม่ว่าจะเลือกสีไหน สีตัวอักษรและสีพื้นจะถูกคำนวณให้ผ่านอัตราส่วนคอนทราสต์ของ WCAG
+ตาราง จำนวน และคำอธิบาย API ทั้งหมดบนเว็บไซต์สร้างขึ้นตอน build จากสเปกและ type definition ไม่มีตัวเลขไหนที่เขียนด้วยมือ
+
+การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 141 รายการ, decision matrix และเกณฑ์คุณภาพ)
+เวลาเขียนโค้ดกับผู้ช่วย AI ให้ใส่ไฟล์นี้ไว้ใน context
+
+| เอกสาร | เนื้อหา |
+|---|---|
+| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 141 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
+| [`docs/requirements-audit.md`](./docs/requirements-audit.md) | แตกข้อกำหนดตั้งต้นออกเป็นบรรทัดละข้อ: implement แล้ว / ทำได้ด้วยการประกอบ (composition) / อยู่ในโรดแมป |
+| [`docs/control-recipes.md`](./docs/control-recipes.md) | ตัวอย่างขั้นต่ำของการใส่ range / checkbox / radio / toggle / select / text / file / date / time / chips ลงในโมดอล |
+| [`docs/library-landscape.md`](./docs/library-landscape.md) | `<dialog>` แบบเนทีฟ vs Base UI vs React Aria vs Radix (ณ วันที่ 2026-09-29 ใช้เฉพาะแหล่งข้อมูลปฐมภูมิ) |
+
+สเปก (`modal.skill.md`) และไฟล์ใน `docs/` เขียนเป็นภาษาญี่ปุ่น
+เว็บไซต์เอกสารแปลคำอธิบายไว้ครบทั้ง 6 ภาษา ส่วนข้อความที่ยกมาจากสเปก (ชื่อและสรุปของพฤติกรรม, บันทึกการ implement, คำอธิบาย API) จะแสดงเป็นภาษาญี่ปุ่นตามต้นฉบับ
+
+---
+
+## การติดตั้ง
+
+เผยแพร่บน npm ในชื่อ [`@genelab/gassan`](https://www.npmjs.com/package/@genelab/gassan)
+
+```bash
+npm install @genelab/gassan
+```
+
+```tsx
+import { Modal } from '@genelab/gassan';
+import '@genelab/gassan/styles.css';
+```
+
+peer dependency คือ React 18.2 ขึ้นไป (19 ก็ใช้ได้) bundle มี `"use client"` อยู่แล้ว จึง import จาก Next.js App Router ได้ทันที
+
+ข้อความในตัว (เสียงประกาศของโปรแกรมอ่านหน้าจอ, ป้ายปุ่ม) มีค่าเริ่มต้นเป็นภาษาญี่ปุ่น
+ถ้าต้องการภาษาอังกฤษ ให้ครอบแอปด้วย `<GassanProvider labels={englishLabels}>` ทั้งสองตัว export มาจากแพ็กเกจ
+สำหรับภาษาอื่น ให้ส่งข้อความของตัวเองให้ `labels` (ส่งแค่บางส่วนก็ได้) ข้อความภาษาจีน เกาหลี และไทยของเว็บไซต์เอกสาร
+(`gassan.ts` ใต้ [`site/i18n/<lang>/`](https://github.com/hiroki-abe-58/gassan/tree/main/site/i18n)) ใช้เป็นจุดตั้งต้นได้
+
+---
+
+## ตัวอย่างขั้นต่ำ
+
+```tsx
+function Example() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>เปิด</button>
+
+      <Modal.Root kind="form" open={open} onOpenChange={setOpen}>
+        <Modal.Header>
+          <Modal.Controls end={<Modal.Close />} />
+          <Modal.Title>แก้ไขโปรไฟล์</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <Modal.Field label="ชื่อที่แสดง" required>
+            {(control) => <input {...control} type="text" />}
+          </Modal.Field>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Modal.Button variant="tertiary" closeOnClick="close-button">ยกเลิก</Modal.Button>
+          <Modal.Button variant="primary" onAction={save}>บันทึก</Modal.Button>
+        </Modal.Footer>
+      </Modal.Root>
+    </>
+  );
+}
+```
+
+**mount โมดอลไว้ตลอดเวลา** อย่าเขียน `{open && <Modal.Root .../>}`
+ถ้า mount แบบมีเงื่อนไข แอนิเมชันตอนปิดจะวาดไม่ได้เลยโดยหลักการ
+
+---
+
+## 5 ประเภท
+
+เมื่อเลือก `kind` ค่าเริ่มต้นของ scrim การปิด (dismiss) และการจัดวางจะถูกกำหนดตามนั้น ถ้าโมดอลหนึ่งเข้าได้หลายประเภท แปลว่าจริง ๆ แล้วมันคือโมดอล 2 ตัวที่ควรแยกออกจากกัน
+
+| kind | การใช้งาน | Scrim | Esc | คลิกพื้นหลัง |
+|---|---|---|:-:|:-:|
+| `confirm` | ยืนยันการกระทำที่ย้อนกลับไม่ได้ | default | ○ | ○ |
+| `form` | กรอกข้อมูล | default | ○ | **×** |
+| `view` | ดู / ขยาย | default | ○ | ○ |
+| `consent` | ยินยอม / รับทราบสิ่งที่บังคับ | strong | **×** | **×** |
+| `flow` | หลายขั้นตอน | default | ○ | **×** |
+
+แม้จะตั้งให้ปิดไม่ได้ ความพยายามปิดก็จะไม่ถูกเพิกเฉยแบบเงียบ ๆ แผงจะสั่น และเหตุผลจะถูกอ่านออกเสียง
+
+---
+
+## Activation gate
+
+นี่คือส่วนที่ gassan ต่างจากไลบรารีอื่นมากที่สุด
+
+```tsx
+<Modal.Body readGate="read">
+  {/* ข้อกำหนดการใช้งานยาว ๆ */}
+  <Modal.Consent gate="terms">ฉันยอมรับข้อกำหนด</Modal.Consent>
+  <Modal.GateStatus />
+</Modal.Body>
+
+<Modal.Footer>
+  <Modal.Button variant="primary" gate>ยอมรับและดำเนินการต่อ</Modal.Button>
+</Modal.Footer>
+```
+
+**ไม่ใช้ `disabled`** ปุ่มใช้ `aria-disabled` แทน
+ปุ่มที่เป็น `disabled` รับโฟกัสไม่ได้ ผู้ใช้จึงเสียช่องทางเดียวที่จะรู้ว่าทำไมถึงกดไม่ได้
+เมื่อกดปุ่ม gassan จะอ่านเหตุผลออกเสียงและย้ายโฟกัสไปยังจุดที่ผู้ใช้ติดอยู่
+
+**“อ่านจนจบ” ตัดสินด้วย logical OR**
+
+1. sentinel ที่ท้ายเนื้อหามองเห็นได้แล้ว (เมาส์, การสัมผัส)
+2. โฟกัสไปถึงตัวทำเครื่องหมายท้ายเนื้อหา (คีย์บอร์ด, โปรแกรมอ่านหน้าจอ)
+3. เนื้อหาไม่จำเป็นต้องเลื่อนตั้งแต่แรก
+
+ถ้าตัดสินจากตำแหน่งการเลื่อนอย่างเดียว คนที่อ่านด้วย virtual cursor จะถูกกันออกไป เพราะพวกเขาไม่เคยทำให้เกิด scroll event ปุ่มจึงไม่มีวันกดได้
+
+เงื่อนไขอื่น ๆ ลงทะเบียนได้ด้วย `Modal.Gate`
+
+```tsx
+<Modal.Gate
+  name="min-3"
+  satisfied={selected.length >= 3}
+  reason="เลือกอย่างน้อย 3 รายการ"
+  focus={() => listRef.current?.focus()}
+/>
+```
+
+**gate จะปิดอยู่จนกว่าการลงทะเบียนจะครบ**
+
+gate ลงทะเบียนใน effect ของคอมโพเนนต์ลูก effect ไม่ทำงานบนเซิร์ฟเวอร์ และบนไคลเอนต์ก็ยังไม่ได้ทำงานในการ render ครั้งแรก
+ในช่วงนั้น registry จะว่าง แต่นั่นหมายถึง “ยังไม่รู้” ไม่ใช่ “ไม่มีเงื่อนไข”
+ปุ่มที่มี `gate` จะ render เป็น `aria-disabled="true"` ตั้งแต่ใน markup ฝั่งเซิร์ฟเวอร์
+แล้วสลับไปใช้เงื่อนไขจริงหลัง mount ถ้าไม่มี gate เลยสักตัว ปุ่มจะกดได้ตั้งแต่ตอนนั้น
+
+| รูปแบบการเขียน | ก่อนลงทะเบียน | ความหมาย |
+|---|---|---|
+| `gate` / `gate={true}` | ปิด | ชุดเงื่อนไขที่ต้องตรวจยังไม่ลงตัว |
+| `gate={['terms']}` | ปิด | ชื่อที่ยังไม่ได้ลงทะเบียนถือว่ายังไม่ผ่าน |
+| `gate={[]}` | เปิด | รู้แน่แล้วว่าไม่มีเงื่อนไขเลย ไม่มีอะไรต้องรอ |
+
+markup ฝั่งเซิร์ฟเวอร์กับการ render ครั้งแรกฝั่งไคลเอนต์ตรงกัน จึงไม่เกิด hydration mismatch
+ข้อความเหตุผลเปลี่ยนได้ด้วย `unresolvedReason` ของ `GassanProvider`
+
+---
+
+## การตัดบรรทัด (ภาษาญี่ปุ่น จีน เกาหลี)
+
+ถ้าปล่อยให้เบราว์เซอร์จัดการ ภาษาญี่ปุ่นจะขึ้นบรรทัดใหม่ระหว่างตัวอักษรคู่ใดก็ได้ ปุ่มแคบ ๆ จึงกลายเป็น 「プロフィールを編｜集」
+ภาษาจีน (「编辑个人资｜料」) และภาษาเกาหลี (「프로필 편｜집」) ก็ขาดกลางคำแบบเดียวกัน
+gassan ไม่ตัดบรรทัดกลางคำเลย — ทั้งในชื่อเรื่อง คำอธิบาย ปุ่ม ป้ายของฟิลด์ เซลล์ตาราง ข้อความสรุปของกราฟ และทุกที่ที่คอมโพเนนต์ของ gassan แสดงข้อความ
+
+| ภาษา | ปล่อยให้เบราว์เซอร์ | gassan |
+|---|---|---|
+| ภาษาญี่ปุ่น | ตัดระหว่างตัวอักษรคู่ใดก็ได้ | ตัดเฉพาะที่รอยต่อวลี: 「プロフィールを｜編集」 |
+| ภาษาจีน (ตัวย่อ, ตัวเต็ม) | ตัดกลางคำ: 「编辑个人资｜料」 | ตัดเฉพาะที่รอยต่อคำ: 「编辑个人｜资料」 |
+| ภาษาเกาหลี | ตัดกลางคำ: 「프로필 편｜집」 | ตัดเฉพาะที่ช่องว่าง: 「프로필｜편집」 |
+| ภาษาไทย ลาว เขมร พม่า | หารอยต่อคำด้วยพจนานุกรม (ถูกต้องอยู่แล้ว) | ไม่ไปยุ่ง |
+| ภาษาอังกฤษและภาษาอื่นที่คั่นคำด้วยช่องว่าง | ตัดที่ช่องว่าง (ถูกต้องอยู่แล้ว) | ไม่ไปยุ่ง |
+
+กฎเหล่านี้ได้มาจากการวัดทีละภาษาว่า Chrome ตัดบรรทัดตรงไหนจริง ๆ เมื่อใส่ข้อความในกล่องแคบ
+การไม่ไปยุ่งกับภาษาไทยและภาษาข้างเคียงเป็นความตั้งใจ: ถ้าใส่ `word-break: keep-all` ให้ภาษาเหล่านี้ จุดตัดตามพจนานุกรมของเบราว์เซอร์เองจะถูกกดไว้ แล้วกลับขาดกลางคำแทน
+
+```tsx
+// ในคอมโพเนนต์ของ gassan เปิดใช้อยู่แล้วโดยค่าเริ่มต้น สำหรับ UI ของคุณเองให้ใช้ Phrase
+const edit = (
+  <button type="button">
+    <Phrase>プロフィールを編集</Phrase>
+  </button>
+);
+
+// ปล่อยการตัดบรรทัดให้เบราว์เซอร์ (ค่าเริ่มต้นคือ 'phrase')
+const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
+```
+
+- ภาษาตัดสินจากตัวอักษรในสตริง: มีคานะคือภาษาญี่ปุ่น มีฮันกึลคือภาษาเกาหลี มีอักษรฮั่น (Han) โดยไม่มีสองอย่างนั้นคือภาษาจีน ถึงจะไม่มี attribute `lang` ผลก็ไม่เปลี่ยน
+- จุดตัดได้จาก `Intl.Segmenter` ร่วมกับกฎตามประเภทตัวอักษร (ไม่เพิ่ม dependency) และทำเครื่องหมายด้วย `<wbr aria-hidden="true">` ข้อความจะได้ `word-break: keep-all` และวลีที่ยาวกว่ากล่องก็ยังขึ้นบรรทัดใหม่ได้แทนที่จะล้นออกไป ภาษาเกาหลีไม่ต้องใช้เครื่องหมาย: `keep-all` อย่างเดียวก็ทำให้ตัดเฉพาะที่ช่องว่างแล้ว
+- ไม่มีอะไรถูกเพิ่มลงในข้อความ accessible name ข้อความที่คัดลอก และการค้นหาจึงไม่เปลี่ยน `<wbr>` เปล่า ๆ จะเพิ่มช่องว่างลงใน accessible name บน Chrome และ `aria-hidden` ป้องกันเรื่องนี้
+- เซิร์ฟเวอร์และไคลเอนต์สร้าง markup เดียวกัน
+
+---
+
+## คอมโพเนนต์
+
+| ชื่อ | บทบาท |
+|---|---|
+| `Modal.Root` | เลเยอร์ 1–3: `<dialog>` / scrim / แผง / live region |
+| `Modal.Header` `Modal.Controls` | header และช่องทั้งสามของมัน (1fr auto 1fr) |
+| `Modal.Back` `Modal.Close` `Modal.Indicator` | ย้อนกลับ / ปิด / ขั้นตอนปัจจุบัน |
+| `Modal.Title` `Modal.Description` | ชื่อและคำอธิบาย (ผูกกับ aria ให้อัตโนมัติ) |
+| `Modal.Body` `Modal.Section` | พื้นที่เลื่อนเพียงแห่งเดียว และส่วนย่อยภายใน |
+| `Modal.Footer` `Modal.Button` | ลำดับชั้นของปุ่ม, gate, กันการส่งซ้ำ |
+| `Modal.Gate` `Modal.Consent` `Modal.GateStatus` | Activation gate |
+| `Modal.Media` `Modal.Gallery` | รูปภาพ, วิดีโอ, เสียง, สไลเดอร์ |
+| `Modal.Field` `Modal.Chips` `Modal.Switch` `Modal.Table` `Modal.Alert` | ส่วนประกอบฟอร์มและตาราง |
+| `Modal.Chart` | ภาชนะสำหรับกราฟ ผูกชื่อ (`label`) และข้อความทดแทนที่บอกแนวโน้ม (`summary`) และเปิดให้ดูข้อมูลดิบใน `<details>` ตัวมันเองไม่ได้วาดอะไร |
+| `Modal.Handle` | ที่จับของ sheet ถ้ามี detent จะเป็นตัวควบคุม `role="slider"` ถ้าไม่มี จะเป็นพื้นที่จับเพื่อการตกแต่ง |
+| `ModalHost` `useModals` | Imperative API (`await confirm()`) |
+| `GassanProvider` | แทนที่ข้อความ UI (ค่าเริ่มต้นเป็นภาษาญี่ปุ่น มี `englishLabels` มาให้ด้วย) และสลับการตัดบรรทัด (`lineBreak`) |
+| `Phrase` `splitPhrases` | การตัดบรรทัดแบบเดียวกันสำหรับข้อความภาษาญี่ปุ่น จีน และเกาหลีใน UI ของคุณเอง (ในคอมโพเนนต์ของ gassan เปิดอยู่แล้วโดยค่าเริ่มต้น) |
+
+`Modal.Field` เป็น render prop ตัวควบคุมข้างในจึงเป็น input แบบเนทีฟหรือคอมโพเนนต์ของ Base UI ก็ได้
+กลุ่มตัวเลือก (radio, checkbox หลายตัว) ให้ตั้งชื่อด้วย `fieldset` / `legend` ไม่ใช่ `label`
+**อย่าสร้างตัวควบคุมเอง** ใช้ range / date / time / file / select แบบเนทีฟก่อน
+ส่วน select ที่ค้นหาได้และสไลเดอร์สองหัวให้ Base UI จัดการ ตัวอย่างอยู่ใน [`docs/control-recipes.md`](./docs/control-recipes.md)
+
+```tsx
+<Modal.Chart
+  label="ยอดขายรายเดือน (พันดอลลาร์สหรัฐ)"
+  summary="มีนาคมสูงสุดที่ 120 ตั้งแต่เมษายนเป็นต้นไปทรงตัวอยู่ราว 100"
+  data={<Modal.Table label="ข้อมูลดิบ"><table>{/* … */}</table></Modal.Table>}
+>
+  <MyBarChart />  {/* SVG / canvas / ไลบรารีใดก็ได้ ค่าเริ่มต้นเป็น aria-hidden */}
+</Modal.Chart>
+```
+
+---
+
+## การส่งผ่าน `data-*`
+
+ทุกคอมโพเนนต์ส่ง `data-*` ต่อไปยัง host element ตรง ๆ จึงใช้เป็น selector สำหรับ E2E ได้
+
+```tsx
+<Modal.Root data-testid="confirm" open={open} onOpenChange={setOpen}>
+  <Modal.Footer>
+    <Modal.Button variant="primary" data-testid="confirm-ok">OK</Modal.Button>
+  </Modal.Footer>
+</Modal.Root>
+```
+
+มีแค่ 2 อย่างที่ไม่ถูกส่งผ่าน และทั้งสองอย่าง**ไม่ถูกทิ้งแบบเงียบ ๆ: จะมีคำเตือนตอน development เสมอ**
+
+| สิ่งที่ส่งไป | ผลที่เกิด | ให้ใช้แทน |
+|---|---|---|
+| ชื่อที่ gassan ใช้ภายใน เช่น `data-kind` | ถูกเพิกเฉย (ไม่อย่างนั้น state ภายในจะเสียหาย) | ชื่ออื่น |
+| prop ที่มีขีดกลางซึ่งไม่ใช่ `data-` เช่น `aria-label` | ถูกเพิกเฉย | `label` หรือ `Modal.Title` สำหรับชื่อ, `aria-describedby` สำหรับคำอธิบาย |
+
+TypeScript ยกเว้นชื่อ attribute ของ JSX ที่มีขีดกลางจากการตรวจ excess property
+**ทั้งหมดนี้จึงไม่เป็น type error** เมื่อ type จับไม่ได้ runtime จึงไม่ยอมเงียบ
+
+---
+
+## Sheet และ detent
+
+`placement="sheet"` ทำให้แผงเลื่อนขึ้นมาจากด้านล่าง ถ้าส่ง `detents` แผงจะหยุดที่ความสูงเหล่านั้น
+
+```tsx
+<Modal.Root
+  open={open}
+  onOpenChange={setOpen}
+  placement="sheet"
+  swipeToDismiss
+  detents={['peek', 'half', 'full']}
+  defaultDetent="half"
+  onDetentChange={(d) => console.log(d)}
+>
+  <Modal.Handle />
+  <Modal.Header>
+    <Modal.Title>เส้นทาง</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>{/* … */}</Modal.Body>
+</Modal.Root>
+```
+
+มีกฎ 3 ข้อ
+
+1. **การปัดลงเร็ว ๆ ไม่ได้ปิด sheet แต่ลดลงหนึ่ง detent** เมื่อมี detent คนที่ปัดมักหมายถึง “ย่อลงอีกนิด”
+   sheet จะปิดก็ต่อเมื่อปัดลงต่อจาก detent ที่ต่ำที่สุดเท่านั้น
+2. **ที่จับไม่ได้มีไว้ลากอย่างเดียว** เมื่อมี detent จะกลายเป็น `role="slider"`
+   และปุ่มลูกศร, Home / End และการคลิกก็เลื่อนไปมาระหว่าง detent ได้ คนที่ลากไม่ได้จึงไม่ถูกทิ้งไว้โดยไม่มีทางไป
+3. **ถ้าไม่มี detent sheet จะสูงเท่าเนื้อหาเหมือนเดิม** ที่จับจะกลับไปเป็นของตกแต่ง (`aria-hidden`)
+   สิ่งที่ขยับไม่ได้จะไม่ถูกประกาศว่าเป็นตัวควบคุม
+
+ตรรกะการ snap แยกออกมาเป็น pure function `resolveDetents` / `snapToDetent` (import แยกได้)
+
+---
+
+## Imperative API
+
+```tsx
+const modals = useModals();
+const ok = await modals.confirm({ title: 'ลบรายการนี้ไหม', tone: 'danger' });
+```
+
+วาง `<ModalHost />` หนึ่งตัวไว้ที่ root ของแอป ต่อให้เรียก confirm สองครั้งพร้อมกัน ก็จะแสดงทีละอัน
+
+---
+
+## ข้อกำหนดของเบราว์เซอร์
+
+gassan ใช้ `<dialog>` `showModal()` `@starting-style` `transition-behavior: allow-discrete` `:has()` `@container`
+ทั้งหมดเป็น Baseline (`<dialog>` ตั้งแต่ 2022 ที่เหลือตั้งแต่ 2023–2024)
+
+มีเพียง property `overlay` ของ CSS ที่ใช้กับแอนิเมชันขาออกเท่านั้นที่เป็น **Limited availability บน MDN (ไม่ใช่ Baseline)**
+gassan จึงมี fallback ด้วย JS: เมื่อได้รับคำขอปิด จะเพิ่ม `data-exiting` แล้ววาดสถานะขาออกขณะที่ dialog ยังเปิดอยู่
+และเรียก `close()` หลัง `--g-dur-out` (ถ้าเป็น `prefers-reduced-motion` จะเรียกทันที)
+`onExited` การรีเซ็ตเนื้อหา การคืนโฟกัส และการปลด scroll lock เกิดขึ้นหลัง `close()` ทั้งหมด
+
+`requestClose()` เป็น Baseline 2025 และ `closedby` เป็น Limited availability gassan ไม่ใช้ทั้งสองอย่าง
+แต่หยุด `cancel` แล้วส่งทุกอย่างผ่าน `requestClose(reason)` ของตัวเอง (รายละเอียดอยู่ใน [`docs/library-landscape.md`](./docs/library-landscape.md))
+
+ในสภาพแวดล้อมที่เก่ากว่า จะลดระดับเหลือแค่ “โมดอลที่ไม่มีแอนิเมชัน” ส่วนการเปิดปิดและการเข้าถึงยังคงอยู่
+
+---
+
+## การพัฒนา
+
+```bash
+npm install
+npm run dev              # เดโมใน examples/react (Vite) ใช้เป็นแท่นทดสอบบนอุปกรณ์จริง
+npm run site:dev         # เปิดเว็บไซต์เอกสารบนเครื่อง (http://localhost:5180)
+npm run site:build       # build เว็บไซต์ลง site/dist (ตรวจดูด้วย npm run site:preview)
+npm run verify           # typecheck → lint → test → trace → docs → build → ตรวจ dist / SSR / pack
+npm run check:consumer   # ติดตั้ง tarball จริงแล้วตรวจจากภายนอก (ต้องใช้เครือข่าย)
+```
+
+เว็บไซต์เอกสารอยู่ใน `site/` ตอน build จะอ่านสเปก ตาราง traceability รายงานการตรวจสอบ
+และ type definition ใน `src` มาประกอบเป็นตารางและ API reference (`site/plugins/gassan-data.ts`)
+โค้ดที่แสดงในแต่ละเดโมคือไฟล์เดโมตัวจริง (`?raw`) ตัวอย่างกับโค้ดจึงไม่มีทางคลาดกัน
+เมื่อ push ไปที่ `main` GitHub Actions จะ build เว็บไซต์และเผยแพร่ไปยัง GitHub Pages
+
+`examples/css-check.html` เปิดในเบราว์เซอร์ได้โดยตรง
+เป็นหน้าสำหรับตรวจด้วยตาในสิ่งที่ jsdom ตรวจไม่ได้ เช่น top layer แอนิเมชันขาออก ความเข้มของ scrim
+
+อะไรตรวจแล้วและอะไรยังไม่ได้ตรวจ เขียนแยกไว้ใน [`VERIFICATION.md`](./VERIFICATION.md)
+**“เทสต์เป็นสีเขียว” กับ “รับประกันได้” เป็นคนละเรื่องกัน**
+18 รายการที่ตรวจได้เฉพาะในเบราว์เซอร์จริงจึงแยกไว้ในหัวข้อที่ 3 ของไฟล์นั้น
+
+ประวัติการเปลี่ยนแปลงอยู่ใน [`CHANGELOG.md`](./CHANGELOG.md) และแผนการออกเวอร์ชันจนถึง v1.0 อยู่ใน [`ROADMAP.md`](./ROADMAP.md)
+
+---
+
+## ไลเซนส์
+
+MIT ฉบับเต็มอยู่ใน [`LICENSE`](./LICENSE)
