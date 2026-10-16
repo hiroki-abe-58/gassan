@@ -112,19 +112,22 @@ export function useLabels(): GassanLabels {
 export interface GassanProviderProps {
   labels?: Partial<GassanLabels>;
   /**
-   * 日本語の折り返し方。既定は 'phrase'（文節の切れ目でだけ改行する）。
-   * 'browser' にするとブラウザ任せ（文字単位）に戻る。省略すると外側の Provider に従う。W-01〜W-05。
+   * 日本語・中国語・韓国語の折り返し方。既定は 'phrase'（文節・語の切れ目でだけ改行する）。
+   * 'browser' にするとブラウザ任せ（文字単位）に戻る。省略すると外側の Provider に従う。W-01〜W-06。
    */
   lineBreak?: LineBreakMode;
   children: ReactNode;
 }
 
 /**
- * 文言と、日本語の折り返し方を差し替える。文言は部分指定でよい。
+ * 文言と、折り返し方を差し替える。文言は部分指定でよい。
+ * どちらも、省略した分は外側の Provider に従う（文言は外側の文言に重ねる）。
+ * 英語の Provider の内側に lineBreak だけを指定した Provider を置いても、文言は日本語に戻らない。
  * JSX を使わないのは、このファイルを .ts のまま保つため。
  */
 export function GassanProvider({ labels, lineBreak, children }: GassanProviderProps): ReactNode {
-  const merged: GassanLabels = labels ? { ...japaneseLabels, ...labels } : japaneseLabels;
+  const outer = useContext(LabelsContext);
+  const merged: GassanLabels = labels ? { ...outer, ...labels } : outer;
   const inherited = useContext(LineBreakContext);
   return createElement(
     LineBreakContext.Provider,
