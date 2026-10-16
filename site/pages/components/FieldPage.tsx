@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import type { PageProps } from '../../routes';
 import FieldForm from '../../demos/FieldForm';
 import fieldSource from '../../demos/FieldForm.tsx?raw';
@@ -44,12 +46,14 @@ export function FieldPage({ rest }: PageProps): ReactNode {
                   </tr>
                 </thead>
                 <tbody>
-                  {t.delegate.rows.map((row) => (
-                    <tr key={row.control}>
-                      <th scope="row">{row.control}</th>
-                      <td>{row.use}</td>
-                    </tr>
-                  ))}
+                  <Phrase>
+                    {t.delegate.rows.map((row) => (
+                      <tr key={row.control}>
+                        <th scope="row">{row.control}</th>
+                        <td>{row.use}</td>
+                      </tr>
+                    ))}
+                  </Phrase>
                 </tbody>
               </table>
             </div>

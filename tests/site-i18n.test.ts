@@ -74,10 +74,19 @@ describe('site/i18n / デモのコード', () => {
   });
 });
 
+/** 関数の文言を見本の引数で呼ぶ。数を受ける関数と、文字列の配列を受ける関数（並べて読ませる文）がある。 */
+function call(fn: (...args: unknown[]) => unknown): string {
+  try {
+    return String(fn(1, 2, 3));
+  } catch {
+    return String(fn(['a', 'b']));
+  }
+}
+
 /** 文言の木から文字列を集める。関数（数を差し込む文）は見本の引数で呼ぶ。 */
 function strings(node: unknown, path: string): [string, string][] {
   if (typeof node === 'string') return [[path, node]];
-  if (typeof node === 'function') return [[path, String((node as (...args: unknown[]) => unknown)(1, 2, 3))]];
+  if (typeof node === 'function') return [[path, call(node as (...args: unknown[]) => unknown)]];
   if (Array.isArray(node)) return node.flatMap((child, i) => strings(child, `${path}[${String(i)}]`));
   if (node && typeof node === 'object') {
     return Object.entries(node).flatMap(([key, child]) => strings(child, path ? `${path}.${key}` : key));
@@ -88,6 +97,11 @@ function strings(node: unknown, path: string): [string, string][] {
 /** 引用（「」『』“”"" と `code`）の中は言語の見本なので、訳し忘れとして数えない。 */
 const QUOTED = /「[^」]*」|『[^』]*』|“[^”]*”|"[^"]*"|`[^`]*`/g;
 const KANA = /[\p{Script=Hiragana}\p{Script=Katakana}]/u;
+/**
+ * 中身そのものが日本語の見本の文言。英語・タイ語は gassan が手を出さない言語なので、
+ * 折り返しのデモはその言語に訳すと違いが見えない。日本語の見本のまま出す。
+ */
+const JAPANESE_SAMPLES = ['demos.lineBreakModal.'];
 
 describe('site/i18n / 訳し忘れ', () => {
   it('日本語以外の文言には、引用の外にかなが残っていない', () => {
@@ -95,6 +109,7 @@ describe('site/i18n / 訳し忘れ', () => {
       .filter(([lang]) => lang !== 'ja')
       .flatMap(([lang, messages]) =>
         strings(messages, '')
+          .filter(([path]) => !JAPANESE_SAMPLES.some((prefix) => path.startsWith(prefix)))
           .filter(([, text]) => KANA.test(text.replace(QUOTED, '')))
           .map(([path, text]) => `${lang} ${path}: ${text.slice(0, 40)}`),
       );

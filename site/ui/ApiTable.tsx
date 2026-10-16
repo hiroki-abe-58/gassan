@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../data';
 import { useT } from '../i18n';
 import { InlineMd, md } from './Markdown';
@@ -60,9 +62,15 @@ export function ApiTable({ name, title }: { name: string; title?: string }): Rea
       </div>
       {passthrough || inherited.length > 0 ? (
         <ul className="s-api-notes">
-          {passthrough ? <li>{md(t.passthrough)}</li> : null}
+          {passthrough ? (
+            <li>
+              <Phrase>{md(t.passthrough)}</Phrase>
+            </li>
+          ) : null}
           {inherited.map((e) => (
-            <li key={e}>{md(t.inherits(e))}</li>
+            <li key={e}>
+              <Phrase>{md(t.inherits(e))}</Phrase>
+            </li>
           ))}
         </ul>
       ) : null}

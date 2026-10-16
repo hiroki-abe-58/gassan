@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import { useT } from '../../i18n';
 import { Guideline, Guidelines, MockPanel, MockScreen } from '../../ui/Guidelines';
@@ -109,8 +111,10 @@ export function Accessibility(): ReactNode {
                   OR
                 </span>
               ) : null}
-              <p className="s-or-who">{row.who}</p>
-              <p className="s-or-signal">{row.signal}</p>
+              <Phrase>
+                <p className="s-or-who">{row.who}</p>
+                <p className="s-or-signal">{row.signal}</p>
+              </Phrase>
             </li>
           ))}
         </ol>

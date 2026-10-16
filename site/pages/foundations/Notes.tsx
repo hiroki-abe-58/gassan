@@ -1,5 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import type { PageProps } from '../../routes';
 import { data } from '../../data';
 import { SPEC_LANG, useT } from '../../i18n';
@@ -31,7 +33,7 @@ export function Notes({ rest }: PageProps): ReactNode {
               <summary>
                 <span className="s-note-num">§{note.number}</span>
                 <span className="s-note-title" lang={SPEC_LANG}>
-                  {inline(note.title, note.number)}
+                  <Phrase>{inline(note.title, note.number)}</Phrase>
                 </span>
               </summary>
               <div className="s-note-body">

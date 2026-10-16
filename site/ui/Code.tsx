@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { useT } from '../i18n';
 
 /**
@@ -90,7 +92,9 @@ export function CodeBlock({ code, lang = 'tsx', caption, textLang }: CodeBlockPr
   return (
     <div className="s-code">
       <div className="s-code-bar">
-        <span className="s-code-lang">{caption ?? lang}</span>
+        <span className="s-code-lang">
+          <Phrase>{caption ?? lang}</Phrase>
+        </span>
         <button type="button" className="s-code-copy" onClick={copy}>
           {copied ? t.copied : t.copy}
         </button>

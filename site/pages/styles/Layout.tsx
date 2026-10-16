@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import { token } from '../../data/tokens';
 import { useT } from '../../i18n';
@@ -72,7 +74,9 @@ export function Layout(): ReactNode {
               <p>
                 <code>{p.name}</code>
               </p>
-              <p className="s-placement-when">{t.placement.when[p.name]}</p>
+              <p className="s-placement-when">
+                <Phrase>{t.placement.when[p.name]}</Phrase>
+              </p>
             </li>
           ))}
         </ul>

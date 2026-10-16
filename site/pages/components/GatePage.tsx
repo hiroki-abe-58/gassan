@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import type { PageProps } from '../../routes';
 import GateCustom from '../../demos/GateCustom';
 import gateSource from '../../demos/GateCustom.tsx?raw';
@@ -54,15 +56,17 @@ export function GatePage({ rest }: PageProps): ReactNode {
                   </tr>
                 </thead>
                 <tbody>
-                  {t.selector.rows.map((row) => (
-                    <tr key={row.code}>
-                      <th scope="row">
-                        <code>{row.code}</code>
-                      </th>
-                      <td>{row.before}</td>
-                      <td>{row.meaning}</td>
-                    </tr>
-                  ))}
+                  <Phrase>
+                    {t.selector.rows.map((row) => (
+                      <tr key={row.code}>
+                        <th scope="row">
+                          <code>{row.code}</code>
+                        </th>
+                        <td>{row.before}</td>
+                        <td>{row.meaning}</td>
+                      </tr>
+                    ))}
+                  </Phrase>
                 </tbody>
               </table>
             </div>

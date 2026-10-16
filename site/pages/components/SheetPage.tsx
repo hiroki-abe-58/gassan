@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import type { PageProps } from '../../routes';
 import SheetDetents from '../../demos/SheetDetents';
 import sheetSource from '../../demos/SheetDetents.tsx?raw';
@@ -37,8 +39,10 @@ export function SheetPage({ rest }: PageProps): ReactNode {
             <ol className="s-rules">
               {t.rules.items.map((rule) => (
                 <li key={rule.title}>
-                  <h3>{rule.title}</h3>
-                  <p>{rule.body}</p>
+                  <Phrase>
+                    <h3>{rule.title}</h3>
+                    <p>{rule.body}</p>
+                  </Phrase>
                 </li>
               ))}
             </ol>

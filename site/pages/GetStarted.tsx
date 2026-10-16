@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../data';
 import QuickStart from '../demos/QuickStart';
 import quickStartSource from '../demos/QuickStart.tsx?raw';
@@ -96,7 +98,9 @@ export function GetStarted(): ReactNode {
           </Guideline>
         </Guidelines>
         <p className="s-more">
-          <a href={to('/foundations/kinds')}>{t.choose.more}</a>
+          <a href={to('/foundations/kinds')}>
+            <Phrase>{t.choose.more}</Phrase>
+          </a>
         </p>
       </Section>
 

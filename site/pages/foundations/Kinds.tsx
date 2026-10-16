@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import KindConfirm from '../../demos/KindConfirm';
 import confirmSource from '../../demos/KindConfirm.tsx?raw';
@@ -203,7 +205,9 @@ export function Kinds(): ReactNode {
       {gates ? (
         <Section id="gates" title={t.gates.title} intro={t.gates.intro}>
           <MdTable table={gates} caption={t.gates.tableCaption} />
-          <p className="s-more">{md(t.gates.more)}</p>
+          <p className="s-more">
+            <Phrase>{md(t.gates.more)}</Phrase>
+          </p>
         </Section>
       ) : null}
     </>

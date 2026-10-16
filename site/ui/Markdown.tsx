@@ -103,12 +103,18 @@ export function md(text: string, keyPrefix = 'm'): ReactNode[] {
   return inline(text, keyPrefix);
 }
 
-/** 段落の並び。文言の配列を 1 つずつ <p> にする。 */
+/**
+ * 段落の並び。文言の配列を 1 つずつ <p> にする。
+ * 折り返し（Phrase）はここで掛ける。Prose の Phrase はコンポーネントの中まで潜らないので、
+ * Prose の中に置いても、この段落には届かない。
+ */
 export function Paras({ items }: { items: readonly string[] }): ReactNode {
   return (
     <>
       {items.map((text, i) => (
-        <p key={i}>{inline(text, `p${String(i)}`)}</p>
+        <p key={i}>
+          <Phrase>{inline(text, `p${String(i)}`)}</Phrase>
+        </p>
       ))}
     </>
   );

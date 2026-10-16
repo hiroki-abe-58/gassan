@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { allItems, data } from '../../data';
 import { SPEC_LANG, useT } from '../../i18n';
 import { to } from '../../router';
@@ -35,7 +37,9 @@ export function Verification(): ReactNode {
           {t.pipeline.steps.map((step) => (
             <li key={step.command}>
               <code>{step.command}</code>
-              <span>{step.catches}</span>
+              <span>
+                <Phrase>{step.catches}</Phrase>
+              </span>
             </li>
           ))}
         </ol>
@@ -77,16 +81,18 @@ export function Verification(): ReactNode {
             </thead>
             {/* 検品票の中身は VERIFICATION.md の原文 */}
             <tbody lang={SPEC_LANG}>
-              {browserChecks.map((check) => (
-                <tr key={check.id}>
-                  <th scope="row" className="s-nowrap">
-                    {check.id}
-                  </th>
-                  <td>{inline(check.item, `${check.id}-i`)}</td>
-                  <td>{inline(check.how, `${check.id}-h`)}</td>
-                  <td>{inline(check.diagnosis, `${check.id}-d`)}</td>
-                </tr>
-              ))}
+              <Phrase>
+                {browserChecks.map((check) => (
+                  <tr key={check.id}>
+                    <th scope="row" className="s-nowrap">
+                      {check.id}
+                    </th>
+                    <td>{inline(check.item, `${check.id}-i`)}</td>
+                    <td>{inline(check.how, `${check.id}-h`)}</td>
+                    <td>{inline(check.diagnosis, `${check.id}-d`)}</td>
+                  </tr>
+                ))}
+              </Phrase>
             </tbody>
           </table>
         </div>

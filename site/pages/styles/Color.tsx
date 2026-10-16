@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import { CONTRAST_PAIRS, contrastRatio, isHex6 } from '../../data/color';
 import { token } from '../../data/tokens';
@@ -26,7 +28,9 @@ function ContrastTable({ scheme }: { scheme: 'light' | 'dark' }): ReactNode {
   return (
     <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption}>
       <table className="s-table s-contrast-table" data-scheme={scheme}>
-        <caption>{caption}</caption>
+        <caption>
+          <Phrase>{caption}</Phrase>
+        </caption>
         <thead>
           <tr>
             <th scope="col">{t.sample}</th>
@@ -54,7 +58,9 @@ function ContrastTable({ scheme }: { scheme: 'light' | 'dark' }): ReactNode {
                   <br />
                   <code>--g-{bg}</code>
                 </th>
-                <td>{uses[fg]}</td>
+                <td>
+                  <Phrase>{uses[fg]}</Phrase>
+                </td>
                 <td className="s-num">{Number.isNaN(ratio) ? '—' : `${ratio.toFixed(2)}:1`}</td>
                 <td>
                   <span className="s-pass" data-pass={pass ? '' : undefined}>

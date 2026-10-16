@@ -56,7 +56,7 @@ export function SpecChips({ ids, label }: { ids: readonly string[]; label: strin
             <span className="s-chip-id">{item.id}</span>
             {/* リンクの中なので、リンクを生みうる inline() は通さず記号だけ落とす */}
             <span className="s-chip-name" lang={SPEC_LANG}>
-              {item.name.replace(/`/g, '')}
+              <Phrase>{item.name.replace(/`/g, '')}</Phrase>
             </span>
           </a>
         </li>

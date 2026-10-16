@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../data';
 import { SPEC_LANG, useT } from '../i18n';
 
@@ -77,10 +79,10 @@ export function LayerStack({ detailed = false }: { detailed?: boolean }): ReactN
                 <span className="s-stack-owner">{OWNER[layer.n]}</span>
               </p>
               <p className="s-stack-scope" lang={SPEC_LANG}>
-                {layer.scope}
+                <Phrase>{layer.scope}</Phrase>
               </p>
               <p className="s-stack-answer" lang={SPEC_LANG}>
-                {layer.answer}
+                <Phrase>{layer.answer}</Phrase>
               </p>
             </li>
           ))}

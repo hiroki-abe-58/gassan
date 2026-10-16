@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import { scrimLevels, token } from '../../data/tokens';
 import ScrimLevels from '../../demos/ScrimLevels';
@@ -102,7 +104,9 @@ export function Scrim(): ReactNode {
         {/* 条件は仕様書のコードブロックを分解したもの。原文のまま出す */}
         <ul className="s-checks" lang={SPEC_LANG}>
           {blurConditions.map((line) => (
-            <li key={line}>{inline(line)}</li>
+            <li key={line}>
+              <Phrase>{inline(line)}</Phrase>
+            </li>
           ))}
         </ul>
         <Prose>

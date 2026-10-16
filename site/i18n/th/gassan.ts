@@ -1,0 +1,29 @@
+import type { GassanLabels } from '@genelab/gassan';
+
+const labels: GassanLabels = {
+  close: 'ปิด',
+  back: 'ย้อนกลับ',
+  previous: 'ก่อนหน้า',
+  next: 'ถัดไป',
+  body: 'เนื้อหา',
+  expandTitle: 'แสดงชื่อเรื่องทั้งหมด',
+  collapseTitle: 'ย่อชื่อเรื่อง',
+  endOfContent: 'สิ้นสุดเนื้อหา',
+  blocked: 'ยังปิดหน้าต่างนี้ไม่ได้ กรุณาตรวจสอบเนื้อหาและดำเนินการให้เสร็จก่อน',
+  unreadReason: 'กรุณาอ่านเนื้อหาจนจบ',
+  unconsentedReason: 'ยอมรับเนื้อหาแล้วจึงจะดำเนินการต่อได้',
+  unresolvedReason: 'การดำเนินการนี้ยังมีเงื่อนไขที่ไม่ครบ',
+  loading: 'กำลังดำเนินการ',
+  cancel: 'ยกเลิก',
+  ok: 'ตกลง',
+  required: 'จำเป็น',
+  optional: 'ไม่บังคับ',
+  step: (current, total) => `ขั้นตอนที่ ${String(current)} จาก ${String(total)}`,
+  galleryPosition: (current, total) => `รายการที่ ${String(current)} จาก ${String(total)}`,
+  chartData: 'แสดงข้อมูลดิบ',
+  sheetHandle: 'ปรับความสูงของชีต',
+  detent: (token) => ({ peek: 'เล็กสุด', half: 'กลาง', full: 'ใหญ่สุด' })[token],
+  detentChanged: (name) => `ความสูงของชีต: ${name}`,
+};
+
+export default labels;

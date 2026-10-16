@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import type { CloseReason } from '@genelab/gassan';
+import { Phrase, type CloseReason } from '@genelab/gassan';
 
 import type { PageProps } from '../../routes';
 import Playground from '../../demos/Playground';
@@ -55,15 +55,17 @@ export function RootPage({ rest }: PageProps): ReactNode {
                   </tr>
                 </thead>
                 <tbody>
-                  {REASONS.map((reason) => (
-                    <tr key={reason}>
-                      <th scope="row">
-                        <code>{reason}</code>
-                      </th>
-                      <td>{t.reasons.rows[reason].from}</td>
-                      <td>{t.reasons.rows[reason].refuse}</td>
-                    </tr>
-                  ))}
+                  <Phrase>
+                    {REASONS.map((reason) => (
+                      <tr key={reason}>
+                        <th scope="row">
+                          <code>{reason}</code>
+                        </th>
+                        <td>{t.reasons.rows[reason].from}</td>
+                        <td>{t.reasons.rows[reason].refuse}</td>
+                      </tr>
+                    ))}
+                  </Phrase>
                 </tbody>
               </table>
             </div>

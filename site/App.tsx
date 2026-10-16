@@ -141,7 +141,11 @@ export function App(): ReactNode {
           </nav>
 
           <main id="main" ref={mainRef} tabIndex={-1} className="s-main" data-page={page.path}>
-            {lang !== DEFAULT_LANG ? <p className="s-original-note">{md(t.common.originalNote)}</p> : null}
+            {lang !== DEFAULT_LANG ? (
+              <p className="s-original-note">
+                <Phrase>{md(t.common.originalNote)}</Phrase>
+              </p>
+            ) : null}
 
             <Page rest={rest} />
 
@@ -171,7 +175,7 @@ export function App(): ReactNode {
             <footer className="s-footer">
               <p>
                 {data.meta.packageName} v{data.meta.version} · MIT ·{' '}
-                {md(t.common.footerCompliance(data.meta.specVersion, data.meta.specUpdated))}
+                <Phrase>{md(t.common.footerCompliance(data.meta.specVersion, data.meta.specUpdated))}</Phrase>
               </p>
               <p>
                 <Phrase>{t.common.footerGenerated}</Phrase>

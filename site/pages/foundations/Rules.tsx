@@ -1,5 +1,7 @@
 import { useId, useState, type ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import { SPEC_LANG, useT } from '../../i18n';
 import { CodeBlock } from '../../ui/Code';
@@ -57,7 +59,9 @@ function Checklist({ groups }: { groups: readonly ChecklistGroup[] }): ReactNode
                     setChecked(next);
                   }}
                 />
-                <label htmlFor={id}>{inline(item, id)}</label>
+                <label htmlFor={id}>
+                  <Phrase>{inline(item, id)}</Phrase>
+                </label>
               </div>
             );
           })}

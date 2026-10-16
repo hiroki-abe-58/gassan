@@ -1,5 +1,7 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import { bezier, durationMs, token } from '../../data/tokens';
 import { SPEC_LANG, useT } from '../../i18n';
@@ -86,7 +88,9 @@ export function Motion(): ReactNode {
           ].map((c) => (
             <li key={c.name}>
               <Curve value={c.value} />
-              <p>{c.label}</p>
+              <p>
+                <Phrase>{c.label}</Phrase>
+              </p>
               <code>{c.name}</code>
               <code className="s-curve-value">{c.value}</code>
             </li>

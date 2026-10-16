@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import type { PageProps } from '../../routes';
 import { data, repoFile, type Priority, type SpecItem } from '../../data';
 import { SPEC_LANG, useT } from '../../i18n';
@@ -24,7 +26,9 @@ function EvidenceList({ item }: { item: SpecItem }): ReactNode {
                 <code>{e.value}</code>
               </a>
             ) : e.kind === 'T' ? (
-              <span lang={SPEC_LANG}>{e.value}</span>
+              <span lang={SPEC_LANG}>
+                <Phrase>{e.value}</Phrase>
+              </span>
             ) : (
               <code lang={SPEC_LANG}>{e.value}</code>
             )}
@@ -147,7 +151,7 @@ export function Spec({ rest }: PageProps): ReactNode {
       {filtered.map((c) => (
         <section key={c.letter} className="s-spec-category" aria-labelledby={`cat-${c.letter}`}>
           <h2 id={`cat-${c.letter}`} lang={SPEC_LANG}>
-            <span className="s-spec-letter">{c.letter}</span> {c.name}
+            <span className="s-spec-letter">{c.letter}</span> <Phrase>{c.name}</Phrase>
           </h2>
           <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.categoryItems(c.name)}>
             <table className="s-table s-spec-table">
@@ -176,7 +180,9 @@ export function Spec({ rest }: PageProps): ReactNode {
                         {item.id}
                       </a>
                     </th>
-                    <td lang={SPEC_LANG}>{inline(item.name, item.id)}</td>
+                    <td lang={SPEC_LANG}>
+                      <Phrase>{inline(item.name, item.id)}</Phrase>
+                    </td>
                     <td>
                       <PriorityBadge priority={item.priority} />
                     </td>

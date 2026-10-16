@@ -140,7 +140,9 @@ export function Theme(): ReactNode {
                           <code>{themed.accent.accent}</code>
                         </span>
                         <span className="s-pass s-preset-result" data-pass={pass ? '' : undefined}>
-                          {worst ? t.presets.withTightest(verdict, worst.ratio.toFixed(2), worst.min) : verdict}
+                          <Phrase>
+                            {worst ? t.presets.withTightest(verdict, worst.ratio.toFixed(2), worst.min) : verdict}
+                          </Phrase>
                         </span>
                       </td>
                     );

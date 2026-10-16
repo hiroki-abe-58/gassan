@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { data } from '../../data';
 import { SPEC_LANG, useT } from '../../i18n';
 import { Guideline, Guidelines, MockPanel, MockScreen } from '../../ui/Guidelines';
@@ -17,7 +19,9 @@ export function Purpose(): ReactNode {
 
       {definition ? (
         <blockquote className="s-definition">
-          <p lang={SPEC_LANG}>{definition}</p>
+          <p lang={SPEC_LANG}>
+            <Phrase>{definition}</Phrase>
+          </p>
           <footer>modal.skill.md §1-1</footer>
         </blockquote>
       ) : null}
@@ -34,8 +38,10 @@ export function Purpose(): ReactNode {
           {t.alternatives.items.map((alt) => (
             <li key={alt.name} className="s-card s-card-plain">
               <h3>{alt.name}</h3>
-              <p className="s-card-when">{alt.when}</p>
-              <p>{alt.why}</p>
+              <Phrase>
+                <p className="s-card-when">{alt.when}</p>
+                <p>{alt.why}</p>
+              </Phrase>
             </li>
           ))}
         </ul>
