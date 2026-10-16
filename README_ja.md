@@ -11,18 +11,20 @@
 - **タイトルの省略** — DOM のテキストを切らずに省略し、アクセシブルネームを完全に保つ
 - **閉じる理由** — 8種類の `CloseReason` を区別し、拒否するときは必ず理由を返す
 - **スクリム** — 黒60%の決め打ちをやめ、意図別の4段階トークンにする
+- **日本語の折り返し** — ボタンもタイトルも表のセルもグラフの要約も、日本語は文節の切れ目でだけ改行する。「プロフィールを｜編集」であって、「プロフィールを編｜集」にはしない
 
 **ドキュメントサイト: <https://hiroki-abe-58.github.io/gassan/>**
-— 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・寸法・モーション）、
-全コンポーネントの動くデモと API、135項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
+— 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・テーマ・寸法・日本語の折り返し・モーション）、
+全コンポーネントの動くデモと API、141項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
+サイトはライト・ダークの表示とプライマリカラーを切り替えられる。どの色を選んでも、文字と塗りが WCAG のコントラスト比を満たすように色を導いている。
 表・件数・API の説明はすべて仕様書と型定義からビルド時に生成していて、手で書いた数値は無い。
 
-設計の全文は [`modal.skill.md`](./modal.skill.md)（135項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
+設計の全文は [`modal.skill.md`](./modal.skill.md)（141項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
 AI コーディング時はそのファイルをコンテキストに入れる。
 
 | 文書 | 内容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の135項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の141項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 元の要件を分解し、「実装済み / 合成で対応 / ロードマップ」を1行ずつ示した監査表 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | range / checkbox / radio / toggle / select / text / file / date / time / chips をモーダルに載せる最小例 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | native `<dialog>` / Base UI / React Aria / Radix の比較（2026-09-29 時点、一次資料のみ） |
@@ -156,6 +158,29 @@ function Example() {
 
 ---
 
+## 日本語の折り返し
+
+ブラウザに任せると、日本語はどの文字の間でも改行される。狭いボタンは「プロフィールを編｜集」になる。
+gassan は日本語を文節の切れ目でだけ改行する（「プロフィールを｜編集」）。タイトル・説明・ボタン・入力欄のラベル・表のセル・グラフの要約など、部品が文字を描くところはすべて対象。
+
+```tsx
+// gassan の部品の中では既定で効いている。自分の UI には Phrase を使う
+const edit = (
+  <button type="button">
+    <Phrase>プロフィールを編集</Phrase>
+  </button>
+);
+
+// ブラウザ任せに戻す（既定は 'phrase'）
+const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
+```
+
+- 切れ目は `Intl.Segmenter` と文字種の規則で決める（辞書も依存も足さない）。切れ目に `<wbr aria-hidden="true">` を置き、文字列には `word-break: keep-all` を掛ける。器より長い文節は、はみ出さずに文字単位で折る。
+- 文字は 1 つも足さないので、読み上げの名前・コピーした文字列・検索は変わらない。素の `<wbr>` は Chrome で読み上げの名前に空白を混ぜるので、`aria-hidden` を付けている。
+- サーバーとクライアントで同じマークアップになる。かなを含まない文字列（英語・中国語）には手を出さない。
+
+---
+
 ## コンポーネント
 
 | 名前 | 役割 |
@@ -172,7 +197,8 @@ function Example() {
 | `Modal.Chart` | グラフの器。名前（`label`）と傾向のテキスト代替（`summary`）を配線し、元データを `<details>` で開閉する。描画はしない |
 | `Modal.Handle` | シートのつまみ。段があれば `role="slider"` の操作子、無ければ掴みどころの飾り |
 | `ModalHost` `useModals` | 命令的 API（`await confirm()`） |
-| `GassanProvider` | 文言の差し替え（既定は日本語、`englishLabels` も同梱） |
+| `GassanProvider` | 文言の差し替え（既定は日本語、`englishLabels` も同梱）と、折り返しの切り替え（`lineBreak`） |
+| `Phrase` `splitPhrases` | 自分の UI の日本語を文節で折る（gassan の部品の中では既定で効いている） |
 
 `Modal.Field` は render prop なので、中身はネイティブ入力でも Base UI でも構わない。
 選択肢のグループ（ラジオ・複数チェック）は `label` ではなく `fieldset` / `legend` で名前を付ける。

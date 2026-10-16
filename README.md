@@ -11,18 +11,20 @@ Instead, gassan concentrates on the layer that existing libraries have barely to
 - **Title truncation** — truncate without cutting the DOM text, so the accessible name always stays complete
 - **Close reasons** — distinguish 8 kinds of `CloseReason`, and always return a reason when refusing to close
 - **Scrim** — drop the hard-coded 60% black and use four intent-based tokens instead
+- **Japanese line breaking** — Japanese text wraps only at phrase boundaries, in buttons, titles, table cells and chart summaries alike: 「プロフィールを｜編集」, never 「プロフィールを編｜集」
 
 **Documentation site: <https://hiroki-abe-58.github.io/gassan/>**
-— design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, sizing, motion),
-live demos and the API of every component, and the specification of 135 behaviors, laid out like the Material Design 3 guidelines.
+— design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, Japanese line breaking, motion),
+live demos and the API of every component, and the specification of 141 behaviors, laid out like the Material Design 3 guidelines.
+The site has a light / dark theme and a choice of primary colors; whichever color you pick, its text and fills are derived to meet the WCAG contrast ratios.
 Every table, count and API description on the site is generated at build time from the specification and the type definitions; no number is written by hand.
 
-The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 135 behaviors, a decision matrix and a quality rubric).
+The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 141 behaviors, a decision matrix and a quality rubric).
 Put that file in the context when coding with an AI assistant.
 
 | Document | Contents |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 135 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 141 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | The original requirements broken down, one row each: implemented / achieved by composition / on the roadmap |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | Minimal examples of putting range / checkbox / radio / toggle / select / text / file / date / time / chips inside a modal |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | Native `<dialog>` vs Base UI vs React Aria vs Radix (as of 2026-09-29, primary sources only) |
@@ -161,6 +163,29 @@ The reason text can be replaced with `unresolvedReason` on `GassanProvider`.
 
 ---
 
+## Japanese line breaking
+
+Left to the browser, Japanese wraps between any two characters, so a narrow button reads 「プロフィールを編｜集」.
+gassan breaks Japanese text only at phrase boundaries — 「プロフィールを｜編集」 — in titles, descriptions, buttons, field labels, table cells, chart summaries and every other place its components render text.
+
+```tsx
+// Inside gassan's components this is on by default. Use Phrase for your own UI
+const edit = (
+  <button type="button">
+    <Phrase>プロフィールを編集</Phrase>
+  </button>
+);
+
+// Leave line breaking to the browser (the default is 'phrase')
+const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
+```
+
+- Boundaries come from `Intl.Segmenter` plus character-class rules (no dictionary, no extra dependency), and are marked with `<wbr aria-hidden="true">`. The text gets `word-break: keep-all`, and a phrase longer than its box still wraps instead of overflowing.
+- Nothing is added to the text, so the accessible name, copied text and search are unchanged. A plain `<wbr>` adds a space to the accessible name in Chrome; `aria-hidden` prevents that.
+- The same markup is produced on the server and the client. Strings without kana (English, Chinese) are left alone.
+
+---
+
 ## Components
 
 | Name | Role |
@@ -177,7 +202,8 @@ The reason text can be replaced with `unresolvedReason` on `GassanProvider`.
 | `Modal.Chart` | A container for charts. Wires up the name (`label`) and a text alternative for the trend (`summary`), and exposes the raw data in a `<details>`. It does not draw anything |
 | `Modal.Handle` | The grip of a sheet. With detents it is a `role="slider"` control; without them, a decorative grab area |
 | `ModalHost` `useModals` | Imperative API (`await confirm()`) |
-| `GassanProvider` | Replaces UI strings (Japanese by default; `englishLabels` is bundled) |
+| `GassanProvider` | Replaces UI strings (Japanese by default; `englishLabels` is bundled) and switches line breaking (`lineBreak`) |
+| `Phrase` `splitPhrases` | Phrase-boundary line breaking for Japanese text in your own UI (inside gassan's components it is on by default) |
 
 `Modal.Field` is a render prop, so the control inside can be a native input or a Base UI component.
 Groups of options (radios, multiple checkboxes) are named with `fieldset` / `legend`, not `label`.
