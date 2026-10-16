@@ -29,8 +29,7 @@ export function TitlePage({ rest }: PageProps): ReactNode {
           <Section id="why" title="なぜ CSS だけで省略するのか">
             <Prose>
               <p>
-                文字列を JS で切ると、DOM のテキストそのものが欠ける。<code>aria-labelledby</code> が指す名前も一緒に欠け、
-                スクリーンリーダーの利用者は「第3四半期 東北エリア 店舗別売…」というダイアログに入ることになる。
+                文字列を JS で切ると、DOM のテキストそのものが欠ける。<code>aria-labelledby</code> が指す名前も一緒に欠け、スクリーンリーダーの利用者は「第3四半期 東北エリア 店舗別売…」というダイアログに入ることになる。
                 <code>line-clamp</code> は見た目だけを切るので、名前は常に完全なまま残る。
               </p>
             </Prose>

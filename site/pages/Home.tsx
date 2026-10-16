@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { KIND_DEFAULTS, type ModalKind } from '@genelab/gassan';
+import { KIND_DEFAULTS, Phrase, type ModalKind } from '@genelab/gassan';
 
 import { allItems, data } from '../data';
 import KindConfirm from '../demos/KindConfirm';
@@ -9,6 +9,8 @@ import KindFlow from '../demos/KindFlow';
 import KindForm from '../demos/KindForm';
 import KindView from '../demos/KindView';
 import { to } from '../router';
+import { PRESETS } from '../theme/engine';
+import { BreakCompare, ButtonSamples, type SampleButton } from '../ui/BreakCompare';
 import { CodeBlock } from '../ui/Code';
 import { MockPanel, MockScreen } from '../ui/Guidelines';
 import { LayerStack } from '../ui/LayerStack';
@@ -77,6 +79,29 @@ const PROMISES: readonly {
   },
 ];
 
+const JAPANESE_BUTTONS: readonly SampleButton[] = [
+  { label: 'プロフィールを編集', variant: 'primary' },
+  { label: '利用規約に同意して続ける', variant: 'secondary' },
+];
+
+const DETAILS: readonly { title: string; body: string; href: string }[] = [
+  {
+    title: '日本語の折り返し',
+    body: 'ボタン・タイトル・表のセル・グラフの要約まで、文節の切れ目でだけ改行する。読み上げの名前とコピーされる文字列は変えない。',
+    href: '/styles/line-break',
+  },
+  {
+    title: 'テーマ',
+    body: `ライトとダーク、${String(PRESETS.length)} のプリセットと任意の色。どの色を選んでも、文字と塗りが WCAG の基準を満たすように色を導く。`,
+    href: '/styles/theme',
+  },
+  {
+    title: 'ボタンの種類と状態',
+    body: 'primary・secondary・tertiary と danger。押せる・処理中・ゲート中・使用不可を、色だけに頼らず形で見分けられる。',
+    href: '/components/button',
+  },
+];
+
 const KIND_DEMOS: readonly { kind: ModalKind; label: string; use: string; Demo: () => ReactNode }[] = [
   { kind: 'confirm', label: '確認', use: '取り消せない操作の確認', Demo: KindConfirm },
   { kind: 'form', label: '入力', use: '文脈を保ったままの副次入力', Demo: KindForm },
@@ -101,14 +126,16 @@ export function Home(): ReactNode {
         <div className="s-hero-copy">
           <p className="s-eyebrow">React のモーダルシェル</p>
           <h1 id="page-title" tabIndex={-1}>
-            層 1 は、
-            <br />
-            ブラウザに任せる。
+            <Phrase>
+              層 1 は、
+              <br />
+              ブラウザに任せる。
+            </Phrase>
           </h1>
           <p className="s-lead">
-            gassan はネイティブの <code>&lt;dialog&gt;</code> を土台にした React のモーダルシェル。
-            フォーカストラップも Esc も背景の inert 化も、一行も実装していない。その代わり、
-            既存のライブラリがほとんど手を付けてこなかった層——情報構造、活性化ゲート、閉じる理由——に全部を注ぐ。
+            <Phrase>
+              gassan はネイティブの <code>&lt;dialog&gt;</code> を土台にした React のモーダルシェル。フォーカストラップも Esc も背景の inert 化も、一行も実装していない。その代わり、既存のライブラリがほとんど手を付けてこなかった層——情報構造、活性化ゲート、閉じる理由——に全部を注ぐ。
+            </Phrase>
           </p>
           <div className="s-hero-actions">
             <a className="s-btn s-btn-lg" href={to('/start')}>
@@ -132,6 +159,30 @@ export function Home(): ReactNode {
       />
 
       <Section
+        id="japanese"
+        title="日本語の画面のために"
+        intro="狭い画面で「プロフィールを編｜集」と割れるボタンを、もう出さない。右上の「テーマ」で色を変えても、文字は読めるまま。"
+      >
+        <BreakCompare width={8.5}>
+          <ButtonSamples buttons={JAPANESE_BUTTONS} />
+        </BreakCompare>
+        <ul className="s-cards s-cards-3 s-feature-cards">
+          {DETAILS.map((detail) => (
+            <li key={detail.href} className="s-card s-card-plain">
+              <h3>
+                <a href={to(detail.href)} className="s-card-link">
+                  <Phrase>{detail.title}</Phrase>
+                </a>
+              </h3>
+              <p>
+                <Phrase>{detail.body}</Phrase>
+              </p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section
         id="promises"
         title="ほかのライブラリが解いていない 4 つ"
         intro="層 1（top layer・フォーカス・Esc）はブラウザがもう解いている。gassan が時間を使うのは、その上の設計の仕事である。"
@@ -144,10 +195,12 @@ export function Home(): ReactNode {
               </div>
               <h3>
                 <a href={to(promise.href)} className="s-card-link">
-                  {promise.title}
+                  <Phrase>{promise.title}</Phrase>
                 </a>
               </h3>
-              <p>{promise.body}</p>
+              <p>
+                <Phrase>{promise.body}</Phrase>
+              </p>
             </li>
           ))}
         </ul>
@@ -167,7 +220,9 @@ export function Home(): ReactNode {
                   <code>{kind}</code>
                   <span>{label}</span>
                 </p>
-                <p className="s-kind-use">{use}</p>
+                <p className="s-kind-use">
+                  <Phrase>{use}</Phrase>
+                </p>
                 <dl className="s-kind-defaults">
                   <div>
                     <dt>スクリム</dt>

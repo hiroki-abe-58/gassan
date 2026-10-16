@@ -12,6 +12,23 @@ import { afterEach, beforeEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
 /* -------------------------------------------------------------------------- */
+/* 行内要素の display                                                         */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * jsdom は UA スタイルシートの display をほぼ持たず、span や wbr の display が '' になる。
+ * dom-accessibility-api は display が inline でない子の前後に空白を入れるので、
+ * <span> を 1 つ挟んだだけでアクセシブルネームが「プロフィールを 編集」になり、
+ * 実ブラウザ（どちらも inline）と食い違う。実ブラウザの既定に合わせておく。
+ *
+ * これで jsdom は「<wbr> に aria-hidden が無いと Chrome では名前に空白が混ざる」を再現しなくなる。
+ * その退行は tests/phrase.test.tsx が <wbr aria-hidden="true"> を直接検査して塞いでいる（W-03）。
+ */
+const inlineDefaults = document.createElement('style');
+inlineDefaults.textContent = 'span, wbr, strong, em, b, i, a, code, small, abbr, label { display: inline; }';
+document.head.appendChild(inlineDefaults);
+
+/* -------------------------------------------------------------------------- */
 /* <dialog>                                                                   */
 /* -------------------------------------------------------------------------- */
 

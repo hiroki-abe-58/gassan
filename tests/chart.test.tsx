@@ -81,8 +81,9 @@ describe('chart / B-14', () => {
     const details = document.querySelector<HTMLDetailsElement>('details.g-chart-data');
     if (!details) throw new Error('details missing');
     expect(details.open).toBe(false);
-    const summary = screen.getByText('元データを表示');
-    expect(summary.tagName).toBe('SUMMARY');
+    // 文言は文節折り返しの span（W-01）の中にあるので、それを包む summary を引く。
+    const summary = screen.getByText('元データを表示').closest('summary');
+    if (!summary) throw new Error('summary missing');
     expect(details.querySelector('table')).not.toBeNull();
 
     await user.click(summary);
@@ -92,7 +93,7 @@ describe('chart / B-14', () => {
 
   it('dataLabel で文言を差し替えられ、Provider の英語文言にも従う', () => {
     renderChart({ data: table, dataLabel: '表で見る' });
-    expect(screen.getByText('表で見る').tagName).toBe('SUMMARY');
+    expect(screen.getByText('表で見る').closest('summary')).not.toBeNull();
 
     render(
       <GassanProvider labels={englishLabels}>

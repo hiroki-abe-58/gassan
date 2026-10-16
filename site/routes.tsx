@@ -11,9 +11,12 @@ import { Purpose } from './pages/foundations/Purpose';
 import { Rules } from './pages/foundations/Rules';
 import { Color } from './pages/styles/Color';
 import { Layout } from './pages/styles/Layout';
+import { LineBreak } from './pages/styles/LineBreak';
 import { Motion } from './pages/styles/Motion';
 import { Scrim } from './pages/styles/Scrim';
+import { Theme } from './pages/styles/Theme';
 import { BodyPage } from './pages/components/BodyPage';
+import { ButtonPage } from './pages/components/ButtonPage';
 import { ChartPage } from './pages/components/ChartPage';
 import { FieldPage } from './pages/components/FieldPage';
 import { FooterPage } from './pages/components/FooterPage';
@@ -66,7 +69,9 @@ export const PAGES: readonly PageDef[] = [
 
   { path: '/styles/scrim', title: 'スクリム', section: 'styles', Component: Scrim },
   { path: '/styles/color', title: '色とコントラスト', section: 'styles', Component: Color },
+  { path: '/styles/theme', title: 'テーマ', section: 'styles', Component: Theme },
   { path: '/styles/layout', title: '寸法と配置', section: 'styles', Component: Layout },
+  { path: '/styles/line-break', title: '日本語の折り返し', section: 'styles', Component: LineBreak },
   { path: '/styles/motion', title: 'モーション', section: 'styles', Component: Motion },
 
   { path: '/components/root', title: 'Modal.Root', section: 'components', Component: RootPage },
@@ -74,6 +79,7 @@ export const PAGES: readonly PageDef[] = [
   { path: '/components/title', title: 'Title と Description', section: 'components', Component: TitlePage },
   { path: '/components/body', title: 'Body と Section', section: 'components', Component: BodyPage },
   { path: '/components/footer', title: 'Footer と Button', section: 'components', Component: FooterPage },
+  { path: '/components/button', title: 'ボタンの種類と状態', section: 'components', Component: ButtonPage },
   { path: '/components/gate', title: '活性化ゲート', section: 'components', Component: GatePage },
   { path: '/components/field', title: 'フォーム部品', section: 'components', Component: FieldPage },
   { path: '/components/media', title: 'Media と Gallery', section: 'components', Component: MediaPage },

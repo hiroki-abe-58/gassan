@@ -15,6 +15,7 @@ import {
   GassanProvider,
   Modal,
   ModalHost,
+  Phrase,
   englishLabels,
 } from '../dist/index.js';
 
@@ -258,6 +259,19 @@ if (warnings.some((line) => line.includes('data-kind'))) {
 } else {
   fail('reserved data-* was ignored without a warning');
 }
+
+// --- 日本語の文節折り返し（W-01 / W-03 / W-04）-----------------------------
+// サーバーでも文節の切れ目に <wbr aria-hidden="true"> を置く。クライアントと同じ位置でなければ
+// hydration がずれる。Intl.Segmenter を持つ Node（full-icu が既定）で、dist 経由で確かめる。
+const phraseHtml = renderToString(h(Phrase, null, 'プロフィールを編集'));
+if (phraseHtml === '<span class="g-phrase">プロフィールを<wbr aria-hidden="true"/>編集</span>') {
+  ok('dist breaks Japanese at phrase boundaries on the server (<wbr aria-hidden>)');
+} else {
+  fail(`unexpected phrase markup on the server: ${phraseHtml}`);
+}
+const phraseOff = renderToString(h(GassanProvider, { lineBreak: 'browser' }, h(Phrase, null, 'プロフィールを編集')));
+if (phraseOff === 'プロフィールを編集') ok('lineBreak="browser" leaves the text untouched on the server');
+else fail(`lineBreak="browser" still changed the markup: ${phraseOff}`);
 
 if (failed) {
   console.error('\nssr smoke test failed.');

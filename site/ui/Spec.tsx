@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { Phrase } from '@genelab/gassan';
+
 import { specItem, type Priority, type SpecItem } from '../data';
 import { to } from '../router';
 import { inline, InlineMd } from './Markdown';
@@ -82,7 +84,9 @@ export function SpecTable({ ids, caption }: { ids: readonly string[]; caption: s
                   {item.id}
                 </a>
               </th>
-              <td>{inline(item.name, item.id)}</td>
+              <td>
+                <Phrase>{inline(item.name, item.id)}</Phrase>
+              </td>
               <td>
                 <PriorityBadge priority={item.priority} />
               </td>

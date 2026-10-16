@@ -66,8 +66,7 @@ export function Verification(): ReactNode {
         {weakMust.length > 0 ? (
           <Callout tone="warn">
             <p>
-              必須（M）なのに「記述」の項目が {weakMust.length} 件ある。値は機械検証しているが、描画結果は実ブラウザでしか確かめられない。
-              これがこのライブラリの現在の弱点で、隠さずに出す。
+              必須（M）なのに「記述」の項目が {weakMust.length} 件ある。値は機械検証しているが、描画結果は実ブラウザでしか確かめられない。これがこのライブラリの現在の弱点で、隠さずに出す。
             </p>
             <p className="s-idlist">
               {weakMust.map((i) => (
@@ -112,8 +111,7 @@ export function Verification(): ReactNode {
         </div>
         <Prose>
           <p>
-            この {browserChecks.length} 項目は、まだ実機で消化していない（ROADMAP v0.2.0）。実ブラウザでの自動検査（Playwright + axe）は v0.4.0 で入れる。
-            詳しくは{' '}
+            この {browserChecks.length} 項目は、まだ実機で消化していない（ROADMAP v0.2.0）。実ブラウザでの自動検査（Playwright + axe）は v0.4.0 で入れる。詳しくは{' '}
             <a href={repoFile('VERIFICATION.md')} target="_blank" rel="noreferrer">
               VERIFICATION.md
             </a>{' '}

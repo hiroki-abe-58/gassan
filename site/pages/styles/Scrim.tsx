@@ -61,8 +61,7 @@ export function Scrim(): ReactNode {
       <Section id="why" title="なぜ 60% ではないのか">
         <Prose>
           <p>
-            32% は Material Design 3 の scrim 規定と一致する。60〜80% の黒は、背後の文脈——モーダルが他の手段より優れている唯一の点——を
-            自分で消してしまう。誰を削除しようとしているのか、どの行の詳細を見ているのかが分からなくなる。
+            32% は Material Design 3 の scrim 規定と一致する。60〜80% の黒は、背後の文脈——モーダルが他の手段より優れている唯一の点——を自分で消してしまう。誰を削除しようとしているのか、どの行の詳細を見ているのかが分からなくなる。
           </p>
         </Prose>
         <Guidelines>
@@ -97,8 +96,7 @@ export function Scrim(): ReactNode {
         </ul>
         <Prose>
           <p>
-            blur を切るときの代替は「不透明度を上げる」。<code>prefers-reduced-transparency: reduce</code> では gassan が自動で blur を外し、
-            そのぶん濃度を足す。ぼかしだけ消して 32% のままにすると、透明度を下げている人には何も伝わらない。
+            blur を切るときの代替は「不透明度を上げる」。<code>prefers-reduced-transparency: reduce</code> では gassan が自動で blur を外し、そのぶん濃度を足す。ぼかしだけ消して 32% のままにすると、透明度を下げている人には何も伝わらない。
           </p>
         </Prose>
       </Section>

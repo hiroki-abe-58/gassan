@@ -26,17 +26,14 @@ export function Accessibility(): ReactNode {
       <Section id="native" title="ブラウザに任せていること" intro="showModal() が担う。自作すると必ずどこかが漏れるので、書かないのが正解。">
         <SpecTable ids={['L-01', 'L-02', 'K-01', 'K-02', 'K-06', 'A-03', 'A-04']} caption="ネイティブに委譲している項目" />
         <Callout>
-          <code>aria-modal</code> も付けない。<code>showModal()</code> の top layer と inert が同等以上の効果を持ち、
-          二重に指定すると一部のスクリーンリーダーで挙動が不安定になる（A-03）。
+          <code>aria-modal</code> も付けない。<code>showModal()</code> の top layer と inert が同等以上の効果を持ち、二重に指定すると一部のスクリーンリーダーで挙動が不安定になる（A-03）。
         </Callout>
       </Section>
 
       <Section id="name" title="名前は欠けない">
         <Prose>
           <p>
-            ダイアログの名前は <code>&lt;h2&gt;</code> の内側の <code>&lt;span&gt;</code> に <code>aria-labelledby</code> で向ける。
-            長いタイトルの省略は CSS の <code>line-clamp</code> だけで行い、DOM の文字列は切らない。
-            だから画面上は 2 行で切れていても、読み上げられる名前は常に完全である。
+            ダイアログの名前は <code>&lt;h2&gt;</code> の内側の <code>&lt;span&gt;</code> に <code>aria-labelledby</code> で向ける。長いタイトルの省略は CSS の <code>line-clamp</code> だけで行い、DOM の文字列は切らない。だから画面上は 2 行で切れていても、読み上げられる名前は常に完全である。
           </p>
         </Prose>
         <Guidelines>
@@ -69,8 +66,7 @@ export function Accessibility(): ReactNode {
               </MockScreen>
             }
           >
-            <code>title.slice(0, 30) + '…'</code> と JS で切らない。名前ごと欠ける。続きを <code>title</code> 属性に逃がすのも、
-            タッチで出ず WCAG 1.4.13 を満たさない（T-05）。
+            <code>title.slice(0, 30) + '…'</code> と JS で切らない。名前ごと欠ける。続きを <code>title</code> 属性に逃がすのも、タッチで出ず WCAG 1.4.13 を満たさない（T-05）。
           </Guideline>
         </Guidelines>
       </Section>
@@ -78,9 +74,7 @@ export function Accessibility(): ReactNode {
       <Section id="gate" title="押せない理由を、押して聞ける">
         <Prose>
           <p>
-            条件を満たすまで押せないボタンに <code>disabled</code> は使わない。<code>disabled</code> はフォーカスを受け取らないので、
-            キーボードやスクリーンリーダーの利用者は、なぜ進めないのかを確かめる手段そのものを失う。
-            gassan は <code>aria-disabled="true"</code> にして、押されたら理由を読み上げ、詰まっている場所へ連れて行く。
+            条件を満たすまで押せないボタンに <code>disabled</code> は使わない。<code>disabled</code> はフォーカスを受け取らないので、キーボードやスクリーンリーダーの利用者は、なぜ進めないのかを確かめる手段そのものを失う。gassan は <code>aria-disabled="true"</code> にして、押されたら理由を読み上げ、詰まっている場所へ連れて行く。
           </p>
         </Prose>
         <Guidelines>
@@ -94,8 +88,7 @@ export function Accessibility(): ReactNode {
               </MockScreen>
             }
           >
-            <code>aria-disabled</code> + 常に見える理由 + 押したときの読み上げと誘導（G-01 / G-07 / G-08）。
-            見た目は専用トークンで 4.5:1 を保つ（G-10）。
+            <code>aria-disabled</code> + 常に見える理由 + 押したときの読み上げと誘導（G-01 / G-07 / G-08）。見た目は専用トークンで 4.5:1 を保つ（G-10）。
           </Guideline>
           <Guideline
             tone="dont"
@@ -152,8 +145,7 @@ export function Accessibility(): ReactNode {
               </MockScreen>
             }
           >
-            タッチ端末で最初の入力欄にフォーカスしない。仮想キーボードが跳ね上がり、本文が隠れる（K-04）。
-            × ボタンに当てるのも、本文を読み飛ばさせるので避ける。
+            タッチ端末で最初の入力欄にフォーカスしない。仮想キーボードが跳ね上がり、本文が隠れる（K-04）。× ボタンに当てるのも、本文を読み飛ばさせるので避ける。
           </Guideline>
         </Guidelines>
       </Section>

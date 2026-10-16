@@ -50,8 +50,7 @@ export function Purpose(): ReactNode {
         {reasons ? <MdTable table={reasons} caption="モーダルを使ってよい 4 つの理由" /> : null}
         <Prose>
           <p>
-            NN/g は overlay の乱用を強く批判しつつ、lightbox だけは擁護している。理由は「文脈を失わせない」から。
-            モーダルが他の手段を上回るのは、<strong>今いる場所を保ったまま</strong>何かをさせられる、この一点においてのみである。
+            NN/g は overlay の乱用を強く批判しつつ、lightbox だけは擁護している。理由は「文脈を失わせない」から。モーダルが他の手段を上回るのは、<strong>今いる場所を保ったまま</strong>何かをさせられる、この一点においてのみである。
           </p>
         </Prose>
       </Section>

@@ -1,5 +1,6 @@
 import { createContext, createElement, useContext, type ReactNode } from 'react';
 
+import { LineBreakContext, type LineBreakMode } from './phrase';
 import { DEFAULT_BLOCKED_MESSAGE, DEFAULT_UNRESOLVED_GATE_MESSAGE } from './types';
 
 /**
@@ -110,14 +111,24 @@ export function useLabels(): GassanLabels {
 
 export interface GassanProviderProps {
   labels?: Partial<GassanLabels>;
+  /**
+   * 日本語の折り返し方。既定は 'phrase'（文節の切れ目でだけ改行する）。
+   * 'browser' にするとブラウザ任せ（文字単位）に戻る。省略すると外側の Provider に従う。W-01〜W-05。
+   */
+  lineBreak?: LineBreakMode;
   children: ReactNode;
 }
 
 /**
- * 文言を差し替える。部分指定でよい。
+ * 文言と、日本語の折り返し方を差し替える。文言は部分指定でよい。
  * JSX を使わないのは、このファイルを .ts のまま保つため。
  */
-export function GassanProvider({ labels, children }: GassanProviderProps): ReactNode {
+export function GassanProvider({ labels, lineBreak, children }: GassanProviderProps): ReactNode {
   const merged: GassanLabels = labels ? { ...japaneseLabels, ...labels } : japaneseLabels;
-  return createElement(LabelsContext.Provider, { value: merged }, children);
+  const inherited = useContext(LineBreakContext);
+  return createElement(
+    LineBreakContext.Provider,
+    { value: lineBreak ?? inherited },
+    createElement(LabelsContext.Provider, { value: merged }, children),
+  );
 }

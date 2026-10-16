@@ -11,6 +11,7 @@ import {
 import { prefersReducedMotion, warnDuplicateKeys, warnOnce } from './internal/dom';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { usePhrase } from './phrase';
 
 /* -------------------------------------------------------------------------- */
 /* Media                                                                      */
@@ -46,6 +47,7 @@ export function ModalMedia({
   loading = 'lazy',
   ...rest
 }: ModalMediaProps): ReactNode {
+  const phrase = usePhrase();
   useEffect(() => {
     if (kind === 'image' && alt === undefined) {
       warnOnce(
@@ -92,7 +94,7 @@ export function ModalMedia({
       style={style}
     >
       {element}
-      <figcaption className="g-media-caption">{caption}</figcaption>
+      <figcaption className="g-media-caption">{phrase(caption)}</figcaption>
     </figure>
   );
 }

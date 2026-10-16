@@ -93,8 +93,7 @@ export function Motion(): ReactNode {
       <Section id="exit" title="退出アニメと overlay">
         <Prose>
           <p>
-            退出を CSS で描く要は <code>transition-behavior: allow-discrete</code> と <code>overlay</code> の 2 つ。
-            ただし <code>overlay</code> はまだ Baseline ではない。対応していないブラウザでは <code>close()</code> した瞬間に top layer から外れて消える。
+            退出を CSS で描く要は <code>transition-behavior: allow-discrete</code> と <code>overlay</code> の 2 つ。ただし <code>overlay</code> はまだ Baseline ではない。対応していないブラウザでは <code>close()</code> した瞬間に top layer から外れて消える。
           </p>
           <p>
             そこで gassan は、閉じる要求を受けたら <code>close()</code> を呼ばずに <code>data-exiting</code> を付け、dialog を開いたまま退出状態へ遷移させる。
@@ -106,8 +105,7 @@ export function Motion(): ReactNode {
 
       <Section id="reduced" title="動きを減らす設定">
         <Callout>
-          <code>prefers-reduced-motion: reduce</code> ではフェードを 1ms にする。0 にはしない。0 にすると discrete な遷移
-          （<code>display</code> と <code>overlay</code>）が壊れる（S-05）。退出の待ち時間も 0 になるが、経路は同じコードを通す。
+          <code>prefers-reduced-motion: reduce</code> ではフェードを 1ms にする。0 にはしない。0 にすると discrete な遷移（<code>display</code> と <code>overlay</code>）が壊れる（S-05）。退出の待ち時間も 0 になるが、経路は同じコードを通す。
         </Callout>
         <SpecTable ids={['L-04', 'L-05', 'L-06', 'L-07', 'S-03', 'S-05']} caption="モーションの仕様" />
       </Section>

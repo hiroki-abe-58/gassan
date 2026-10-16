@@ -36,6 +36,8 @@ export { ModalChart } from './chart';
 export { ModalHandle } from './sheet';
 export { ModalHost, useModals, confirm, resetModalQueue } from './imperative';
 export { GassanProvider, japaneseLabels, englishLabels, useLabels } from './labels';
+export { Phrase } from './phrase';
+export { splitPhrases } from './internal/phrase';
 
 /* --------------------------------------------------------------------- types */
 
@@ -80,6 +82,7 @@ export type {
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';
 export type { GassanLabels, GassanProviderProps } from './labels';
+export type { LineBreakMode, PhraseProps } from './phrase';
 
 /* ------------------------------------------------------------------ internals */
 
