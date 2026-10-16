@@ -1,13 +1,10 @@
 import { useRef, useState, type ReactNode } from 'react';
 
 import { Modal } from '@genelab/gassan';
-
-const PLANS = [
-  { value: 'free', label: 'フリー' },
-  { value: 'pro', label: 'プロ（月 980 円）' },
-] as const;
+import { fmt, useDemoText } from '../i18n';
 
 export default function FieldForm(): ReactNode {
+  const t = useDemoText('fieldForm');
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [plan, setPlan] = useState<string>('free');
@@ -15,12 +12,16 @@ export default function FieldForm(): ReactNode {
   const [errors, setErrors] = useState<string[]>([]);
   const emailRef = useRef<HTMLInputElement>(null);
 
-  const emailError = errors.includes('email') ? '@ を含むメールアドレスを入力してください' : undefined;
+  const PLANS = [
+    { value: 'free', label: t.planFree },
+    { value: 'pro', label: t.planPro },
+  ] as const;
+  const emailError = errors.includes('email') ? t.emailError : undefined;
 
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        メンバーを招待
+        {t.open}
       </button>
 
       <Modal.Root
@@ -34,15 +35,15 @@ export default function FieldForm(): ReactNode {
       >
         <Modal.Header>
           <Modal.Controls end={<Modal.Close />} />
-          <Modal.Title>メンバーを招待</Modal.Title>
+          <Modal.Title>{t.title}</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          {/* 送信失敗のまとめは 1 箇所に。フォーカスは最初のエラー項目へ（B-09） */}
-          {errors.length > 0 ? <Modal.Alert tone="error">入力内容を確認してください（{errors.length} 件）</Modal.Alert> : null}
+          {/* t:summary */}
+          {errors.length > 0 ? <Modal.Alert tone="error">{fmt(t.alert, String(errors.length))}</Modal.Alert> : null}
 
-          {/* 1 つの入力は Modal.Field。ラベル・ヘルプ・エラーの配線を引き受ける（B-08） */}
-          <Modal.Field label="メールアドレス" required error={emailError} help="招待メールが届きます">
+          {/* t:field */}
+          <Modal.Field label={t.email} required error={emailError} help={t.emailHelp}>
             {(control) => (
               <input
                 {...control}
@@ -54,9 +55,9 @@ export default function FieldForm(): ReactNode {
             )}
           </Modal.Field>
 
-          {/* 選択肢のグループは label ではなく fieldset / legend で名前を付ける */}
+          {/* t:group */}
           <fieldset className="s-demo-fieldset">
-            <legend className="g-label">プラン</legend>
+            <legend className="g-label">{t.plan}</legend>
             {PLANS.map((option) => (
               <label key={option.value} className="s-demo-choice">
                 <input
@@ -71,8 +72,8 @@ export default function FieldForm(): ReactNode {
             ))}
           </fieldset>
 
-          {/* range も date も、作り直さずネイティブを包むだけ */}
-          <Modal.Field label="席数" help={`${String(seats)} 席`}>
+          {/* t:native */}
+          <Modal.Field label={t.seats} help={fmt(t.seatsHelp, String(seats))}>
             {(control) => (
               <input
                 {...control}
@@ -88,7 +89,7 @@ export default function FieldForm(): ReactNode {
 
         <Modal.Footer>
           <Modal.Button variant="tertiary" closeOnClick="close-button">
-            キャンセル
+            {t.cancel}
           </Modal.Button>
           <Modal.Button
             variant="primary"
@@ -102,7 +103,7 @@ export default function FieldForm(): ReactNode {
               setOpen(false);
             }}
           >
-            招待する
+            {t.submit}
           </Modal.Button>
         </Modal.Footer>
       </Modal.Root>

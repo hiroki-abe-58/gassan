@@ -323,12 +323,12 @@ function palette(scheme: 'light' | 'dark'): (name: string) => string {
   };
 }
 
-/** 最低比を割っている組を「何の組か: 実測」で返す。空なら合格。 */
+/** 最低比を割っている組を「前景 / 背景 = 実測」で返す。空なら合格。 */
 function shortfalls(scheme: 'light' | 'dark'): string[] {
   const color = palette(scheme);
-  return CONTRAST_PAIRS.flatMap(([fg, bg, min, what]) => {
+  return CONTRAST_PAIRS.flatMap(([fg, bg, min]) => {
     const ratio = contrastRatio(color(fg), color(bg));
-    return ratio >= min ? [] : [`${what}: --g-${fg} / --g-${bg} = ${ratio.toFixed(2)}:1（${String(min)}:1 未満）`];
+    return ratio >= min ? [] : [`--g-${fg} / --g-${bg} = ${ratio.toFixed(2)}:1（${String(min)}:1 未満）`];
   });
 }
 

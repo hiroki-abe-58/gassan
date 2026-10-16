@@ -30,7 +30,7 @@ function failures(seed: string, themesGassan = true): string[] {
   return SCHEMES.flatMap((scheme) =>
     buildTheme(seed, scheme, gassanTokens(scheme), themesGassan)
       .checks.filter((c) => !c.pass)
-      .map((c) => `${seed} ${scheme} ${c.what}: ${c.fg} / ${c.bg} = ${c.ratio.toFixed(2)}:1（${String(c.min)}:1 未満）`),
+      .map((c) => `${seed} ${scheme} ${c.id}: ${c.fg} / ${c.bg} = ${c.ratio.toFixed(2)}:1（${String(c.min)}:1 未満）`),
   );
 }
 
@@ -67,7 +67,7 @@ describe('theme / 色の見え方', () => {
         const seed = hexToOklch(p.seed);
         const accent = hexToOklch(buildTheme(p.seed, scheme, gassanTokens(scheme), true).accent.accent);
         const delta = Math.abs(((accent.h - seed.h + 540) % 360) - 180);
-        return delta > 8 ? [`${p.label} ${scheme}: 色相が ${delta.toFixed(1)}° ずれた`] : [];
+        return delta > 8 ? [`${p.id} ${scheme}: 色相が ${delta.toFixed(1)}° ずれた`] : [];
       }),
     );
     expect(drift).toEqual([]);
@@ -76,7 +76,7 @@ describe('theme / 色の見え方', () => {
   it('隣り合うプリセットのアクセントは見分けられる（OKLab で一定以上離れている）', () => {
     for (const scheme of SCHEMES) {
       const colors = PRESETS.filter((p) => p.id !== 'default').map((p) => ({
-        label: p.label,
+        label: p.id,
         lab: hexToOklch(buildTheme(p.seed, scheme, gassanTokens(scheme), true).accent.accent),
       }));
       for (let i = 1; i < colors.length; i += 1) {

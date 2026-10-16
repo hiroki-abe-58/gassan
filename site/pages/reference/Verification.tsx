@@ -1,24 +1,14 @@
 import type { ReactNode } from 'react';
 
-import { allItems, data, repoFile } from '../../data';
+import { allItems, data } from '../../data';
+import { SPEC_LANG, useT } from '../../i18n';
 import { to } from '../../router';
-import { inline } from '../../ui/Markdown';
+import { inline, md } from '../../ui/Markdown';
 import { Callout, PageHeader, Prose, Section, Stats } from '../../ui/Page';
 import { STATUS_ORDER, StatusBadge } from '../../ui/Spec';
 
-const PIPELINE: readonly { command: string; catches: string }[] = [
-  { command: 'tsc --noEmit', catches: '型の食い違い' },
-  { command: 'eslint .', catches: '静的に分かる書き間違い' },
-  { command: 'vitest run', catches: 'アクセシブルネーム、ゲートの論理和、閉じる理由の分類、色のコントラスト比' },
-  { command: 'check:trace', catches: '仕様の項目と根拠の欠落・余剰、存在しないテスト名の引用、文書に書いた件数のずれ' },
-  { command: 'check:docs', catches: 'README と docs のコード例が、公開 API でコンパイルできないこと' },
-  { command: 'tsup', catches: 'ESM / CJS / 型の生成の失敗' },
-  { command: 'check:dist', catches: '"use client" の消失、公開 API の欠落、サイズ予算の超過' },
-  { command: 'check:ssr', catches: 'レンダー中の window 参照（Next.js App Router で落ちる）、SSR 時点のゲートの fail-open' },
-  { command: 'check:pack', catches: 'npm に載る形の事故（LICENSE 欠落、types 条件の取り違え、同梱文書のリンク切れ）' },
-];
-
 export function Verification(): ReactNode {
+  const { nav, verification: t } = useT();
   const { meta, browserChecks } = data;
   const byStatus = STATUS_ORDER.map((status) => ({
     status,
@@ -29,24 +19,20 @@ export function Verification(): ReactNode {
 
   return (
     <>
-      <PageHeader
-        eyebrow="仕様と検証"
-        title="検証"
-        lead="「テストが緑である」ことと「保証されている」ことは別物である。何をどの層で検証し、何をまだ検証できていないかを分けて書く。"
-      />
+      <PageHeader eyebrow={nav.sections.reference} title={nav.pages.verification} lead={t.lead} />
 
       <Stats
         items={[
-          { value: meta.tests, label: `テスト（${String(meta.testFiles)} ファイル）` },
-          { value: meta.items, label: '振る舞いの項目' },
-          { value: proven, label: 'テストで証明済みの項目' },
-          { value: browserChecks.length, label: '実機でしか確かめられない項目' },
+          { value: meta.tests, label: t.stats.tests(meta.testFiles) },
+          { value: meta.items, label: t.stats.items },
+          { value: proven, label: t.stats.proven },
+          { value: browserChecks.length, label: t.stats.device },
         ]}
       />
 
-      <Section id="pipeline" title="npm run verify" intro="上から順に走り、1 つでも落ちたら止まる。下の段ほど、上の段では原理的に見つからない事故を捕まえる。">
+      <Section id="pipeline" title="npm run verify" intro={t.pipeline.intro}>
         <ol className="s-pipeline">
-          {PIPELINE.map((step) => (
+          {t.pipeline.steps.map((step) => (
             <li key={step.command}>
               <code>{step.command}</code>
               <span>{step.catches}</span>
@@ -55,19 +41,17 @@ export function Verification(): ReactNode {
         </ol>
       </Section>
 
-      <Section id="status" title="項目の状態" intro={`${String(meta.items)} 項目それぞれが、どの強さで保証されているか。`}>
+      <Section id="status" title={t.status.title} intro={t.status.intro(meta.items)}>
         <ul className="s-status-legend s-status-legend-lg">
           {byStatus.map((e) => (
             <li key={e.status}>
-              <StatusBadge status={e.status} /> {e.count} 項目
+              <StatusBadge status={e.status} /> {t.status.count(e.count)}
             </li>
           ))}
         </ul>
         {weakMust.length > 0 ? (
           <Callout tone="warn">
-            <p>
-              必須（M）なのに「記述」の項目が {weakMust.length} 件ある。値は機械検証しているが、描画結果は実ブラウザでしか確かめられない。これがこのライブラリの現在の弱点で、隠さずに出す。
-            </p>
+            <p>{t.status.weakMust(weakMust.length)}</p>
             <p className="s-idlist">
               {weakMust.map((i) => (
                 <a key={i.id} className="s-idref" href={to(`/spec/${i.id}`)}>
@@ -79,23 +63,20 @@ export function Verification(): ReactNode {
         ) : null}
       </Section>
 
-      <Section
-        id="device"
-        title="jsdom では検証できないもの"
-        intro="top layer・退出アニメ・スクリムの濃さのように、描画しないと真偽が決まらない項目。examples/css-check.html を実機で開くと、同じ項目がチェックボックスになっている。"
-      >
-        <div className="s-table-wrap" role="group" tabIndex={0} aria-label="実機の検品票">
+      <Section id="device" title={t.device.title} intro={t.device.intro}>
+        <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.device.tableCaption}>
           <table className="s-table">
-            <caption className="s-sr-only">実機の検品票</caption>
+            <caption className="s-sr-only">{t.device.tableCaption}</caption>
             <thead>
               <tr>
-                <th scope="col">ID</th>
-                <th scope="col">項目</th>
-                <th scope="col">確認方法</th>
-                <th scope="col">落ちていたら</th>
+                <th scope="col">{t.device.columns.id}</th>
+                <th scope="col">{t.device.columns.item}</th>
+                <th scope="col">{t.device.columns.how}</th>
+                <th scope="col">{t.device.columns.diagnosis}</th>
               </tr>
             </thead>
-            <tbody>
+            {/* 検品票の中身は VERIFICATION.md の原文 */}
+            <tbody lang={SPEC_LANG}>
               {browserChecks.map((check) => (
                 <tr key={check.id}>
                   <th scope="row" className="s-nowrap">
@@ -110,17 +91,7 @@ export function Verification(): ReactNode {
           </table>
         </div>
         <Prose>
-          <p>
-            この {browserChecks.length} 項目は、まだ実機で消化していない（ROADMAP v0.2.0）。実ブラウザでの自動検査（Playwright + axe）は v0.4.0 で入れる。詳しくは{' '}
-            <a href={repoFile('VERIFICATION.md')} target="_blank" rel="noreferrer">
-              VERIFICATION.md
-            </a>{' '}
-            と{' '}
-            <a href={repoFile('ROADMAP.md')} target="_blank" rel="noreferrer">
-              ROADMAP.md
-            </a>
-            。
-          </p>
+          <p>{md(t.device.pending(browserChecks.length))}</p>
         </Prose>
       </Section>
     </>

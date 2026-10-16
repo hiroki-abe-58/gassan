@@ -1,37 +1,39 @@
 import { useState, type ReactNode } from 'react';
 
 import { Modal } from '@genelab/gassan';
+import { fmt, useDemoText } from '../i18n';
 
 const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function FooterButtons(): ReactNode {
+  const t = useDemoText('footerButtons');
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(0);
 
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        公開設定
+        {t.open}
       </button>
 
       <Modal.Root kind="form" open={open} onOpenChange={setOpen} submitShortcut>
         <Modal.Header>
           <Modal.Controls end={<Modal.Close />} />
-          <Modal.Title>記事を公開する</Modal.Title>
+          <Modal.Title>{t.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Modal.Description>
-            「公開する」を連打しても、処理が終わるまで 2 回目は走らない（F-08）。いままでの送信回数: {count}
+            {fmt(t.description, String(count))}
           </Modal.Description>
         </Modal.Body>
 
-        {/* DOM 順 = 視覚順 = Tab 順。弱い順に書く。最初の tertiary だけが左に離れる（F-02 / F-03） */}
-        <Modal.Footer note="公開後も編集できます">
+        {/* t:order */}
+        <Modal.Footer note={t.note}>
           <Modal.Button variant="tertiary" closeOnClick="close-button">
-            キャンセル
+            {t.cancel}
           </Modal.Button>
           <Modal.Button variant="secondary" onAction={() => wait(600)}>
-            下書き保存
+            {t.saveDraft}
           </Modal.Button>
           <Modal.Button
             variant="primary"
@@ -41,7 +43,7 @@ export default function FooterButtons(): ReactNode {
               await wait(1200);
             }}
           >
-            公開する
+            {t.publish}
           </Modal.Button>
         </Modal.Footer>
       </Modal.Root>

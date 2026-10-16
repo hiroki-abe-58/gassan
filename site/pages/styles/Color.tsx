@@ -3,7 +3,9 @@ import type { CSSProperties, ReactNode } from 'react';
 import { data } from '../../data';
 import { CONTRAST_PAIRS, contrastRatio, isHex6 } from '../../data/color';
 import { token } from '../../data/tokens';
+import { useT } from '../../i18n';
 import { CodeBlock } from '../../ui/Code';
+import { md, Paras } from '../../ui/Markdown';
 import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
 
 function Swatch({ value }: { value: string }): ReactNode {
@@ -11,26 +13,31 @@ function Swatch({ value }: { value: string }): ReactNode {
 }
 
 function ContrastTable({ scheme }: { scheme: 'light' | 'dark' }): ReactNode {
+  const { color, common } = useT();
+  const t = color.contrast;
+  const sample = common.contrastSample;
+  // 前景のトークン名で引く。CONTRAST_PAIRS の名前は string なので、ここで広げて受ける
+  const uses: Readonly<Record<string, string | undefined>> = t.uses;
   const value = (name: string): string => {
-    const t = token(`--g-${name}`);
-    return scheme === 'dark' ? (t.dark ?? t.light) : t.light;
+    const found = token(`--g-${name}`);
+    return scheme === 'dark' ? (found.dark ?? found.light) : found.light;
   };
-  const caption = `${scheme === 'light' ? 'ライト' : 'ダーク'}のコントラスト比`;
+  const caption = t.tableCaption[scheme];
   return (
     <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption}>
       <table className="s-table s-contrast-table" data-scheme={scheme}>
         <caption>{caption}</caption>
         <thead>
           <tr>
-            <th scope="col">見本</th>
-            <th scope="col">組</th>
-            <th scope="col">用途</th>
-            <th scope="col">比</th>
-            <th scope="col">基準</th>
+            <th scope="col">{t.sample}</th>
+            <th scope="col">{t.pair}</th>
+            <th scope="col">{t.use}</th>
+            <th scope="col">{t.ratio}</th>
+            <th scope="col">{t.min}</th>
           </tr>
         </thead>
         <tbody>
-          {CONTRAST_PAIRS.map(([fg, bg, min, what]) => {
+          {CONTRAST_PAIRS.map(([fg, bg, min]) => {
             const f = value(fg);
             const b = value(bg);
             const ratio = isHex6(f) && isHex6(b) ? contrastRatio(f, b) : Number.NaN;
@@ -39,7 +46,7 @@ function ContrastTable({ scheme }: { scheme: 'light' | 'dark' }): ReactNode {
               <tr key={`${fg}/${bg}`}>
                 <td>
                   <span className="s-contrast-sample" style={{ color: f, background: b }} aria-hidden="true">
-                    Aa あ
+                    {sample}
                   </span>
                 </td>
                 <th scope="row">
@@ -47,11 +54,11 @@ function ContrastTable({ scheme }: { scheme: 'light' | 'dark' }): ReactNode {
                   <br />
                   <code>--g-{bg}</code>
                 </th>
-                <td>{what}</td>
+                <td>{uses[fg]}</td>
                 <td className="s-num">{Number.isNaN(ratio) ? '—' : `${ratio.toFixed(2)}:1`}</td>
                 <td>
                   <span className="s-pass" data-pass={pass ? '' : undefined}>
-                    {pass ? `合格（${String(min)}:1 以上）` : `不足（${String(min)}:1 未満）`}
+                    {pass ? t.pass(min) : t.fail(min)}
                   </span>
                 </td>
               </tr>
@@ -64,46 +71,47 @@ function ContrastTable({ scheme }: { scheme: 'light' | 'dark' }): ReactNode {
 }
 
 export function Color(): ReactNode {
+  const { nav, color: t } = useT();
   const surface = data.tokens.find((g) => g.name === 'surface');
 
   return (
     <>
       <PageHeader
-        eyebrow="スタイル"
-        title="色とコントラスト"
-        lead="すべての色はカスタムプロパティで、ライトとダークの 2 組を持つ。どの組が何の文字を載せるかを決め、その比をテストで計算している。"
+        eyebrow={nav.sections.styles}
+        title={nav.pages.color}
+        lead={t.lead}
         ids={['D-06', 'S-07', 'G-10', 'K-07', 'F-06']}
       />
 
       {surface ? (
-        <Section id="tokens" title="色のトークン" intro="src/styles.css の @layer gassan.tokens から読んでいる。ダーク欄が空のものは、ライトの値をそのまま使う。">
-          <div className="s-table-wrap" role="group" tabIndex={0} aria-label="色のトークン">
+        <Section id="tokens" title={t.tokens.title} intro={t.tokens.intro}>
+          <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.tokens.tableCaption}>
             <table className="s-table s-token-table">
-              <caption className="s-sr-only">色のトークン</caption>
+              <caption className="s-sr-only">{t.tokens.tableCaption}</caption>
               <thead>
                 <tr>
-                  <th scope="col">トークン</th>
-                  <th scope="col">ライト</th>
-                  <th scope="col">ダーク</th>
+                  <th scope="col">{t.tokens.token}</th>
+                  <th scope="col">{t.tokens.light}</th>
+                  <th scope="col">{t.tokens.dark}</th>
                 </tr>
               </thead>
               <tbody>
-                {surface.tokens.map((t) => (
-                  <tr key={t.name}>
+                {surface.tokens.map((item) => (
+                  <tr key={item.name}>
                     <th scope="row">
-                      <code>{t.name}</code>
+                      <code>{item.name}</code>
                     </th>
                     <td>
                       <span className="s-token-value">
-                        <Swatch value={t.light} />
-                        <code>{t.light}</code>
+                        <Swatch value={item.light} />
+                        <code>{item.light}</code>
                       </span>
                     </td>
                     <td>
-                      {t.dark ? (
+                      {item.dark ? (
                         <span className="s-token-value">
-                          <Swatch value={t.dark} />
-                          <code>{t.dark}</code>
+                          <Swatch value={item.dark} />
+                          <code>{item.dark}</code>
                         </span>
                       ) : (
                         '—'
@@ -117,36 +125,20 @@ export function Color(): ReactNode {
         </Section>
       ) : null}
 
-      <Section
-        id="contrast"
-        title="コントラスト比"
-        intro="下の表はこのページを開いた時点のトークンから計算している。同じ組と同じ計算を tests/tokens.test.ts が使い、基準を割ると CI が落ちる。"
-      >
+      <Section id="contrast" title={t.contrast.title} intro={t.contrast.intro}>
         <ContrastTable scheme="light" />
         <ContrastTable scheme="dark" />
-        <Callout>
-          ゲート中の primary（<code>--g-accent-muted</code>）は、かつて白文字で 3.16:1 しかなかった。コメントには「4.5:1 を維持する」と書いてあり、追跡表でも「値は検査済み」と主張していたが、比そのものは誰も計算していなかった。このページで比を表示しようとして見つかった。
-        </Callout>
+        <Callout>{md(t.contrast.callout)}</Callout>
       </Section>
 
-      <Section id="gated" title="押せないボタンこそ、読めなければならない">
+      <Section id="gated" title={t.gated.title}>
         <Prose>
-          <p>
-            <code>disabled</code> の要素は WCAG のコントラスト要件から除外される。だが gassan のゲート中のボタンは <code>aria-disabled</code> で、フォーカスでき、押せば理由を返す「使える」ボタンである。除外規定には頼れない。だから専用のトークンで 4.5:1 を保ち、
-            <code>opacity</code> で薄くして済ませることはしない（G-10）。
-          </p>
-          <p>
-            背景用のトークンを文字色に流用しないことも決めている。ダークでは、明るい文字を載せる背景と、暗い面に載る文字の両方で 4.5:1 を取れる色は存在しない。
-          </p>
+          <Paras items={t.gated.body} />
         </Prose>
       </Section>
 
-      <Section id="theme" title="自分の色にする" intro="トークンは @layer gassan.tokens の中にあるので、レイヤの外から書けば詳細度を気にせず上書きできる。">
-        <CodeBlock
-          lang="css"
-          caption="app.css"
-          code={`:root {\n  --g-accent: #0b5cad;\n  --g-on-accent: #ffffff;\n  --g-accent-muted: #5f7184; /* 白文字で 4.5:1 以上を確かめてから */\n  --g-radius: 20px;\n}`}
-        />
+      <Section id="theme" title={t.theme.title} intro={t.theme.intro}>
+        <CodeBlock lang="css" caption="app.css" code={t.theme.code} />
       </Section>
     </>
   );

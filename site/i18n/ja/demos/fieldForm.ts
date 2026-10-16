@@ -1,0 +1,21 @@
+export default {
+  planFree: 'フリー',
+  planPro: 'プロ（月 980 円）',
+  emailError: '@ を含むメールアドレスを入力してください',
+  open: 'メンバーを招待',
+  title: 'メンバーを招待',
+  alert: '入力内容を確認してください（{0} 件）',
+  email: 'メールアドレス',
+  emailHelp: '招待メールが届きます',
+  plan: 'プラン',
+  seats: '席数',
+  seatsHelp: '{0} 席',
+  cancel: 'キャンセル',
+  submit: '招待する',
+  comments: {
+    summary: '送信失敗のまとめは 1 箇所に。フォーカスは最初のエラー項目へ（B-09）',
+    field: '1 つの入力は Modal.Field。ラベル・ヘルプ・エラーの配線を引き受ける（B-08）',
+    group: '選択肢のグループは label ではなく fieldset / legend で名前を付ける',
+    native: 'range も date も、作り直さずネイティブを包むだけ',
+  },
+};

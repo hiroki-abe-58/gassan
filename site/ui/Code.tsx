@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
+import { useT } from '../i18n';
+
 /**
  * 依存を足さない、軽いシンタックスハイライト。
  * 正確な構文解析はしない。読む助けになる程度の色分けだけを担う。
@@ -67,9 +69,12 @@ export interface CodeBlockProps {
   lang?: string;
   /** コードの上に出す小見出し（ファイル名など）。 */
   caption?: string;
+  /** コードの中の文（コメントなど）の言語。仕様書から読んだコード（原文のまま出す）に SPEC_LANG を渡す。 */
+  textLang?: string;
 }
 
-export function CodeBlock({ code, lang = 'tsx', caption }: CodeBlockProps): ReactNode {
+export function CodeBlock({ code, lang = 'tsx', caption, textLang }: CodeBlockProps): ReactNode {
+  const t = useT().common.code;
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -87,13 +92,13 @@ export function CodeBlock({ code, lang = 'tsx', caption }: CodeBlockProps): Reac
       <div className="s-code-bar">
         <span className="s-code-lang">{caption ?? lang}</span>
         <button type="button" className="s-code-copy" onClick={copy}>
-          {copied ? 'コピーしました' : 'コピー'}
+          {copied ? t.copied : t.copy}
         </button>
         <span className="s-sr-only" role="status">
-          {copied ? 'コードをコピーしました' : ''}
+          {copied ? t.copiedStatus : ''}
         </span>
       </div>
-      <pre tabIndex={0} role="group" aria-label={caption ? `${caption} のコード` : 'コード'}>
+      <pre tabIndex={0} role="group" aria-label={caption ? t.labelOf(caption) : t.label} lang={textLang}>
         <code>{highlight(code, lang)}</code>
       </pre>
     </div>

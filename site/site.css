@@ -20,6 +20,8 @@
   --s-radius: 14px;
   --s-radius-sm: 10px;
 
+  /* 漢字の字体（日本・中国大陸・台湾香港）とハングル・タイ文字の字形は、言語で選ぶフォントが変わる。
+   * --s-font は下の :lang() で言語ごとに差し替える。ここは日本語と英語の値 */
   --s-font: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
     "Yu Gothic UI", Meiryo, sans-serif;
   --s-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
@@ -41,6 +43,24 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+  }
+  :lang(zh-Hans) {
+    --s-font: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+      "Noto Sans SC", sans-serif;
+  }
+  :lang(zh-Hant) {
+    --s-font: system-ui, -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+  }
+  :lang(ko) {
+    --s-font: system-ui, -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR",
+      sans-serif;
+  }
+  :lang(th) {
+    --s-font: system-ui, -apple-system, "Segoe UI", Thonburi, "Leelawadee UI", "Noto Sans Thai", sans-serif;
+  }
+  /* 仕様の原文（lang="ja"）や言語の見本のように、ページの中で言語が変わる要素はフォントも選び直す */
+  [lang] {
+    font-family: var(--s-font);
   }
   body {
     margin: 0;
@@ -2702,10 +2722,80 @@
   white-space: normal;
 }
 
+/* ---------------------------------------------------------------------------
+ * 言語の切り替え（トップバー）と、訳したページの注記
+ * -------------------------------------------------------------------------*/
+.s-lang-icon {
+  inline-size: 18px;
+  block-size: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+.s-lang-panel {
+  inline-size: min(280px, calc(100vw - 24px));
+  padding: 16px 12px 12px;
+}
+.s-lang-title {
+  margin: 0 8px 8px;
+  font-size: 1.125rem;
+}
+.s-lang-list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.s-lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 44px;
+  padding: 0 12px;
+  border-radius: var(--s-radius-sm);
+  color: var(--s-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.s-lang-option:hover {
+  background: var(--s-surface-2);
+}
+/* 選択中は塗りの色だけでなく、チェックの印でも示す */
+.s-lang-option[aria-current] {
+  background: var(--s-accent-soft);
+  color: var(--s-on-accent-soft);
+}
+.s-lang-option[aria-current]::after {
+  content: "✓";
+  margin-inline-start: auto;
+}
+.s-original-note {
+  margin: 0 0 28px;
+  padding: 10px 14px;
+  border-radius: var(--s-radius-sm);
+  background: var(--s-surface-1);
+  color: var(--s-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
 @media (max-width: 520px) {
   /* トップバーに収めるため、仕様へのリンクはメニューに任せる */
   .s-topbar-spec {
     display: none;
+  }
+  /* 言語のボタンは地球の印だけにする。名前は読み上げ用に残す */
+  .s-lang-name {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .s-lang-btn {
+    padding-inline: 10px;
   }
 }
 
@@ -2733,6 +2823,23 @@
 .s-width-control {
   max-inline-size: 360px;
   margin-block-end: 16px;
+}
+/* 見本の言語。6 つあるので折り返して並べる */
+.s-sample-langs {
+  max-inline-size: 640px;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+}
+.s-segmented-wrap {
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  border-radius: var(--s-radius);
+}
+.s-segmented-wrap label > span {
+  border-radius: var(--s-radius-sm);
+}
+.s-lang-table th[scope="row"] {
+  min-inline-size: 7em;
 }
 .s-compare {
   display: grid;

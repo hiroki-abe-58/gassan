@@ -3,6 +3,7 @@ import { Fragment, type ReactNode } from 'react';
 import { Phrase } from '@genelab/gassan';
 
 import { repoFile } from '../data';
+import { SPEC_LANG, useT } from '../i18n';
 import { to } from '../router';
 import { CodeBlock } from './Code';
 
@@ -12,6 +13,10 @@ import { CodeBlock } from './Code';
  * 汎用の Markdown 処理系ではない。modal.skill.md と追跡表が実際に使っている書式
  * （段落・コードブロック・表・箇条書き・強調・コード・リンク）だけを扱う。
  * 仕様書を唯一の原本にしておき、サイトはそれを読むだけ、を保つための部品である。
+ *
+ * サイトの文言（i18n/<lang>/*.ts）も同じインライン書式で書き、md() で描く。
+ * 仕様書から読んだもの（InlineMd / MdTable / BlockMd）は原文の言語のまま出すので、lang を付けて
+ * 読み上げと字形（漢字の字体）を原文の言語に合わせる。
  */
 
 /* -------------------------------------------------------------------------- */
@@ -23,7 +28,7 @@ const INLINE = new RegExp(
     /`([^`]+)`/.source, // 1: code
     /\*\*(.+?)\*\*/.source, // 2: strong
     /\[([^\]]+)\]\(([^)\s]+)\)/.source, // 3,4: link
-    /(?<![A-Za-z0-9-])([LSCHTBFGKAMD]-\d{2})(?![0-9])/.source, // 5: 仕様の ID
+    /(?<![A-Za-z0-9-])([LSCHTBFGKAMDW]-\d{2})(?![0-9])/.source, // 5: 仕様の ID
     /§(10-\d+)/.source, // 6: 実装ノート
   ].join('|'),
   'g',
@@ -31,6 +36,8 @@ const INLINE = new RegExp(
 
 function linkTarget(href: string): { href: string; external: boolean } {
   if (/^https?:\/\//.test(href)) return { href, external: true };
+  // サイト内のページ（#/path）には、いまの言語の頭を付ける
+  if (href.startsWith('#/')) return { href: to(href.slice(1)), external: false };
   if (href.startsWith('#')) return { href, external: false };
   // 仕様書の相対リンク（./docs/x.md など）は GitHub 上のファイルへ。
   return { href: repoFile(href.replace(/^\.\.\//, '')), external: true };
@@ -91,9 +98,30 @@ export function joinLines(lines: readonly string[]): string {
   }, '');
 }
 
+/** サイトの文言（インライン Markdown）を描く。折り返しは呼ぶ側の Phrase（Prose・Section など）に任せる。 */
+export function md(text: string, keyPrefix = 'm'): ReactNode[] {
+  return inline(text, keyPrefix);
+}
+
+/** 段落の並び。文言の配列を 1 つずつ <p> にする。 */
+export function Paras({ items }: { items: readonly string[] }): ReactNode {
+  return (
+    <>
+      {items.map((text, i) => (
+        <p key={i}>{inline(text, `p${String(i)}`)}</p>
+      ))}
+    </>
+  );
+}
+
+/** 仕様書から読んだ 1 文（条文の要点・API の説明）。原文の言語のまま出す。 */
 export function InlineMd({ text }: { text: string }): ReactNode {
   // 仕様の文はセルや段落の中で折り返すので、日本語は文節で折る（W-05）
-  return <Phrase>{inline(joinLines(text.split('\n')))}</Phrase>;
+  return (
+    <span lang={SPEC_LANG}>
+      <Phrase>{inline(joinLines(text.split('\n')))}</Phrase>
+    </span>
+  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -127,11 +155,12 @@ export function MdTable({
   caption?: string;
   align?: readonly ('left' | 'center' | 'right' | undefined)[];
 }): ReactNode {
+  const t = useT();
   return (
-    <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption ?? '表'}>
+    <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption ?? t.common.table}>
       <table className="s-table">
         {caption ? <caption className="s-sr-only">{caption}</caption> : null}
-        <thead>
+        <thead lang={SPEC_LANG}>
           <tr>
             {table.header.map((cell, i) => (
               <th key={i} scope="col" style={align[i] ? { textAlign: align[i] } : undefined}>
@@ -140,7 +169,7 @@ export function MdTable({
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody lang={SPEC_LANG}>
           <Phrase>
             {table.rows.map((row, r) => (
               <tr key={r}>
@@ -235,7 +264,7 @@ function blocks(md: string): Block[] {
 
 export function BlockMd({ text, tableCaption }: { text: string; tableCaption?: string }): ReactNode {
   return (
-    <div className="s-prose">
+    <div className="s-prose" lang={SPEC_LANG}>
       {/* 段落・箇条書き・見出しの日本語を文節で折る。コードと表（MdTable）は Phrase が素通りする */}
       <Phrase>
       {blocks(text).map((block, index) => {

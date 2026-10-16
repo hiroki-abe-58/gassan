@@ -1,9 +1,11 @@
 import { useState, type ReactNode } from 'react';
 
 import { useModals } from '@genelab/gassan';
+import { fmt, useDemoText } from '../i18n';
 
-// アプリのルートに <ModalHost /> を 1 つ置いておくこと（このサイトでは App.tsx に置いてある）。
+// t:host
 export default function ImperativeConfirm(): ReactNode {
+  const t = useDemoText('imperativeConfirm');
   const modals = useModals();
   const [log, setLog] = useState('');
 
@@ -13,23 +15,23 @@ export default function ImperativeConfirm(): ReactNode {
         type="button"
         className="s-btn"
         onClick={async () => {
-          const ok = await modals.confirm({ title: 'ログアウトしますか', tone: 'danger', confirmLabel: 'ログアウト' });
+          const ok = await modals.confirm({ title: t.logoutTitle, tone: 'danger', confirmLabel: t.logout });
           setLog(`confirm → ${String(ok)}`);
         }}
       >
-        confirm を呼ぶ
+        {t.callOne}
       </button>
       <button
         type="button"
         className="s-btn s-btn-tonal"
         onClick={async () => {
-          // 同時に 2 つ呼んでも、1 枚ずつ順に出る（L-14）
-          void modals.confirm({ title: '1 枚目: 通知をオフにしますか' });
-          const ok = await modals.confirm({ title: '2 枚目: 退会の確認', consent: '内容を理解しました' });
-          setLog(`2 枚目 → ${String(ok)}`);
+          // t:queue
+          void modals.confirm({ title: t.firstTitle });
+          const ok = await modals.confirm({ title: t.secondTitle, consent: t.consent });
+          setLog(fmt(t.secondLog, String(ok)));
         }}
       >
-        2 つ同時に呼ぶ
+        {t.callTwo}
       </button>
       <output className="s-demo-log">{log}</output>
     </>

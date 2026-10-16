@@ -6,7 +6,7 @@ export default function ProviderEnglish(): ReactNode {
   const [open, setOpen] = useState(false);
 
   return (
-    // ライブラリが出す文字列（閉じる・読了の理由・ステップの読み上げ…）は、例外なくここを通る
+    // t:provider
     <GassanProvider labels={{ ...englishLabels, required: 'Required' }}>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
         Open in English

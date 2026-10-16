@@ -1,0 +1,22 @@
+export default {
+  open: 'プロフィールを編集',
+  jazz: 'ジャズ',
+  ambient: 'アンビエント',
+  classic: 'クラシック',
+  techno: 'テクノ',
+  nameRequired: '表示名を入力してください',
+  discardTitle: '入力中の内容を破棄しますか',
+  discard: '破棄する',
+  backToEdit: '編集に戻る',
+  title: 'プロフィールを編集',
+  name: '表示名',
+  nameHelp: '全角20文字まで',
+  genres: '好きなジャンル',
+  notify: '新着があれば知らせる',
+  shortcut: '⌘ / Ctrl + Enter でも保存できます',
+  cancel: 'キャンセル',
+  save: '保存する',
+  comments: {
+    leaveGuard: '書きかけなら引き止める。確認は命令的 API で、フォームの上にもう 1 枚重ねる。',
+  },
+};

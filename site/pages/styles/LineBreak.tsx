@@ -1,68 +1,195 @@
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { useId, useState, type CSSProperties, type ReactNode } from 'react';
 
 import { Modal, Phrase, splitPhrases } from '@genelab/gassan';
 
 import LineBreakModal from '../../demos/LineBreakModal';
 import lineBreakSource from '../../demos/LineBreakModal.tsx?raw';
+import { LANG_NAMES, useI18n, type Lang } from '../../i18n';
 import { BreakCompare, ButtonSamples, type SampleButton } from '../../ui/BreakCompare';
 import { CodeBlock } from '../../ui/Code';
 import { Example } from '../../ui/Example';
+import { md, Paras } from '../../ui/Markdown';
 import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
-const BUTTONS: readonly SampleButton[] = [
-  { label: 'プロフィールを編集', variant: 'primary' },
-  { label: '下書きとして保存する', variant: 'secondary' },
-  { label: '利用規約に同意して続ける', variant: 'primary' },
-  { label: '通知の設定を変更する', variant: 'tertiary' },
-];
+/**
+ * 言語ごとの見本。見本そのものが言語の例なので、サイトの言語では訳さない（サイトが英語でも中国語の見本は中国語）。
+ * ボタンは「ブラウザ任せだと語の途中で割れる」長さのものを選んである。
+ */
+interface Sample {
+  buttons: readonly SampleButton[];
+  title: string;
+  table: { head: [string, string]; rows: readonly [string, string][] };
+  chart: { label: string; summary: string };
+}
+
+const SAMPLES: Record<Lang, Sample> = {
+  ja: {
+    buttons: [
+      { label: 'プロフィールを編集', variant: 'primary' },
+      { label: '下書きとして保存する', variant: 'secondary' },
+      { label: '利用規約に同意して続ける', variant: 'primary' },
+      { label: '通知の設定を変更する', variant: 'tertiary' },
+    ],
+    title: '第3四半期の売上レポートを共有する',
+    table: {
+      head: ['項目', '変更内容'],
+      rows: [
+        ['通知の設定', 'メールでの通知を停止しました'],
+        ['表示名', 'プロフィールを編集しました'],
+      ],
+    },
+    chart: { label: '月別の売上の推移', summary: '3月が最大の120万円。4月以降は100万円前後で横ばい。' },
+  },
+  'zh-Hans': {
+    buttons: [
+      { label: '编辑个人资料', variant: 'primary' },
+      { label: '保存更改并关闭', variant: 'secondary' },
+      { label: '同意用户协议并继续', variant: 'primary' },
+      { label: '更改通知设置', variant: 'tertiary' },
+    ],
+    title: '共享第三季度的销售报告',
+    table: {
+      head: ['项目', '变更内容'],
+      rows: [
+        ['通知设置', '已停止电子邮件通知'],
+        ['显示名称', '已编辑个人资料'],
+      ],
+    },
+    chart: { label: '各月销售额的变化', summary: '3月最高，为120万元。4月以后稳定在100万元左右。' },
+  },
+  'zh-Hant': {
+    buttons: [
+      { label: '編輯個人資料', variant: 'primary' },
+      { label: '儲存變更並關閉', variant: 'secondary' },
+      { label: '同意使用者條款並繼續', variant: 'primary' },
+      { label: '變更通知設定', variant: 'tertiary' },
+    ],
+    title: '分享第三季的銷售報告',
+    table: {
+      head: ['項目', '變更內容'],
+      rows: [
+        ['通知設定', '已停止電子郵件通知'],
+        ['顯示名稱', '已編輯個人資料'],
+      ],
+    },
+    chart: { label: '各月銷售額的變化', summary: '3月最高，為120萬元。4月以後維持在100萬元左右。' },
+  },
+  ko: {
+    buttons: [
+      { label: '프로필 편집', variant: 'primary' },
+      { label: '변경 사항을 저장하고 닫기', variant: 'secondary' },
+      { label: '이용약관에 동의하고 계속하기', variant: 'primary' },
+      { label: '알림 설정 변경하기', variant: 'tertiary' },
+    ],
+    title: '3분기 매출 보고서를 공유하기',
+    table: {
+      head: ['항목', '변경 내용'],
+      rows: [
+        ['알림 설정', '이메일 알림을 중지했습니다'],
+        ['표시 이름', '프로필을 편집했습니다'],
+      ],
+    },
+    chart: { label: '월별 매출 추이', summary: '3월이 120만 원으로 가장 높았고, 4월 이후로는 100만 원 안팎에서 보합세입니다.' },
+  },
+  th: {
+    buttons: [
+      { label: 'แก้ไขโปรไฟล์', variant: 'primary' },
+      { label: 'บันทึกการเปลี่ยนแปลงและปิด', variant: 'secondary' },
+      { label: 'ยอมรับข้อกำหนดและดำเนินการต่อ', variant: 'primary' },
+      { label: 'เปลี่ยนการตั้งค่าการแจ้งเตือน', variant: 'tertiary' },
+    ],
+    title: 'แชร์รายงานยอดขายไตรมาสที่ 3',
+    table: {
+      head: ['รายการ', 'การเปลี่ยนแปลง'],
+      rows: [
+        ['การแจ้งเตือน', 'หยุดการแจ้งเตือนทางอีเมลแล้ว'],
+        ['ชื่อที่แสดง', 'แก้ไขโปรไฟล์แล้ว'],
+      ],
+    },
+    chart: { label: 'ยอดขายรายเดือน', summary: 'เดือนมีนาคมสูงสุดที่ 1.2 ล้าน หลังเดือนเมษายนทรงตัวที่ประมาณ 1 ล้าน' },
+  },
+  en: {
+    buttons: [
+      { label: 'Edit profile', variant: 'primary' },
+      { label: 'Save changes and close', variant: 'secondary' },
+      { label: 'Agree to the terms and continue', variant: 'primary' },
+      { label: 'Change notification settings', variant: 'tertiary' },
+    ],
+    title: 'Share the third-quarter sales report',
+    table: {
+      head: ['Item', 'Change'],
+      rows: [
+        ['Notifications', 'Turned off email notifications'],
+        ['Display name', 'Edited the profile'],
+      ],
+    },
+    chart: { label: 'Monthly sales', summary: 'Peaked at 1.2M in March, then flat at around 1M from April.' },
+  },
+};
+
+/** 見本の言語の並び。比べ甲斐のある順（gassan が手を入れる言語が先）。 */
+const SAMPLE_LANGS: readonly Lang[] = ['ja', 'zh-Hans', 'zh-Hant', 'ko', 'th', 'en'];
+
+/** 「試す」欄の初めの文。サイトの言語の文にする。英語とタイ語は分割の様子が見えないので日本語の文にする。 */
+const TRY_TEXT: Record<Lang, string> = {
+  ja: '本文を最後までお読みのうえ、更新後の利用規約に同意してください。',
+  'zh-Hans': '请阅读全文后，同意更新后的用户协议。',
+  'zh-Hant': '請閱讀全文後，同意更新後的使用者條款。',
+  ko: '본문을 끝까지 읽은 후 변경된 이용약관에 동의해 주세요.',
+  en: '本文を最後までお読みのうえ、更新後の利用規約に同意してください。',
+  th: '本文を最後までお読みのうえ、更新後の利用規約に同意してください。',
+};
 
 const BARS = [40, 62, 92, 80, 78];
 
 /** 比べる見本。BreakCompare が左右に同じものを描く。 */
-function Samples(): ReactNode {
+function Samples({ sample }: { sample: Sample }): ReactNode {
+  const { t } = useI18n();
+  const labels = t.lineBreak.compare.labels;
   return (
     <div className="s-samples">
       <div className="s-sample">
-        <p className="s-sample-label">ボタン</p>
-        <ButtonSamples buttons={BUTTONS} />
+        <p className="s-sample-label">{labels.buttons}</p>
+        <ButtonSamples buttons={sample.buttons} />
       </div>
       <div className="s-sample">
-        <p className="s-sample-label">タイトル</p>
+        <p className="s-sample-label">{labels.title}</p>
         <p className="s-sample-box s-sample-title">
-          <Phrase>第3四半期の売上レポートを共有する</Phrase>
+          <Phrase>{sample.title}</Phrase>
         </p>
       </div>
       <div className="s-sample">
-        <p className="s-sample-label">表</p>
+        <p className="s-sample-label">{labels.table}</p>
         {/* 2 列の表は、ボタンと同じ幅では列が 1〜2 文字幅になる。器を広げて比べる */}
         <div className="s-sample-box" style={{ '--s-sample-scale': 1.8 } as CSSProperties}>
-          <Modal.Table label="変更履歴の見本">
+          <Modal.Table label={labels.tableLabel}>
             <table>
               <thead>
                 <tr>
-                  <th scope="col">項目</th>
-                  <th scope="col">変更内容</th>
+                  {sample.table.head.map((cell) => (
+                    <th key={cell} scope="col">
+                      {cell}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>通知の設定</td>
-                  <td>メールでの通知を停止しました</td>
-                </tr>
-                <tr>
-                  <td>表示名</td>
-                  <td>プロフィールを編集しました</td>
-                </tr>
+                {sample.table.rows.map(([item, change]) => (
+                  <tr key={item}>
+                    <td>{item}</td>
+                    <td>{change}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </Modal.Table>
         </div>
       </div>
       <div className="s-sample">
-        <p className="s-sample-label">グラフの要約</p>
+        <p className="s-sample-label">{labels.chart}</p>
         <div className="s-sample-box">
-          <Modal.Chart label="月別の売上の推移" summary="3月が最大の120万円。4月以降は100万円前後で横ばい。">
+          <Modal.Chart label={sample.chart.label} summary={sample.chart.summary}>
             <span className="s-mock-bars">
               {BARS.map((h, i) => (
                 <i key={i} style={{ height: `${String(h)}%` }} />
@@ -75,16 +202,30 @@ function Samples(): ReactNode {
   );
 }
 
+const KANA = /[\p{Script=Hiragana}\p{Script=Katakana}]/u;
+const HANGUL = /\p{Script=Hangul}/u;
+const HAN = /\p{Script=Han}/u;
+
 function Splitter(): ReactNode {
-  const [text, setText] = useState('本文を最後までお読みのうえ、更新後の利用規約に同意してください。');
+  const { lang, t } = useI18n();
+  const tt = t.lineBreak.try;
+  const [text, setText] = useState(TRY_TEXT[lang]);
   const phrases = splitPhrases(text);
+  // gassan と同じ判定（W-04）で、どの扱いになったかを添える
+  const note = KANA.test(text) || (!HANGUL.test(text) && HAN.test(text))
+    ? phrases.length > 1
+      ? tt.split(phrases.length)
+      : tt.single
+    : HANGUL.test(text)
+      ? tt.korean
+      : tt.untouched;
   return (
     <div className="s-splitter">
       <label className="s-field">
-        <span>試す文字列</span>
+        <span>{tt.input}</span>
         <textarea rows={2} value={text} onChange={(event) => setText(event.target.value)} />
       </label>
-      <ol className="s-splitter-out" aria-label="文節に分けた結果">
+      <ol className="s-splitter-out" aria-label={tt.resultLabel}>
         {phrases.map((p, i) => (
           <li key={i} className="s-phrase-chip">
             {p}
@@ -92,164 +233,184 @@ function Splitter(): ReactNode {
         ))}
       </ol>
       <p className="s-splitter-note">
-        <Phrase>
-          {phrases.length > 1
-            ? `${String(phrases.length)} 個の文節に分かれた。改行はこの切れ目でだけ起きる。`
-            : 'かなを含まない文字列（英語・中国語）や、1 文節だけの文字列には手を出さない。'}
-        </Phrase>
+        <Phrase>{note}</Phrase>
       </p>
     </div>
   );
 }
 
-const STEPS: readonly { title: string; body: string }[] = [
-  { title: '語に分ける', body: 'ブラウザと Node が標準で持つ Intl.Segmenter で、語の境目を候補として取り出す。依存は増やさない。' },
-  {
-    title: '折ってよい位置だけ残す',
-    body: 'ひらがなの後に漢字・カタカナ・英数字が始まる、句読点や閉じ括弧の後、といった文字種の規則で選ぶ。送り仮名・「お」「ご」・数と単位の中では折らない。',
-  },
-  { title: '切れ目に印を置く', body: '切れ目に <wbr aria-hidden="true"> を入れる。文字は 1 つも足さないので、コピーしても検索しても元のまま。' },
-  { title: 'そこでだけ折る', body: '器に word-break: keep-all を掛け、文字の間では折らない。1 文節が器より長いときだけ、overflow-wrap: break-word で文字単位に折る。' },
-];
-
 export function LineBreak(): ReactNode {
-  const [width, setWidth] = useState(8.5);
+  const { lang, t } = useI18n();
+  const tt = t.lineBreak;
+  // 10em: 見本のどの言語でも、ブラウザ任せだと語の途中で割れ、gassan では切れ目に収まる幅
+  const [width, setWidth] = useState(10);
+  const [sampleLang, setSampleLang] = useState<Lang>(SAMPLE_LANGS.slice(0, 4).includes(lang) ? lang : 'ja');
+  const name = useId().replace(/:/g, '');
+  const notes = tt.compare.notes[sampleLang];
+  const css = [
+    '.g-phrase {',
+    `  word-break: keep-all;        /* ${tt.how.cssComments.keepAll} */`,
+    `  overflow-wrap: break-word;   /* ${tt.how.cssComments.breakWord} */`,
+    `  line-break: strict;          /* ${tt.how.cssComments.strict} */`,
+    '}',
+  ].join('\n');
+  const usage = [
+    "import { Phrase, GassanProvider } from '@genelab/gassan';",
+    '',
+    `// ${tt.use.codeComments.outside}`,
+    '<button><Phrase>プロフィールを編集</Phrase></button>',
+    '',
+    `// ${tt.use.codeComments.revert}`,
+    '<GassanProvider lineBreak="browser">…</GassanProvider>',
+  ].join('\n');
 
   return (
     <>
       <PageHeader
-        eyebrow="スタイル"
-        title="日本語の折り返し"
-        lead="「プロフィールを編｜集」を、もう出さない。gassan は日本語の文字列を文節の切れ目でだけ改行する。ボタンにも、タイトルにも、表のセルにも、グラフの要約にも。"
+        eyebrow={t.nav.sections.styles}
+        title={t.nav.pages.lineBreak}
+        lead={tt.lead}
         ids={['W-01', 'W-02', 'W-03', 'W-04', 'W-05']}
       />
 
-      <Section
-        id="compare"
-        title="同じ幅で比べる"
-        intro="左はブラウザに任せた場合、右が gassan。どちらも同じライブラリで、左だけ lineBreak を 'browser' に切り替えている。幅を動かして、どこで改行されるかを見てほしい。"
-      >
+      <Section id="compare" title={tt.compare.title} intro={md(tt.compare.intro)}>
+        <fieldset className="s-field s-sample-langs">
+          <legend>{tt.compare.language}</legend>
+          <div className="s-segmented s-segmented-wrap">
+            {SAMPLE_LANGS.map((code) => (
+              <label key={code}>
+                <input
+                  type="radio"
+                  name={`${name}-sample`}
+                  value={code}
+                  checked={sampleLang === code}
+                  onChange={() => setSampleLang(code)}
+                />
+                <span lang={code}>{LANG_NAMES[code]}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <label className="s-field s-width-control">
-          <span>器の幅: {width.toFixed(1)}em</span>
+          <span>{tt.compare.width(width.toFixed(1))}</span>
           <input
             type="range"
-            min={5}
+            min={4}
             max={22}
             step={0.5}
             value={width}
             onChange={(event) => setWidth(Number(event.target.value))}
           />
         </label>
-        <BreakCompare width={width}>
-          <Samples />
+        <BreakCompare width={width} lang={sampleLang} browserNote={notes.browser} phraseNote={notes.phrase}>
+          <Samples sample={SAMPLES[sampleLang]} />
         </BreakCompare>
       </Section>
 
-      <Section id="modal" title="本物のモーダルで" intro="幅 360px のモーダル。チェックを外すとブラウザ任せに戻る。">
+      <Section id="languages" title={tt.languages.title} intro={tt.languages.intro}>
+        <div className="s-table-wrap" role="group" tabIndex={0} aria-label={tt.languages.caption}>
+          <table className="s-table s-lang-table">
+            <caption className="s-sr-only">{tt.languages.caption}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{tt.languages.head.language}</th>
+                <th scope="col">{tt.languages.head.browser}</th>
+                <th scope="col">{tt.languages.head.gassan}</th>
+                <th scope="col">{tt.languages.head.why}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <Phrase>
+                {tt.languages.rows.map((row) => (
+                  <tr key={row.language}>
+                    <th scope="row">{row.language}</th>
+                    <td>{md(row.browser)}</td>
+                    <td>{md(row.gassan)}</td>
+                    <td>{md(row.why)}</td>
+                  </tr>
+                ))}
+              </Phrase>
+            </tbody>
+          </table>
+        </div>
+        <Prose>
+          <p>{md(tt.languages.note)}</p>
+        </Prose>
+      </Section>
+
+      <Section id="modal" title={tt.modal.title} intro={tt.modal.intro}>
         <Example
-          title="狭いモーダルの日本語"
-          description="フッタのボタン、タイトル、表のセルを見比べる。読み上げられる名前は、どちらでも同じ。"
+          title={tt.modal.exampleTitle}
+          description={tt.modal.exampleDescription}
           code={lineBreakSource}
+          demo="lineBreakModal"
         >
           <LineBreakModal />
         </Example>
       </Section>
 
-      <Section id="try" title="文字を入れて試す" intro="どこで文節に分かれるかを、その場で確かめられる。">
-        <Splitter />
+      <Section id="try" title={tt.try.title} intro={tt.try.intro}>
+        {/* 言語を変えたら、初めの文もその言語に入れ替える */}
+        <Splitter key={lang} />
       </Section>
 
-      <Section id="how" title="しくみ">
+      <Section id="how" title={tt.how.title}>
         <ol className="s-rules">
-          {STEPS.map((step) => (
+          {tt.how.steps.map((step) => (
             <li key={step.title}>
               <h3>
                 <Phrase>{step.title}</Phrase>
               </h3>
               <p>
-                <Phrase>{step.body}</Phrase>
+                <Phrase>{md(step.body)}</Phrase>
               </p>
             </li>
           ))}
         </ol>
-        <CodeBlock
-          lang="css"
-          caption="src/styles.css"
-          code={`.g-phrase {\n  word-break: keep-all;        /* 文字の間では折らない */\n  overflow-wrap: break-word;   /* 1 文節が器より長いときだけ文字単位で折る */\n  line-break: strict;          /* そのときも小書きのかな・長音符を行頭に置かない */\n}`}
-        />
+        <CodeBlock lang="css" caption="src/styles.css" code={css} />
       </Section>
 
-      <Section id="name" title="読み上げを汚さない" intro="改行の位置を変えても、スクリーンリーダーが読む名前とコピーされる文字列は変えない。">
+      <Section id="name" title={tt.name.title} intro={tt.name.intro}>
         <Prose>
-          <p>
-            素の <code>&lt;wbr&gt;</code> は、Chrome のアクセシビリティツリーで空白として名前に混ざる。
-            <code>&lt;button&gt;プロフィールを&lt;wbr&gt;編集&lt;/button&gt;</code> は「プロフィールを 編集」と読まれる。画面の文字（
-            <code>innerText</code>）には空白が無いのに、である。3 つの方式を実ブラウザで測って選んだ。
-          </p>
+          <Paras items={tt.name.body} />
         </Prose>
-        <div className="s-table-wrap" role="group" tabIndex={0} aria-label="方式の比較">
+        <div className="s-table-wrap" role="group" tabIndex={0} aria-label={tt.name.tableLabel}>
           <table className="s-table">
-            <caption className="s-sr-only">改行の印の付け方と、その結果</caption>
+            <caption className="s-sr-only">{tt.name.caption}</caption>
             <thead>
               <tr>
-                <th scope="col">方式</th>
-                <th scope="col">読み上げの名前</th>
-                <th scope="col">文節で折れるか</th>
-                <th scope="col">長い文節</th>
+                <th scope="col">{tt.name.head.method}</th>
+                <th scope="col">{tt.name.head.name}</th>
+                <th scope="col">{tt.name.head.breaks}</th>
+                <th scope="col">{tt.name.head.long}</th>
               </tr>
             </thead>
             <tbody>
               <Phrase>
-                <tr>
-                  <th scope="row">
-                    <code>&lt;wbr aria-hidden="true"&gt;</code> ＋ keep-all（採用）
-                  </th>
-                  <td>元のまま</td>
-                  <td>折れる</td>
-                  <td>はみ出さない</td>
-                </tr>
-                <tr>
-                  <th scope="row">文節ごとの span に white-space: nowrap</th>
-                  <td>元のまま</td>
-                  <td>折れる</td>
-                  <td>はみ出す</td>
-                </tr>
-                <tr>
-                  <th scope="row">文節ごとの span に word-break: keep-all</th>
-                  <td>元のまま</td>
-                  <td>折れない（文字単位）</td>
-                  <td>—</td>
-                </tr>
-                <tr>
-                  <th scope="row">素の &lt;wbr&gt;</th>
-                  <td>空白が混ざる</td>
-                  <td>折れる</td>
-                  <td>はみ出さない</td>
-                </tr>
+                {tt.name.rows.map((row) => (
+                  <tr key={row.method}>
+                    <th scope="row">{md(row.method)}</th>
+                    <td>{row.name}</td>
+                    <td>{row.breaks}</td>
+                    <td>{row.long}</td>
+                  </tr>
+                ))}
               </Phrase>
             </tbody>
           </table>
         </div>
-        <Callout>
-          ゼロ幅スペースは使わない。目に見えないのに文字としては残るので、コピーした文字列や検索、入力値との比較が静かに壊れる。
-        </Callout>
+        <Callout>{tt.name.callout}</Callout>
       </Section>
 
-      <Section id="use" title="使い方" intro="gassan の部品の中では、何も書かなくても文節で折れる。gassan の外の UI には Phrase で同じ折り返しを効かせられる。">
-        <CodeBlock
-          lang="tsx"
-          code={`import { Phrase, GassanProvider } from '@genelab/gassan';\n\n// gassan の外のボタンや見出しにも効かせる\n<button><Phrase>プロフィールを編集</Phrase></button>\n\n// ブラウザ任せに戻す（既定は 'phrase'）\n<GassanProvider lineBreak="browser">…</GassanProvider>`}
-        />
+      <Section id="use" title={tt.use.title} intro={tt.use.intro}>
+        <CodeBlock lang="tsx" code={usage} />
         <Prose>
-          <p>
-            かな（ひらがな・カタカナ）を含む文字列にだけ効く。中国語は文字単位の改行が正しく、英語は空白で折れるので、手を出さない。サーバーでもクライアントでも同じ位置に印を置くので、hydration はずれない。CSS の{' '}
-            <code>word-break: auto-phrase</code> は同じ問題をブラウザ側で解く仕組みだが、対応するブラウザが限られ、改行の位置もブラウザごとに異なる。gassan はどのブラウザでも同じ位置で折る。
-          </p>
+          <Paras items={tt.use.body} />
         </Prose>
       </Section>
 
-      <Section id="spec" title="折り返しの項目">
-        <SpecTable ids={['W-01', 'W-02', 'W-03', 'W-04', 'W-05', 'W-06']} caption="折り返しの仕様" />
+      <Section id="spec" title={tt.spec.title}>
+        <SpecTable ids={['W-01', 'W-02', 'W-03', 'W-04', 'W-05', 'W-06']} caption={tt.spec.caption} />
       </Section>
     </>
   );

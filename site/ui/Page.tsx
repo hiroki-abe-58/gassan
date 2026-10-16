@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Phrase } from '@genelab/gassan';
 
+import { useT } from '../i18n';
 import { SpecChips } from './Spec';
 
 export interface PageHeaderProps {
@@ -17,6 +18,7 @@ export interface PageHeaderProps {
  * ページ遷移のたびにフォーカスをここへ移すので tabIndex={-1} を持つ。
  */
 export function PageHeader({ eyebrow, title, lead, ids }: PageHeaderProps): ReactNode {
+  const t = useT();
   return (
     <header className="s-page-header">
       <p className="s-eyebrow">{eyebrow}</p>
@@ -29,7 +31,7 @@ export function PageHeader({ eyebrow, title, lead, ids }: PageHeaderProps): Reac
           <Phrase>{lead}</Phrase>
         </p>
       ) : null}
-      {ids && ids.length > 0 ? <SpecChips ids={ids} label="このページが扱う仕様" /> : null}
+      {ids && ids.length > 0 ? <SpecChips ids={ids} label={t.common.specChips} /> : null}
     </header>
   );
 }

@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
-import { Modal, ModalHost, Phrase } from '@genelab/gassan';
+import { GassanProvider, Modal, ModalHost, Phrase } from '@genelab/gassan';
 
 import { data } from './data';
+import { DEFAULT_LANG, loadLang, useI18n } from './i18n';
 import { PAGES, SECTIONS, neighbours, resolve } from './routes';
-import { to, useSegments } from './router';
+import { to, useRoute } from './router';
+import { LangPicker } from './ui/LangPicker';
+import { md } from './ui/Markdown';
 import { ThemePicker } from './ui/ThemePicker';
 
 export function Logo(): ReactNode {
@@ -24,16 +27,17 @@ export function Logo(): ReactNode {
 }
 
 function NavList({ current }: { current: string }): ReactNode {
+  const { t } = useI18n();
   return (
     <>
       {SECTIONS.map((section) => {
-        const pages = PAGES.filter((page) => page.section === section.id && page.path !== '/');
+        const pages = PAGES.filter((page) => page.section === section && page.path !== '/');
         return (
-          <div key={section.id} className="s-nav-group">
-            <p className="s-nav-label" id={`nav-${section.id}`}>
-              {section.label}
+          <div key={section} className="s-nav-group">
+            <p className="s-nav-label" id={`nav-${section}`}>
+              {t.nav.sections[section]}
             </p>
-            <ul aria-labelledby={`nav-${section.id}`}>
+            <ul aria-labelledby={`nav-${section}`}>
               {pages.map((page) => (
                 <li key={page.path}>
                   <a
@@ -41,7 +45,7 @@ function NavList({ current }: { current: string }): ReactNode {
                     href={to(page.path)}
                     aria-current={page.path === current ? 'page' : undefined}
                   >
-                    <Phrase>{page.nav ?? page.title}</Phrase>
+                    <Phrase>{t.nav.pages[page.key]}</Phrase>
                   </a>
                 </li>
               ))}
@@ -54,20 +58,28 @@ function NavList({ current }: { current: string }): ReactNode {
 }
 
 export function App(): ReactNode {
-  const segments = useSegments();
-  const { page, rest } = resolve(segments);
+  const route = useRoute();
+  const { lang, t } = useI18n();
+  const { page, rest } = resolve(route.segments);
   const [menuOpen, setMenuOpen] = useState(false);
   /** メニューが閉じた後のフォーカス先。ページ遷移で閉じたときだけ新しいページの見出しにする（K-06）。 */
   const menuFinalFocus = useRef<HTMLElement | null>(null);
   const mainRef = useRef<HTMLElement>(null);
   const firstRender = useRef(true);
+  const title = t.nav.pages[page.key];
+
+  // URL の言語が変わったら、その言語の文言を読む。読み終えるまでは前の言語で描く。
+  useEffect(() => {
+    void loadLang(route.lang);
+  }, [route.lang]);
 
   useEffect(() => {
-    document.title = page.path === '/' ? 'gassan — ネイティブ dialog のためのモーダルシェル' : `${page.title} — gassan`;
-  }, [page]);
+    document.title = page.path === '/' ? t.common.siteTitle : `${title} — gassan`;
+  }, [page, title, t]);
 
   // ページが変わったら先頭へ戻り、見出しへフォーカスを移す。
   // SPA の遷移は読み上げられないので、移さないと支援技術の利用者は迷子になる。
+  // 言語だけを変えたときは同じページに留まるので、動かさない。
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
@@ -81,122 +93,125 @@ export function App(): ReactNode {
   const Page = page.Component;
 
   return (
-    <div className="s-app">
-      <a
-        className="s-skip"
-        href="#main"
-        onClick={(event) => {
-          event.preventDefault();
-          mainRef.current?.focus();
-        }}
-      >
-        本文へ移動
-      </a>
-
-      <header className="s-topbar">
-        <button
-          type="button"
-          className="s-icon-btn s-menu-btn"
-          aria-label="メニューを開く"
-          aria-haspopup="dialog"
-          onClick={() => setMenuOpen(true)}
+    // gassan が出す文字列（閉じる・読み上げ・ゲートの理由）も、サイトの言語にそろえる
+    <GassanProvider labels={t.gassan}>
+      <div className="s-app">
+        <a
+          className="s-skip"
+          href="#main"
+          onClick={(event) => {
+            event.preventDefault();
+            mainRef.current?.focus();
+          }}
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" />
-          </svg>
-        </button>
-        <a className="s-brand" href={to('/')}>
-          <Logo />
-          <span>gassan</span>
+          {t.common.skipToMain}
         </a>
-        <span className="s-version">v{data.meta.version}</span>
-        <span className="s-topbar-spacer" />
-        <ThemePicker />
-        <a className="s-topbar-link s-topbar-spec" href={to('/spec')}>
-          仕様
-        </a>
-        <a className="s-topbar-link" href={data.meta.repository} target="_blank" rel="noreferrer">
-          GitHub
-        </a>
-      </header>
 
-      <div className="s-layout">
-        <nav className="s-sidenav" aria-label="サイト内">
-          <NavList current={page.path} />
-        </nav>
+        <header className="s-topbar">
+          <button
+            type="button"
+            className="s-icon-btn s-menu-btn"
+            aria-label={t.common.openMenu}
+            aria-haspopup="dialog"
+            onClick={() => setMenuOpen(true)}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+          <a className="s-brand" href={to('/')}>
+            <Logo />
+            <span>gassan</span>
+          </a>
+          <span className="s-version">v{data.meta.version}</span>
+          <span className="s-topbar-spacer" />
+          <LangPicker />
+          <ThemePicker />
+          <a className="s-topbar-link s-topbar-spec" href={to('/spec')}>
+            {t.common.spec}
+          </a>
+          <a className="s-topbar-link" href={data.meta.repository} target="_blank" rel="noreferrer">
+            GitHub
+          </a>
+        </header>
 
-        <main id="main" ref={mainRef} tabIndex={-1} className="s-main" data-page={page.path}>
-          <Page rest={rest} />
-
-          {page.path !== '/' ? (
-            <nav className="s-pager" aria-label="前後のページ">
-              {prev ? (
-                <a className="s-pager-link" href={to(prev.path)} data-dir="prev">
-                  <span className="s-pager-dir">前へ</span>
-                  <span className="s-pager-title">
-                    <Phrase>{prev.title}</Phrase>
-                  </span>
-                </a>
-              ) : (
-                <span />
-              )}
-              {next ? (
-                <a className="s-pager-link" href={to(next.path)} data-dir="next">
-                  <span className="s-pager-dir">次へ</span>
-                  <span className="s-pager-title">
-                    <Phrase>{next.title}</Phrase>
-                  </span>
-                </a>
-              ) : null}
-            </nav>
-          ) : null}
-
-          <footer className="s-footer">
-            <p>
-              {data.meta.packageName} v{data.meta.version} · MIT ·{' '}
-              <a href={to('/spec')}>
-                仕様書 v{data.meta.specVersion}（{data.meta.specUpdated}）
-              </a>
-              {' '}に準拠
-            </p>
-            <p>
-              表・件数・API はすべて仕様書と型定義からビルド時に生成している。手で書いた数値はない。
-            </p>
-          </footer>
-        </main>
-      </div>
-
-      {/* 狭い画面のメニュー。gassan のシートそのもの。ページが変わったら route-change で閉じる（L-13）。 */}
-      <Modal.Root
-        kind="view"
-        placement="sheet"
-        open={menuOpen}
-        onOpenChange={(next, reason) => {
-          // × で閉じたならメニューボタンへ戻す（既定）。項目を選んで閉じたなら、
-          // 戻り先のボタンは用済みなので、移った先のページの見出しへ送る。
-          menuFinalFocus.current = reason === 'route-change' ? document.getElementById('page-title') : null;
-          setMenuOpen(next);
-        }}
-        finalFocus={menuFinalFocus}
-        routeKey={page.path}
-        swipeToDismiss
-        className="s-menu-sheet"
-      >
-        <Modal.Header>
-          <Modal.Controls end={<Modal.Close />} />
-          <Modal.Title>メニュー</Modal.Title>
-        </Modal.Header>
-        <Modal.Body label="サイト内のページ">
-          <nav aria-label="サイト内" className="s-sheet-nav">
-            <a className="s-nav-item" href={to('/')} aria-current={page.path === '/' ? 'page' : undefined}>
-              ホーム
-            </a>
+        <div className="s-layout">
+          <nav className="s-sidenav" aria-label={t.common.siteNav}>
             <NavList current={page.path} />
           </nav>
-        </Modal.Body>
-      </Modal.Root>
 
-      <ModalHost />
-    </div>
+          <main id="main" ref={mainRef} tabIndex={-1} className="s-main" data-page={page.path}>
+            {lang !== DEFAULT_LANG ? <p className="s-original-note">{md(t.common.originalNote)}</p> : null}
+
+            <Page rest={rest} />
+
+            {page.path !== '/' ? (
+              <nav className="s-pager" aria-label={t.common.pager}>
+                {prev ? (
+                  <a className="s-pager-link" href={to(prev.path)} data-dir="prev">
+                    <span className="s-pager-dir">{t.common.prev}</span>
+                    <span className="s-pager-title">
+                      <Phrase>{t.nav.pages[prev.key]}</Phrase>
+                    </span>
+                  </a>
+                ) : (
+                  <span />
+                )}
+                {next ? (
+                  <a className="s-pager-link" href={to(next.path)} data-dir="next">
+                    <span className="s-pager-dir">{t.common.next}</span>
+                    <span className="s-pager-title">
+                      <Phrase>{t.nav.pages[next.key]}</Phrase>
+                    </span>
+                  </a>
+                ) : null}
+              </nav>
+            ) : null}
+
+            <footer className="s-footer">
+              <p>
+                {data.meta.packageName} v{data.meta.version} · MIT ·{' '}
+                {md(t.common.footerCompliance(data.meta.specVersion, data.meta.specUpdated))}
+              </p>
+              <p>
+                <Phrase>{t.common.footerGenerated}</Phrase>
+              </p>
+            </footer>
+          </main>
+        </div>
+
+        {/* 狭い画面のメニュー。gassan のシートそのもの。ページが変わったら route-change で閉じる（L-13）。 */}
+        <Modal.Root
+          kind="view"
+          placement="sheet"
+          open={menuOpen}
+          onOpenChange={(nextOpen, reason) => {
+            // × で閉じたならメニューボタンへ戻す（既定）。項目を選んで閉じたなら、
+            // 戻り先のボタンは用済みなので、移った先のページの見出しへ送る。
+            menuFinalFocus.current = reason === 'route-change' ? document.getElementById('page-title') : null;
+            setMenuOpen(nextOpen);
+          }}
+          finalFocus={menuFinalFocus}
+          routeKey={page.path}
+          swipeToDismiss
+          className="s-menu-sheet"
+        >
+          <Modal.Header>
+            <Modal.Controls end={<Modal.Close />} />
+            <Modal.Title>{t.common.menu}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body label={t.common.menuBody}>
+            <nav aria-label={t.common.siteNav} className="s-sheet-nav">
+              <a className="s-nav-item" href={to('/')} aria-current={page.path === '/' ? 'page' : undefined}>
+                {t.common.home}
+              </a>
+              <NavList current={page.path} />
+            </nav>
+          </Modal.Body>
+        </Modal.Root>
+
+        <ModalHost />
+      </div>
+    </GassanProvider>
   );
 }

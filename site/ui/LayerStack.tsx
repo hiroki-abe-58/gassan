@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
 import { data } from '../data';
+import { SPEC_LANG, useT } from '../i18n';
 
 export interface LayerInfo {
   n: number;
@@ -29,19 +30,20 @@ function parseLayers(): LayerInfo[] {
 
 export const LAYERS: readonly LayerInfo[] = parseLayers();
 
-/** 誰がその層を担うか。図の札に出す短い名前。 */
-const OWNER: Record<number, string> = {
-  1: '<dialog>',
-  2: 'CSS トークン',
-  3: 'CSS Grid + dvh',
-  4: 'gassan',
-};
-
 /**
  * 4 層の積み重ねの図。上ほど gassan の仕事で、いちばん下はブラウザが担う。
  * 図そのものは飾り。同じ内容を隣の文（または detailed の一覧）が運ぶ。
+ * 層の説明（scope / answer）は仕様書 §1-2 の原文なので、原文の言語のまま出す。
  */
 export function LayerStack({ detailed = false }: { detailed?: boolean }): ReactNode {
+  const t = useT().common.layers;
+  /** 誰がその層を担うか。図の札に出す短い名前。 */
+  const OWNER: Record<number, string> = {
+    1: '<dialog>',
+    2: t.tokens,
+    3: 'CSS Grid + dvh',
+    4: 'gassan',
+  };
   const top = [...LAYERS].sort((a, b) => b.n - a.n);
   return (
     <div className="s-stack" data-detailed={detailed ? '' : undefined}>
@@ -59,7 +61,7 @@ export function LayerStack({ detailed = false }: { detailed?: boolean }): ReactN
               ) : null}
             </span>
             <span className="s-plane-tag">
-              <span className="s-plane-num">層{layer.n}</span>
+              <span className="s-plane-num">{t.layer(layer.n)}</span>
               <span className="s-plane-name">{layer.name}</span>
               <span className="s-plane-owner">{OWNER[layer.n]}</span>
             </span>
@@ -71,11 +73,15 @@ export function LayerStack({ detailed = false }: { detailed?: boolean }): ReactN
           {top.map((layer) => (
             <li key={layer.n} data-layer={layer.n}>
               <p className="s-stack-head">
-                <span className="s-stack-num">層{layer.n}</span> {layer.name}
+                <span className="s-stack-num">{t.layer(layer.n)}</span> {layer.name}
                 <span className="s-stack-owner">{OWNER[layer.n]}</span>
               </p>
-              <p className="s-stack-scope">{layer.scope}</p>
-              <p className="s-stack-answer">{layer.answer}</p>
+              <p className="s-stack-scope" lang={SPEC_LANG}>
+                {layer.scope}
+              </p>
+              <p className="s-stack-answer" lang={SPEC_LANG}>
+                {layer.answer}
+              </p>
             </li>
           ))}
         </ol>

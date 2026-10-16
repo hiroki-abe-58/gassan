@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react';
 
 import { data } from '../data';
-import { InlineMd } from './Markdown';
+import { useT } from '../i18n';
+import { InlineMd, md } from './Markdown';
 
 /**
  * 型定義から抜き出した props の表。
- * 説明文は src の JSDoc そのもの。ここに手で書き足すと、型と表が別々に古くなる。
+ * 説明文は src の JSDoc そのもの（原文のまま）。ここに手で書き足すと、型と表が別々に古くなる。
  */
 export function ApiTable({ name, title }: { name: string; title?: string }): ReactNode {
+  const t = useT().common.api;
   const def = data.api[name];
   if (!def) {
     if (import.meta.env.DEV) throw new Error(`公開型に ${name} が無い`);
@@ -28,15 +30,15 @@ export function ApiTable({ name, title }: { name: string; title?: string }): Rea
           <InlineMd text={def.doc} />
         </p>
       ) : null}
-      <div className="s-table-wrap" role="group" tabIndex={0} aria-label={`${name} のプロパティ`}>
+      <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.propsOf(name)}>
         <table className="s-table s-api-table">
-          <caption className="s-sr-only">{name} のプロパティ</caption>
+          <caption className="s-sr-only">{t.propsOf(name)}</caption>
           <thead>
             <tr>
-              <th scope="col">名前</th>
-              <th scope="col">型</th>
-              <th scope="col">既定値</th>
-              <th scope="col">説明</th>
+              <th scope="col">{t.name}</th>
+              <th scope="col">{t.type}</th>
+              <th scope="col">{t.default}</th>
+              <th scope="col">{t.description}</th>
             </tr>
           </thead>
           <tbody>
@@ -44,12 +46,12 @@ export function ApiTable({ name, title }: { name: string; title?: string }): Rea
               <tr key={prop.name}>
                 <th scope="row">
                   <code className="s-api-name">{prop.name}</code>
-                  {prop.optional ? null : <span className="s-required">必須</span>}
+                  {prop.optional ? null : <span className="s-required">{t.required}</span>}
                 </th>
                 <td>
                   <code className="s-api-typecode">{prop.type}</code>
                 </td>
-                <td>{prop.defaultValue ? <code>{prop.defaultValue}</code> : <span aria-label="なし">—</span>}</td>
+                <td>{prop.defaultValue ? <code>{prop.defaultValue}</code> : <span aria-label={t.none}>—</span>}</td>
                 <td>{prop.doc ? <InlineMd text={prop.doc} /> : null}</td>
               </tr>
             ))}
@@ -58,16 +60,9 @@ export function ApiTable({ name, title }: { name: string; title?: string }): Rea
       </div>
       {passthrough || inherited.length > 0 ? (
         <ul className="s-api-notes">
-          {passthrough ? (
-            <li>
-              <code>data-*</code> はホスト要素へそのまま渡す（D-11）。<code>aria-*</code> などハイフン付きのほかの
-              prop は警告して落とす。
-            </li>
-          ) : null}
+          {passthrough ? <li>{md(t.passthrough)}</li> : null}
           {inherited.map((e) => (
-            <li key={e}>
-              <code>{e}</code> を継承する。
-            </li>
+            <li key={e}>{md(t.inherits(e))}</li>
           ))}
         </ul>
       ) : null}

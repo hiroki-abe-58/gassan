@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 
+import type { Messages } from './i18n';
 import { Home } from './pages/Home';
 import { GetStarted } from './pages/GetStarted';
 import { NotFound } from './pages/NotFound';
@@ -36,63 +37,58 @@ export interface PageProps {
   rest: readonly string[];
 }
 
-export type SectionId = 'start' | 'foundations' | 'styles' | 'components' | 'reference';
+export type SectionId = keyof Messages['nav']['sections'];
+
+/** 題名は言語ごとに i18n/<lang>/nav.ts の pages[key] から引く。 */
+export type PageKey = keyof Messages['nav']['pages'];
 
 export interface PageDef {
   path: string;
-  title: string;
-  /** ナビに出す短い名前。省略時は title。 */
-  nav?: string;
+  key: PageKey;
   section: SectionId;
   Component: ComponentType<PageProps>;
 }
 
-export const SECTIONS: readonly { id: SectionId; label: string }[] = [
-  { id: 'start', label: 'はじめに' },
-  { id: 'foundations', label: '設計思想' },
-  { id: 'styles', label: 'スタイル' },
-  { id: 'components', label: 'コンポーネント' },
-  { id: 'reference', label: '仕様と検証' },
-];
+export const SECTIONS: readonly SectionId[] = ['start', 'foundations', 'styles', 'components', 'reference'];
 
 /** ナビの並び順がそのまま「前へ / 次へ」の順になる。 */
 export const PAGES: readonly PageDef[] = [
-  { path: '/', title: 'ホーム', section: 'start', Component: Home },
-  { path: '/start', title: 'はじめる', section: 'start', Component: GetStarted },
+  { path: '/', key: 'home', section: 'start', Component: Home },
+  { path: '/start', key: 'start', section: 'start', Component: GetStarted },
 
-  { path: '/foundations/purpose', title: 'モーダルの存在理由', section: 'foundations', Component: Purpose },
-  { path: '/foundations/layers', title: '4 層モデル', section: 'foundations', Component: Layers },
-  { path: '/foundations/kinds', title: '5 つの類型と決め方', section: 'foundations', Component: Kinds },
-  { path: '/foundations/accessibility', title: 'アクセシビリティ', section: 'foundations', Component: Accessibility },
-  { path: '/foundations/rules', title: '禁止事項と品質基準', section: 'foundations', Component: Rules },
-  { path: '/foundations/notes', title: '実装ノート', section: 'foundations', Component: Notes },
+  { path: '/foundations/purpose', key: 'purpose', section: 'foundations', Component: Purpose },
+  { path: '/foundations/layers', key: 'layers', section: 'foundations', Component: Layers },
+  { path: '/foundations/kinds', key: 'kinds', section: 'foundations', Component: Kinds },
+  { path: '/foundations/accessibility', key: 'accessibility', section: 'foundations', Component: Accessibility },
+  { path: '/foundations/rules', key: 'rules', section: 'foundations', Component: Rules },
+  { path: '/foundations/notes', key: 'notes', section: 'foundations', Component: Notes },
 
-  { path: '/styles/scrim', title: 'スクリム', section: 'styles', Component: Scrim },
-  { path: '/styles/color', title: '色とコントラスト', section: 'styles', Component: Color },
-  { path: '/styles/theme', title: 'テーマ', section: 'styles', Component: Theme },
-  { path: '/styles/layout', title: '寸法と配置', section: 'styles', Component: Layout },
-  { path: '/styles/line-break', title: '日本語の折り返し', section: 'styles', Component: LineBreak },
-  { path: '/styles/motion', title: 'モーション', section: 'styles', Component: Motion },
+  { path: '/styles/scrim', key: 'scrim', section: 'styles', Component: Scrim },
+  { path: '/styles/color', key: 'color', section: 'styles', Component: Color },
+  { path: '/styles/theme', key: 'theme', section: 'styles', Component: Theme },
+  { path: '/styles/layout', key: 'layout', section: 'styles', Component: Layout },
+  { path: '/styles/line-break', key: 'lineBreak', section: 'styles', Component: LineBreak },
+  { path: '/styles/motion', key: 'motion', section: 'styles', Component: Motion },
 
-  { path: '/components/root', title: 'Modal.Root', section: 'components', Component: RootPage },
-  { path: '/components/header', title: 'Header と Controls', section: 'components', Component: HeaderPage },
-  { path: '/components/title', title: 'Title と Description', section: 'components', Component: TitlePage },
-  { path: '/components/body', title: 'Body と Section', section: 'components', Component: BodyPage },
-  { path: '/components/footer', title: 'Footer と Button', section: 'components', Component: FooterPage },
-  { path: '/components/button', title: 'ボタンの種類と状態', section: 'components', Component: ButtonPage },
-  { path: '/components/gate', title: '活性化ゲート', section: 'components', Component: GatePage },
-  { path: '/components/field', title: 'フォーム部品', section: 'components', Component: FieldPage },
-  { path: '/components/media', title: 'Media と Gallery', section: 'components', Component: MediaPage },
-  { path: '/components/chart', title: 'Modal.Chart', section: 'components', Component: ChartPage },
-  { path: '/components/sheet', title: 'シートと Handle', section: 'components', Component: SheetPage },
-  { path: '/components/imperative', title: '命令的 API', section: 'components', Component: ImperativePage },
-  { path: '/components/provider', title: 'GassanProvider', section: 'components', Component: ProviderPage },
+  { path: '/components/root', key: 'root', section: 'components', Component: RootPage },
+  { path: '/components/header', key: 'header', section: 'components', Component: HeaderPage },
+  { path: '/components/title', key: 'title', section: 'components', Component: TitlePage },
+  { path: '/components/body', key: 'body', section: 'components', Component: BodyPage },
+  { path: '/components/footer', key: 'footer', section: 'components', Component: FooterPage },
+  { path: '/components/button', key: 'button', section: 'components', Component: ButtonPage },
+  { path: '/components/gate', key: 'gate', section: 'components', Component: GatePage },
+  { path: '/components/field', key: 'field', section: 'components', Component: FieldPage },
+  { path: '/components/media', key: 'media', section: 'components', Component: MediaPage },
+  { path: '/components/chart', key: 'chart', section: 'components', Component: ChartPage },
+  { path: '/components/sheet', key: 'sheet', section: 'components', Component: SheetPage },
+  { path: '/components/imperative', key: 'imperative', section: 'components', Component: ImperativePage },
+  { path: '/components/provider', key: 'provider', section: 'components', Component: ProviderPage },
 
-  { path: '/spec', title: '振る舞い仕様', section: 'reference', Component: Spec },
-  { path: '/verification', title: '検証', section: 'reference', Component: Verification },
+  { path: '/spec', key: 'spec', section: 'reference', Component: Spec },
+  { path: '/verification', key: 'verification', section: 'reference', Component: Verification },
 ];
 
-const NOT_FOUND: PageDef = { path: '/404', title: 'ページが見つからない', section: 'start', Component: NotFound };
+const NOT_FOUND: PageDef = { path: '/404', key: 'notFound', section: 'start', Component: NotFound };
 
 /** セグメントに最も長く前方一致するページを選び、残りを rest として渡す。 */
 export function resolve(segments: readonly string[]): { page: PageDef; rest: string[] } {

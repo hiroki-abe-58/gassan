@@ -19,13 +19,16 @@ export function contrastRatio(a: string, b: string): number {
 
 export const isHex6 = (value: string): boolean => /^#[0-9a-fA-F]{6}$/.test(value);
 
-/** [前景, 背景, 最低比, 何の組か]。トークン名は --g- を除いた部分。 */
-export const CONTRAST_PAIRS: readonly (readonly [fg: string, bg: string, min: number, what: string])[] = [
-  ['fg', 'surface', 4.5, '本文'],
-  ['fg-muted', 'surface', 4.5, '補足・tertiary・ゲート中の secondary'],
-  ['on-accent', 'accent', 4.5, 'primary'],
-  ['on-accent-muted', 'accent-muted', 4.5, 'ゲート中の primary（G-10）'],
-  ['on-danger', 'danger', 4.5, 'danger ボタン（F-06）'],
-  ['danger', 'surface', 4.5, 'エラー文・必須の印'],
-  ['focus', 'surface', 3, 'フォーカスリング（K-07。非テキストは 3:1）'],
+/**
+ * [前景, 背景, 最低比]。トークン名は --g- を除いた部分。
+ * 何の組か（用途）は、サイトでは i18n の color.contrast.uses に前景の名前で引く。
+ */
+export const CONTRAST_PAIRS: readonly (readonly [fg: string, bg: string, min: number])[] = [
+  ['fg', 'surface', 4.5],
+  ['fg-muted', 'surface', 4.5],
+  ['on-accent', 'accent', 4.5],
+  ['on-accent-muted', 'accent-muted', 4.5],
+  ['on-danger', 'danger', 4.5],
+  ['danger', 'surface', 4.5],
+  ['focus', 'surface', 3],
 ];

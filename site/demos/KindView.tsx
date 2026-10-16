@@ -1,32 +1,41 @@
 import { useState, type ReactNode } from 'react';
 
 import { Modal } from '@genelab/gassan';
+import { fmt, useDemoText } from '../i18n';
 
-import { SCENES, sceneUri } from './art';
+import { SCENES, sceneUri, type SceneId } from './art';
 
 export default function KindView(): ReactNode {
+  const t = useDemoText('kindView');
+  const TITLES: Record<SceneId, string> = {
+    dawn: t.dawn,
+    noon: t.noon,
+    dusk: t.dusk,
+    night: t.night,
+    snow: t.snow,
+  };
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
   const items = SCENES.map((scene) => ({
     id: scene.id,
-    content: <Modal.Media src={sceneUri(scene)} alt={scene.title} ratio="16 / 9" caption={scene.title} />,
+    content: <Modal.Media src={sceneUri(scene)} alt={TITLES[scene.id]} ratio="16 / 9" caption={TITLES[scene.id]} />,
   }));
 
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        作品を見る
+        {t.open}
       </button>
 
       <Modal.Root kind="view" size="lg" scrim="immersive" open={open} onOpenChange={setOpen}>
         <Modal.Header>
           <Modal.Controls end={<Modal.Close />} />
-          <Modal.Title>{`稜線の習作（${String(index + 1)} / ${String(SCENES.length)}）`}</Modal.Title>
+          <Modal.Title>{fmt(t.title, String(index + 1), String(SCENES.length))}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* 矢印キー・Home / End で移動し、位置は読み上げられる（B-12 / K-10） */}
-          <Modal.Gallery label="稜線の習作" items={items} onIndexChange={setIndex} />
+          {/* t:keys */}
+          <Modal.Gallery label={t.gallery} items={items} onIndexChange={setIndex} />
         </Modal.Body>
       </Modal.Root>
     </>
