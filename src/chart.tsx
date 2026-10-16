@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { warnOnce } from './internal/dom';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { usePhrase } from './phrase';
 
 export interface ModalChartProps extends DataAttributes {
   /** 図の名前。figcaption になり、図のアクセシブルネームとして配線される。 */
@@ -54,6 +55,7 @@ export function ModalChart({
   ...rest
 }: ModalChartProps): ReactNode {
   const labels = useLabels();
+  const phrase = usePhrase();
   const reactId = useId();
   const baseId = id ?? `gassan-chart-${reactId}`;
   const captionId = `${baseId}-caption`;
@@ -84,7 +86,7 @@ export function ModalChart({
       aria-describedby={summaryId}
     >
       <figcaption id={captionId} className="g-chart-caption">
-        {label}
+        {phrase(label)}
       </figcaption>
       <div
         ref={visualRef}
@@ -94,11 +96,11 @@ export function ModalChart({
         {children}
       </div>
       <p id={summaryId} className="g-chart-summary">
-        {summary}
+        {phrase(summary)}
       </p>
       {data !== undefined && data !== null && data !== false ? (
         <details className="g-chart-data">
-          <summary>{dataLabel ?? labels.chartData}</summary>
+          <summary>{phrase(dataLabel ?? labels.chartData)}</summary>
           <div className="g-chart-data-body">{data}</div>
         </details>
       ) : null}

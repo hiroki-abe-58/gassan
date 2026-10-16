@@ -10,6 +10,7 @@ import { useModalContext } from './context';
 import { hasResizeObserver } from './internal/dom';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { usePhrase } from './phrase';
 
 /* -------------------------------------------------------------------------- */
 /* icons — 依存を増やさないためのインライン SVG。装飾なので aria-hidden。A-06     */
@@ -240,6 +241,7 @@ export interface ModalTitleProps extends DataAttributes {
  */
 export function ModalTitle({ children, lines = 2, className, ...rest }: ModalTitleProps): ReactNode {
   const labels = useLabels();
+  const phrase = usePhrase();
   const { ids, setHasTitle } = useModalContext('Modal.Title');
   const textRef = useRef<HTMLSpanElement | null>(null);
   const [overflowing, setOverflowing] = useState(false);
@@ -285,7 +287,7 @@ export function ModalTitle({ children, lines = 2, className, ...rest }: ModalTit
         data-clamped={clamped ? '' : undefined}
         style={style}
       >
-        {children}
+        {phrase(children)}
       </span>
       {overflowing ? (
         <button
@@ -295,7 +297,7 @@ export function ModalTitle({ children, lines = 2, className, ...rest }: ModalTit
           aria-controls={ids.title}
           onClick={() => setExpanded((value) => !value)}
         >
-          {expanded ? labels.collapseTitle : labels.expandTitle}
+          {phrase(expanded ? labels.collapseTitle : labels.expandTitle)}
         </button>
       ) : null}
     </h2>
@@ -314,6 +316,7 @@ export interface ModalDescriptionProps extends DataAttributes {
 /** aria-describedby として Root に自動で配線される。A-02。 */
 export function ModalDescription({ children, className, ...rest }: ModalDescriptionProps): ReactNode {
   const { ids, setHasDescription } = useModalContext('Modal.Description');
+  const phrase = usePhrase();
 
   useEffect(() => {
     setHasDescription(true);
@@ -326,7 +329,7 @@ export function ModalDescription({ children, className, ...rest }: ModalDescript
       id={ids.description}
       className={className ? `g-desc ${className}` : 'g-desc'}
     >
-      {children}
+      {phrase(children)}
     </p>
   );
 }

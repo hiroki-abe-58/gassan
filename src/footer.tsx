@@ -13,6 +13,7 @@ import { useBlockers, useModalContext } from './context';
 import { useLabels } from './labels';
 import type { ButtonVariant, CloseReason, GateSelector } from './types';
 import { domPassthrough, stripReservedData, type DataAttributes } from './internal/passthrough';
+import { usePhrase } from './phrase';
 
 /* -------------------------------------------------------------------------- */
 /* Footer                                                                     */
@@ -34,12 +35,13 @@ export interface ModalFooterProps extends DataAttributes {
  * column-reverse で見た目だけ入れ替えると、Tab 順と読み上げ順が視覚順と逆になるため。
  */
 export function ModalFooter({ children, note, className, ...rest }: ModalFooterProps): ReactNode {
+  const phrase = usePhrase();
   return (
     <footer
       {...domPassthrough(rest, 'Modal.Footer')}
       className={className ? `g-footer ${className}` : 'g-footer'}
     >
-      {note ? <p className="g-footer-note">{note}</p> : null}
+      {note ? <p className="g-footer-note">{phrase(note)}</p> : null}
       <div className="g-footer-actions">{children}</div>
     </footer>
   );
@@ -102,6 +104,7 @@ export function ModalButton({
   ...rest
 }: ModalButtonProps): ReactNode {
   const labels = useLabels();
+  const phrase = usePhrase();
   const { announce, requestClose } = useModalContext('Modal.Button');
   const blockers = useBlockers(gate);
   const reactId = useId();
@@ -186,7 +189,7 @@ export function ModalButton({
         disabled={unavailable || undefined}
         onClick={handleClick}
       >
-        <span className="g-btn-label">{children}</span>
+        <span className="g-btn-label">{phrase(children)}</span>
         {busy ? <span className="g-btn-spinner" aria-hidden="true" /> : null}
       </button>
       {/*

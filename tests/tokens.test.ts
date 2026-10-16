@@ -283,6 +283,22 @@ describe('tokens / gated button (G-10)', () => {
     expect(forced).toMatch(/\.g-btn\[data-gated\][^{]*\{[^}]*GrayText/);
   });
 
+  it('unavailable（本物の disabled）は、押せるボタンとも、ゲート中とも見た目で区別する', () => {
+    // 色をバリアントごとに明示しているので、何も書かないと押せるボタンと同じ見た目になっていた。
+    const disabled = block('.g-btn:disabled');
+    expect(disabled).toMatch(/background:\s*transparent;/);
+    expect(disabled).toMatch(/border:\s*1px dashed var\(--g-border-strong\);/);
+    expect(disabled).toMatch(/color:\s*var\(--g-fg-muted\);/);
+    expect(disabled).not.toMatch(/opacity/);
+  });
+
+  it('primary / danger の hover は背景色を変えない（テーマのアクセントが文字との比を割らない）', () => {
+    const hover = /\.g-btn\[data-variant="primary"\][^{]*:hover,\s*\.g-btn\[data-variant="danger"\][^{]*:hover\s*\{([^}]*)\}/.exec(css)?.[1];
+    if (hover === undefined) throw new Error('primary / danger の hover 規則が無い');
+    expect(hover).toMatch(/box-shadow/);
+    expect(hover).not.toMatch(/background|color:/);
+  });
+
   it('ゲート中の secondary / tertiary は、背景用のトークンを文字色に流用しない', () => {
     // --g-accent-muted は「明るい文字を載せる背景」。ダークでは暗い面の上の文字として
     // 4.5:1 を取れない（明るい文字にも暗い面にも 4.5:1 を取れる色は存在しない）。
@@ -409,7 +425,16 @@ describe('tokens / remaining invariants (S-06 C-07 C-11 H-08 T-09 B-05 D-05)', (
 
 describe('tokens / focus ring (K-07)', () => {
   it('フォーカスリングは :focus-visible にだけ出す', () => {
-    expect(block('.g-dialog :focus-visible')).toMatch(/outline:\s*2px solid/);
+    expect(block(':where(.g-dialog :focus-visible)')).toMatch(/outline:\s*2px solid/);
+  });
+
+  it('既定のリングは詳細度 0 で、部品の角丸やパネルの outline: none を上書きしない', () => {
+    // 詳細度のある .g-dialog :focus-visible に戻すと、フォーカス中だけボタンの角丸が 4px になり、
+    // キーボードで開いたパネルに角の尖ったリングが出る（実ブラウザで確認した不具合）
+    expect(css).not.toMatch(/(?:^|[},])[ \t]*\.g-dialog :focus-visible\s*\{/m);
+    expect(block('.g-panel')).toMatch(/outline:\s*none;/);
+    expect(block('.g-btn')).toMatch(/border-radius:\s*var\(--g-radius-control\);/);
+    expect(block('.g-sentinel:focus-visible')).toMatch(/outline-offset:\s*4px;/);
   });
 
   it('outline: none を裸で置かない（リングを消したまま代替を出し忘れない）', () => {
@@ -463,7 +488,19 @@ describe('sheet detents and handle', () => {
   });
 
   it('H-09: つまみはキーボードでも見える（focus-visible に輪郭がある）', () => {
-    expect(block('.g-handle-grip:focus-visible')).toMatch(/outline:\s*var\(--g-focus-width\)/);
+    // 以前ここは outline: var(--g-focus-width) を期待していた。そのトークンはどこにも定義が無く、
+    // 宣言ごと無効になって輪郭は出ていなかった。壊れた規則をテストが固定していたことになる。
+    expect(block('.g-handle-grip:focus-visible')).toMatch(/outline:\s*2px solid var\(--g-focus\);/);
+  });
+
+  it('参照するカスタムプロパティは、CSS で定義されているか、JS が書くか、フォールバックを持つ', () => {
+    // 未定義の var() は宣言ごと無効になる。見た目は何も起きないので、目で見ても気づけない。
+    const defined = new Set([...css.matchAll(/(?:^|[{;\s])(--g-[\w-]+)\s*:/g)].map((m) => m[1]));
+    const setByScript = new Set(['--g-dur-out', '--g-keyboard-inset', '--g-ratio', '--g-sheet-detent', '--g-swipe-y', '--g-title-lines']);
+    const missing = [...css.matchAll(/var\((--g-[\w-]+)(\s*,)?/g)]
+      .filter((m) => !m[2] && !defined.has(m[1] ?? '') && !setByScript.has(m[1] ?? ''))
+      .map((m) => m[1]);
+    expect([...new Set(missing)]).toEqual([]);
   });
 
   it('H-09: ドラッグ中にブラウザのスクロールへ奪われない', () => {

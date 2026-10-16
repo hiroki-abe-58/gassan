@@ -5,6 +5,7 @@ import { useEvent } from './internal/use-event';
 import { useLabels } from './labels';
 import type { GateSelector } from './types';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { usePhrase } from './phrase';
 
 const noop = (): void => {};
 
@@ -128,6 +129,7 @@ export function ModalConsent({
   ...rest
 }: ModalConsentProps): ReactNode {
   const labels = useLabels();
+  const phrase = usePhrase();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [internal, setInternal] = useState(defaultChecked);
   const isControlled = checked !== undefined;
@@ -158,7 +160,7 @@ export function ModalConsent({
           onCheckedChange?.(next);
         }}
       />
-      <span>{children}</span>
+      <span>{phrase(children)}</span>
     </label>
   );
 }
@@ -184,6 +186,7 @@ export function ModalGateStatus({
   ...rest
 }: ModalGateStatusProps): ReactNode {
   const blockers = useBlockers(gate);
+  const phrase = usePhrase();
   const first = blockers[0];
   if (!first) return null;
   return (
@@ -191,7 +194,7 @@ export function ModalGateStatus({
       {...domPassthrough(rest, 'Modal.GateStatus')}
       className={className ? `g-gate-status ${className}` : 'g-gate-status'}
     >
-      {first.reason}
+      {phrase(first.reason)}
     </p>
   );
 }

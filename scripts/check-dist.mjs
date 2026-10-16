@@ -55,6 +55,9 @@ const REQUIRED_EXPORTS = [
   // fail-closed の契約そのもの。dist から消えたら G-12 が黙って壊れる。
   'selectBlockers',
   'DEFAULT_UNRESOLVED_GATE_MESSAGE',
+  // 日本語の文節折り返しを gassan の外の UI にも効かせる入口。W-05。
+  'Phrase',
+  'splitPhrases',
 ];
 
 let failed = false;

@@ -566,6 +566,25 @@
     border-color: var(--g-border);
   }
 
+  /* primary / danger の hover は背景色を変えない。影で持ち上げるだけにする。
+   * 背景を明るく・暗くすると、テーマで 4.5:1 ちょうどに合わせたアクセントが、文字との比を割る。 */
+  .g-btn[data-variant="primary"]:not([data-gated], [data-loading], :disabled):hover,
+  .g-btn[data-variant="danger"]:not([data-gated], [data-loading], :disabled):hover {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 4px 10px -2px rgb(0 0 0 / 0.3);
+  }
+
+  /* unavailable（本物の disabled）。権限が無いなど、この画面ではどうしても押せないときだけ。
+   * 色をバリアントごとに明示しているので、何も書かないと「押せるボタン」と同じ見た目になる。
+   * ゲート中（塗りのある灰色）とも区別できるよう、塗りを消して破線にする。
+   * disabled は WCAG のコントラスト要件の対象外だが、文字は --g-fg-muted のまま読める比を保つ。 */
+  .g-btn:disabled {
+    background: transparent;
+    color: var(--g-fg-muted);
+    border: 1px dashed var(--g-border-strong);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
   .g-btn[data-loading] { cursor: progress; }
   .g-btn[data-loading] .g-btn-label { opacity: 0; }
   .g-btn-spinner {
@@ -579,8 +598,28 @@
   }
   @keyframes g-spin { to { rotate: 360deg; } }
 
-  /* --- 3.9 focus --------------------------------------------------------- */
-  .g-dialog :focus-visible {
+  /* --- 3.8b phrase（日本語の文節折り返し） -------------------------------
+   * W-01〜W-03。Phrase / 各部品が文節の切れ目に <wbr> を入れ、ここで「そこでだけ折る」にする。
+   *   keep-all   … 文字の間では折らない。改行は <wbr> と空白の位置だけ
+   *   break-word … 1 文節が器より長いときだけ文字単位で折る（はみ出させない）。
+   *                anywhere にしないこと。anywhere は最小幅の計算にも効くので、
+   *                狭いフッタでボタンが 1 文字幅まで縮み、かえって文字単位で折れる
+   *   strict     … 万一文字単位で折るときも、小書きのかな・長音符を行頭に置かない */
+  .g-phrase {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-break: strict;
+  }
+
+  /* --- 3.9 focus ---------------------------------------------------------
+   * 既定のリング。:where() で詳細度を 0 にして、部品が自分で決めた値を必ず勝たせる。
+   * 以前は .g-dialog :focus-visible（0,2,0）だったので、同じ層の部品（0,1,0）を上書きしていた:
+   *   - .g-btn / .g-chip / .g-table-wrap などの角丸が、フォーカスの間だけ 4px に変わる
+   *   - キーボードで開くと、パネル本体の outline: none（初期フォーカスにリングを出さない）が負け、
+   *     パネル全体に角の尖ったリングが出る
+   *   - .g-sentinel:focus-visible の outline-offset: 4px が効かない
+   * 角丸の 4px は、自分の角丸を持たない要素（リンクなど）にだけ効く。 */
+  :where(.g-dialog :focus-visible) {
     outline: 2px solid var(--g-focus);
     outline-offset: 2px;
     border-radius: 4px;
@@ -643,6 +682,7 @@
     .g-scrim { background: Canvas; opacity: 0.85; }
     .g-btn { border: 1px solid ButtonText; }
     .g-btn[data-gated] { color: GrayText; border-color: GrayText; }
+    .g-btn:disabled { color: GrayText; border: 1px dashed GrayText; }
   }
 
   /* ポインタが粗い環境ではタップ領域をさらに広げる。 */
@@ -936,7 +976,9 @@
     touch-action: none;
   }
   .g-handle-grip:focus-visible {
-    outline: var(--g-focus-width) solid var(--g-focus-color);
+    /* 他のフォーカスリングと同じトークン。以前は定義の無い --g-focus-width / --g-focus-color を
+     * 参照していて、宣言ごと無効になり、つまみにフォーカスしても輪郭が出ていなかった。K-07。 */
+    outline: 2px solid var(--g-focus);
     outline-offset: 2px;
     border-radius: var(--g-radius-sm, 6px);
   }

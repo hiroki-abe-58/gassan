@@ -13,6 +13,7 @@ import { useEvent } from './internal/use-event';
 import { useGateRegistration } from './gate';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { usePhrase } from './phrase';
 
 export interface ModalBodyProps extends DataAttributes {
   /**
@@ -198,6 +199,7 @@ export function ModalSection({
   ...rest
 }: ModalSectionProps): ReactNode {
   const reactId = useId();
+  const phrase = usePhrase();
   const headingId = `gassan-section-${reactId}`;
   const classes = className ? `g-section ${className}` : 'g-section';
 
@@ -218,7 +220,7 @@ export function ModalSection({
       aria-labelledby={headingId}
     >
       <Heading id={headingId} className="g-section-title">
-        {title}
+        {phrase(title)}
       </Heading>
       {children}
     </section>

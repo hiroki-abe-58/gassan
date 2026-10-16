@@ -3,6 +3,7 @@ import { useEffect, useId, type ReactNode } from 'react';
 import { warnDuplicateKeys } from './internal/dom';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { usePhrase } from './phrase';
 
 /* -------------------------------------------------------------------------- */
 /* Field                                                                      */
@@ -46,6 +47,7 @@ export function ModalField({
   ...rest
 }: ModalFieldProps): ReactNode {
   const labels = useLabels();
+  const phrase = usePhrase();
   const reactId = useId();
   const fieldId = id ?? `gassan-field-${reactId}`;
   const helpId = `${fieldId}-help`;
@@ -61,7 +63,7 @@ export function ModalField({
       data-invalid={error ? '' : undefined}
     >
       <label className="g-label" htmlFor={fieldId}>
-        <span className="g-label-text">{label}</span>
+        <span className="g-label-text">{phrase(label)}</span>
         <span className="g-label-badge" data-required={required ? '' : undefined}>
           {required ? labels.required : labels.optional}
         </span>
@@ -76,12 +78,12 @@ export function ModalField({
 
       {help ? (
         <p className="g-help" id={helpId}>
-          {help}
+          {phrase(help)}
         </p>
       ) : null}
       {error ? (
         <p className="g-error" id={errorId}>
-          {error}
+          {phrase(error)}
         </p>
       ) : null}
     </div>
@@ -120,6 +122,7 @@ export function ModalChips({
   className,
   ...rest
 }: ModalChipsProps): ReactNode {
+  const phrase = usePhrase();
   const selected = new Set(value);
 
   const values = options.map((option) => option.value).join('\u0000');
@@ -152,7 +155,7 @@ export function ModalChips({
             <span className="g-chip-mark" aria-hidden="true">
               {isOn ? '×' : '+'}
             </span>
-            <span>{option.label}</span>
+            <span>{phrase(option.label)}</span>
           </button>
         );
       })}
@@ -181,6 +184,7 @@ export function ModalSwitch({
   id,
   ...rest
 }: ModalSwitchProps): ReactNode {
+  const phrase = usePhrase();
   return (
     <button
       {...domPassthrough(rest, 'Modal.Switch')}
@@ -194,7 +198,7 @@ export function ModalSwitch({
       <span className="g-switch-track" aria-hidden="true">
         <span className="g-switch-thumb" />
       </span>
-      <span className="g-switch-label">{children}</span>
+      <span className="g-switch-label">{phrase(children)}</span>
     </button>
   );
 }
@@ -220,6 +224,7 @@ export function ModalTable({
   className,
   ...rest
 }: ModalTableProps): ReactNode {
+  const phrase = usePhrase();
   return (
     <div
       {...domPassthrough(rest, 'Modal.Table')}
@@ -228,7 +233,8 @@ export function ModalTable({
       tabIndex={0}
       aria-label={label}
     >
-      {children}
+      {/* セルの文字列にも効かせる。<table> は素の HTML 要素なので、中まで潜って変換できる */}
+      {phrase(children)}
     </div>
   );
 }
@@ -253,6 +259,7 @@ export function ModalAlert({
   assertive = false,
   ...rest
 }: ModalAlertProps): ReactNode {
+  const phrase = usePhrase();
   return (
     <div
       {...domPassthrough(rest, 'Modal.Alert')}
@@ -260,7 +267,7 @@ export function ModalAlert({
       data-tone={tone}
       role={assertive ? 'alert' : 'status'}
     >
-      {children}
+      {phrase(children)}
     </div>
   );
 }
