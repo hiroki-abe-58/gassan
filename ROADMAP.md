@@ -9,9 +9,10 @@
 
 1. **層1を実装しない。** ブラウザが持っている機能（top layer / フォーカストラップ / inert / Esc）を
    再実装した瞬間に、このライブラリの存在理由が消える。
-2. **中身の部品を自作しない。** range / date / time / file / select はネイティブ、
-   検索つきセレクト・コンボボックス・摘み2つのスライダーは Base UI に委ねる。
-   `Modal.Field` の render prop と `fieldset` / `legend` がその境界（[`docs/control-recipes.md`](./docs/control-recipes.md)）。
+2. **中身の部品は、ネイティブの要素のまま枠と印だけを描き替える。** ネイティブで足りないセレクト・
+   コンボボックス・カレンダーだけを WAI-ARIA APG のパターンどおりに作る（2026-10-18 に「自作しない」から改めた。仕様 v1.6 の I）。
+   それでも足りないもの（複数選択のコンボボックス、日付の範囲選択）は、ほかのライブラリの部品を
+   `Modal.Field` / `Modal.Fieldset` で包む（[`docs/control-recipes.md`](./docs/control-recipes.md)）。
 3. **API を増やす前に、既存 API の穴を塞ぐ。** コンポーネントの数は競争力ではない。
 4. **各版に「これができるようになった」を1文で書けること。** 書けないなら出さない。
 
@@ -33,8 +34,8 @@
 - [x] フッタの視覚順 = DOM 順 = Tab 順（狭幅でも反転しない）
 - [x] 要件監査・コントロールの合成レシピ・ライブラリ比較の3文書（`docs/`）
 - [x] `data-*` の受け渡し（D-11。E2E の選択子が通る。予約名は守り、落とすときは警告する）
-- [x] 141 項目の追跡表（`docs/traceability.md`）と、それを機械検証する `check:trace`
-- [x] 442 テスト / 型チェック / lint / dist 検品が CI で通る
+- [x] 156 項目の追跡表（`docs/traceability.md`）と、それを機械検証する `check:trace`
+- [x] 508 テスト / 型チェック / lint / dist 検品が CI で通る
 - [x] 公開形態の整備（LICENSE / CHANGELOG / `publishConfig.access` / dual-package の型条件）
 
 **受け入れ条件（すべて満たした）**
@@ -42,12 +43,13 @@
 数値はこの木で `npm run verify` / `npm run check:dist` が出す実測値であり、
 `npm run check:trace` が文書との食い違いを落とす。v0.2.0 で先行着手したシート分を含む。
 
-- `npm run verify` が緑（typecheck → lint → 442 tests → trace → docs → build → dist → SSR → pack）
-- `dist/index.js` が gzip 22 KB 未満、`styles.css` が gzip 6 KB 未満
-  … 実測 21,840 B / 5,035 B（2026-10-16 再計測。v0.2.0 のシート分・入れ子の修正・data-* の受け渡し・ゲートの登録まわり・props の契約の修正・日本語・中国語・韓国語の折り返しを含む）
+- `npm run verify` が緑（typecheck → lint → 508 tests → trace → docs → build → dist → SSR → pack）
+- `dist/index.js` が gzip 34 KB 未満、`styles.css` が gzip 9 KB 未満
+  （2026-10-18 に 22 KB / 6 KB から引き上げた。入力部品 18 個を本体に入れたため。名前つき import でモーダルの部品だけを使えば、入力部品は tree shaking で落ちる）
+  … 実測 33,055 B / 7,905 B（2026-10-18 再計測。v0.2.0 のシート分・入れ子の修正・data-* の受け渡し・ゲートの登録まわり・props の契約の修正・日本語・中国語・韓国語の折り返し・入力部品を含む）
 - `"use client"` が両フォーマットの先頭にある
-- 公開 API 35 個が dist に存在する
-- `modal.skill.md` の 141 項目が 1 件残らず `docs/traceability.md` に現れ、
+- 公開 API 52 個が dist に存在する
+- `modal.skill.md` の 156 項目が 1 件残らず `docs/traceability.md` に現れ、
   各行の根拠（テスト名・CSS の文字列・ファイル）が実在する
 - 実機検品票 B-1〜B-18 が、`VERIFICATION.md` と `examples/css-check.html` で一致する
 - `npm run check:consumer` が緑。tarball を実インストールし、
@@ -92,6 +94,11 @@ npm には `@genelab/gassan@0.1.0` として公開済み（latest）。
       狭い画面のボタン・タイトル・表・グラフの要約で起きていた「プロフィールを編｜集」を、実機の幅を待たずに直せたので先に入れた。
       中国語は語の切れ目、韓国語は空白でだけ折る。タイ語などブラウザが辞書で折る言語には手を出さない（Chrome で実測）
 - [ ] 折り返しの Safari / Firefox での確認（`Intl.Segmenter` の語の切れ目が Node・Chrome と同じか。違うと SSR の hydration がずれる）
+- [x] 入力部品 18 個（I-01〜I-15。テキスト・パスワード・検索・テキストエリア・数値・確認コード・チェックボックス・ラジオ・セグメント・評価・
+      スライダー・2 つ摘み・セレクト・コンボボックス・カレンダー・ファイル、と束の `Modal.Fieldset`）。
+      中身はネイティブの要素で、色は `--g-accent`（テーマに追従）。一覧とカレンダーは popover で top layer に出す
+- [ ] 入力部品のポップアップの Safari / Firefox での確認（Esc の keydown を止めたときにモーダルの `cancel` が起きないこと、
+      top layer での位置。Chrome 155 では確認済み）
 - [ ] ネストしたモーダルの実機確認（スクリムの二重掛け、フォーカス復帰の連鎖）
 - [ ] `closeOnBack` の実挙動と、Next.js App Router での相互作用
 
@@ -103,16 +110,16 @@ npm には `@genelab/gassan@0.1.0` として公開済み（latest）。
 
 ## v0.3.0 — 他のエコシステムと繋ぐ
 
-**これができる**: Base UI の Select や react-hook-form を、配線を書かずにモーダルへ載せられる。
+**これができる**: gassan に無い部品（複数選択のコンボボックスなど）や react-hook-form を、配線を書かずにモーダルへ載せられる。
 
 - [ ] `Modal.Field` と react-hook-form の統合例（`register` をそのまま渡せる形）
-- [ ] Base UI（`@base-ui/react`）の Select / Combobox / Slider を載せた実例と、
+- [ ] Base UI（`@base-ui/react`）の複数選択 Combobox を載せた実例と、
       「Portal の `container` をパネルに向けたとき、inert・スクリム・Esc の順序がどうなるか」の検証
 - [ ] `Modal.Form`（`<form method="dialog">` を安全に使うラッパ。`returnValue` の型付け）
 - [ ] 送信エラーのまとめを `Modal.Alert` に集約するパターン
 
 **受け入れ条件**
-- Base UI の Select をモーダル内で開いたとき、選択肢がスクリムの下に隠れない
+- Base UI の Combobox をモーダル内で開いたとき、選択肢がスクリムの下に隠れない
 - フォーム送信の失敗が、フォーカス移動つきで1箇所に集約される例が動く
 
 ---
@@ -184,7 +191,7 @@ npm には `@genelab/gassan@0.1.0` として公開済み（latest）。
 | 項目 | 理由 |
 |---|---|
 | フォーカストラップの自前実装 | ブラウザが持っている。再実装は退化 |
-| セレクト・日付選択・コンボボックスの自作 | ネイティブか Base UI のほうが良い。競う意味がない |
+| 複数選択のコンボボックス・日付の範囲選択・リッチテキストの自作 | 単一選択のセレクト・コンボボックス・カレンダーは 2026-10-18 に自作へ切り替えたが（I-11〜I-13）、ここから先はキー操作と読み上げの規約が一段重く、取りこぼしの代償に見合わない。ほかのライブラリを包む |
 | チャートの描画 | 描画ライブラリは選択肢が多く、用途で最適解が違う。gassan は名前・要約・元データの配線（`Modal.Chart`）だけを持つ |
 | トースト・ポップオーバー・ツールチップ | モーダルではない。別の問題 |
 | アニメーションライブラリへの依存 | CSS だけで足りる。依存ゼロを保つ |

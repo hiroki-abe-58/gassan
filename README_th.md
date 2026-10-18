@@ -12,22 +12,23 @@ gassan จึงทุ่มไปที่เลเยอร์ที่ไล�
 - **เหตุผลการปิด** — แยกแยะ `CloseReason` ได้ 8 แบบ และเมื่อปฏิเสธการปิดจะคืนเหตุผลกลับมาเสมอ
 - **Scrim** — เลิกใช้สีดำ 60% แบบตายตัว แล้วใช้โทเคน 4 ระดับที่แบ่งตามเจตนาแทน
 - **การตัดบรรทัดภาษาญี่ปุ่น จีน และเกาหลี** — ไม่ว่าจะเป็นปุ่ม ชื่อเรื่อง เซลล์ตาราง หรือข้อความสรุปของกราฟ ข้อความจะไม่ขาดกลางคำ ภาษาญี่ปุ่นตัดที่รอยต่อวลี (「プロフィールを｜編集」 ไม่ใช่ 「プロフィールを編｜集」) ภาษาจีนตัดที่รอยต่อคำ ภาษาเกาหลีตัดเฉพาะที่ช่องว่าง ส่วนภาษาไทยและภาษาอังกฤษปล่อยให้เบราว์เซอร์จัดการ เพราะเบราว์เซอร์ตัดได้ถูกต้องอยู่แล้ว
+- **ส่วนประกอบอินพุต** — มี 18 ตัว เช่น ข้อความ, รหัสผ่าน, ค้นหา, ตัวเลข, รหัสยืนยัน, checkbox, radio, segmented, การให้คะแนน, แถบเลื่อน, select, combobox, ปฏิทิน และไฟล์ ข้างในยังเป็น element แบบเนทีฟ วาดใหม่แค่กรอบและเครื่องหมาย และใช้สี accent ของธีม รายการตัวเลือกและปฏิทินแสดงใน top layer จึงไม่ถูกโมดอลตัดขอบ
 
 **เว็บไซต์เอกสาร: <https://hiroki-abe-58.github.io/gassan/#/th>**
 — แนวคิดการออกแบบ (โมดอลมีไว้ทำไม, โมเดล 4 เลเยอร์, 5 ประเภท, การเข้าถึง), สไตล์ (scrim, สีและคอนทราสต์, ธีม, ขนาด, การตัดบรรทัด, โมชัน),
-เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์ และสเปกของพฤติกรรม 141 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
+เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์และส่วนประกอบฟอร์ม และสเปกของพฤติกรรม 156 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
 เว็บไซต์มีให้อ่านเป็นภาษาไทย, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant) และ [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) (สลับภาษาได้ด้วยปุ่มรูปลูกโลกที่แถบด้านบน)
 มีธีมสว่าง / มืด และเลือกสีหลัก (primary color) ได้ ไม่ว่าจะเลือกสีไหน สีตัวอักษรและสีพื้นจะถูกคำนวณให้ผ่านอัตราส่วนคอนทราสต์ของ WCAG
 ตาราง จำนวน และคำอธิบาย API ทั้งหมดบนเว็บไซต์สร้างขึ้นตอน build จากสเปกและ type definition ไม่มีตัวเลขไหนที่เขียนด้วยมือ
 
-การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 141 รายการ, decision matrix และเกณฑ์คุณภาพ)
+การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 156 รายการ, decision matrix และเกณฑ์คุณภาพ)
 เวลาเขียนโค้ดกับผู้ช่วย AI ให้ใส่ไฟล์นี้ไว้ใน context
 
 | เอกสาร | เนื้อหา |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 141 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 156 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | แตกข้อกำหนดตั้งต้นออกเป็นบรรทัดละข้อ: implement แล้ว / ทำได้ด้วยการประกอบ (composition) / อยู่ในโรดแมป |
-| [`docs/control-recipes.md`](./docs/control-recipes.md) | ตัวอย่างขั้นต่ำของการใส่ range / checkbox / radio / toggle / select / text / file / date / time / chips ลงในโมดอล |
+| [`docs/control-recipes.md`](./docs/control-recipes.md) | ตัวอย่างขั้นต่ำของการใส่ส่วนประกอบอินพุตของ gassan ลงในโมดอล และข้อควรระวังเมื่อห่อคอมโพเนนต์จากไลบรารีอื่นมาใช้แทนส่วนที่ gassan ไม่มี |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | `<dialog>` แบบเนทีฟ vs Base UI vs React Aria vs Radix (ณ วันที่ 2026-09-29 ใช้เฉพาะแหล่งข้อมูลปฐมภูมิ) |
 
 สเปก (`modal.skill.md`) และไฟล์ใน `docs/` เขียนเป็นภาษาญี่ปุ่น
@@ -54,6 +55,7 @@ peer dependency คือ React 18.2 ขึ้นไป (19 ก็ใช้ไ�
 ถ้าต้องการภาษาอังกฤษ ให้ครอบแอปด้วย `<GassanProvider labels={englishLabels}>` ทั้งสองตัว export มาจากแพ็กเกจ
 สำหรับภาษาอื่น ให้ส่งข้อความของตัวเองให้ `labels` (ส่งแค่บางส่วนก็ได้) ข้อความภาษาจีน เกาหลี และไทยของเว็บไซต์เอกสาร
 (`gassan.ts` ใต้ [`site/i18n/<lang>/`](https://github.com/hiroki-abe-58/gassan/tree/main/site/i18n)) ใช้เป็นจุดตั้งต้นได้
+ชื่อเดือนและวันในสัปดาห์ของปฏิทิน และขนาดไฟล์ สร้างด้วย `Intl` จาก `labels.locale` (BCP 47 ค่าเริ่มต้นคือ `ja-JP`) ถ้าเป็น locale ภาษาไทย ปีจะแสดงเป็นพุทธศักราช เพราะ `Intl` ใช้ปฏิทินพุทธสำหรับ `th`
 
 ---
 
@@ -75,7 +77,7 @@ function Example() {
 
         <Modal.Body>
           <Modal.Field label="ชื่อที่แสดง" required>
-            {(control) => <input {...control} type="text" />}
+            {(control) => <Modal.Input {...control} />}
           </Modal.Field>
         </Modal.Body>
 
@@ -215,17 +217,33 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Footer` `Modal.Button` | ลำดับชั้นของปุ่ม, gate, กันการส่งซ้ำ |
 | `Modal.Gate` `Modal.Consent` `Modal.GateStatus` | Activation gate |
 | `Modal.Media` `Modal.Gallery` | รูปภาพ, วิดีโอ, เสียง, สไลเดอร์ |
-| `Modal.Field` `Modal.Chips` `Modal.Switch` `Modal.Table` `Modal.Alert` | ส่วนประกอบฟอร์มและตาราง |
+| `Modal.Field` `Modal.Fieldset` | ผูกชื่อ, help และ error ให้ช่องกรอกหนึ่งช่อง และให้กลุ่มตัวเลือก |
+| `Modal.Input` `Modal.PasswordInput` `Modal.SearchInput` `Modal.Textarea` `Modal.NumberField` `Modal.CodeInput` | ช่องกรอกข้อความ |
+| `Modal.Checkbox` `Modal.RadioGroup` `Modal.Segmented` `Modal.Rating` `Modal.Switch` `Modal.Chips` | ตัวเลือก |
+| `Modal.Slider` `Modal.RangeSlider` | แถบเลื่อน (หัวเลื่อนและแถบที่เติมสีใช้สีของธีม) |
+| `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | ส่วนประกอบที่แสดงรายการตัวเลือกหรือปฏิทินใน top layer |
+| `Modal.FileDrop` | พื้นที่รับไฟล์ (ตรวจ `accept` กับไฟล์ที่ลากมาวางด้วย) |
+| `Modal.Table` `Modal.Alert` | ตารางที่เลื่อนแนวนอนได้ และสรุปผลการส่งฟอร์ม |
 | `Modal.Chart` | ภาชนะสำหรับกราฟ ผูกชื่อ (`label`) และข้อความทดแทนที่บอกแนวโน้ม (`summary`) และเปิดให้ดูข้อมูลดิบใน `<details>` ตัวมันเองไม่ได้วาดอะไร |
 | `Modal.Handle` | ที่จับของ sheet ถ้ามี detent จะเป็นตัวควบคุม `role="slider"` ถ้าไม่มี จะเป็นพื้นที่จับเพื่อการตกแต่ง |
 | `ModalHost` `useModals` | Imperative API (`await confirm()`) |
 | `GassanProvider` | แทนที่ข้อความ UI (ค่าเริ่มต้นเป็นภาษาญี่ปุ่น มี `englishLabels` มาให้ด้วย) และสลับการตัดบรรทัด (`lineBreak`) |
 | `Phrase` `splitPhrases` | การตัดบรรทัดแบบเดียวกันสำหรับข้อความภาษาญี่ปุ่น จีน และเกาหลีใน UI ของคุณเอง (ในคอมโพเนนต์ของ gassan เปิดอยู่แล้วโดยค่าเริ่มต้น) |
 
-`Modal.Field` เป็น render prop ตัวควบคุมข้างในจึงเป็น input แบบเนทีฟหรือคอมโพเนนต์ของ Base UI ก็ได้
-กลุ่มตัวเลือก (radio, checkbox หลายตัว) ให้ตั้งชื่อด้วย `fieldset` / `legend` ไม่ใช่ `label`
-**อย่าสร้างตัวควบคุมเอง** ใช้ range / date / time / file / select แบบเนทีฟก่อน
-ส่วน select ที่ค้นหาได้และสไลเดอร์สองหัวให้ Base UI จัดการ ตัวอย่างอยู่ใน [`docs/control-recipes.md`](./docs/control-recipes.md)
+ส่วนประกอบอินพุตข้างในเป็น element แบบเนทีฟ และรับ render prop ของ `Modal.Field` ได้เลยแค่ spread เข้าไปตรง ๆ
+กลุ่มตัวเลือก (radio, checkbox หลายตัว, การให้คะแนน, สไลเดอร์สองหัว) ให้ตั้งชื่อด้วย `Modal.Fieldset` (`fieldset` / `legend`) ไม่ใช่ `label`
+รายการตัวเลือกและปฏิทินแสดงใน top layer ด้วย popover API และขณะที่เปิดอยู่ Esc จะปิดแค่รายการหรือปฏิทินนั้น
+ส่วนประกอบที่ gassan ไม่มี (เช่น combobox ที่เลือกได้หลายค่า) ให้ห่อคอมโพเนนต์จากไลบรารีอื่นด้วยวิธีเดียวกัน ตัวอย่างอยู่ใน [`docs/control-recipes.md`](./docs/control-recipes.md)
+
+```tsx
+<Modal.Field label="วิธีจัดส่ง">
+  {(control) => <Modal.Select {...control} value={shipping} onValueChange={setShipping} options={SHIPPING} />}
+</Modal.Field>
+
+<Modal.Fieldset label="ช่วงราคา">
+  <Modal.RangeSlider value={price} onValueChange={setPrice} min={0} max={10000} step={500} showValue />
+</Modal.Fieldset>
+```
 
 ```tsx
 <Modal.Chart

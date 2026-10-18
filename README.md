@@ -12,22 +12,23 @@ Instead, gassan concentrates on the layer that existing libraries have barely to
 - **Close reasons** — distinguish 8 kinds of `CloseReason`, and always return a reason when refusing to close
 - **Scrim** — drop the hard-coded 60% black and use four intent-based tokens instead
 - **Line breaking for Japanese, Chinese and Korean** — text never breaks in the middle of a word, in buttons, titles, table cells and chart summaries alike. Japanese breaks at phrase boundaries (「プロフィールを｜編集」, never 「プロフィールを編｜集」), Chinese at word boundaries, Korean only at spaces. Thai and English are left to the browser, which already breaks them correctly
+- **Form controls** — 18 parts, including text, password, search, number, verification code, checkbox, radio, segmented control, rating, slider, select, combobox, calendar and file. Inside they stay native elements; only the frame and the marks are redrawn, and the color follows the theme's accent. Lists and calendars open in the top layer, so the modal never clips them
 
 **Documentation site: <https://hiroki-abe-58.github.io/gassan/#/en>**
 — design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, line breaking, motion),
-live demos and the API of every component, and the specification of 141 behaviors, laid out like the Material Design 3 guidelines.
+live demos and the API of every component and form control, and the specification of 156 behaviors, laid out like the Material Design 3 guidelines.
 The site is available in English, [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) and [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) (switch with the globe button in the top bar).
 It has a light / dark theme and a choice of primary colors; whichever color you pick, its text and fills are derived to meet the WCAG contrast ratios.
 Every table, count and API description on the site is generated at build time from the specification and the type definitions; no number is written by hand.
 
-The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 141 behaviors, a decision matrix and a quality rubric).
+The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 156 behaviors, a decision matrix and a quality rubric).
 Put that file in the context when coding with an AI assistant.
 
 | Document | Contents |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 141 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 156 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | The original requirements broken down, one row each: implemented / achieved by composition / on the roadmap |
-| [`docs/control-recipes.md`](./docs/control-recipes.md) | Minimal examples of putting range / checkbox / radio / toggle / select / text / file / date / time / chips inside a modal |
+| [`docs/control-recipes.md`](./docs/control-recipes.md) | Minimal examples of putting gassan's form controls inside a modal, and notes on wrapping components from other libraries for what gassan does not provide |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | Native `<dialog>` vs Base UI vs React Aria vs Radix (as of 2026-09-29, primary sources only) |
 
 The specification (`modal.skill.md`) and the files in `docs/` are written in Japanese.
@@ -54,6 +55,7 @@ Built-in strings (screen reader announcements, button labels) default to Japanes
 For English, wrap your app in `<GassanProvider labels={englishLabels}>`; both are exported from the package.
 For other languages, pass your own strings to `labels` (a partial object is fine). The documentation site's Chinese, Korean and Thai strings
 (`gassan.ts` under [`site/i18n/<lang>/`](https://github.com/hiroki-abe-58/gassan/tree/main/site/i18n)) can be used as a starting point.
+Month and weekday names in the calendar, and file sizes, are formatted with `Intl` from `labels.locale` (a BCP 47 tag; `ja-JP` by default).
 
 ---
 
@@ -75,7 +77,7 @@ function Example() {
 
         <Modal.Body>
           <Modal.Field label="Display name" required>
-            {(control) => <input {...control} type="text" />}
+            {(control) => <Modal.Input {...control} />}
           </Modal.Field>
         </Modal.Body>
 
@@ -215,17 +217,33 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Footer` `Modal.Button` | Button hierarchy, gates, double-submit prevention |
 | `Modal.Gate` `Modal.Consent` `Modal.GateStatus` | Activation gates |
 | `Modal.Media` `Modal.Gallery` | Images, video, audio, slider |
-| `Modal.Field` `Modal.Chips` `Modal.Switch` `Modal.Table` `Modal.Alert` | Form parts and tables |
+| `Modal.Field` `Modal.Fieldset` | Wire a name, help text and errors to a single field or a group of options |
+| `Modal.Input` `Modal.PasswordInput` `Modal.SearchInput` `Modal.Textarea` `Modal.NumberField` `Modal.CodeInput` | Text input |
+| `Modal.Checkbox` `Modal.RadioGroup` `Modal.Segmented` `Modal.Rating` `Modal.Switch` `Modal.Chips` | Choices |
+| `Modal.Slider` `Modal.RangeSlider` | Sliders (thumb and fill in the theme color) |
+| `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | Controls whose list or calendar opens in the top layer |
+| `Modal.FileDrop` | A drop zone for files (`accept` applies to drops too) |
+| `Modal.Table` `Modal.Alert` | Horizontally scrolling tables, and a summary of submission results |
 | `Modal.Chart` | A container for charts. Wires up the name (`label`) and a text alternative for the trend (`summary`), and exposes the raw data in a `<details>`. It does not draw anything |
 | `Modal.Handle` | The grip of a sheet. With detents it is a `role="slider"` control; without them, a decorative grab area |
 | `ModalHost` `useModals` | Imperative API (`await confirm()`) |
 | `GassanProvider` | Replaces UI strings (Japanese by default; `englishLabels` is bundled) and switches line breaking (`lineBreak`) |
 | `Phrase` `splitPhrases` | The same line breaking for Japanese, Chinese and Korean text in your own UI (inside gassan's components it is on by default) |
 
-`Modal.Field` is a render prop, so the control inside can be a native input or a Base UI component.
-Groups of options (radios, multiple checkboxes) are named with `fieldset` / `legend`, not `label`.
-**Do not build your own controls.** Use native range / date / time / file / select first,
-and leave searchable selects and two-thumb sliders to Base UI. Examples are in [`docs/control-recipes.md`](./docs/control-recipes.md).
+The form controls are native elements inside, and take the props from `Modal.Field`'s render prop by simply spreading them.
+Groups of options (radios, multiple checkboxes, ratings, two-thumb sliders) are named with `Modal.Fieldset` (`fieldset` / `legend`), not `label`.
+Lists and calendars open in the top layer through the popover API, and while one is open, Esc closes only the list.
+For controls gassan does not have (a multi-select combobox, for example), wrap a component from another library the same way. Examples are in [`docs/control-recipes.md`](./docs/control-recipes.md).
+
+```tsx
+<Modal.Field label="Shipping method">
+  {(control) => <Modal.Select {...control} value={shipping} onValueChange={setShipping} options={SHIPPING} />}
+</Modal.Field>
+
+<Modal.Fieldset label="Price range">
+  <Modal.RangeSlider value={price} onValueChange={setPrice} min={0} max={10000} step={500} showValue />
+</Modal.Fieldset>
+```
 
 ```tsx
 <Modal.Chart
