@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react';
 
-import { Modal } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 import { fmt, useDemoText } from '../i18n';
 
 export default function FieldForm(): ReactNode {
@@ -17,7 +17,7 @@ export default function FieldForm(): ReactNode {
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
 
       <Modal.Root

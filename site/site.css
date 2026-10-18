@@ -676,6 +676,8 @@
   font-size: 0.6875rem;
   font-weight: 700;
   vertical-align: middle;
+  /* 1 語のバッジ（「必須」「必填」）。狭い列でも語の途中で折らない */
+  white-space: nowrap;
 }
 .s-pass {
   color: var(--s-dont);
@@ -785,6 +787,9 @@
   color: #d5d9e3;
   font-size: 0.75rem;
   cursor: pointer;
+  /* 「コピーしました」を 2 行に割らない。短いので幅は足りる */
+  flex: none;
+  white-space: nowrap;
 }
 .s-code-copy:hover {
   background: rgb(255 255 255 / 0.16);
@@ -1038,6 +1043,10 @@
   padding-inline-start: 1.2em;
   color: var(--s-ink-2);
   font-size: 0.875rem;
+}
+/* 長い型（ComponentPropsWithoutRef<HTMLButtonElement>）が狭い画面ではみ出さないように */
+.s-api-notes code {
+  overflow-wrap: anywhere;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1572,7 +1581,7 @@
   font-size: 1.125rem;
   font-weight: 800;
 }
-.s-kind-name span {
+.s-kind-name > span {
   color: var(--s-ink-2);
   font-weight: 650;
 }
@@ -2659,6 +2668,7 @@
   background: var(--s-accent);
   color: var(--s-on-accent);
   font-size: 0.75rem;
+  white-space: nowrap;
 }
 .s-preset-result {
   display: block;
@@ -2870,6 +2880,9 @@
   color: var(--s-on-accent-soft);
   line-height: 1.5;
   white-space: pre-wrap;
+  /* 1 つの札が 1 つの文節。札の中では語の途中で折らない（韓国語の音節の間も含めて） */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 .s-splitter-note {
   margin: 0;

@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { Modal, type DetentToken } from '@genelab/gassan';
+import { Modal, Phrase, type DetentToken } from '@genelab/gassan';
 import { fmt, useDemoText } from '../i18n';
 
 export default function SheetDetents(): ReactNode {
@@ -19,9 +19,11 @@ export default function SheetDetents(): ReactNode {
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
-      <output className="s-demo-log">{fmt(t.detent, detent)}</output>
+      <output className="s-demo-log">
+        <Phrase>{fmt(t.detent, detent)}</Phrase>
+      </output>
 
       <Modal.Root
         kind="view"

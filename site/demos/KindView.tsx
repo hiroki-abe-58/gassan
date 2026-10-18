@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { Modal } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 import { fmt, useDemoText } from '../i18n';
 
 import { SCENES, sceneUri, type SceneId } from './art';
@@ -25,7 +25,7 @@ export default function KindView(): ReactNode {
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
 
       <Modal.Root kind="view" size="lg" scrim="immersive" open={open} onOpenChange={setOpen}>

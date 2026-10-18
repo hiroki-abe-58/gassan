@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react';
 import {
   KIND_DEFAULTS,
   Modal,
+  Phrase,
   type CloseReason,
   type ModalKind,
   type PlacementOption,
@@ -71,23 +72,25 @@ export default function Playground(): ReactNode {
         />
       </div>
 
-      <dl className="s-playground-defaults">
-        <div>
-          <dt>{t.esc}</dt>
-          <dd>{defaults.dismiss.esc ? t.closes : t.refuses}</dd>
-        </div>
-        <div>
-          <dt>{t.backdrop}</dt>
-          <dd>{defaults.dismiss.backdrop ? t.closes : t.refuses}</dd>
-        </div>
-      </dl>
+      <Phrase>
+        <dl className="s-playground-defaults">
+          <div>
+            <dt>{t.esc}</dt>
+            <dd>{defaults.dismiss.esc ? t.closes : t.refuses}</dd>
+          </div>
+          <div>
+            <dt>{t.backdrop}</dt>
+            <dd>{defaults.dismiss.backdrop ? t.closes : t.refuses}</dd>
+          </div>
+        </dl>
+      </Phrase>
 
       <div className="s-playground-run">
         <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-          {t.open}
+          <Phrase>{t.open}</Phrase>
         </button>
         <output className="s-demo-log">
-          {log.length > 0 ? fmt(t.closedBy, log.join(' → ')) : t.logEmpty}
+          <Phrase>{log.length > 0 ? fmt(t.closedBy, log.join(' → ')) : t.logEmpty}</Phrase>
         </output>
       </div>
 

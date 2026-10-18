@@ -199,32 +199,33 @@ export function Home(): ReactNode {
           {KIND_DEMOS.map(({ kind, Demo }) => {
             const defaults = KIND_DEFAULTS[kind];
             return (
-              <li key={kind} className="s-kind">
-                <p className="s-kind-name">
-                  <code>{kind}</code>
-                  <span>{t.kinds.items[kind].label}</span>
-                </p>
-                <p className="s-kind-use">
-                  <Phrase>{t.kinds.items[kind].use}</Phrase>
-                </p>
-                <dl className="s-kind-defaults">
-                  <div>
-                    <dt>{t.kinds.scrim}</dt>
-                    <dd>{defaults.scrim}</dd>
+              // li ごと Phrase で包む。中の Demo はコンポーネントなので潜らない（自分で折る）。
+              <Phrase key={kind}>
+                <li className="s-kind">
+                  <p className="s-kind-name">
+                    <code>{kind}</code>
+                    <span>{t.kinds.items[kind].label}</span>
+                  </p>
+                  <p className="s-kind-use">{t.kinds.items[kind].use}</p>
+                  <dl className="s-kind-defaults">
+                    <div>
+                      <dt>{t.kinds.scrim}</dt>
+                      <dd>{defaults.scrim}</dd>
+                    </div>
+                    <div>
+                      <dt>{t.kinds.esc}</dt>
+                      <dd>{yesNo(defaults.dismiss.esc)}</dd>
+                    </div>
+                    <div>
+                      <dt>{t.kinds.backdrop}</dt>
+                      <dd>{yesNo(defaults.dismiss.backdrop)}</dd>
+                    </div>
+                  </dl>
+                  <div className="s-kind-demo">
+                    <Demo />
                   </div>
-                  <div>
-                    <dt>{t.kinds.esc}</dt>
-                    <dd>{yesNo(defaults.dismiss.esc)}</dd>
-                  </div>
-                  <div>
-                    <dt>{t.kinds.backdrop}</dt>
-                    <dd>{yesNo(defaults.dismiss.backdrop)}</dd>
-                  </div>
-                </dl>
-                <div className="s-kind-demo">
-                  <Demo />
-                </div>
-              </li>
+                </li>
+              </Phrase>
             );
           })}
         </ul>

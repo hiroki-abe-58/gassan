@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { Modal } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 import { fmt, useDemoText } from '../i18n';
 
 const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
@@ -13,7 +13,7 @@ export default function FooterButtons(): ReactNode {
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
 
       <Modal.Root kind="form" open={open} onOpenChange={setOpen} submitShortcut>

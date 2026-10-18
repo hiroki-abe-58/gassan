@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { Modal, useModals, type CloseReason } from '@genelab/gassan';
+import { Modal, Phrase, useModals, type CloseReason } from '@genelab/gassan';
 import { useDemoText } from '../i18n';
 
 export default function KindForm(): ReactNode {
@@ -35,7 +35,7 @@ export default function KindForm(): ReactNode {
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
 
       <Modal.Root

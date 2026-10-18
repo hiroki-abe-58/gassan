@@ -28,10 +28,17 @@ describe('styles / footer order (F-02〜F-04)', () => {
   });
 
   it('ボタン列は残り幅を占め、最初の tertiary だけを左へ分離する', () => {
-    expect(rules).toMatch(/\.g-footer-actions\s*\{[^}]*flex:\s*1;/);
+    expect(rules).toMatch(/\.g-footer-actions\s*\{[^}]*flex:\s*auto;/);
     expect(rules).toMatch(
       /\.g-footer-actions > \.g-btn\[data-variant="tertiary"\]:first-child\s*\{\s*margin-inline-end:\s*auto;/,
     );
+  });
+
+  it('ボタン列が補足と同じ行に収まらないときは、ボタンを縮めずに次の行へ送り、補足は左に残す', () => {
+    // flex: 1 は基準幅が 0 なので、折り返しの判定でボタン列が必ず収まる扱いになり、ボタンが押し縮められる
+    expect(rules).not.toMatch(/\.g-footer-actions\s*\{[^}]*flex:\s*1;/);
+    expect(rules).toMatch(/\.g-footer\s*\{[^}]*flex-wrap:\s*wrap;/);
+    expect(rules).toMatch(/\.g-footer-note\s*\{[^}]*margin-inline-end:\s*auto;/);
   });
 
   it('狭幅の縦積み規則は、ボタン列の基本規則より後に置く（詳細度が同じなので順序で勝つ）', () => {

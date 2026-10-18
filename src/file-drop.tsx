@@ -5,6 +5,7 @@ import { useControllable } from './internal/controllable';
 import { Icon } from './internal/icons';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { useLabels } from './labels';
+import { usePhrase } from './phrase';
 
 /**
  * accept 属性の規則（「.pdf」「image/*」「application/json」）にファイルが合うか。
@@ -67,6 +68,7 @@ export function ModalFileDrop({
   ...rest
 }: ModalFileDropProps): ReactNode {
   const labels = useLabels();
+  const phrase = usePhrase();
   const [files, setFiles] = useControllable<readonly File[]>(value, defaultValue, (next) => onValueChange?.([...next]));
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -139,10 +141,10 @@ export function ModalFileDrop({
         <Icon name="upload" className="g-dropzone-icon" />
         {/* 読み上げでは input そのものが「ファイルを選択」のボタンになるので、案内は重ねて読ませない。 */}
         <span className="g-dropzone-text" aria-hidden="true">
-          {labels.dropFiles}
+          {phrase(labels.dropFiles)}
         </span>
         <span className="g-dropzone-button" aria-hidden="true">
-          {labels.chooseFiles}
+          {phrase(labels.chooseFiles)}
         </span>
       </div>
       {files.length > 0 ? (

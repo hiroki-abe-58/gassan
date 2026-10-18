@@ -124,7 +124,7 @@ function Listbox({ id, labelledBy, options, active, selected, anchorRef, onActiv
       </ul>
       {options.length === 0 ? (
         <p className="g-listbox-empty" role="status">
-          {labels.noResults}
+          {phrase(labels.noResults)}
         </p>
       ) : null}
     </Popup>

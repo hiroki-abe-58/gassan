@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { Modal } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 import { fmt, useDemoText } from '../i18n';
 
 export default function KindConfirm(): ReactNode {
@@ -11,9 +11,11 @@ export default function KindConfirm(): ReactNode {
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
-      <output className="s-demo-log">{log}</output>
+      <output className="s-demo-log">
+        <Phrase>{log}</Phrase>
+      </output>
 
       <Modal.Root
         kind="confirm"
