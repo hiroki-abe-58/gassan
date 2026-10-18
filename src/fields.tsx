@@ -16,6 +16,56 @@ export interface FieldControlProps {
   'aria-required': true | undefined;
 }
 
+/**
+ * gassan の入力部品が受ける配線。FieldControlProps をそのまま広げて渡せる。
+ * Field の外で使うときは aria-label か aria-labelledby で名前を付ける。I-01。
+ */
+export interface ControlAria {
+  id?: string;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
+  'aria-required'?: boolean;
+}
+
+/** Field と Fieldset が共有する、ヘルプとエラーの id と aria-describedby。 */
+function useMessages(baseId: string, help: ReactNode, error: ReactNode) {
+  const phrase = usePhrase();
+  const helpId = `${baseId}-help`;
+  const errorId = `${baseId}-error`;
+  const describedBy = [help ? helpId : null, error ? errorId : null].filter(Boolean).join(' ') || undefined;
+  const messages = (
+    <>
+      {help ? (
+        <p className="g-help" id={helpId}>
+          {phrase(help)}
+        </p>
+      ) : null}
+      {error ? (
+        <p className="g-error" id={errorId}>
+          {phrase(error)}
+        </p>
+      ) : null}
+    </>
+  );
+  return { describedBy, messages };
+}
+
+/** ラベルの中身。文言と「必須 / 任意」のバッジ。 */
+function LabelContent({ label, required }: { label: ReactNode; required: boolean }): ReactNode {
+  const labels = useLabels();
+  const phrase = usePhrase();
+  return (
+    <>
+      <span className="g-label-text">{phrase(label)}</span>
+      <span className="g-label-badge" data-required={required ? '' : undefined}>
+        {required ? labels.required : labels.optional}
+      </span>
+    </>
+  );
+}
+
 export interface ModalFieldProps extends DataAttributes {
   label: ReactNode;
   children: (control: FieldControlProps) => ReactNode;
@@ -46,15 +96,9 @@ export function ModalField({
   className,
   ...rest
 }: ModalFieldProps): ReactNode {
-  const labels = useLabels();
-  const phrase = usePhrase();
   const reactId = useId();
   const fieldId = id ?? `gassan-field-${reactId}`;
-  const helpId = `${fieldId}-help`;
-  const errorId = `${fieldId}-error`;
-
-  const describedBy =
-    [help ? helpId : null, error ? errorId : null].filter(Boolean).join(' ') || undefined;
+  const { describedBy, messages } = useMessages(fieldId, help, error);
 
   return (
     <div
@@ -63,10 +107,7 @@ export function ModalField({
       data-invalid={error ? '' : undefined}
     >
       <label className="g-label" htmlFor={fieldId}>
-        <span className="g-label-text">{phrase(label)}</span>
-        <span className="g-label-badge" data-required={required ? '' : undefined}>
-          {required ? labels.required : labels.optional}
-        </span>
+        <LabelContent label={label} required={required} />
       </label>
 
       {children({
@@ -76,17 +117,59 @@ export function ModalField({
         'aria-required': required ? true : undefined,
       })}
 
-      {help ? (
-        <p className="g-help" id={helpId}>
-          {phrase(help)}
-        </p>
-      ) : null}
-      {error ? (
-        <p className="g-error" id={errorId}>
-          {phrase(error)}
-        </p>
-      ) : null}
+      {messages}
     </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Fieldset                                                                   */
+/* -------------------------------------------------------------------------- */
+
+export interface ModalFieldsetProps extends DataAttributes {
+  /** legend になる。グループの名前。 */
+  label: ReactNode;
+  children: ReactNode;
+  help?: ReactNode;
+  error?: ReactNode;
+  required?: boolean;
+  id?: string;
+  className?: string;
+}
+
+/**
+ * 選択肢の束（ラジオ・チェックボックス・評価・2 つ摘みのスライダー）の配線。B-08 / I-09。
+ *
+ * 1 つの欄に名前を付ける Field と違い、束には fieldset と legend で名前を付ける。
+ * <label> で束を包むと、中の各選択肢のラベルと名前が混ざる。
+ * ヘルプとエラーは fieldset の aria-describedby に載せ、束に入ったときに読ませる。
+ */
+export function ModalFieldset({
+  label,
+  children,
+  help,
+  error,
+  required = false,
+  id,
+  className,
+  ...rest
+}: ModalFieldsetProps): ReactNode {
+  const reactId = useId();
+  const { describedBy, messages } = useMessages(id ?? `gassan-fieldset-${reactId}`, help, error);
+  return (
+    <fieldset
+      {...domPassthrough(rest, 'Modal.Fieldset')}
+      id={id}
+      className={className ? `g-field g-fieldset ${className}` : 'g-field g-fieldset'}
+      data-invalid={error ? '' : undefined}
+      aria-describedby={describedBy}
+    >
+      <legend className="g-label">
+        <LabelContent label={label} required={required} />
+      </legend>
+      {children}
+      {messages}
+    </fieldset>
   );
 }
 

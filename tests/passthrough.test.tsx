@@ -141,6 +141,48 @@ const CASES: Array<{ name: string; render: () => void }> = [
   },
   { name: 'Modal.Alert', render: () => inRoot(<Modal.Alert data-testid={TID}>e</Modal.Alert>) },
   {
+    name: 'Modal.Fieldset',
+    render: () => inRoot(<Modal.Fieldset label="l" data-testid={TID}>x</Modal.Fieldset>),
+  },
+  { name: 'Modal.Input', render: () => inRoot(<Modal.Input aria-label="i" data-testid={TID} />) },
+  {
+    name: 'Modal.PasswordInput',
+    render: () => inRoot(<Modal.PasswordInput aria-label="p" data-testid={TID} />),
+  },
+  {
+    name: 'Modal.SearchInput',
+    render: () => inRoot(<Modal.SearchInput aria-label="s" data-testid={TID} />),
+  },
+  { name: 'Modal.Textarea', render: () => inRoot(<Modal.Textarea aria-label="t" data-testid={TID} />) },
+  {
+    name: 'Modal.NumberField',
+    render: () => inRoot(<Modal.NumberField aria-label="n" data-testid={TID} />),
+  },
+  { name: 'Modal.CodeInput', render: () => inRoot(<Modal.CodeInput aria-label="c" data-testid={TID} />) },
+  { name: 'Modal.Checkbox', render: () => inRoot(<Modal.Checkbox data-testid={TID}>c</Modal.Checkbox>) },
+  {
+    name: 'Modal.RadioGroup',
+    render: () => inRoot(<Modal.RadioGroup options={[{ value: 'a', label: 'A' }]} data-testid={TID} />),
+  },
+  {
+    name: 'Modal.Segmented',
+    render: () => inRoot(<Modal.Segmented options={[{ value: 'a', label: 'A' }]} data-testid={TID} />),
+  },
+  { name: 'Modal.Rating', render: () => inRoot(<Modal.Rating aria-label="r" data-testid={TID} />) },
+  { name: 'Modal.Slider', render: () => inRoot(<Modal.Slider aria-label="s" data-testid={TID} />) },
+  { name: 'Modal.RangeSlider', render: () => inRoot(<Modal.RangeSlider data-testid={TID} />) },
+  {
+    name: 'Modal.Select',
+    render: () => inRoot(<Modal.Select aria-label="s" options={[{ value: 'a', label: 'A' }]} data-testid={TID} />),
+  },
+  {
+    name: 'Modal.Combobox',
+    render: () =>
+      inRoot(<Modal.Combobox aria-label="c" options={[{ value: 'a', label: 'A' }]} data-testid={TID} />),
+  },
+  { name: 'Modal.DatePicker', render: () => inRoot(<Modal.DatePicker aria-label="d" data-testid={TID} />) },
+  { name: 'Modal.FileDrop', render: () => inRoot(<Modal.FileDrop aria-label="f" data-testid={TID} />) },
+  {
     name: 'Modal.Chart',
     render: () =>
       inRoot(
@@ -197,6 +239,23 @@ describe('data-* の受け渡し（D-11）', () => {
   it('Modal.Alert は data-* をホスト要素へ渡す', () => sweep('Modal.Alert'));
   it('Modal.Chart は data-* をホスト要素へ渡す', () => sweep('Modal.Chart'));
   it('Modal.Handle は data-* をホスト要素へ渡す', () => sweep('Modal.Handle'));
+  it('Modal.Fieldset は data-* をホスト要素へ渡す', () => sweep('Modal.Fieldset'));
+  it('Modal.Input は data-* を input へ渡す', () => sweep('Modal.Input'));
+  it('Modal.PasswordInput は data-* を input へ渡す', () => sweep('Modal.PasswordInput'));
+  it('Modal.SearchInput は data-* を input へ渡す', () => sweep('Modal.SearchInput'));
+  it('Modal.Textarea は data-* を textarea へ渡す', () => sweep('Modal.Textarea'));
+  it('Modal.NumberField は data-* をホスト要素へ渡す', () => sweep('Modal.NumberField'));
+  it('Modal.CodeInput は data-* をホスト要素へ渡す', () => sweep('Modal.CodeInput'));
+  it('Modal.Checkbox は data-* をホスト要素へ渡す', () => sweep('Modal.Checkbox'));
+  it('Modal.RadioGroup は data-* をホスト要素へ渡す', () => sweep('Modal.RadioGroup'));
+  it('Modal.Segmented は data-* をホスト要素へ渡す', () => sweep('Modal.Segmented'));
+  it('Modal.Rating は data-* をホスト要素へ渡す', () => sweep('Modal.Rating'));
+  it('Modal.Slider は data-* をホスト要素へ渡す', () => sweep('Modal.Slider'));
+  it('Modal.RangeSlider は data-* をホスト要素へ渡す', () => sweep('Modal.RangeSlider'));
+  it('Modal.Select は data-* をホスト要素へ渡す', () => sweep('Modal.Select'));
+  it('Modal.Combobox は data-* をホスト要素へ渡す', () => sweep('Modal.Combobox'));
+  it('Modal.DatePicker は data-* をホスト要素へ渡す', () => sweep('Modal.DatePicker'));
+  it('Modal.FileDrop は data-* をホスト要素へ渡す', () => sweep('Modal.FileDrop'));
 
   it('Modal.Gate は要素を描かないので受け渡しの対象外', () => {
     inRoot(<Modal.Gate name="g" satisfied reason="r" />);
@@ -374,7 +433,8 @@ describe('スプレッドの位置（消費者の値で内部状態を壊させ�
       calls += [...text.matchAll(/(?:domPassthrough|stripReservedData)\(rest, '/g)].length;
     }
     // Modal.Handle は段の有無で 2 経路に分かれ、Modal.Section も同様。
-    // 23 コンポーネントすべてが濾過を通ること。
-    expect(calls).toBeGreaterThanOrEqual(23);
+    // PasswordInput と SearchInput は Modal.Input を通して濾過される（自前の呼び出しは持たない）。
+    // それ以外の 39 コンポーネントすべてが濾過を通ること。
+    expect(calls).toBeGreaterThanOrEqual(39);
   });
 });

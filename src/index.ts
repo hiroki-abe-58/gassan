@@ -7,7 +7,20 @@
 
 import { ModalBody, ModalSection } from './body';
 import { ModalChart } from './chart';
-import { ModalAlert, ModalChips, ModalField, ModalSwitch, ModalTable } from './fields';
+import { ModalCheckbox, ModalRadioGroup, ModalRating, ModalSegmented } from './choices';
+import { ModalDatePicker } from './date-picker';
+import { ModalAlert, ModalChips, ModalField, ModalFieldset, ModalSwitch, ModalTable } from './fields';
+import { ModalFileDrop } from './file-drop';
+import {
+  ModalCodeInput,
+  ModalInput,
+  ModalNumberField,
+  ModalPasswordInput,
+  ModalSearchInput,
+  ModalTextarea,
+} from './inputs';
+import { ModalCombobox, ModalSelect } from './select';
+import { ModalRangeSlider, ModalSlider } from './slider';
 import { ModalButton, ModalFooter } from './footer';
 import { ModalConsent, ModalGate, ModalGateStatus } from './gate';
 import {
@@ -31,7 +44,20 @@ export { ModalBody, ModalSection } from './body';
 export { ModalFooter, ModalButton } from './footer';
 export { ModalGate, ModalConsent, ModalGateStatus, useGateRegistration } from './gate';
 export { ModalMedia, ModalGallery } from './media';
-export { ModalField, ModalChips, ModalSwitch, ModalTable, ModalAlert } from './fields';
+export { ModalField, ModalFieldset, ModalChips, ModalSwitch, ModalTable, ModalAlert } from './fields';
+export {
+  ModalInput,
+  ModalPasswordInput,
+  ModalSearchInput,
+  ModalTextarea,
+  ModalNumberField,
+  ModalCodeInput,
+} from './inputs';
+export { ModalCheckbox, ModalRadioGroup, ModalSegmented, ModalRating } from './choices';
+export { ModalSlider, ModalRangeSlider } from './slider';
+export { ModalSelect, ModalCombobox } from './select';
+export { ModalDatePicker } from './date-picker';
+export { ModalFileDrop } from './file-drop';
 export { ModalChart } from './chart';
 export { ModalHandle } from './sheet';
 export { ModalHost, useModals, confirm, resetModalQueue } from './imperative';
@@ -73,12 +99,34 @@ export type { ModalHandleProps } from './sheet';
 export type {
   ModalFieldProps,
   FieldControlProps,
+  ControlAria,
+  ModalFieldsetProps,
   ModalChipsProps,
   ChipOption,
   ModalSwitchProps,
   ModalTableProps,
   ModalAlertProps,
 } from './fields';
+export type {
+  ModalInputProps,
+  ModalPasswordInputProps,
+  ModalSearchInputProps,
+  ModalTextareaProps,
+  ModalNumberFieldProps,
+  ModalCodeInputProps,
+} from './inputs';
+export type {
+  GroupAria,
+  ModalCheckboxProps,
+  ChoiceOption,
+  ModalRadioGroupProps,
+  ModalSegmentedProps,
+  ModalRatingProps,
+} from './choices';
+export type { ModalSliderProps, ModalRangeSliderProps } from './slider';
+export type { SelectOption, ModalSelectProps, ModalComboboxProps } from './select';
+export type { ModalDatePickerProps } from './date-picker';
+export type { ModalFileDropProps } from './file-drop';
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';
 export type { GassanLabels, GassanProviderProps } from './labels';
@@ -126,6 +174,23 @@ export const Modal = {
   Media: ModalMedia,
   Gallery: ModalGallery,
   Field: ModalField,
+  Fieldset: ModalFieldset,
+  Input: ModalInput,
+  PasswordInput: ModalPasswordInput,
+  SearchInput: ModalSearchInput,
+  Textarea: ModalTextarea,
+  NumberField: ModalNumberField,
+  CodeInput: ModalCodeInput,
+  Checkbox: ModalCheckbox,
+  RadioGroup: ModalRadioGroup,
+  Segmented: ModalSegmented,
+  Rating: ModalRating,
+  Slider: ModalSlider,
+  RangeSlider: ModalRangeSlider,
+  Select: ModalSelect,
+  Combobox: ModalCombobox,
+  DatePicker: ModalDatePicker,
+  FileDrop: ModalFileDrop,
   Chips: ModalChips,
   Switch: ModalSwitch,
   Table: ModalTable,
