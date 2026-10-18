@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import { Phrase } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 
 import type { PageProps } from '../../routes';
 import { data, repoFile, type Priority, type SpecItem } from '../../data';
@@ -86,7 +86,7 @@ export function Spec({ rest }: PageProps): ReactNode {
 
   return (
     <>
-      <PageHeader eyebrow={nav.sections.reference} title={t.title(nav.pages.spec, data.meta.items)} lead={t.lead} />
+      <PageHeader eyebrow={nav.sections.reference} title={t.title(nav.pages.spec, data.meta.items)} lead={t.lead(data.categories.length)} />
 
       <Prose>
         <p>{md(t.source(data.meta.specVersion, data.meta.specUpdated))}</p>
@@ -95,8 +95,7 @@ export function Spec({ rest }: PageProps): ReactNode {
       <div className="s-filters" role="search" aria-label={t.filters.label}>
         <label className="s-field s-field-grow">
           <span>{t.filters.keyword}</span>
-          <input
-            type="search"
+          <Modal.SearchInput
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={t.filters.keywordPlaceholder}
@@ -104,43 +103,39 @@ export function Spec({ rest }: PageProps): ReactNode {
         </label>
         <label className="s-field">
           <span>{t.filters.category}</span>
-          <select value={category} onChange={(event) => setCategory(event.target.value)}>
-            <option value="">{t.filters.all}</option>
-            {data.categories.map((c) => (
-              <option key={c.letter} value={c.letter} lang={SPEC_LANG}>
-                {c.letter}. {c.name}
-              </option>
-            ))}
-          </select>
+          <Modal.Select
+            value={category}
+            onValueChange={setCategory}
+            options={[
+              { value: '', label: t.filters.all },
+              ...data.categories.map((c) => ({ value: c.letter, label: `${c.letter}. ${c.name}` })),
+            ]}
+          />
         </label>
         <label className="s-field">
           <span>{t.filters.status}</span>
-          <select value={status} onChange={(event) => setStatus(event.target.value)}>
-            <option value="">{t.filters.all}</option>
-            {/* 値は追跡表の原文のまま（絞り込みに使う）、表示だけ訳す */}
-            {statuses.map((s) => (
-              <option key={s} value={s}>
-                {statusLabel(s)}
-              </option>
-            ))}
-          </select>
+          {/* 値は追跡表の原文のまま（絞り込みに使う）、表示だけ訳す */}
+          <Modal.Select
+            value={status}
+            onValueChange={setStatus}
+            options={[{ value: '', label: t.filters.all }, ...statuses.map((s) => ({ value: s, label: statusLabel(s) }))]}
+          />
         </label>
         <fieldset className="s-field s-priority-filter">
           <legend>{t.filters.priority}</legend>
           {PRIORITIES.map((p) => (
-            <label key={p} className="s-toggle">
-              <input
-                type="checkbox"
-                checked={priorities.has(p)}
-                onChange={(event) => {
-                  const next = new Set(priorities);
-                  if (event.target.checked) next.add(p);
-                  else next.delete(p);
-                  setPriorities(next);
-                }}
-              />
+            <Modal.Checkbox
+              key={p}
+              checked={priorities.has(p)}
+              onCheckedChange={(on) => {
+                const next = new Set(priorities);
+                if (on) next.add(p);
+                else next.delete(p);
+                setPriorities(next);
+              }}
+            >
               {t.filters.priorityOption(p, common.priority[p])}
-            </label>
+            </Modal.Checkbox>
           ))}
         </fieldset>
       </div>

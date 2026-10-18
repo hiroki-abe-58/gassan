@@ -1,4 +1,4 @@
-import { useId, useState, type CSSProperties, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 
 import { Modal, Phrase, splitPhrases } from '@genelab/gassan';
 
@@ -223,7 +223,7 @@ function Splitter(): ReactNode {
     <div className="s-splitter">
       <label className="s-field">
         <span>{tt.input}</span>
-        <textarea rows={2} value={text} onChange={(event) => setText(event.target.value)} />
+        <Modal.Textarea rows={2} value={text} onChange={(event) => setText(event.target.value)} />
       </label>
       <ol className="s-splitter-out" aria-label={tt.resultLabel}>
         {phrases.map((p, i) => (
@@ -245,7 +245,6 @@ export function LineBreak(): ReactNode {
   // 10em: 見本のどの言語でも、ブラウザ任せだと語の途中で割れ、gassan では切れ目に収まる幅
   const [width, setWidth] = useState(10);
   const [sampleLang, setSampleLang] = useState<Lang>(SAMPLE_LANGS.slice(0, 4).includes(lang) ? lang : 'ja');
-  const name = useId().replace(/:/g, '');
   const notes = tt.compare.notes[sampleLang];
   const css = [
     '.g-phrase {',
@@ -276,31 +275,15 @@ export function LineBreak(): ReactNode {
       <Section id="compare" title={tt.compare.title} intro={md(tt.compare.intro)}>
         <fieldset className="s-field s-sample-langs">
           <legend>{tt.compare.language}</legend>
-          <div className="s-segmented s-segmented-wrap">
-            {SAMPLE_LANGS.map((code) => (
-              <label key={code}>
-                <input
-                  type="radio"
-                  name={`${name}-sample`}
-                  value={code}
-                  checked={sampleLang === code}
-                  onChange={() => setSampleLang(code)}
-                />
-                <span lang={code}>{LANG_NAMES[code]}</span>
-              </label>
-            ))}
-          </div>
+          <Modal.Segmented
+            value={sampleLang}
+            onValueChange={(code) => setSampleLang(code as Lang)}
+            options={SAMPLE_LANGS.map((code) => ({ value: code, label: <span lang={code}>{LANG_NAMES[code]}</span> }))}
+          />
         </fieldset>
         <label className="s-field s-width-control">
           <span>{tt.compare.width(width.toFixed(1))}</span>
-          <input
-            type="range"
-            min={4}
-            max={22}
-            step={0.5}
-            value={width}
-            onChange={(event) => setWidth(Number(event.target.value))}
-          />
+          <Modal.Slider min={4} max={22} step={0.5} value={width} onValueChange={setWidth} />
         </label>
         <BreakCompare width={width} lang={sampleLang} browserNote={notes.browser} phraseNote={notes.phrase}>
           <Samples sample={SAMPLES[sampleLang]} />

@@ -24,6 +24,21 @@ const labels: GassanLabels = {
   sheetHandle: '調整面板高度',
   detent: (token) => ({ peek: '最小', half: '中', full: '最大' })[token],
   detentChanged: (name) => `面板高度：${name}`,
+  locale: 'zh-TW',
+  choose: '請選擇',
+  noResults: '沒有符合的選項',
+  clear: '清除輸入',
+  showPassword: '顯示密碼',
+  increment: '增加',
+  decrement: '減少',
+  rangeStart: '最小值',
+  rangeEnd: '最大值',
+  rating: (value, max) => `${String(max)} 分中的 ${String(value)} 分`,
+  previousMonth: '上個月',
+  nextMonth: '下個月',
+  dropFiles: '將檔案拖放到這裡',
+  chooseFiles: '選擇檔案',
+  removeFile: (name) => `移除 ${name}`,
 };
 
 export default labels;

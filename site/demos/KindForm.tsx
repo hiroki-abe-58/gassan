@@ -58,7 +58,7 @@ export default function KindForm(): ReactNode {
         <Modal.Body>
           <Modal.Field label={t.name} required error={nameError} help={t.nameHelp}>
             {(control) => (
-              <input {...control} type="text" value={name} onChange={(event) => setName(event.target.value)} />
+              <Modal.Input {...control} value={name} onChange={(event) => setName(event.target.value)} />
             )}
           </Modal.Field>
           <Modal.Chips label={t.genres} options={GENRES} value={genres} onChange={setGenres} />

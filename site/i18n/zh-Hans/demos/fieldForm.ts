@@ -17,7 +17,7 @@ export default {
   comments: {
     summary: '提交失败的汇总集中在一处。焦点移到第一个出错的项目（B-09）',
     field: '一个输入对应一个 Modal.Field。由它负责标签、帮助文字、错误信息的关联（B-08）',
-    group: '选项组不用 label，而用 fieldset / legend 命名',
-    native: 'range 和 date 都不重新造，只把原生控件包起来',
+    group: '选项组用 Modal.Fieldset。不用 label，而用 legend 命名（I-09）',
+    native: '里面是原生的 range。手柄和填充用主题的颜色绘制（I-10）',
   },
 } satisfies typeof ja;

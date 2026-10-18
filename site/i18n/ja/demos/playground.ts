@@ -10,6 +10,6 @@ export default {
   description: 'Esc・背景クリック・× ボタンを試す。閉じない設定のときは、パネルが揺れて理由が読み上げられる。',
   done: '完了',
   comments: {
-    choice: 'select の 1 行。「kind の既定」を空文字で表す。',
+    choice: 'Modal.Select の 1 行。「kind の既定」を空文字の value で表す。<label> の中のボタンなので、見出しがそのまま名前になる。',
   },
 };

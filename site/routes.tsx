@@ -19,7 +19,10 @@ import { Theme } from './pages/styles/Theme';
 import { BodyPage } from './pages/components/BodyPage';
 import { ButtonPage } from './pages/components/ButtonPage';
 import { ChartPage } from './pages/components/ChartPage';
+import { ChoicePage } from './pages/components/ChoicePage';
+import { DatePickerPage } from './pages/components/DatePickerPage';
 import { FieldPage } from './pages/components/FieldPage';
+import { FileDropPage } from './pages/components/FileDropPage';
 import { FooterPage } from './pages/components/FooterPage';
 import { GatePage } from './pages/components/GatePage';
 import { HeaderPage } from './pages/components/HeaderPage';
@@ -27,7 +30,10 @@ import { ImperativePage } from './pages/components/ImperativePage';
 import { MediaPage } from './pages/components/MediaPage';
 import { ProviderPage } from './pages/components/ProviderPage';
 import { RootPage } from './pages/components/RootPage';
+import { SelectPage } from './pages/components/SelectPage';
 import { SheetPage } from './pages/components/SheetPage';
+import { SliderPage } from './pages/components/SliderPage';
+import { TextInputPage } from './pages/components/TextInputPage';
 import { TitlePage } from './pages/components/TitlePage';
 import { Spec } from './pages/reference/Spec';
 import { Verification } from './pages/reference/Verification';
@@ -49,7 +55,7 @@ export interface PageDef {
   Component: ComponentType<PageProps>;
 }
 
-export const SECTIONS: readonly SectionId[] = ['start', 'foundations', 'styles', 'components', 'reference'];
+export const SECTIONS: readonly SectionId[] = ['start', 'foundations', 'styles', 'components', 'forms', 'reference'];
 
 /** ナビの並び順がそのまま「前へ / 次へ」の順になる。 */
 export const PAGES: readonly PageDef[] = [
@@ -77,12 +83,20 @@ export const PAGES: readonly PageDef[] = [
   { path: '/components/footer', key: 'footer', section: 'components', Component: FooterPage },
   { path: '/components/button', key: 'button', section: 'components', Component: ButtonPage },
   { path: '/components/gate', key: 'gate', section: 'components', Component: GatePage },
-  { path: '/components/field', key: 'field', section: 'components', Component: FieldPage },
   { path: '/components/media', key: 'media', section: 'components', Component: MediaPage },
   { path: '/components/chart', key: 'chart', section: 'components', Component: ChartPage },
   { path: '/components/sheet', key: 'sheet', section: 'components', Component: SheetPage },
   { path: '/components/imperative', key: 'imperative', section: 'components', Component: ImperativePage },
   { path: '/components/provider', key: 'provider', section: 'components', Component: ProviderPage },
+
+  // 公開済みのリンクを壊さないよう、パスは /components の下のまま。ナビの節だけを分ける。
+  { path: '/components/field', key: 'field', section: 'forms', Component: FieldPage },
+  { path: '/components/text-input', key: 'textInput', section: 'forms', Component: TextInputPage },
+  { path: '/components/choice', key: 'choice', section: 'forms', Component: ChoicePage },
+  { path: '/components/select', key: 'select', section: 'forms', Component: SelectPage },
+  { path: '/components/slider', key: 'slider', section: 'forms', Component: SliderPage },
+  { path: '/components/date-picker', key: 'datePicker', section: 'forms', Component: DatePickerPage },
+  { path: '/components/file-drop', key: 'fileDrop', section: 'forms', Component: FileDropPage },
 
   { path: '/spec', key: 'spec', section: 'reference', Component: Spec },
   { path: '/verification', key: 'verification', section: 'reference', Component: Verification },

@@ -27,14 +27,14 @@ function Choice<T extends string>(props: {
   return (
     <label className="s-field">
       <span>{props.label}</span>
-      <select value={props.value} onChange={(event) => props.onChange(event.target.value as T | '')}>
-        {props.fallback ? <option value="">{props.fallback}</option> : null}
-        {props.options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
+      <Modal.Select
+        value={props.value}
+        onValueChange={(value) => props.onChange(value as T | '')}
+        options={[
+          ...(props.fallback ? [{ value: '', label: props.fallback }] : []),
+          ...props.options.map((option) => ({ value: option, label: option })),
+        ]}
+      />
     </label>
   );
 }

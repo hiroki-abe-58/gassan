@@ -6,10 +6,13 @@ import accessibility from './accessibility';
 import body from './body';
 import button from './button';
 import chart from './chart';
+import choice from './choice';
 import color from './color';
 import common from './common';
+import datePicker from './datePicker';
 import demos from './demos';
 import field from './field';
+import fileDrop from './fileDrop';
 import footer from './footer';
 import gassan from './gassan';
 import gate from './gate';
@@ -29,9 +32,12 @@ import purpose from './purpose';
 import root from './root';
 import rules from './rules';
 import scrim from './scrim';
+import select from './select';
 import sheet from './sheet';
+import slider from './slider';
 import spec from './spec';
 import start from './start';
+import textInput from './textInput';
 import theme from './theme';
 import title from './title';
 import verification from './verification';
@@ -62,6 +68,12 @@ export default {
   button,
   gate,
   field,
+  textInput,
+  choice,
+  select,
+  slider,
+  datePicker,
+  fileDrop,
   media,
   chart,
   sheet,

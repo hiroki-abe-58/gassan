@@ -23,7 +23,7 @@ export default function QuickStart(): ReactNode {
 
         <Modal.Body>
           <Modal.Field label={t.name} required>
-            {(control) => <input {...control} type="text" />}
+            {(control) => <Modal.Input {...control} />}
           </Modal.Field>
         </Modal.Body>
 

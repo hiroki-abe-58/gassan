@@ -1,7 +1,10 @@
 import type ja from '../../ja/demos';
 import bodyScroll from './bodyScroll';
 import chartReport from './chartReport';
+import choiceForm from './choiceForm';
+import dateForm from './dateForm';
 import fieldForm from './fieldForm';
+import fileForm from './fileForm';
 import footerButtons from './footerButtons';
 import gateCustom from './gateCustom';
 import imperativeConfirm from './imperativeConfirm';
@@ -15,13 +18,19 @@ import playground from './playground';
 import providerEnglish from './providerEnglish';
 import quickStart from './quickStart';
 import scrimLevels from './scrimLevels';
+import selectForm from './selectForm';
 import sheetDetents from './sheetDetents';
+import sliderForm from './sliderForm';
+import textForm from './textForm';
 import titleClamp from './titleClamp';
 
 export default {
   bodyScroll,
   chartReport,
+  choiceForm,
+  dateForm,
   fieldForm,
+  fileForm,
   footerButtons,
   gateCustom,
   imperativeConfirm,
@@ -35,6 +44,9 @@ export default {
   providerEnglish,
   quickStart,
   scrimLevels,
+  selectForm,
   sheetDetents,
+  sliderForm,
+  textForm,
   titleClamp,
 } satisfies typeof ja;

@@ -1,0 +1,51 @@
+import type ja from '../ja/choice';
+
+export default {
+  lead: 'Checkbox, RadioGroup, Segmented and Rating, alongside the existing Switch and Chips. Each is a native input or button underneath, and the legend of Modal.Fieldset carries the group’s name.',
+  gallery: {
+    title: 'Examples',
+    intro: 'Marks and the selected segment are filled with the theme’s accent color. Change the theme at the top right, and they change with it.',
+    items: {
+      checkbox: 'Checkbox',
+      mixed: 'Partially selected',
+      radio: 'Radio',
+      segmented: 'Segmented',
+      rating: 'Rating',
+      switch: 'Switch',
+      chips: 'Chips',
+    },
+    samples: {
+      terms: 'I agree to the terms of service',
+      termsNote: 'Agree to continue',
+      all: 'All notifications',
+      allNote: '1 of 3 selected',
+      planLabel: 'Plan',
+      planFree: 'Free',
+      planFreeNote: 'Up to 3 people',
+      planTeam: 'Team',
+      planTeamNote: 'Up to 20 people, ¥1,200/month',
+      viewLabel: 'View',
+      viewList: 'List',
+      viewGrid: 'Tiles',
+      viewMap: 'Map',
+      ratingLabel: 'Satisfaction',
+      switchLabel: 'Notify me by email',
+      chipsLabel: 'Areas of interest',
+      chipDesign: 'Design',
+      chipA11y: 'Accessibility',
+      chipPerf: 'Performance',
+    },
+  },
+  modal: {
+    title: 'Inside a modal',
+    intro: 'Wrap a group of options in Modal.Fieldset. The legend becomes the group’s name, and help and error become the group’s description.',
+    exampleTitle: 'Notification settings',
+    exampleDescription: '“All” shows an in-between mark when only some are selected. Radios and segments can be chosen with the arrow keys.',
+  },
+  fieldset: {
+    title: 'Fieldset for groups',
+    callout:
+      'Name a single input with the `<label>` of `Modal.Field`, and a group of options with the `<legend>` of `Modal.Fieldset`. Wrapping a group in a `<label>` mixes its name with the labels of the options inside. Put an option’s supplementary note outside its `<label>` and tie it in with `aria-describedby`. Placed inside, the note is read as part of the name too (I-09).',
+  },
+  a11yCaption: 'Specification items choices satisfy',
+} satisfies typeof ja;

@@ -2,7 +2,8 @@ import type ja from '../ja/spec';
 
 export default {
   title: (page: string, count: number): string => `${page}(${String(count)}개 항목)`,
-  lead: '이상적인 모달이 충족해야 할 동작을 12개 카테고리로 나눠 한 줄씩 열거한 것. 각 행에는 그것을 어느 테스트·어느 CSS로 충족하는지가 연결되어 있다.',
+  lead: (categories: number): string =>
+    `이상적인 모달이 충족해야 할 동작을 ${String(categories)}개 카테고리로 나눠 한 줄씩 열거한 것. 각 행에는 그것을 어느 테스트·어느 CSS로 충족하는지가 연결되어 있다.`,
   source: (version: string, updated: string): string =>
     `원본은 [modal.skill.md](modal.skill.md) §4(v${version}, ${updated}), 상태와 근거는 [docs/traceability.md](docs/traceability.md). 둘 다 \`npm run check:trace\`가 기계적으로 검증하며, 존재하지 않는 테스트 이름을 근거로 쓰면 CI가 실패한다. 이 페이지는 그 둘로부터 빌드 시 만든다.`,
   filters: {

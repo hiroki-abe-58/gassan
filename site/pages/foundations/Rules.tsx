@@ -1,6 +1,6 @@
 import { useId, useState, type ReactNode } from 'react';
 
-import { Phrase } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 
 import { data } from '../../data';
 import { SPEC_LANG, useT } from '../../i18n';
@@ -47,22 +47,20 @@ function Checklist({ groups }: { groups: readonly ChecklistGroup[] }): ReactNode
             const key = `${String(g)}-${String(i)}`;
             const id = `${base}-${key}`;
             return (
-              <div key={key} className="s-check">
-                <input
-                  id={id}
-                  type="checkbox"
-                  checked={checked.has(key)}
-                  onChange={(event) => {
-                    const next = new Set(checked);
-                    if (event.target.checked) next.add(key);
-                    else next.delete(key);
-                    setChecked(next);
-                  }}
-                />
-                <label htmlFor={id}>
-                  <Phrase>{inline(item, id)}</Phrase>
-                </label>
-              </div>
+              <Modal.Checkbox
+                key={key}
+                id={id}
+                className="s-check"
+                checked={checked.has(key)}
+                onCheckedChange={(on) => {
+                  const next = new Set(checked);
+                  if (on) next.add(key);
+                  else next.delete(key);
+                  setChecked(next);
+                }}
+              >
+                <Phrase>{inline(item, id)}</Phrase>
+              </Modal.Checkbox>
             );
           })}
         </fieldset>

@@ -24,6 +24,21 @@ const labels: GassanLabels = {
   sheetHandle: 'ปรับความสูงของชีต',
   detent: (token) => ({ peek: 'เล็กสุด', half: 'กลาง', full: 'ใหญ่สุด' })[token],
   detentChanged: (name) => `ความสูงของชีต: ${name}`,
+  locale: 'th-TH',
+  choose: 'เลือก…',
+  noResults: 'ไม่พบรายการที่ตรงกัน',
+  clear: 'ล้างข้อความ',
+  showPassword: 'แสดงรหัสผ่าน',
+  increment: 'เพิ่ม',
+  decrement: 'ลด',
+  rangeStart: 'ค่าต่ำสุด',
+  rangeEnd: 'ค่าสูงสุด',
+  rating: (value, max) => `${String(value)} จาก ${String(max)}`,
+  previousMonth: 'เดือนก่อนหน้า',
+  nextMonth: 'เดือนถัดไป',
+  dropFiles: 'วางไฟล์ที่นี่',
+  chooseFiles: 'เลือกไฟล์',
+  removeFile: (name) => `นำ ${name} ออก`,
 };
 
 export default labels;

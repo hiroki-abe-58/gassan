@@ -2,7 +2,8 @@ import type ja from '../ja/spec';
 
 export default {
   title: (page: string, count: number): string => `${page}（${String(count)} 項）`,
-  lead: '把理想的模態視窗應滿足的行為，分成 12 個類別逐行列舉。每一行都對應到以哪個測試、哪段 CSS 來滿足它。',
+  lead: (categories: number): string =>
+    `把理想的模態視窗應滿足的行為，分成 ${String(categories)} 個類別逐行列舉。每一行都對應到以哪個測試、哪段 CSS 來滿足它。`,
   source: (version: string, updated: string): string =>
     `原文是 [modal.skill.md](modal.skill.md) §4（v${version}，${updated}），狀態與依據是 [docs/traceability.md](docs/traceability.md)。兩者都由 \`npm run check:trace\` 機器驗證，若以不存在的測試名稱作為依據，CI 就會失敗。本頁在建置時由這兩份檔案產生。`,
   filters: {

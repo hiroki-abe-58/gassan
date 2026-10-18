@@ -7,15 +7,11 @@ export default function FieldForm(): ReactNode {
   const t = useDemoText('fieldForm');
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
-  const [plan, setPlan] = useState<string>('free');
+  const [plan, setPlan] = useState('free');
   const [seats, setSeats] = useState(3);
   const [errors, setErrors] = useState<string[]>([]);
   const emailRef = useRef<HTMLInputElement>(null);
 
-  const PLANS = [
-    { value: 'free', label: t.planFree },
-    { value: 'pro', label: t.planPro },
-  ] as const;
   const emailError = errors.includes('email') ? t.emailError : undefined;
 
   return (
@@ -45,10 +41,11 @@ export default function FieldForm(): ReactNode {
           {/* t:field */}
           <Modal.Field label={t.email} required error={emailError} help={t.emailHelp}>
             {(control) => (
-              <input
+              <Modal.Input
                 {...control}
                 ref={emailRef}
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
@@ -56,32 +53,28 @@ export default function FieldForm(): ReactNode {
           </Modal.Field>
 
           {/* t:group */}
-          <fieldset className="s-demo-fieldset">
-            <legend className="g-label">{t.plan}</legend>
-            {PLANS.map((option) => (
-              <label key={option.value} className="s-demo-choice">
-                <input
-                  type="radio"
-                  name="plan"
-                  value={option.value}
-                  checked={plan === option.value}
-                  onChange={() => setPlan(option.value)}
-                />
-                {option.label}
-              </label>
-            ))}
-          </fieldset>
+          <Modal.Fieldset label={t.plan}>
+            <Modal.RadioGroup
+              value={plan}
+              onValueChange={setPlan}
+              options={[
+                { value: 'free', label: t.planFree },
+                { value: 'pro', label: t.planPro },
+              ]}
+            />
+          </Modal.Fieldset>
 
           {/* t:native */}
-          <Modal.Field label={t.seats} help={fmt(t.seatsHelp, String(seats))}>
+          <Modal.Field label={t.seats}>
             {(control) => (
-              <input
+              <Modal.Slider
                 {...control}
-                type="range"
                 min={1}
                 max={20}
                 value={seats}
-                onChange={(event) => setSeats(Number(event.target.value))}
+                onValueChange={setSeats}
+                showValue
+                formatValue={(value) => fmt(t.seatsHelp, String(value))}
               />
             )}
           </Modal.Field>

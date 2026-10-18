@@ -1,22 +1,18 @@
 export default {
-  lead: 'Modal.Field はラベル・ヘルプ・エラーの配線だけを引き受け、中身の入力は作らない。Chips・Switch・Table・Alert は、モーダルの中でよく要るのに配線を間違えやすい部品だけを持つ。',
+  lead: 'Modal.Field は 1 つの欄に、Modal.Fieldset は選択肢の束に、名前・ヘルプ・エラーを配線する。中身は gassan の入力部品でも、ネイティブの input でも、ほかのライブラリの部品でもよい。',
   field: {
     title: '配線を 1 箇所に',
-    intro: 'render prop で id と aria-* を渡す。中身はネイティブの input でも、ほかのライブラリの部品でもよい。',
+    intro: 'render prop で id と aria-* を渡す。gassan の入力部品は、これをそのまま広げて受ける。',
     exampleTitle: 'メンバーを招待',
     exampleDescription: '空のまま「招待する」を押すと、まとめが 1 箇所に出て、フォーカスが最初のエラーへ移る。',
   },
-  delegate: {
-    title: 'コントロールは自作しない',
-    tableCaption: '入力部品の任せ先',
-    head: { control: '部品', use: 'どうするか' },
-    rows: [
-      { control: 'range / date / time / file / select', use: 'ネイティブの input をそのまま Modal.Field で包む' },
-      { control: 'ラジオ・複数チェック', use: 'fieldset と legend で名前を付ける（label ではなく）' },
-      { control: '検索つきセレクト・コンボボックス・2 つ摘みのスライダー', use: 'Base UI などの専用ライブラリに任せる' },
-    ],
+  parts: {
+    title: 'gassan の入力部品',
+    tableCaption: '入力部品と、載っているページ',
+    head: { page: 'ページ', parts: '部品' },
     body: [
-      'それぞれの最小例は [docs/control-recipes.md](./docs/control-recipes.md) にある。モーダルの中のポップアップは、パネルの `transform` で `position: fixed` が壊れるので、popover API か dialog 内へのポータルを使う（C-12）。',
+      'どの部品も中身はネイティブの要素で、枠と印だけを描き替えている。キーボード操作・読み上げ・フォーム送信・スマホの専用 UI は、ブラウザのものがそのまま効く。ネイティブで足りないセレクト・コンボボックス・カレンダーだけを、WAI-ARIA APG のパターンどおりに作った（I-01〜I-15）。',
+      '複数を選べるコンボボックスや、日付の範囲選択はまだ無い。要るときは、ほかのライブラリの部品を同じように Modal.Field で包む。モーダルの中のポップアップは、パネルの `transform` で `position: fixed` が壊れるので、popover API か dialog 内へのポータルを使う（C-12）。最小例は [docs/control-recipes.md](./docs/control-recipes.md) にある。',
     ],
   },
   errors: {
@@ -25,5 +21,6 @@ export default {
       '個々のエラーに `role="alert"` は付けない。入力のたびに読み上げが割り込むと、かえって入力できなくなる。送信時のまとめだけを `Modal.Alert` に置き、フォーカスは最初のエラー項目へ移す（B-09）。',
   },
   apiControl: 'render prop の引数',
+  apiAria: '入力部品が受ける配線（Field の外で名前を付けるとき）',
   a11yCaption: 'フォーム部品が満たす仕様',
 };

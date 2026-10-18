@@ -30,12 +30,12 @@ export default function KindFlow(): ReactNode {
         <Modal.Body>
           {step === 0 ? (
             <Modal.Field label={t.address} required>
-              {(control) => <input {...control} type="text" defaultValue={t.addressValue} />}
+              {(control) => <Modal.Input {...control} defaultValue={t.addressValue} />}
             </Modal.Field>
           ) : null}
           {step === 1 ? (
             <Modal.Field label={t.card} required help={t.cardHelp}>
-              {(control) => <input {...control} type="text" inputMode="numeric" autoComplete="cc-number" />}
+              {(control) => <Modal.Input {...control} inputMode="numeric" autoComplete="cc-number" />}
             </Modal.Field>
           ) : null}
           {step === 2 ? (

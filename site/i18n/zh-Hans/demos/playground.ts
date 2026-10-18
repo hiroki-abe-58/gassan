@@ -12,6 +12,6 @@ export default {
   description: '试试 Esc、点击背景、× 按钮。设置为不可关闭时，面板会抖动并播报原因。',
   done: '完成',
   comments: {
-    choice: '一行 select。用空字符串表示“kind 的默认值”。',
+    choice: '一行 Modal.Select。用空字符串的 value 表示“kind 的默认值”。它是 <label> 里的按钮，所以标题文字直接成为名称。',
   },
 } satisfies typeof ja;
