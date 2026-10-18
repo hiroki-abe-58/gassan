@@ -17,7 +17,7 @@ export default {
   comments: {
     summary: 'The summary of failed submission goes in one place. Focus moves to the first field with an error (B-09)',
     field: 'One input, one Modal.Field. It takes on wiring up the label, help and error (B-08)',
-    group: 'Name a group of options with fieldset / legend, not label',
-    native: 'range and date alike: just wrap the native control instead of rebuilding it',
+    group: 'A group of options is a Modal.Fieldset. It is named with a legend, not a label (I-09)',
+    native: 'A native range underneath. The thumb and fill are drawn in the theme’s colors (I-10)',
   },
 } satisfies typeof ja;

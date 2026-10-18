@@ -1,0 +1,47 @@
+export default {
+  lead: 'Select は一覧まで gassan が描くドロップダウン、Combobox は打って絞り込むドロップダウン。一覧は popover で top layer に出るので、モーダルの transform にも、本文のスクロールにも切り取られない。',
+  gallery: {
+    title: '見本',
+    intro: '矢印は枠の余白の内側に置く。ネイティブの select は、padding を付けても矢印を右端に貼り付けて描く。',
+    items: {
+      select: 'セレクト',
+      placeholder: '未選択',
+      combobox: 'コンボボックス',
+      invalid: 'エラー',
+      disabled: '使えない',
+    },
+    samples: {
+      sizeLabel: 'サイズ',
+      sizeS: '小（360px）',
+      sizeM: '中（520px）',
+      sizeL: '大（720px）',
+      cityLabel: '都市',
+      citySapporo: '札幌',
+      cityTokyo: '東京',
+      cityNagoya: '名古屋',
+      cityOsaka: '大阪',
+      cityFukuoka: '福岡',
+    },
+  },
+  modal: {
+    title: 'モーダルの中で',
+    intro: '一覧が開いているときの Esc は一覧だけを閉じ、モーダルは閉じない。',
+    exampleTitle: 'お届け先を選ぶ',
+    exampleDescription: '国は打って絞り込める。カタカナの国名にも、ひらがなで打てば当たる。',
+  },
+  keys: {
+    title: 'キー操作',
+    tableCaption: 'Select と Combobox のキー操作',
+    head: { key: 'キー', select: 'Select', combobox: 'Combobox' },
+    rows: [
+      { key: '↓ / ↑', select: '開く。開いていれば前後へ', combobox: '開く。開いていれば前後へ' },
+      { key: 'Home / End', select: '最初・最後の選択肢へ', combobox: '入力欄の先頭・末尾へ（ネイティブのまま）' },
+      { key: '文字', select: 'その文字で始まる選択肢へ飛ぶ', combobox: '絞り込み、最初の候補を指す' },
+      { key: 'Enter', select: '決めて閉じる', combobox: '指している候補に決める（変換中は決めない）' },
+      { key: 'Space', select: '決めて閉じる（文字送りの途中は文字として扱う）', combobox: '空白を打つ' },
+      { key: 'Tab', select: '指している選択肢に決めて、次へ進む', combobox: 'ちょうど一致すれば決め、なければ元に戻して次へ進む' },
+      { key: 'Esc', select: '一覧だけを閉じる', combobox: '一覧だけを閉じる' },
+    ],
+  },
+  a11yCaption: 'セレクトとコンボボックスが満たす仕様',
+};

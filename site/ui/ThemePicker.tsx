@@ -1,6 +1,6 @@
 import { useId, type CSSProperties, type ReactNode } from 'react';
 
-import { Phrase } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 
 import { useT } from '../i18n';
 import { CUSTOM_PRESET_ID, PRESETS } from '../theme/engine';
@@ -22,22 +22,11 @@ export function ThemeControls(): ReactNode {
     <div className="s-theme-controls">
       <fieldset className="s-theme-group">
         <legend>{t.scheme}</legend>
-        <div className="s-segmented">
-          {SCHEMES.map((value) => (
-            <label key={value}>
-              <input
-                type="radio"
-                name={`${name}-scheme`}
-                value={value}
-                checked={state.scheme === value}
-                onChange={() => setTheme({ scheme: value })}
-              />
-              <span>
-                <Phrase>{t.schemes[value]}</Phrase>
-              </span>
-            </label>
-          ))}
-        </div>
+        <Modal.Segmented
+          value={state.scheme}
+          onValueChange={(value) => setTheme({ scheme: value as SchemeChoice })}
+          options={SCHEMES.map((value) => ({ value, label: t.schemes[value] }))}
+        />
       </fieldset>
 
       <fieldset className="s-theme-group">
@@ -66,12 +55,12 @@ export function ThemeControls(): ReactNode {
         </div>
         <label className="s-custom-color">
           <span>{t.pickCustom}</span>
-          <input
+          <Modal.Input
             type="color"
             value={state.custom}
             onChange={(event) => setTheme({ preset: CUSTOM_PRESET_ID, custom: event.target.value })}
+            end={<code>{state.custom}</code>}
           />
-          <code>{state.custom}</code>
         </label>
       </fieldset>
 

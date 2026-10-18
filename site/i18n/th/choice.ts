@@ -1,0 +1,51 @@
+import type ja from '../ja/choice';
+
+export default {
+  lead: 'Checkbox, RadioGroup, Segmented, Rating และ Switch กับ Chips ที่มีมาแต่เดิม ทุกตัวข้างในเป็น input หรือ button แบบเนทีฟ ชื่อของกลุ่มอยู่ที่ legend ของ Modal.Fieldset',
+  gallery: {
+    title: 'ตัวอย่าง',
+    intro: 'เครื่องหมายและช่องที่ถูกเลือกระบายด้วยสี accent ของธีม ถ้าเปลี่ยนธีมที่มุมขวาบน สีก็เปลี่ยนตาม',
+    items: {
+      checkbox: 'Checkbox',
+      mixed: 'เลือกไว้บางส่วน',
+      radio: 'Radio',
+      segmented: 'Segmented',
+      rating: 'ให้คะแนน',
+      switch: 'สวิตช์',
+      chips: 'ชิป',
+    },
+    samples: {
+      terms: 'ยอมรับข้อกำหนดการใช้งาน',
+      termsNote: 'ยอมรับแล้วจึงไปต่อได้',
+      all: 'การแจ้งเตือนทั้งหมด',
+      allNote: 'เลือกอยู่ 1 จาก 3 รายการ',
+      planLabel: 'แพ็กเกจ',
+      planFree: 'ฟรี',
+      planFreeNote: 'สูงสุด 3 คน',
+      planTeam: 'ทีม',
+      planTeamNote: 'สูงสุด 20 คน 1,200 เยน/เดือน',
+      viewLabel: 'การแสดงผล',
+      viewList: 'รายการ',
+      viewGrid: 'ไทล์',
+      viewMap: 'แผนที่',
+      ratingLabel: 'ความพึงพอใจ',
+      switchLabel: 'แจ้งทางอีเมล',
+      chipsLabel: 'หัวข้อที่สนใจ',
+      chipDesign: 'การออกแบบ',
+      chipA11y: 'การเข้าถึง',
+      chipPerf: 'ประสิทธิภาพ',
+    },
+  },
+  modal: {
+    title: 'ในโมดอล',
+    intro: 'ห่อกลุ่มตัวเลือกด้วย Modal.Fieldset legend จะเป็นชื่อของกลุ่ม ส่วน help และ error จะเป็นคำอธิบายของกลุ่ม',
+    exampleTitle: 'ตั้งค่าการแจ้งเตือน',
+    exampleDescription: 'ถ้าเลือกไว้แค่บางส่วน “ทั้งหมด” จะแสดงเครื่องหมายกึ่งเลือก radio และ segmented เลือกได้ด้วยปุ่มลูกศร',
+  },
+  fieldset: {
+    title: 'กลุ่มตัวเลือกใช้ Fieldset',
+    callout:
+      'ช่องกรอกหนึ่งช่องตั้งชื่อด้วย `<label>` ของ `Modal.Field` ส่วนกลุ่มตัวเลือกตั้งชื่อด้วย `<legend>` ของ `Modal.Fieldset` ถ้าใช้ `<label>` ห่อทั้งกลุ่ม ชื่อจะปนกับ label ของตัวเลือกข้างใน ข้อความเสริมของตัวเลือกให้วางไว้นอก `<label>` แล้วผูกด้วย `aria-describedby` ถ้าวางไว้ข้างใน ข้อความเสริมจะถูกอ่านเป็นชื่อไปด้วย (I-09)',
+  },
+  a11yCaption: 'สเปกที่ตัวเลือกทำตาม',
+} satisfies typeof ja;

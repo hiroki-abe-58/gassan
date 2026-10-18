@@ -1,0 +1,51 @@
+import type ja from '../ja/choice';
+
+export default {
+  lead: 'Checkbox、RadioGroup、Segmented、Rating，以及原有的 Switch、Chips。里面都是原生的 input 或 button，选项组的名称由 Modal.Fieldset 的 legend 承担。',
+  gallery: {
+    title: '示例',
+    intro: '标记和选中的分段用主题的强调色填充。切换右上角的主题，颜色会一起改变。',
+    items: {
+      checkbox: '复选框',
+      mixed: '部分选中',
+      radio: '单选按钮',
+      segmented: '分段控件',
+      rating: '评分',
+      switch: '开关',
+      chips: '标签组',
+    },
+    samples: {
+      terms: '同意使用条款',
+      termsNote: '同意后即可继续',
+      all: '全部通知',
+      allNote: '已选择 3 项中的 1 项',
+      planLabel: '套餐',
+      planFree: '免费',
+      planFreeNote: '最多 3 人',
+      planTeam: '团队',
+      planTeamNote: '最多 20 人，每月 1,200 日元',
+      viewLabel: '显示方式',
+      viewList: '列表',
+      viewGrid: '平铺',
+      viewMap: '地图',
+      ratingLabel: '满意度',
+      switchLabel: '通过邮件通知',
+      chipsLabel: '感兴趣的领域',
+      chipDesign: '设计',
+      chipA11y: '无障碍',
+      chipPerf: '性能',
+    },
+  },
+  modal: {
+    title: '在模态框中',
+    intro: '选项组用 Modal.Fieldset 包起来。legend 成为选项组的名称，帮助文字和错误信息成为选项组的说明。',
+    exampleTitle: '通知设置',
+    exampleDescription: '只选一部分时，“全部”会显示为中间状态的标记。单选按钮和分段控件可以用方向键选择。',
+  },
+  fieldset: {
+    title: '选项组用 Fieldset',
+    callout:
+      '单个输入项用 `Modal.Field` 的 `<label>` 命名，选项组用 `Modal.Fieldset` 的 `<legend>` 命名。如果用 `<label>` 包住选项组，就会和里面各选项的标签混成一个名称。选项的补充说明放在 `<label>` 之外，用 `aria-describedby` 关联。放在里面的话，补充说明也会被当作名称读出（I-09）。',
+  },
+  a11yCaption: '选项满足的规范',
+} satisfies typeof ja;

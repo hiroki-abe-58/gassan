@@ -17,7 +17,7 @@ export default {
   comments: {
     summary: '送出失敗的摘要集中在一處。焦點移到第一個錯誤欄位（B-09）',
     field: '單一輸入使用 Modal.Field。由它負責標籤、說明文字與錯誤的關聯（B-08）',
-    group: '選項群組不用 label，而用 fieldset / legend 命名',
-    native: 'range 與 date 都不重新製作，只包住原生元件',
+    group: '選項群組使用 Modal.Fieldset。不用 label，而用 legend 命名（I-09）',
+    native: '內部是原生的 range。把手與填色以主題的顏色繪製（I-10）',
   },
 } satisfies typeof ja;

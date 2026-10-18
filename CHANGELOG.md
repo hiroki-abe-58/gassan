@@ -9,6 +9,28 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
 
 ## [Unreleased]
 
+### 追加（入力部品）
+
+これまでの「入力部品は作らず、ネイティブか Base UI に任せる」を改め、入力部品 18 個を本体に入れた。
+中身はネイティブの要素のまま、枠と印だけを描き替える。ネイティブで足りないセレクト・コンボボックス・カレンダーだけを、
+WAI-ARIA APG のパターンどおりに作った。仕様書にカテゴリ I（入力部品、I-01〜I-15）を足し、項目は 141 から 156 になった（仕様書 v1.5 → v1.6）。
+
+- テキスト: `Modal.Input`（前後の飾り `start` / `end`）・`Modal.PasswordInput`（表示の切り替え）・`Modal.SearchInput`（消去）・`Modal.Textarea`（`maxLength` の文字数、高さは中身に合わせて伸びる）・`Modal.NumberField`（− と +、step の桁で丸める）・`Modal.CodeInput`（確認コード。入力欄は 1 つ、桁の箱は見た目だけ）。
+- 選択肢: `Modal.Fieldset`（束の legend・ヘルプ・エラー）・`Modal.Checkbox`（`indeterminate` と補足）・`Modal.RadioGroup`・`Modal.Segmented`・`Modal.Rating`。
+- 範囲: `Modal.Slider` と `Modal.RangeSlider`（2 つ摘み）。摘みと値までの塗りは `--g-accent` で描くので、テーマの色に従う。モーダルの中の range がテーマを変えても既定の青のままだった問題がこれで直る（§10-32）。
+- `Modal.Select`（一覧まで自前で描くドロップダウン。矢印は `padding` の内側に置く。ネイティブの select は矢印を右端に貼り付ける。§10-30）と `Modal.Combobox`（打って絞り込む。カタカナとひらがな、全角と半角を区別しない。IME の変換中の Enter では決めない）。
+- `Modal.DatePicker`（カレンダー。月名と曜日は `labels.locale` の `Intl`）と `Modal.FileDrop`（ドロップにも `accept` を当て、外れたものは `onReject`）。日付・時刻・色のネイティブ入力も `Modal.Input` の枠に収まり、`--g-color-scheme` で明暗が面に合う。
+- 一覧とカレンダーは popover API（`popover="manual"`）で top layer に出す。パネルの `transform` にも本文のスクロールにも切り取られない。一覧が開いているときの Esc は一覧だけを閉じ、モーダルは閉じない（Chrome 155 で実測）。
+- どの部品も `Modal.Field` の render prop をそのまま広げて受け、`value`（制御）と `defaultValue`（非制御）の両方を受ける（I-01）。
+- `GassanLabels` に入力部品の文言を足した（`locale` / `choose` / `noResults` / `clear` / `showPassword` / `increment` / `decrement` / `rangeStart` / `rangeEnd` / `rating` / `previousMonth` / `nextMonth` / `dropFiles` / `chooseFiles` / `removeFile`）。**`labels` を丸ごと自前で組み立てている場合は、これらの追加が必要。** 部分指定（`Partial`）なら不要。
+- 公開 API は 35 個から 52 個。サイズ予算を JS 22 → 34 KB、CSS 6 → 9 KB（gzip、未圧縮の dist）に引き上げた。名前つき import でモーダルの部品だけを使えば、入力部品は tree shaking で落ちる。
+- 選択肢の補足を `<label>` の中に置くと名前に混ざることを、テストで見つけて外に出した（§10-31）。
+
+### 変更（ドキュメントサイト）
+
+- ナビに「フォーム部品」の節を足し、テキスト入力・選択肢・セレクトとコンボボックス・スライダー・日付と時刻・ファイルの 6 ページを 6 言語で載せた。各ページに状態ごとの見本と、モーダルの中で動くデモがある。
+- サイト自身の操作部品（プレイグラウンドのドロップダウン、仕様の絞り込み、折り返しのページ、テーマの切り替え、公開前チェックリスト）を gassan の入力部品に置き換えた。
+
 ### 追加（日本語・中国語・韓国語の折り返し）
 
 狭い画面で「プロフィールを編｜集」のように語の途中で折れていた日本語を、文節の切れ目でだけ改行するようにした。

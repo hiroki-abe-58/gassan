@@ -15,7 +15,7 @@ export default {
   comments: {
     summary: '送信失敗のまとめは 1 箇所に。フォーカスは最初のエラー項目へ（B-09）',
     field: '1 つの入力は Modal.Field。ラベル・ヘルプ・エラーの配線を引き受ける（B-08）',
-    group: '選択肢のグループは label ではなく fieldset / legend で名前を付ける',
-    native: 'range も date も、作り直さずネイティブを包むだけ',
+    group: '選択肢の束は Modal.Fieldset。label ではなく legend で名前を付ける（I-09）',
+    native: '中身はネイティブの range。摘みと塗りはテーマの色で描く（I-10）',
   },
 };

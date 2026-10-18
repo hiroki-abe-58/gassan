@@ -12,22 +12,23 @@
 - **닫기 사유** — 8종류의 `CloseReason`을 구별하고, 닫기를 거부할 때는 반드시 사유를 돌려준다
 - **스크림** — 하드코딩된 60% 검정을 버리고, 의도별 4단계 토큰을 쓴다
 - **일본어·중국어·한국어 줄바꿈** — 버튼, 제목, 표의 셀, 차트 요약 어디에서든 단어 중간에서 줄을 바꾸지 않는다. 일본어는 문절 경계(「プロフィールを｜編集」이지, 「プロフィールを編｜集」이 아니다), 중국어는 단어 경계, 한국어는 공백에서만 끊는다. 태국어와 영어는 브라우저가 이미 올바르게 끊으므로 브라우저에 맡긴다
+- **폼 요소** — 텍스트, 비밀번호, 검색, 숫자, 인증 코드, 체크박스, 라디오, 세그먼트, 평점, 슬라이더, 셀렉트, 콤보박스, 달력, 파일 등 18개 컴포넌트. 안쪽은 네이티브 요소 그대로 두고 테두리와 표시만 다시 그리며, 색은 테마의 강조색을 따른다. 목록과 달력은 top layer에 나타나므로 모달에 잘리지 않는다
 
 **문서 사이트: <https://hiroki-abe-58.github.io/gassan/#/ko>**
 — 설계 원칙(모달이 존재하는 이유, 4층 모델, 5가지 유형, 접근성), 스타일(스크림, 색과 대비, 테마, 크기, 줄바꿈, 모션),
-모든 컴포넌트의 라이브 데모와 API, 그리고 141개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
+모든 컴포넌트와 폼 요소의 라이브 데모와 API, 그리고 156개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
 사이트는 한국어, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [ไทย](https://hiroki-abe-58.github.io/gassan/#/th)로 읽을 수 있다(상단 바의 지구본 버튼으로 전환한다).
 라이트 / 다크 테마와 기본 색상(primary color)을 고를 수 있고, 어떤 색을 고르든 글자와 채움 색이 WCAG 대비율을 충족하도록 도출된다.
 사이트의 모든 표, 개수, API 설명은 빌드 시 사양서와 타입 정의에서 생성되며, 손으로 쓴 숫자는 하나도 없다.
 
-전체 설계는 [`modal.skill.md`](./modal.skill.md)(141개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
+전체 설계는 [`modal.skill.md`](./modal.skill.md)(156개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
 AI 어시스턴트와 함께 코딩할 때는 이 파일을 컨텍스트에 넣는다.
 
 | 문서 | 내용 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 141개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 156개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 원래 요구 사항을 분해해 한 줄씩 정리한 표: 구현됨 / 조합으로 달성 / 로드맵에 있음 |
-| [`docs/control-recipes.md`](./docs/control-recipes.md) | range / checkbox / radio / toggle / select / text / file / date / time / chips를 모달 안에 넣는 최소 예제 |
+| [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan의 폼 요소를 모달 안에 넣는 최소 예제와, gassan에 없는 컴포넌트를 다른 라이브러리에서 가져와 감쌀 때의 주의점 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 네이티브 `<dialog>` vs Base UI vs React Aria vs Radix(2026-09-29 기준, 1차 자료만 사용) |
 
 사양서(`modal.skill.md`)와 `docs/`의 파일은 일본어로 작성되어 있다.
@@ -54,6 +55,7 @@ peer dependency는 React 18.2 이상이다(19에서도 동작한다). 번들에 
 영어로 하려면 앱을 `<GassanProvider labels={englishLabels}>`로 감싼다. 둘 다 패키지에서 export된다.
 그 밖의 언어는 `labels`에 직접 만든 문자열을 넘긴다(일부만 지정해도 된다). 문서 사이트의 중국어·한국어·태국어 문자열
 ([`site/i18n/<lang>/`](https://github.com/hiroki-abe-58/gassan/tree/main/site/i18n) 아래의 `gassan.ts`)을 출발점으로 쓸 수 있다.
+달력의 월 이름과 요일, 파일 크기는 `labels.locale`(BCP 47. 기본값은 `ja-JP`)에 따라 `Intl`로 만든다.
 
 ---
 
@@ -75,7 +77,7 @@ function Example() {
 
         <Modal.Body>
           <Modal.Field label="표시 이름" required>
-            {(control) => <input {...control} type="text" />}
+            {(control) => <Modal.Input {...control} />}
           </Modal.Field>
         </Modal.Body>
 
@@ -215,17 +217,33 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Footer` `Modal.Button` | 버튼 위계, 게이트, 중복 제출 방지 |
 | `Modal.Gate` `Modal.Consent` `Modal.GateStatus` | 활성화 게이트 |
 | `Modal.Media` `Modal.Gallery` | 이미지, 동영상, 오디오, 슬라이더 |
-| `Modal.Field` `Modal.Chips` `Modal.Switch` `Modal.Table` `Modal.Alert` | 폼 부품과 표 |
+| `Modal.Field` `Modal.Fieldset` | 입력란 하나와 선택지 그룹에 이름, 도움말, 오류를 연결한다 |
+| `Modal.Input` `Modal.PasswordInput` `Modal.SearchInput` `Modal.Textarea` `Modal.NumberField` `Modal.CodeInput` | 텍스트 입력 |
+| `Modal.Checkbox` `Modal.RadioGroup` `Modal.Segmented` `Modal.Rating` `Modal.Switch` `Modal.Chips` | 선택지 |
+| `Modal.Slider` `Modal.RangeSlider` | 슬라이더(손잡이와 채우기는 테마의 색) |
+| `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | 목록이나 달력을 top layer에 띄우는 컴포넌트 |
+| `Modal.FileDrop` | 파일을 놓는 드롭 영역(드롭에도 `accept`를 적용한다) |
+| `Modal.Table` `Modal.Alert` | 가로로 스크롤되는 표, 제출 결과 요약 |
 | `Modal.Chart` | 차트를 담는 컨테이너. 이름(`label`)과 추세의 텍스트 대체(`summary`)를 연결하고, 원본 데이터를 `<details>`로 보여 준다. 직접 그리지는 않는다 |
 | `Modal.Handle` | 시트의 손잡이. 디텐트가 있으면 `role="slider"` 컨트롤, 없으면 장식용으로 잡는 영역 |
 | `ModalHost` `useModals` | 명령형 API(`await confirm()`) |
 | `GassanProvider` | UI 문자열 교체(기본은 일본어, `englishLabels` 동봉)와 줄바꿈 전환(`lineBreak`) |
 | `Phrase` `splitPhrases` | 직접 만든 UI의 일본어·중국어·한국어 텍스트에도 같은 줄바꿈을 적용(gassan 컴포넌트 안에서는 기본으로 켜져 있다) |
 
-`Modal.Field`는 render prop이므로 안에 넣는 컨트롤은 네이티브 입력이든 Base UI 컴포넌트든 상관없다.
-선택지 그룹(라디오, 여러 체크박스)은 `label`이 아니라 `fieldset` / `legend`로 이름을 붙인다.
-**컨트롤을 직접 만들지 않는다.** 네이티브 range / date / time / file / select를 먼저 쓰고,
-검색 가능한 셀렉트나 손잡이가 두 개인 슬라이더는 Base UI에 맡긴다. 예제는 [`docs/control-recipes.md`](./docs/control-recipes.md)에 있다.
+폼 요소는 안쪽이 네이티브 요소이며, `Modal.Field`의 render prop을 그대로 펼쳐서 받는다.
+선택지 그룹(라디오, 여러 체크박스, 평점, 손잡이가 두 개인 슬라이더)은 `label`이 아니라 `Modal.Fieldset`(`fieldset` / `legend`)으로 이름을 붙인다.
+목록과 달력은 popover API로 top layer에 띄우며, 열려 있을 때의 Esc는 목록만 닫는다.
+gassan에 없는 컴포넌트(여러 개를 고르는 콤보박스 등)는 다른 라이브러리의 컴포넌트를 같은 방식으로 감싼다. 예제는 [`docs/control-recipes.md`](./docs/control-recipes.md)에 있다.
+
+```tsx
+<Modal.Field label="배송 방법">
+  {(control) => <Modal.Select {...control} value={shipping} onValueChange={setShipping} options={SHIPPING} />}
+</Modal.Field>
+
+<Modal.Fieldset label="가격대">
+  <Modal.RangeSlider value={price} onValueChange={setPrice} min={0} max={10000} step={500} showValue />
+</Modal.Fieldset>
+```
 
 ```tsx
 <Modal.Chart

@@ -59,6 +59,10 @@
     --g-danger: #b3251e;
     --g-on-danger: #ffffff;
 
+    /* --- scheme -----------------------------------------------------------
+     * ネイティブ部品（日付の印・一覧のスクロールバー）の明暗を、面の色に合わせる。I-15。 */
+    --g-color-scheme: light;
+
     /* --- geometry -------------------------------------------------------- */
     --g-radius: 14px;
     --g-radius-sheet: 20px;
@@ -104,6 +108,7 @@
       --g-on-accent-muted: #eef0f4;
       --g-danger: #e35d54;   /* #e0564d は面との比が 4.45:1 で、ボタンにもエラー文にも足りなかった */
       --g-on-danger: #1b1e25;
+      --g-color-scheme: dark;
       --g-shadow:
         0 1px 2px rgb(0 0 0 / 0.4),
         0 16px 40px -8px rgb(0 0 0 / 0.55);
@@ -815,7 +820,9 @@
   .g-help  { margin: 0; font-size: 0.8125rem; color: var(--g-fg-muted); }
   .g-error { margin: 0; font-size: 0.8125rem; font-weight: 600; color: var(--g-danger); }
 
-  .g-field :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select) {
+  /* 素の input をそのまま Field に入れたときの枠。gassan の入力部品の内側（.g-bare など）は
+   * 部品が自分で枠を描くので、ここからは外す。 */
+  .g-field :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select):not(.g-bare, .g-code-input, .g-file-input) {
     inline-size: 100%;
     min-block-size: var(--g-tap);
     padding: 8px 10px;
@@ -828,7 +835,9 @@
   .g-field textarea { min-block-size: 96px; resize: vertical; }
   .g-field input[type="range"] { inline-size: 100%; min-block-size: var(--g-tap); }
   .g-field input[type="file"] { padding: 7px 10px; }
-  .g-field[data-invalid] :is(input, textarea, select) { border-color: var(--g-danger); }
+  .g-field[data-invalid] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select):not(.g-bare, .g-code-input, .g-file-input) {
+    border-color: var(--g-danger);
+  }
 
   /* --- 5.6 chips ----------------------------------------------------------- */
   .g-chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -1024,6 +1033,608 @@
   /* 仮想キーボードが出ている間だけ、その高さぶん底上げする。M-04。 */
   .g-dialog[data-placement="sheet"] .g-panel {
     padding-block-end: var(--g-keyboard-inset, 0px);
+  }
+}
+
+/* ===========================================================================
+ * 6. form controls（I-01〜I-15）
+ * ---------------------------------------------------------------------------
+ * 中身はネイティブの要素（input / button）で、描き替えるのは枠と印だけ。
+ * 色はトークンだけを使う。テーマが --g-accent を変えれば、摘み・塗り・印が一緒に変わる。
+ * モーダルの外（ページの上）でも使えるよう、.g-dialog に閉じ込めない。
+ * ======================================================================== */
+
+@layer gassan.core {
+
+  /* --- 6.1 frame: テキスト・数値・コンボボックス -------------------------- */
+  .g-input {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-block-size: var(--g-tap);
+    padding-inline: 4px;
+    border: 1px solid var(--g-border-strong);
+    border-radius: var(--g-radius-control);
+    background: var(--g-surface);
+    color: var(--g-fg);
+    color-scheme: var(--g-color-scheme);
+    cursor: text;
+  }
+  /* リングは枠に出す。中の input は自分のリングを消す（.g-bare）。枠の線に重ねて 2px にする。 */
+  .g-input:focus-within,
+  .g-textarea > .g-bare:focus,
+  .g-select-trigger:focus-visible {
+    outline: 2px solid var(--g-focus);
+    outline-offset: -1px;
+  }
+  .g-select-trigger[aria-expanded="true"] { border-color: var(--g-focus); }
+  .g-input:has(> .g-bare[aria-invalid="true"]),
+  .g-textarea > .g-bare[aria-invalid="true"],
+  .g-select-trigger[aria-invalid="true"] { border-color: var(--g-danger); }
+  .g-input[data-disabled] { opacity: 0.55; cursor: not-allowed; }
+
+  .g-bare {
+    flex: 1;
+    align-self: stretch;
+    min-inline-size: 0;
+    padding: 0 8px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    outline: none;
+  }
+  .g-bare::placeholder { color: var(--g-fg-muted); opacity: 1; }
+  .g-bare:disabled { cursor: not-allowed; }
+
+  .g-input-adorn {
+    display: inline-flex;
+    align-items: center;
+    padding-inline: 6px;
+    color: var(--g-fg-muted);
+    font-size: 0.9375rem;
+    white-space: nowrap;
+  }
+  .g-input-adorn > svg,
+  .g-input-action > svg { inline-size: 18px; block-size: 18px; }
+  .g-input-action {
+    flex: none;
+    display: grid;
+    place-items: center;
+    inline-size: 36px;
+    block-size: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--g-radius-control) - 4px);
+    background: transparent;
+    color: var(--g-fg-muted);
+    cursor: pointer;
+  }
+  .g-input-action:hover:not(:disabled) { background: var(--g-hover); color: var(--g-fg); }
+  .g-input-action[aria-pressed="true"] { color: var(--g-accent); }
+  .g-input-action:disabled { opacity: 0.4; cursor: not-allowed; }
+  .g-input-action:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+
+  /* 検索: ネイティブの × と虫眼鏡は消し、自前の「消す」を値があるときだけ出す。I-05。 */
+  .g-search .g-bare::-webkit-search-cancel-button,
+  .g-search .g-bare::-webkit-search-decoration { appearance: none; }
+  .g-search:has(.g-bare:placeholder-shown) .g-search-clear { visibility: hidden; }
+
+  /* 数値: ネイティブの増減矢印は消し、− と + に置き換える。I-07。 */
+  .g-number .g-bare {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    appearance: textfield;
+  }
+  .g-number .g-bare::-webkit-inner-spin-button,
+  .g-number .g-bare::-webkit-outer-spin-button { appearance: none; margin: 0; }
+
+  /* 日付・時刻: カレンダーの印を押しやすくする。I-15。 */
+  .g-bare::-webkit-calendar-picker-indicator {
+    padding: 6px;
+    border-radius: 6px;
+    opacity: 0.7;
+    cursor: pointer;
+  }
+  .g-bare::-webkit-calendar-picker-indicator:hover { background-color: var(--g-hover); opacity: 1; }
+  /* 色: 枠いっぱいの見本にする。 */
+  .g-bare[type="color"] { padding: 6px 4px; cursor: pointer; }
+  .g-bare[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  .g-bare[type="color"]::-webkit-color-swatch { border: 1px solid var(--g-border); border-radius: 6px; }
+  .g-bare[type="color"]::-moz-color-swatch { border: 1px solid var(--g-border); border-radius: 6px; }
+
+  /* --- 6.2 textarea --------------------------------------------------------- */
+  .g-textarea { display: grid; gap: 4px; }
+  .g-textarea > .g-bare {
+    min-block-size: 96px;
+    max-block-size: 40dvh;
+    field-sizing: content;
+    resize: vertical;
+    padding: 10px 12px;
+    border: 1px solid var(--g-border-strong);
+    border-radius: var(--g-radius-control);
+    background: var(--g-surface);
+    line-height: 1.6;
+    color-scheme: var(--g-color-scheme);
+  }
+  .g-counter {
+    justify-self: end;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--g-fg-muted);
+  }
+  .g-counter[data-full] { color: var(--g-danger); font-weight: 600; }
+
+  /* --- 6.3 select / date: 閉じた箱 ----------------------------------------
+   * 矢印は padding の内側の独立した要素。ネイティブ select の矢印は padding を無視して
+   * 右端に貼り付く（Chrome で実測）ので、自前で置いて余白を取る。I-11。 */
+  .g-select { position: relative; min-inline-size: 0; }
+  .g-select-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    inline-size: 100%;
+    min-block-size: var(--g-tap);
+    padding-block: 6px;
+    padding-inline: 12px 10px;
+    border: 1px solid var(--g-border-strong);
+    border-radius: var(--g-radius-control);
+    background: var(--g-surface);
+    color: var(--g-fg);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .g-select-trigger:hover:not(:disabled) { border-color: var(--g-fg-muted); }
+  .g-select-trigger:disabled { opacity: 0.55; cursor: not-allowed; }
+  .g-select-value {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .g-select-value[data-placeholder] { color: var(--g-fg-muted); }
+  .g-select-icon {
+    flex: none;
+    inline-size: 18px;
+    block-size: 18px;
+    color: var(--g-fg-muted);
+    transition: rotate var(--g-dur-out) var(--g-ease-out);
+  }
+  .g-select:not(.g-date) > [aria-expanded="true"] > .g-select-icon,
+  .g-combobox:has(> [aria-expanded="true"]) > .g-input-action > svg { rotate: 180deg; }
+
+  /* --- 6.4 popup / listbox -------------------------------------------------
+   * top layer に出す（C-12 / I-02）。位置と、入る高さ（--g-popup-room）は JS が測って入れる。 */
+  .g-popup {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    box-sizing: border-box;
+    max-block-size: var(--g-popup-room, none);
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 4px;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius-control);
+    background: var(--g-surface);
+    color: var(--g-fg);
+    box-shadow: var(--g-shadow);
+    color-scheme: var(--g-color-scheme);
+    opacity: 1;
+    transition: opacity var(--g-dur-in) var(--g-ease-in);
+  }
+  @starting-style {
+    .g-popup:popover-open { opacity: 0; }
+  }
+  .g-popup:has(> .g-listbox) { max-block-size: min(20rem, var(--g-popup-room, 20rem)); }
+  /* popover API の無い環境: 起点の直下に置く。 */
+  .g-popup[data-inline] { position: absolute; top: calc(100% + 4px); inset-inline-start: 0; }
+
+  .g-listbox { margin: 0; padding: 0; list-style: none; }
+  .g-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-block-size: 40px;
+    padding: 8px 12px 8px 8px;
+    border-radius: calc(var(--g-radius-control) - 4px);
+    cursor: pointer;
+  }
+  .g-option[data-active] { background: var(--g-hover); }
+  .g-option[aria-selected="true"] {
+    background: color-mix(in srgb, var(--g-accent) 12%, transparent);
+    font-weight: 600;
+  }
+  .g-option[aria-selected="true"][data-active] { background: color-mix(in srgb, var(--g-accent) 20%, transparent); }
+  .g-option[aria-disabled="true"] { color: var(--g-fg-muted); opacity: 0.6; cursor: not-allowed; }
+  .g-option-check { flex: none; inline-size: 18px; block-size: 18px; color: var(--g-accent); visibility: hidden; }
+  .g-option[aria-selected="true"] > .g-option-check { visibility: visible; }
+  .g-option-label { min-inline-size: 0; }
+  .g-listbox-empty { margin: 0; padding: 10px 12px; font-size: 0.875rem; color: var(--g-fg-muted); }
+
+  /* --- 6.5 checkbox / radio ------------------------------------------------ */
+  .g-fieldset { min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+  /* 浮かせると「描画される legend」でなくなり、grid の項目として gap が効く。 */
+  .g-fieldset > legend { float: inline-start; inline-size: 100%; padding: 0; }
+
+  .g-choices { display: grid; }
+  .g-choices[data-orientation="horizontal"] { display: flex; flex-wrap: wrap; column-gap: 20px; }
+  .g-choice { display: grid; color: var(--g-fg); }
+  .g-choice-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-block-size: var(--g-tap);
+    padding-block: 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+  .g-choice[data-disabled] { opacity: 0.55; }
+  .g-choice[data-disabled] .g-choice-main { cursor: not-allowed; }
+  .g-choice-mark {
+    position: relative;
+    flex: none;
+    display: grid;
+    margin-block-start: calc((1lh - 20px) / 2);
+  }
+  .g-check,
+  .g-radio {
+    appearance: none;
+    inline-size: 20px;
+    block-size: 20px;
+    margin: 0;
+    border: 2px solid var(--g-fg-muted);
+    border-radius: 5px;
+    background: var(--g-surface);
+    cursor: inherit;
+    transition: background-color var(--g-dur-out) linear, border-color var(--g-dur-out) linear;
+  }
+  .g-radio { border-radius: 50%; }
+  .g-check:is(:checked, :indeterminate) { border-color: var(--g-accent); background: var(--g-accent); }
+  .g-radio:checked {
+    border-color: var(--g-accent);
+    background: var(--g-accent);
+    box-shadow: inset 0 0 0 3px var(--g-surface);
+  }
+  .g-check:focus-visible,
+  .g-radio:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-fieldset[data-invalid] :is(.g-check, .g-radio):not(:checked) { border-color: var(--g-danger); }
+  .g-check-icon {
+    position: absolute;
+    inset: 2px;
+    inline-size: 16px;
+    block-size: 16px;
+    color: var(--g-on-accent);
+    pointer-events: none;
+    opacity: 0;
+  }
+  .g-check-icon > path { stroke-width: 2.4; }
+  .g-check:is(:checked, :indeterminate) + .g-check-icon { opacity: 1; }
+  /* 補足は label の外（名前に混ぜない）。印の幅だけ字下げして、ラベルの文字にそろえる。 */
+  .g-choice-desc {
+    margin-block-start: -8px;
+    padding-block-end: 10px;
+    padding-inline-start: 30px;
+    font-size: 0.8125rem;
+    color: var(--g-fg-muted);
+  }
+
+  /* --- 6.6 segmented ------------------------------------------------------- */
+  .g-segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    max-inline-size: 100%;
+    padding: 3px;
+    border: 1px solid var(--g-border-strong);
+    border-radius: 999px;
+    background: var(--g-surface);
+  }
+  .g-segmented[data-disabled] { opacity: 0.55; }
+  .g-segment { position: relative; display: grid; flex: 1 1 auto; }
+  .g-segment-input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .g-segment-input:disabled { cursor: not-allowed; }
+  .g-segment-label {
+    display: grid;
+    place-items: center;
+    min-block-size: 36px;
+    padding-inline: 14px;
+    border-radius: 999px;
+    color: var(--g-fg-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color var(--g-dur-out) linear, color var(--g-dur-out) linear;
+  }
+  .g-segment-input:hover:not(:checked, :disabled) + .g-segment-label { background: var(--g-hover); color: var(--g-fg); }
+  .g-segment-input:checked + .g-segment-label { background: var(--g-accent); color: var(--g-on-accent); }
+  .g-segment-input:focus-visible + .g-segment-label { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+
+  /* --- 6.7 rating ---------------------------------------------------------- */
+  .g-rating { display: inline-flex; gap: 2px; }
+  .g-star {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: var(--g-tap);
+    block-size: var(--g-tap);
+    border-radius: var(--g-radius-control);
+    color: var(--g-border-strong);
+    cursor: pointer;
+  }
+  .g-star > svg { inline-size: 28px; block-size: 28px; }
+  .g-star-input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: inherit; }
+  .g-star[data-on] { color: var(--g-accent); }
+  .g-star[data-on] path { fill: currentColor; }
+  /* 指している星までを先に見せる。 */
+  .g-rating:not([data-disabled]):hover .g-star { color: var(--g-border-strong); }
+  .g-rating:not([data-disabled]):hover .g-star path { fill: none; }
+  .g-rating:not([data-disabled]) :is(.g-star:hover, .g-star:has(~ .g-star:hover)) { color: var(--g-accent); }
+  .g-rating:not([data-disabled]) :is(.g-star:hover, .g-star:has(~ .g-star:hover)) path { fill: currentColor; }
+  .g-star:has(> .g-star-input:focus-visible) { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+  .g-rating[data-disabled] { opacity: 0.55; }
+  .g-rating[data-disabled] .g-star { cursor: not-allowed; }
+
+  /* --- 6.8 slider ----------------------------------------------------------
+   * 線は外側の器が描き、input は摘みだけを持つ。線を摘みの半径ぶん内側に寄せて、
+   * 塗りの端と摘みの中心をそろえる。2 つ摘みは同じ器に range を 2 本重ねる。I-10。 */
+  .g-slider {
+    --g-thumb: 20px;
+    --g-fill-dir: to right;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-block-size: var(--g-tap);
+  }
+  .g-slider:dir(rtl) { --g-fill-dir: to left; }
+  .g-slider[data-disabled] { opacity: 0.55; }
+  .g-slider-track {
+    position: relative;
+    flex: 1;
+    display: grid;
+    align-items: center;
+    min-inline-size: 0;
+    block-size: var(--g-tap);
+  }
+  .g-slider-track::before {
+    content: "";
+    position: absolute;
+    inset-inline: calc(var(--g-thumb) / 2);
+    block-size: 6px;
+    border-radius: 999px;
+    background: linear-gradient(
+      var(--g-fill-dir),
+      var(--g-border-strong) var(--g-fill-start),
+      var(--g-accent) var(--g-fill-start) var(--g-fill-end),
+      var(--g-border-strong) var(--g-fill-end)
+    );
+  }
+  .g-range {
+    grid-area: 1 / 1;
+    position: relative;
+    inline-size: 100%;
+    block-size: var(--g-tap);
+    margin: 0;
+    background: transparent;
+    appearance: none;
+    cursor: pointer;
+  }
+  .g-range:disabled { cursor: not-allowed; }
+  .g-range:focus-visible { outline: none; }
+  .g-range::-webkit-slider-runnable-track { block-size: 6px; border: 0; background: transparent; }
+  .g-range::-moz-range-track { block-size: 6px; border: 0; background: transparent; }
+  .g-range::-webkit-slider-thumb {
+    appearance: none;
+    box-sizing: border-box;
+    inline-size: var(--g-thumb);
+    block-size: var(--g-thumb);
+    margin-block-start: -7px;
+    border: 3px solid var(--g-surface);
+    border-radius: 50%;
+    background: var(--g-accent);
+    box-shadow: 0 0 0 1px var(--g-accent), 0 1px 3px rgb(0 0 0 / 0.3);
+  }
+  .g-range::-moz-range-thumb {
+    box-sizing: border-box;
+    inline-size: var(--g-thumb);
+    block-size: var(--g-thumb);
+    border: 3px solid var(--g-surface);
+    border-radius: 50%;
+    background: var(--g-accent);
+    box-shadow: 0 0 0 1px var(--g-accent), 0 1px 3px rgb(0 0 0 / 0.3);
+  }
+  .g-range:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-range:focus-visible::-moz-range-thumb { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-range-slider .g-range { pointer-events: none; }
+  .g-range-slider .g-range:not([data-pass])::-webkit-slider-thumb { pointer-events: auto; }
+  .g-range-slider .g-range:not([data-pass])::-moz-range-thumb { pointer-events: auto; }
+  .g-slider-value {
+    flex: none;
+    min-inline-size: 3ch;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  /* --- 6.9 code ------------------------------------------------------------
+   * 入力欄は 1 つ。透明にして箱の上に重ね、箱は値を映すだけ。I-08。 */
+  .g-code { position: relative; display: inline-grid; max-inline-size: 100%; }
+  .g-code-cells { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 48px); gap: 8px; }
+  .g-code-cell {
+    display: grid;
+    place-items: center;
+    block-size: 52px;
+    border: 1px solid var(--g-border-strong);
+    border-radius: var(--g-radius-control);
+    background: var(--g-surface);
+    font-size: 1.375rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .g-code:focus-within .g-code-cell[data-current] {
+    outline: 2px solid var(--g-focus);
+    outline-offset: -1px;
+  }
+  .g-code:focus-within .g-code-cell[data-current]:not([data-filled])::after {
+    content: "";
+    inline-size: 2px;
+    block-size: 1.2em;
+    background: var(--g-fg);
+    animation: g-caret 1s steps(1) infinite;
+  }
+  .g-code:has(> .g-code-input[aria-invalid="true"]) .g-code-cell { border-color: var(--g-danger); }
+  .g-code[data-disabled] { opacity: 0.55; }
+  .g-code-input {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: transparent;
+    caret-color: transparent;
+    font-size: 16px; /* iOS は 16px 未満の入力欄で画面を拡大する */
+    outline: none;
+  }
+  .g-code-input::selection { background: transparent; }
+  @keyframes g-caret { 50% { opacity: 0; } }
+
+  /* --- 6.10 calendar ------------------------------------------------------- */
+  .g-calendar { padding: 8px; }
+  .g-calendar-head { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+  .g-calendar-title { font-size: 0.9375rem; font-weight: 600; }
+  .g-calendar-grid { margin-inline: auto; border-collapse: collapse; }
+  .g-calendar-grid th {
+    block-size: 32px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--g-fg-muted);
+    text-align: center;
+  }
+  .g-calendar-grid td { padding: 1px; text-align: center; }
+  .g-day {
+    display: grid;
+    place-items: center;
+    inline-size: 40px;
+    block-size: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--g-fg);
+    font: inherit;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .g-day:hover { background: var(--g-hover); }
+  .g-day[data-outside] { color: var(--g-fg-muted); }
+  .g-day[aria-current="date"] { box-shadow: inset 0 0 0 1px var(--g-accent); font-weight: 700; }
+  td[aria-selected="true"] > .g-day { background: var(--g-accent); color: var(--g-on-accent); font-weight: 700; }
+  .g-day[aria-disabled="true"] { background: transparent; color: var(--g-fg-muted); opacity: 0.45; cursor: not-allowed; }
+  .g-day:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 1px; }
+
+  /* --- 6.11 file ----------------------------------------------------------- */
+  .g-file { display: grid; gap: 8px; }
+  .g-dropzone {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 20px 16px;
+    border: 1.5px dashed var(--g-border-strong);
+    border-radius: var(--g-radius);
+    background: var(--g-surface);
+    color: var(--g-fg-muted);
+    text-align: center;
+    transition: border-color var(--g-dur-out) linear, background-color var(--g-dur-out) linear;
+  }
+  .g-file:not([data-disabled]) .g-dropzone:is(:hover, [data-dragging]) {
+    border-color: var(--g-accent);
+    background: color-mix(in srgb, var(--g-accent) 6%, var(--g-surface));
+  }
+  .g-dropzone:has(> .g-file-input:focus-visible) { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-file:has(.g-file-input[aria-invalid="true"]) .g-dropzone { border-color: var(--g-danger); }
+  .g-file[data-disabled] { opacity: 0.55; }
+  .g-file-input {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .g-file-input:disabled { cursor: not-allowed; }
+  .g-dropzone-icon { inline-size: 28px; block-size: 28px; color: var(--g-accent); }
+  .g-dropzone-text { font-size: 0.875rem; }
+  .g-dropzone-button {
+    display: inline-grid;
+    place-items: center;
+    min-block-size: 36px;
+    padding-inline: 14px;
+    border: 1px solid var(--g-border-strong);
+    border-radius: 999px;
+    color: var(--g-fg);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .g-file-list { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+  .g-file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-block-size: var(--g-tap);
+    padding-inline: 10px 4px;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius-control);
+  }
+  .g-file-item > svg { flex: none; inline-size: 18px; block-size: 18px; color: var(--g-fg-muted); }
+  .g-file-name {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    font-size: 0.875rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .g-file-size { flex: none; font-size: 0.8125rem; font-variant-numeric: tabular-nums; color: var(--g-fg-muted); }
+}
+
+@layer gassan.theme {
+  @media (prefers-reduced-motion: reduce) {
+    .g-popup,
+    .g-select-icon,
+    .g-check,
+    .g-radio,
+    .g-segment-label,
+    .g-dropzone { transition: none; }
+    .g-code-cell::after { animation: none; }
+  }
+  @media (forced-colors: active) {
+    /* box-shadow と背景色は塗り替えられる。状態は Highlight と枠線で残す。 */
+    .g-option[data-active] { outline: 2px solid Highlight; outline-offset: -2px; }
+    :is(.g-radio:checked, .g-segment-input:checked + .g-segment-label, td[aria-selected="true"] > .g-day) {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+      border-color: Highlight;
+    }
+    .g-slider-track::before {
+      forced-color-adjust: none;
+      background: linear-gradient(
+        var(--g-fill-dir),
+        GrayText var(--g-fill-start),
+        Highlight var(--g-fill-start) var(--g-fill-end),
+        GrayText var(--g-fill-end)
+      );
+    }
+    .g-range::-webkit-slider-thumb { forced-color-adjust: none; background: Highlight; border-color: Canvas; }
+    .g-range::-moz-range-thumb { forced-color-adjust: none; background: Highlight; border-color: Canvas; }
   }
 }
 

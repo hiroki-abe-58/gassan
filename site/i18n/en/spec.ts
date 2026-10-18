@@ -2,7 +2,8 @@ import type ja from '../ja/spec';
 
 export default {
   title: (page: string, count: number): string => `${page} (${String(count)} items)`,
-  lead: 'The behaviors an ideal modal must satisfy, sorted into 12 categories and listed one per row. Each row is tied to the tests and CSS that satisfy it.',
+  lead: (categories: number): string =>
+    `The behaviors an ideal modal must satisfy, sorted into ${String(categories)} categories and listed one per row. Each row is tied to the tests and CSS that satisfy it.`,
   source: (version: string, updated: string): string =>
     `The source is §4 of [modal.skill.md](modal.skill.md) (v${version}, ${updated}); status and evidence come from [docs/traceability.md](docs/traceability.md). Both are verified mechanically by \`npm run check:trace\`, and citing a test name that does not exist as evidence fails CI. This page is built from those two files at build time.`,
   filters: {

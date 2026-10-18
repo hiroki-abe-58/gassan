@@ -12,22 +12,23 @@
 - **閉じる理由** — 8種類の `CloseReason` を区別し、拒否するときは必ず理由を返す
 - **スクリム** — 黒60%の決め打ちをやめ、意図別の4段階トークンにする
 - **日本語・中国語・韓国語の折り返し** — ボタンもタイトルも表のセルもグラフの要約も、語の途中では改行しない。日本語は文節（「プロフィールを｜編集」であって、「プロフィールを編｜集」にはしない）、中国語は語、韓国語は空白の切れ目でだけ折る。タイ語と英語はブラウザがもともと正しく折るので、手を出さない
+- **入力部品** — テキスト・パスワード・検索・数値・確認コード・チェックボックス・ラジオ・セグメント・評価・スライダー・セレクト・コンボボックス・カレンダー・ファイルなど 18 部品。中身はネイティブの要素のまま枠と印を描き替え、色はテーマのアクセントに従う。一覧とカレンダーは top layer に出るので、モーダルに切り取られない
 
 **ドキュメントサイト: <https://hiroki-abe-58.github.io/gassan/>**
 — 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・テーマ・寸法・折り返し・モーション）、
-全コンポーネントの動くデモと API、141項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
+全コンポーネントとフォーム部品の動くデモと API、156項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
 サイトは日本語・[English](https://hiroki-abe-58.github.io/gassan/#/en)・[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)・[繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant)・[한국어](https://hiroki-abe-58.github.io/gassan/#/ko)・[ไทย](https://hiroki-abe-58.github.io/gassan/#/th) で読める（トップバーの地球の印で切り替える）。
 ライト・ダークの表示とプライマリカラーも切り替えられる。どの色を選んでも、文字と塗りが WCAG のコントラスト比を満たすように色を導いている。
 表・件数・API の説明はすべて仕様書と型定義からビルド時に生成していて、手で書いた数値は無い。
 
-設計の全文は [`modal.skill.md`](./modal.skill.md)（141項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
+設計の全文は [`modal.skill.md`](./modal.skill.md)（156項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
 AI コーディング時はそのファイルをコンテキストに入れる。
 
 | 文書 | 内容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の141項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の156項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 元の要件を分解し、「実装済み / 合成で対応 / ロードマップ」を1行ずつ示した監査表 |
-| [`docs/control-recipes.md`](./docs/control-recipes.md) | range / checkbox / radio / toggle / select / text / file / date / time / chips をモーダルに載せる最小例 |
+| [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan の入力部品をモーダルに載せる最小例と、gassan に無い部品をほかのライブラリから包むときの注意 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | native `<dialog>` / Base UI / React Aria / Radix の比較（2026-09-29 時点、一次資料のみ） |
 
 仕様書（`modal.skill.md`）と `docs/` は日本語で書いている。ドキュメントサイトは説明を 6 言語に訳していて、
@@ -53,6 +54,7 @@ peer は React 18.2 以上（19 でも動く）。Next.js App Router では `"us
 ライブラリが出す文字列（読み上げ・ボタンの文言）の既定は日本語。英語にするには `<GassanProvider labels={englishLabels}>` で包む（どちらもパッケージから export している）。
 ほかの言語は `labels` に自分の文字列を渡す（部分指定でよい）。ドキュメントサイトの中国語・韓国語・タイ語の文言
 （[`site/i18n/<言語>/`](https://github.com/hiroki-abe-58/gassan/tree/main/site/i18n) の `gassan.ts`）を下敷きにできる。
+カレンダーの月名・曜日とファイルの大きさは、`labels.locale`（BCP 47。既定は `ja-JP`）から `Intl` で出す。
 
 ---
 
@@ -74,7 +76,7 @@ function Example() {
 
         <Modal.Body>
           <Modal.Field label="表示名" required>
-            {(control) => <input {...control} type="text" />}
+            {(control) => <Modal.Input {...control} />}
           </Modal.Field>
         </Modal.Body>
 
@@ -214,17 +216,33 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Footer` `Modal.Button` | ボタン階層・ゲート・二重送信防止 |
 | `Modal.Gate` `Modal.Consent` `Modal.GateStatus` | 活性化ゲート |
 | `Modal.Media` `Modal.Gallery` | 画像・動画・音声・スライダー |
-| `Modal.Field` `Modal.Chips` `Modal.Switch` `Modal.Table` `Modal.Alert` | フォーム部品・表 |
+| `Modal.Field` `Modal.Fieldset` | 1 つの欄と選択肢の束に、名前・ヘルプ・エラーを配線する |
+| `Modal.Input` `Modal.PasswordInput` `Modal.SearchInput` `Modal.Textarea` `Modal.NumberField` `Modal.CodeInput` | テキスト入力 |
+| `Modal.Checkbox` `Modal.RadioGroup` `Modal.Segmented` `Modal.Rating` `Modal.Switch` `Modal.Chips` | 選択肢 |
+| `Modal.Slider` `Modal.RangeSlider` | スライダー（摘みと塗りはテーマの色） |
+| `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | 一覧・カレンダーを top layer に出す部品 |
+| `Modal.FileDrop` | ファイルの受け皿（ドロップにも `accept` を当てる） |
+| `Modal.Table` `Modal.Alert` | 横スクロールする表・送信結果のまとめ |
 | `Modal.Chart` | グラフの器。名前（`label`）と傾向のテキスト代替（`summary`）を配線し、元データを `<details>` で開閉する。描画はしない |
 | `Modal.Handle` | シートのつまみ。段があれば `role="slider"` の操作子、無ければ掴みどころの飾り |
 | `ModalHost` `useModals` | 命令的 API（`await confirm()`） |
 | `GassanProvider` | 文言の差し替え（既定は日本語、`englishLabels` も同梱）と、折り返しの切り替え（`lineBreak`） |
 | `Phrase` `splitPhrases` | 自分の UI の日本語・中国語・韓国語にも同じ折り返しを効かせる（gassan の部品の中では既定で効いている） |
 
-`Modal.Field` は render prop なので、中身はネイティブ入力でも Base UI でも構わない。
-選択肢のグループ（ラジオ・複数チェック）は `label` ではなく `fieldset` / `legend` で名前を付ける。
-**コントロールは自作しない。** range / date / time / file / select はまずネイティブ、
-検索つきセレクトや摘み2つのスライダーは Base UI に委ねる。例は [`docs/control-recipes.md`](./docs/control-recipes.md)。
+入力部品は中身がネイティブの要素で、`Modal.Field` の render prop をそのまま広げて受ける。
+選択肢の束（ラジオ・複数チェック・評価・2 つ摘みのスライダー）は `label` ではなく `Modal.Fieldset`（`fieldset` / `legend`）で名前を付ける。
+一覧とカレンダーは popover API で top layer に出し、開いているときの Esc は一覧だけを閉じる。
+gassan に無い部品（複数選択のコンボボックスなど）は、ほかのライブラリの部品を同じように包む。例は [`docs/control-recipes.md`](./docs/control-recipes.md)。
+
+```tsx
+<Modal.Field label="配送方法">
+  {(control) => <Modal.Select {...control} value={shipping} onValueChange={setShipping} options={SHIPPING} />}
+</Modal.Field>
+
+<Modal.Fieldset label="価格帯">
+  <Modal.RangeSlider value={price} onValueChange={setPrice} min={0} max={10000} step={500} showValue />
+</Modal.Fieldset>
+```
 
 ```tsx
 <Modal.Chart

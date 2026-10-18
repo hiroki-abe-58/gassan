@@ -68,6 +68,27 @@ function buildTree(open) {
           onChange: noop,
         }),
         h(Modal.Switch, { checked: false, onCheckedChange: noop }, '通知'),
+        // 入力部品（I-01〜I-15）。ポップアップは閉じている間は描かないので、サーバーでは起点だけが出る。
+        h(Modal.Field, { label: '金額' }, (control) => h(Modal.Input, { ...control, start: '¥', end: '円' })),
+        h(Modal.PasswordInput, { 'aria-label': 'パスワード' }),
+        h(Modal.SearchInput, { 'aria-label': '検索' }),
+        h(Modal.Textarea, { 'aria-label': 'メモ', maxLength: 140, defaultValue: 'こんにちは' }),
+        h(Modal.NumberField, { 'aria-label': '人数', defaultValue: 2, min: 1, unit: '名' }),
+        h(Modal.CodeInput, { 'aria-label': '確認コード', defaultValue: '12' }),
+        h(
+          Modal.Fieldset,
+          { label: 'プラン', help: 'あとで変えられる' },
+          h(Modal.Checkbox, { defaultChecked: true, description: '補足' }, '同意する'),
+          h(Modal.RadioGroup, { options: [{ value: 'a', label: 'A' }], defaultValue: 'a' }),
+          h(Modal.Segmented, { options: [{ value: 'a', label: 'A' }], defaultValue: 'a' }),
+          h(Modal.Rating, { defaultValue: 3 }),
+        ),
+        h(Modal.Slider, { 'aria-label': '音量', defaultValue: 40 }),
+        h(Modal.RangeSlider, { 'aria-label': '価格', defaultValue: [20, 60] }),
+        h(Modal.Select, { 'aria-label': 'サイズ', options: [{ value: 'md', label: '中' }], defaultValue: 'md' }),
+        h(Modal.Combobox, { 'aria-label': '国', options: [{ value: 'jp', label: '日本' }] }),
+        h(Modal.DatePicker, { 'aria-label': '日付', defaultValue: '2026-10-18' }),
+        h(Modal.FileDrop, { 'aria-label': '書類', accept: '.pdf' }),
         h(Modal.Table, { label: '表' }, h('table', null, h('tbody', null, h('tr', null, h('td', null, '1'))))),
         h(
           Modal.Chart,
@@ -129,6 +150,13 @@ const expectations = [
   ['class="g-chart"', 'chart figure'],
   ['class="g-chart-visual" aria-hidden="true"', 'chart visual hidden by default'],
   ['<details class="g-chart-data">', 'chart data disclosure'],
+  ['class="g-select-trigger" role="combobox"', 'select trigger'],
+  ['aria-autocomplete="list"', 'combobox input'],
+  ['2026年10月18日(日)', 'date formatted with Intl on the server'],
+  ['autoComplete="one-time-code"', 'one-time-code input'],
+  ['--g-fill-end:40%', 'slider fill'],
+  ['class="g-file-input"', 'file input'],
+  ['<fieldset', 'fieldset for choice groups'],
 ];
 
 for (const [needle, label] of expectations) {

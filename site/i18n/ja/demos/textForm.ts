@@ -1,0 +1,21 @@
+export default {
+  open: 'アカウントを作る',
+  title: 'アカウントを作る',
+  name: '表示名',
+  password: 'パスワード',
+  passwordHelp: '8 文字以上',
+  bio: '自己紹介',
+  bioPlaceholder: '仕事や関心のあること',
+  seats: '席数',
+  seatsHelp: 'あとから増やせる',
+  seatsUnit: '席',
+  code: '確認コード',
+  codeHelp: 'メールで届いた 6 桁の数字',
+  cancel: 'キャンセル',
+  submit: '登録する',
+  comments: {
+    password: '表示の切り替えは aria-pressed のトグル。文言は 1 つで足りる（I-04）',
+    counter: 'maxLength を渡すと「n / 140」を出し、説明として結ぶ（I-06）',
+    code: '入力欄は 1 つ。箱は見た目だけなので、SMS の自動入力と貼り付けが効く（I-08）',
+  },
+};

@@ -27,6 +27,21 @@ const labels: GassanLabels = {
   sheetHandle: '시트 높이 조절',
   detent: (token) => ({ peek: '최소', half: '중간', full: '최대' })[token],
   detentChanged: (name) => `시트 높이: ${name}`,
+  locale: 'ko-KR',
+  choose: '선택하세요',
+  noResults: '일치하는 항목이 없습니다',
+  clear: '입력 지우기',
+  showPassword: '비밀번호 표시',
+  increment: '늘리기',
+  decrement: '줄이기',
+  rangeStart: '최솟값',
+  rangeEnd: '최댓값',
+  rating: (value, max) => `${String(max)}점 중 ${String(value)}점`,
+  previousMonth: '이전 달',
+  nextMonth: '다음 달',
+  dropFiles: '여기에 파일을 놓으세요',
+  chooseFiles: '파일 선택',
+  removeFile: (name) => `${name} 제거`,
 };
 
 export default labels;

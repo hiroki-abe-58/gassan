@@ -9,6 +9,7 @@ import {
 } from 'react';
 
 import { prefersReducedMotion, warnDuplicateKeys, warnOnce } from './internal/dom';
+import { Icon } from './internal/icons';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { usePhrase } from './phrase';
@@ -291,15 +292,7 @@ export function ModalGallery({
           aria-disabled={index === 0 ? true : undefined}
           onClick={() => go(index - 1)}
         >
-          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
-            <path
-              d="M12.5 4.5 7 10l5.5 5.5"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <Icon name="chevronLeft" />
         </button>
 
         <p className="g-gallery-count">
@@ -319,15 +312,7 @@ export function ModalGallery({
           aria-disabled={index === total - 1 ? true : undefined}
           onClick={() => go(index + 1)}
         >
-          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
-            <path
-              d="M7.5 4.5 13 10l-5.5 5.5"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <Icon name="chevronRight" />
         </button>
       </div>
     </div>

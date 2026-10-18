@@ -3,7 +3,9 @@ import type { EvidenceKind } from '../../data/schema';
 export default {
   /** 題名に項目数を添える。page は nav.pages.spec。 */
   title: (page: string, count: number): string => `${page}（${String(count)} 項目）`,
-  lead: '理想のモーダルが満たすべき振る舞いを、12 のカテゴリに分けて 1 行ずつ列挙したもの。各行には、それをどのテスト・どの CSS で満たしているかが結び付いている。',
+  /** categories は仕様書のカテゴリの数（ビルド時に数える）。 */
+  lead: (categories: number): string =>
+    `理想のモーダルが満たすべき振る舞いを、${String(categories)} のカテゴリに分けて 1 行ずつ列挙したもの。各行には、それをどのテスト・どの CSS で満たしているかが結び付いている。`,
   source: (version: string, updated: string): string =>
     `原本は [modal.skill.md](modal.skill.md) §4（v${version}、${updated}）、状態と根拠は [docs/traceability.md](docs/traceability.md)。どちらも \`npm run check:trace\` が機械検証していて、存在しないテスト名を根拠に書くと CI が落ちる。このページはその 2 つからビルド時に作っている。`,
   filters: {

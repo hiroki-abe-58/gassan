@@ -2,7 +2,8 @@ import type ja from '../ja/spec';
 
 export default {
   title: (page: string, count: number): string => `${page} (${String(count)} รายการ)`,
-  lead: 'รายการพฤติกรรมที่โมดอลในอุดมคติควรมี แบ่งเป็น 12 หมวด บรรทัดละหนึ่งข้อ แต่ละบรรทัดผูกไว้กับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง',
+  lead: (categories: number): string =>
+    `รายการพฤติกรรมที่โมดอลในอุดมคติควรมี แบ่งเป็น ${String(categories)} หมวด บรรทัดละหนึ่งข้อ แต่ละบรรทัดผูกไว้กับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง`,
   source: (version: string, updated: string): string =>
     `ต้นฉบับคือ [modal.skill.md](modal.skill.md) §4 (v${version}, ${updated}) สถานะและหลักฐานอยู่ใน [docs/traceability.md](docs/traceability.md) ทั้งสองไฟล์ถูกตรวจแบบกลไกด้วย \`npm run check:trace\` ถ้าอ้างชื่อเทสต์ที่ไม่มีอยู่จริงเป็นหลักฐาน CI จะล้ม หน้านี้สร้างจากสองไฟล์นั้นตอน build`,
   filters: {

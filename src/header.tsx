@@ -8,40 +8,10 @@ import {
 
 import { useModalContext } from './context';
 import { hasResizeObserver } from './internal/dom';
+import { Icon } from './internal/icons';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { usePhrase } from './phrase';
-
-/* -------------------------------------------------------------------------- */
-/* icons — 依存を増やさないためのインライン SVG。装飾なので aria-hidden。A-06     */
-/* -------------------------------------------------------------------------- */
-
-function IconChevronLeft(): ReactNode {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
-      <path
-        d="M12.5 4.5 7 10l5.5 5.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconClose(): ReactNode {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
-      <path
-        d="m5 5 10 10M15 5 5 15"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 /* -------------------------------------------------------------------------- */
 /* Header                                                                     */
@@ -138,7 +108,7 @@ export function ModalBack({
       aria-label={label ?? labels.back}
       onClick={onClick}
     >
-      {children ?? <IconChevronLeft />}
+      {children ?? <Icon name="chevronLeft" />}
     </button>
   );
 }
@@ -164,7 +134,7 @@ export function ModalClose({
         requestClose('close-button');
       }}
     >
-      {children ?? <IconClose />}
+      {children ?? <Icon name="close" />}
     </button>
   );
 }

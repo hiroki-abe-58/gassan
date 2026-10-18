@@ -438,10 +438,27 @@ describe('tokens / focus ring (K-07)', () => {
   });
 
   it('outline: none を裸で置かない（リングを消したまま代替を出し忘れない）', () => {
+    /**
+     * 入力部品は、中のネイティブ要素のリングを消して外側に描き直す（I-03 / I-08 / I-10）。
+     * 消す側と描く側を組で挙げ、描く側の規則が outline を持つことまで確かめる。
+     */
+    const moved: Record<string, string> = {
+      '.g-bare': '.g-input:focus-within',
+      '.g-range:focus-visible': '.g-range:focus-visible::-webkit-slider-thumb',
+      '.g-code-input': '.g-code:focus-within .g-code-cell[data-current]',
+    };
     const naked = [...css.matchAll(/([^\n{}]*)\{[^{}]*outline:\s*none[^{}]*\}/g)].map((m) =>
       (m[1] ?? '').trim(),
     );
     for (const selector of naked) {
+      const drawnBy = moved[selector];
+      if (drawnBy) {
+        const at = css.indexOf(`${drawnBy} {`) >= 0 ? css.indexOf(`${drawnBy} {`) : css.indexOf(`${drawnBy},`);
+        expect(at, `${selector} のリングを描く ${drawnBy} が無い`).toBeGreaterThanOrEqual(0);
+        const rule = css.slice(at, css.indexOf('}', at));
+        expect(rule).toMatch(/outline:\s*2px solid var\(--g-focus\)/);
+        continue;
+      }
       // パネル本体だけは例外。プログラム的フォーカスにリングを出さないため。
       expect(selector).toContain('.g-panel');
     }
@@ -496,7 +513,16 @@ describe('sheet detents and handle', () => {
   it('参照するカスタムプロパティは、CSS で定義されているか、JS が書くか、フォールバックを持つ', () => {
     // 未定義の var() は宣言ごと無効になる。見た目は何も起きないので、目で見ても気づけない。
     const defined = new Set([...css.matchAll(/(?:^|[{;\s])(--g-[\w-]+)\s*:/g)].map((m) => m[1]));
-    const setByScript = new Set(['--g-dur-out', '--g-keyboard-inset', '--g-ratio', '--g-sheet-detent', '--g-swipe-y', '--g-title-lines']);
+    const setByScript = new Set([
+      '--g-dur-out',
+      '--g-fill-end',
+      '--g-fill-start',
+      '--g-keyboard-inset',
+      '--g-ratio',
+      '--g-sheet-detent',
+      '--g-swipe-y',
+      '--g-title-lines',
+    ]);
     const missing = [...css.matchAll(/var\((--g-[\w-]+)(\s*,)?/g)]
       .filter((m) => !m[2] && !defined.has(m[1] ?? '') && !setByScript.has(m[1] ?? ''))
       .map((m) => m[1]);

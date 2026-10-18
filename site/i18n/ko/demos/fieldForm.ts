@@ -17,7 +17,7 @@ export default {
   comments: {
     summary: '전송 실패 요약은 한 곳에. 포커스는 첫 번째 오류 항목으로(B-09)',
     field: '입력 하나는 Modal.Field. 레이블·도움말·오류의 연결을 맡는다(B-08)',
-    group: '선택지 그룹은 label이 아니라 fieldset / legend로 이름을 붙인다',
-    native: 'range도 date도 다시 만들지 않고 네이티브를 감싸기만 한다',
+    group: '선택지 그룹은 Modal.Fieldset. label이 아니라 legend로 이름을 붙인다(I-09)',
+    native: '안쪽은 네이티브 range. 손잡이와 채우기는 테마의 색으로 그린다(I-10)',
   },
 } satisfies typeof ja;

@@ -49,6 +49,34 @@ export interface GassanLabels {
   detent: (token: 'peek' | 'half' | 'full') => string;
   /** ディテントが変わったときの通知。M-03。 */
   detentChanged: (name: string) => string;
+  /**
+   * 日付と大きさの書式に使うロケール（BCP 47）。カレンダーの月名・曜日もここから引く。I-13 / I-14。
+   * 'th' ならタイの仏暦で出る。
+   */
+  locale: string;
+  /** セレクト・コンボボックス・日付の、まだ選んでいないときの表示。I-11。 */
+  choose: string;
+  /** コンボボックスで候補が 1 つも当たらないとき。I-12。 */
+  noResults: string;
+  /** 検索欄の入力を消すボタン。I-05。 */
+  clear: string;
+  /** パスワードを見せるトグル（aria-pressed で状態を持つので、文言は 1 つ）。I-04。 */
+  showPassword: string;
+  /** 数値ステッパーのボタン。I-07。 */
+  increment: string;
+  decrement: string;
+  /** 2 つ摘みのスライダーの摘み。I-10。 */
+  rangeStart: string;
+  rangeEnd: string;
+  /** 評価の各選択肢の名前。「5 段階中 3」。I-09。 */
+  rating: (value: number, max: number) => string;
+  /** カレンダーの月送り。I-13。 */
+  previousMonth: string;
+  nextMonth: string;
+  /** ファイルの受け皿。I-14。 */
+  dropFiles: string;
+  chooseFiles: string;
+  removeFile: (name: string) => string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -75,6 +103,21 @@ export const japaneseLabels: GassanLabels = {
   sheetHandle: 'シートの高さを変える',
   detent: (token) => ({ peek: '最小', half: '中', full: '最大' })[token],
   detentChanged: (name) => `シートの高さ: ${name}`,
+  locale: 'ja-JP',
+  choose: '選んでください',
+  noResults: '一致する候補がありません',
+  clear: '入力を消す',
+  showPassword: 'パスワードを表示',
+  increment: '増やす',
+  decrement: '減らす',
+  rangeStart: '下限',
+  rangeEnd: '上限',
+  rating: (value, max) => `${max}段階中${value}`,
+  previousMonth: '前の月',
+  nextMonth: '次の月',
+  dropFiles: 'ここにファイルをドロップ',
+  chooseFiles: 'ファイルを選ぶ',
+  removeFile: (name) => `${name} を取り除く`,
 };
 
 export const englishLabels: GassanLabels = {
@@ -101,6 +144,21 @@ export const englishLabels: GassanLabels = {
   sheetHandle: 'Resize the sheet',
   detent: (token) => ({ peek: 'small', half: 'medium', full: 'large' })[token],
   detentChanged: (name) => `Sheet height: ${name}`,
+  locale: 'en-US',
+  choose: 'Choose…',
+  noResults: 'No matches',
+  clear: 'Clear',
+  showPassword: 'Show password',
+  increment: 'Increase',
+  decrement: 'Decrease',
+  rangeStart: 'Minimum',
+  rangeEnd: 'Maximum',
+  rating: (value, max) => `${value} of ${max}`,
+  previousMonth: 'Previous month',
+  nextMonth: 'Next month',
+  dropFiles: 'Drop files here',
+  chooseFiles: 'Choose files',
+  removeFile: (name) => `Remove ${name}`,
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

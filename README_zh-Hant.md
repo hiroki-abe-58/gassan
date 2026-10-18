@@ -12,22 +12,23 @@
 - **關閉原因** — 區分 8 種 `CloseReason`，拒絕關閉時一定會回傳原因
 - **遮罩層（scrim）** — 不再寫死 60% 的黑色，改用依意圖區分的四個 token
 - **日文、中文、韓文的換行** — 無論是按鈕、標題、表格儲存格還是圖表摘要，文字都不會在詞的中間斷開。日文在文節邊界斷行（是「プロフィールを｜編集」，絕不會是「プロフィールを編｜集」），中文在詞的邊界，韓文只在空格處。泰文和英文交給瀏覽器處理，因為瀏覽器原本就能正確斷行
+- **表單元件** — 文字、密碼、搜尋、數字、驗證碼、核取方塊、單選按鈕、分段控制、評分、滑桿、下拉選單、組合框、月曆、檔案等 18 種元件。內部維持原生元素，只重新繪製外框與記號，顏色跟隨主題的強調色。清單與月曆顯示在 top layer，所以不會被 modal 裁切
 
 **文件網站：<https://hiroki-abe-58.github.io/gassan/#/zh-Hant>**
 — 以類似 Material Design 3 指南的形式，整理了設計理念（modal 存在的理由、四層模型、五種類型、無障礙）、樣式（遮罩層、色彩與對比、主題、尺寸、換行、動態效果）、
-每個元件可實際操作的示範與 API，以及 141 項行為的規格。
+每個元件與表單元件可實際操作的示範與 API，以及 156 項行為的規格。
 網站提供 [English](https://hiroki-abe-58.github.io/gassan/#/en)、[日本語](https://hiroki-abe-58.github.io/gassan/)、[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)、繁體中文、[한국어](https://hiroki-abe-58.github.io/gassan/#/ko) 與 [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) 版本（用頂端列的地球圖示按鈕切換）。
 網站可切換淺色 / 深色主題與主色；無論選哪個顏色，文字與填色都會經過推算，以符合 WCAG 的對比度要求。
 網站上所有的表格、數量與 API 說明，都是在建置時從規格書與型別定義自動產生，沒有任何手寫的數字。
 
-完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（141 項行為表、決策矩陣、品質評分準則）。
+完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（156 項行為表、決策矩陣、品質評分準則）。
 用 AI 助理寫程式時，請把這個檔案放進上下文（context）。
 
 | 文件 | 內容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 141 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 156 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 將原始需求逐項拆解，每項一列，標示已實作 / 透過組合達成 / 列入路線圖 |
-| [`docs/control-recipes.md`](./docs/control-recipes.md) | 在 modal 中放入 range / checkbox / radio / toggle / select / text / file / date / time / chips 的最小範例 |
+| [`docs/control-recipes.md`](./docs/control-recipes.md) | 在 modal 中放入 gassan 表單元件的最小範例，以及從其他函式庫包裝 gassan 沒有的元件時的注意事項 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 原生 `<dialog>`、Base UI、React Aria、Radix 的比較（截至 2026-09-29，僅引用第一手資料） |
 
 規格書（`modal.skill.md`）與 `docs/` 中的檔案以日文撰寫。
@@ -54,6 +55,7 @@ peer dependency 為 React 18.2 以上（19 也能用）。bundle 已帶有 `"use
 要改成英文，請用 `<GassanProvider labels={englishLabels}>` 包住整個應用程式；兩者都由套件匯出。
 其他語言則把自己的字串傳給 `labels`（只指定部分項目也可以）。文件網站的中文、韓文、泰文字串
 （[`site/i18n/<lang>/`](https://github.com/hiroki-abe-58/gassan/tree/main/site/i18n) 底下的 `gassan.ts`）可以拿來當作起點。
+月曆的月份名稱、星期與檔案大小，由 `labels.locale`（BCP 47，預設為 `ja-JP`）透過 `Intl` 產生。
 
 ---
 
@@ -75,7 +77,7 @@ function Example() {
 
         <Modal.Body>
           <Modal.Field label="顯示名稱" required>
-            {(control) => <input {...control} type="text" />}
+            {(control) => <Modal.Input {...control} />}
           </Modal.Field>
         </Modal.Body>
 
@@ -215,17 +217,33 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Footer` `Modal.Button` | 按鈕層級、閘門、防止重複送出 |
 | `Modal.Gate` `Modal.Consent` `Modal.GateStatus` | 啟用閘門 |
 | `Modal.Media` `Modal.Gallery` | 圖片、影片、音訊、輪播 |
-| `Modal.Field` `Modal.Chips` `Modal.Switch` `Modal.Table` `Modal.Alert` | 表單元件與表格 |
+| `Modal.Field` `Modal.Fieldset` | 為單一欄位與選項群組關聯名稱、說明文字與錯誤 |
+| `Modal.Input` `Modal.PasswordInput` `Modal.SearchInput` `Modal.Textarea` `Modal.NumberField` `Modal.CodeInput` | 文字輸入 |
+| `Modal.Checkbox` `Modal.RadioGroup` `Modal.Segmented` `Modal.Rating` `Modal.Switch` `Modal.Chips` | 選項 |
+| `Modal.Slider` `Modal.RangeSlider` | 滑桿（把手與填色使用主題的顏色） |
+| `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | 將清單與月曆顯示在 top layer 的元件 |
+| `Modal.FileDrop` | 檔案的放置區（拖放時也套用 `accept`） |
+| `Modal.Table` `Modal.Alert` | 可橫向捲動的表格、送出結果的摘要 |
 | `Modal.Chart` | 圖表的容器。關聯名稱（`label`）與趨勢的替代文字（`summary`），並以 `<details>` 呈現原始資料。本身不負責繪圖 |
 | `Modal.Handle` | 底部面板（sheet）的拖曳把手。有停駐點（detent）時是 `role="slider"` 的控制項；沒有時只是裝飾性的抓取區域 |
 | `ModalHost` `useModals` | 命令式 API（`await confirm()`） |
 | `GassanProvider` | 替換 UI 字串（預設為日文，內附 `englishLabels`），並切換換行方式（`lineBreak`） |
 | `Phrase` `splitPhrases` | 讓自己 UI 中的日文、中文、韓文套用同樣的換行規則（gassan 的元件內部預設已啟用） |
 
-`Modal.Field` 是 render prop，裡面的控制項可以是原生 input，也可以是 Base UI 的元件。
-選項群組（單選按鈕、多個核取方塊）要用 `fieldset` / `legend` 命名，而不是 `label`。
-**不要自己打造控制項。** range / date / time / file / select 先用原生的，
-可搜尋的下拉選單和雙把手滑桿則交給 Base UI。範例見 [`docs/control-recipes.md`](./docs/control-recipes.md)。
+表單元件的內部是原生元素，直接展開 `Modal.Field` 的 render prop 來接收。
+選項群組（單選按鈕、多個核取方塊、評分、雙把手滑桿）要用 `Modal.Fieldset`（`fieldset` / `legend`）命名，而不是 `label`。
+清單與月曆以 popover API 顯示在 top layer，開啟時按 Esc 只會關閉清單。
+gassan 沒有的元件（例如可多選的組合框），請用同樣的方式包住其他函式庫的元件。範例見 [`docs/control-recipes.md`](./docs/control-recipes.md)。
+
+```tsx
+<Modal.Field label="配送方式">
+  {(control) => <Modal.Select {...control} value={shipping} onValueChange={setShipping} options={SHIPPING} />}
+</Modal.Field>
+
+<Modal.Fieldset label="價格區間">
+  <Modal.RangeSlider value={price} onValueChange={setPrice} min={0} max={10000} step={500} showValue />
+</Modal.Fieldset>
+```
 
 ```tsx
 <Modal.Chart

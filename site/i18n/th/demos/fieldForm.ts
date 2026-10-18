@@ -17,7 +17,7 @@ export default {
   comments: {
     summary: 'สรุปข้อผิดพลาดตอนส่งไว้ที่เดียว และย้ายโฟกัสไปที่ช่องที่ผิดช่องแรก (B-09)',
     field: 'ช่องกรอกหนึ่งช่องคือ Modal.Field ซึ่งรับการผูก label, help และ error ไว้ (B-08)',
-    group: 'กลุ่มตัวเลือกตั้งชื่อด้วย fieldset / legend ไม่ใช่ label',
-    native: 'range หรือ date ก็ไม่ต้องสร้างใหม่ แค่ห่อของเนทีฟ',
+    group: 'กลุ่มตัวเลือกคือ Modal.Fieldset ตั้งชื่อด้วย legend ไม่ใช่ label (I-09)',
+    native: 'ข้างในเป็น range แบบเนทีฟ หัวเลื่อนและแถบที่เติมสีวาดด้วยสีของธีม (I-10)',
   },
 } satisfies typeof ja;

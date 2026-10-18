@@ -14,10 +14,16 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
+/*
+ * 2026-10-18 に 22 / 22 / 6 KB から引き上げた。入力部品 18 個（I-01〜I-15）を本体に入れたため
+ * （利用者の判断。別の入口に分けない）。増えた分は JS が約 11 KB・CSS が約 3 KB（どちらも gzip、未圧縮の dist）。
+ * 名前つき import でモーダルの部品だけを使うアプリには、入力部品は tree shaking で載らない。
+ * Modal 名前空間は全部品を参照するので、Modal.* で書くアプリには全部載る。
+ */
 const BUDGETS = {
-  'dist/index.js': 22 * 1024,
-  'dist/index.cjs': 22 * 1024,
-  'dist/styles.css': 6 * 1024,
+  'dist/index.js': 34 * 1024,
+  'dist/index.cjs': 34 * 1024,
+  'dist/styles.css': 9 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -39,6 +45,24 @@ const REQUIRED_EXPORTS = [
   'ModalMedia',
   'ModalGallery',
   'ModalField',
+  'ModalFieldset',
+  // 入力部品。I-01〜I-15。
+  'ModalInput',
+  'ModalPasswordInput',
+  'ModalSearchInput',
+  'ModalTextarea',
+  'ModalNumberField',
+  'ModalCodeInput',
+  'ModalCheckbox',
+  'ModalRadioGroup',
+  'ModalSegmented',
+  'ModalRating',
+  'ModalSlider',
+  'ModalRangeSlider',
+  'ModalSelect',
+  'ModalCombobox',
+  'ModalDatePicker',
+  'ModalFileDrop',
   'ModalChips',
   'ModalSwitch',
   'ModalTable',

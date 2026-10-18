@@ -10,10 +10,9 @@ export default function LineBreakModal(): ReactNode {
 
   return (
     <>
-      <label className="s-toggle">
-        <input type="checkbox" checked={phrase} onChange={(event) => setPhrase(event.target.checked)} />
+      <Modal.Switch checked={phrase} onCheckedChange={setPhrase}>
         {t.toggle}
-      </label>
+      </Modal.Switch>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
         {t.open}
       </button>
