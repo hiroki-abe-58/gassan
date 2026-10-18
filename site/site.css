@@ -3023,15 +3023,18 @@
 .s-state-head code {
   color: var(--s-ink-2);
 }
+/* 見出しの列は一番長いラベル（英語の「Rationale」）に合わせ、各行は subgrid でそろえる。
+ * 固定幅（4em）だと、欧文の幅が広いフォント（CI の Ubuntu）で見出しが欄からはみ出した */
 .s-state-text {
   display: grid;
-  gap: 8px;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 12px;
   margin: 0;
 }
 .s-state-text > div {
   display: grid;
-  grid-template-columns: 4em minmax(0, 1fr);
-  gap: 12px;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
 }
 .s-state-text dt {
   color: var(--s-ink-2);
@@ -3045,7 +3048,7 @@
 
 @media (max-width: 640px) {
   .s-variant,
-  .s-state-text > div {
+  .s-state-text {
     grid-template-columns: minmax(0, 1fr);
   }
   .s-state-text > div {
