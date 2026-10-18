@@ -1,5 +1,5 @@
 /**
- * サイトのテーマ（表示とプライマリカラー）を組み立てる。
+ * サイトのテーマ（表示・背景の色づけ・プライマリカラー）を組み立てる。
  *
  * 好きな色を選べても、文字が読めなければ意味がない。ここでは「選ばれた色」を種として、
  * 色相を保ったまま明度だけを動かし、WCAG 2.x のコントラスト比を満たす色を導く。
@@ -161,10 +161,125 @@ export const SITE_NEUTRALS: Record<Scheme, Record<string, string>> = {
 
 /** アクセントを合わせる目標の比。判定の基準（4.5）より少しだけ上に置く。 */
 const ACCENT_TARGET = 4.6;
+/** 淡い面の上の文字の目標の比。基準（7）にちょうど張り付かせない（背景を色づけて淡い面を濃くしたとき 7.01:1 になった）。 */
+const ON_SOFT_TARGET = 7.1;
 
 /** ダークで暗い文字を載せるときの色。どの面より暗いので、面に対して通る色の上では必ず通る。 */
 const ON_LIGHT_ACCENT = '#0b0c10';
 const ON_DARK_ACCENT = '#ffffff';
+
+/* -------------------------------------------------------------------------- */
+/* 背景の色づけ                                                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * 背景の色づけ。表示名は i18n の common.theme.tints にある。
+ *
+ *   neutral … 無彩色の面（SITE_NEUTRALS と styles.css の値のまま）
+ *   soft    … 面と線に、プライマリの色相をうっすら混ぜる。明るさは変えない
+ *   strong  … ページがはっきり色の面に見えるまで彩度を足し、ライトは暗く、ダークは明るくずらす
+ */
+export type Tint = 'neutral' | 'soft' | 'strong';
+export const TINTS: readonly Tint[] = ['neutral', 'soft', 'strong'];
+
+interface TintSpec {
+  /** 面に足す彩度（OKLCH の C）。種の彩度は超えない（灰色を選べば灰色のまま） */
+  chroma: number;
+  /** 面の明度をずらす量 */
+  shift: Record<Scheme, number>;
+  /** 淡い面（選択中のナビ・補足の囲み）。背景と同じ明るさのままだと、色づけた背景に溶けて見分けられない */
+  soft: Record<Scheme, { l: number; c: number }>;
+}
+
+const TINT_SPECS: Record<Tint, TintSpec> = {
+  neutral: {
+    chroma: 0,
+    shift: { light: 0, dark: 0 },
+    soft: { light: { l: 0.95, c: 0.04 }, dark: { l: 0.3, c: 0.06 } },
+  },
+  soft: {
+    chroma: 0.018,
+    shift: { light: 0, dark: 0 },
+    // 無彩色では、淡い面とホバーの面（--s-surface-2）を彩度の差で見分けていた。面にも色相が乗るとその差が消えるので、
+    // ライトでは淡い面を一段暗くする。ダークは面が暗いぶん、明度の差がもともと十分ある
+    soft: { light: { l: 0.915, c: 0.06 }, dark: { l: 0.3, c: 0.06 } },
+  },
+  // 明度をずらす量と淡い面の明るさは、隣り合うプリセットの見分けやすさとの綱引きで決めた。
+  // 面を暗く（ダークでは明るく）するほど、アクセントが 4.5:1 を取れる明度の幅が狭まり、隣の色と寄っていく。
+  strong: {
+    chroma: 0.045,
+    shift: { light: -0.03, dark: 0.01 },
+    // 淡い面は、ホバーの面（--s-surface-2）より一段濃くする。背景より明るくすると、カードの面と区別がつかない
+    soft: { light: { l: 0.88, c: 0.06 }, dark: { l: 0.34, c: 0.07 } },
+  },
+};
+
+/**
+ * 色づける面と線。値は重み（1 で TintSpec のとおりに彩度と明度を動かす）。
+ * カードの面（--s-surface）とモーダルの面（--g-surface）は軽くして、色づけた背景より上に浮かせる。
+ * ダークで面を明るくして分離する約束（S-07）も、明度を同じ向きにずらすので保たれる。
+ */
+const SURFACE_WEIGHTS: Readonly<Record<string, number>> = {
+  '--s-bg': 1,
+  '--s-surface': 0.35,
+  '--s-surface-1': 1,
+  '--s-surface-2': 1,
+  '--s-surface-3': 1,
+  '--s-line': 1,
+  '--s-line-strong': 1,
+  '--g-surface': 0.35,
+  '--g-border': 1,
+  '--g-border-strong': 1,
+};
+
+/** サイトの文字が載る面。リンク（アクセント）と同じ 4 つ。 */
+const SITE_TEXT_BACKGROUNDS = ['--s-bg', '--s-surface', '--s-surface-1', '--s-surface-2'] as const;
+
+/**
+ * 面に載る文字。色づけた面の上でも基準を満たすまで明度を動かす（通るなら元の明度のまま）。
+ * tinted は灰色の文字の色相をプライマリに寄せる。良い例・悪い例・注意・エラーの色は、意味の色なので色相を保つ。
+ */
+const TEXT_TOKENS: readonly { name: string; on: readonly string[]; tinted: boolean }[] = [
+  { name: '--s-ink', on: SITE_TEXT_BACKGROUNDS, tinted: true },
+  { name: '--s-ink-2', on: SITE_TEXT_BACKGROUNDS, tinted: true },
+  { name: '--s-ink-3', on: SITE_TEXT_BACKGROUNDS, tinted: true },
+  { name: '--s-do', on: SITE_TEXT_BACKGROUNDS, tinted: false },
+  { name: '--s-dont', on: SITE_TEXT_BACKGROUNDS, tinted: false },
+  { name: '--s-caution', on: SITE_TEXT_BACKGROUNDS, tinted: false },
+  { name: '--g-fg', on: ['--g-surface'], tinted: true },
+  { name: '--g-fg-muted', on: ['--g-surface'], tinted: true },
+  { name: '--g-danger', on: ['--g-surface'], tinted: false },
+];
+
+/** 背景の色づけで値が変わる gassan のトークン。テーマのページが、自分のアプリで同じ色にするコードに出す。 */
+export const TINTED_GASSAN_TOKENS: readonly string[] = [
+  ...Object.keys(SURFACE_WEIGHTS),
+  ...TEXT_TOKENS.map((text) => text.name),
+].filter((name) => name.startsWith('--g-'));
+
+/** 無彩色の面と文字（サイトと gassan の両方）を、種の色相で色づける。 */
+function tintNeutrals(tokens: Record<string, string>, seed: Oklch, scheme: Scheme, tint: Tint): Record<string, string> {
+  if (tint === 'neutral') return tokens;
+  const spec = TINT_SPECS[tint];
+  const out = { ...tokens };
+  for (const [name, weight] of Object.entries(SURFACE_WEIGHTS)) {
+    const value = tokens[name];
+    if (!value) continue;
+    out[name] = oklchToHex({
+      l: hexToOklch(value).l + spec.shift[scheme] * weight,
+      c: Math.min(seed.c, spec.chroma * weight),
+      h: seed.h,
+    });
+  }
+  for (const text of TEXT_TOKENS) {
+    const value = tokens[text.name];
+    if (!value) continue;
+    const own = hexToOklch(value);
+    const color = text.tinted ? { l: own.l, c: Math.min(own.c, seed.c), h: seed.h } : own;
+    out[text.name] = fitLightness(color, scheme, text.on.map((bg) => out[bg] ?? '#000000'), ACCENT_TARGET);
+  }
+  return out;
+}
 
 /* -------------------------------------------------------------------------- */
 /* プリセット                                                                 */
@@ -243,10 +358,17 @@ export type CheckId =
   | 'linkSoft'
   | 'onAccent'
   | 'onSoft'
+  | 'ink'
+  | 'ink2'
+  | 'ink3'
+  | 'do'
+  | 'dont'
+  | 'caution'
   | 'gassanPrimary'
   | 'gassanGated'
   | 'gassanBody'
   | 'gassanMuted'
+  | 'gassanDanger'
   | 'focusRing'
   | 'fill';
 
@@ -269,18 +391,21 @@ export interface Theme {
 }
 
 /** 種の色からアクセント一式を導く。backgrounds はアクセントを文字として載せる面。 */
-export function deriveAccent(seedHex: string, scheme: Scheme, backgrounds: readonly string[]): Accent {
+export function deriveAccent(
+  seedHex: string,
+  scheme: Scheme,
+  backgrounds: readonly string[],
+  tint: Tint = 'neutral',
+): Accent {
   const seed = hexToOklch(seedHex);
-  const soft =
-    scheme === 'light'
-      ? oklchToHex({ l: 0.95, c: Math.min(seed.c, 0.04), h: seed.h })
-      : oklchToHex({ l: 0.3, c: Math.min(seed.c, 0.06), h: seed.h });
+  const softTone = TINT_SPECS[tint].soft[scheme];
+  const soft = oklchToHex({ l: softTone.l, c: Math.min(seed.c, softTone.c), h: seed.h });
   const onSoftSeed =
     scheme === 'light'
       ? { l: 0.4, c: Math.min(seed.c, 0.12), h: seed.h }
       : { l: 0.9, c: Math.min(seed.c, 0.08), h: seed.h };
   // 淡い面の上の文字は、AA（4.5）ではなく AAA（7）を目標にする。長い文を載せる場所なので。
-  const onSoft = fitLightness(onSoftSeed, scheme, [soft], 7);
+  const onSoft = fitLightness(onSoftSeed, scheme, [soft], ON_SOFT_TARGET);
   // 基準は 4.5 だが、ちょうどに張り付かせない。描画（アンチエイリアス）の誤差のぶん余裕を持たせる。
   const accent = fitLightness(seed, scheme, [...backgrounds, soft], ACCENT_TARGET);
   return { accent, onAccent: scheme === 'light' ? ON_DARK_ACCENT : ON_LIGHT_ACCENT, soft, onSoft };
@@ -293,37 +418,36 @@ const check = (id: CheckId, fg: string, bg: string, min: number): ContrastCheck 
 
 /**
  * テーマを組み立てる。gassanTokens は styles.css のその表示の値（--g-surface など）。
- * themesGassan が false なら、gassan のアクセントは既定のまま（墨色）。
+ * themesGassan が false なら、gassan のアクセントは既定のまま（墨色）。背景の色づけ（tint）は、それとは別に効く。
  */
 export function buildTheme(
   seedHex: string,
   scheme: Scheme,
   gassanTokens: Record<string, string>,
   themesGassan: boolean,
+  tint: Tint = 'neutral',
 ): Theme {
-  const site = SITE_NEUTRALS[scheme];
-  const g = (name: string): string => gassanTokens[name] ?? '#000000';
-  const backgrounds = [site['--s-bg'], site['--s-surface'], site['--s-surface-1'], site['--s-surface-2'], g('--g-surface')]
-    .filter((v): v is string => Boolean(v));
-  const accent = deriveAccent(seedHex, scheme, backgrounds);
-
-  const gassan: Record<string, string> = { ...gassanTokens };
-  if (themesGassan) {
-    gassan['--g-accent'] = accent.accent;
-    gassan['--g-on-accent'] = accent.onAccent;
-    gassan['--g-focus'] = accent.accent;
-  }
+  const neutrals = tintNeutrals({ ...SITE_NEUTRALS[scheme], ...gassanTokens }, hexToOklch(seedHex), scheme, tint);
+  const n = (name: string): string => neutrals[name] ?? '#000000';
+  const accent = deriveAccent(seedHex, scheme, [...SITE_TEXT_BACKGROUNDS, '--g-surface'].map(n), tint);
 
   const vars: Record<string, string> = {
-    ...site,
+    ...neutrals,
     '--s-accent': accent.accent,
     '--s-on-accent': accent.onAccent,
     '--s-accent-soft': accent.soft,
     '--s-on-accent-soft': accent.onSoft,
-    ...gassan,
   };
+  if (themesGassan) {
+    vars['--g-accent'] = accent.accent;
+    vars['--g-on-accent'] = accent.onAccent;
+    vars['--g-focus'] = accent.accent;
+  }
 
   const s = (name: string): string => vars[name] ?? '#000000';
+  /** サイトの文字は、載りうる面のうち比がいちばん小さい面で測る。 */
+  const onSiteSurfaces = (id: CheckId, name: string): ContrastCheck =>
+    SITE_TEXT_BACKGROUNDS.map((bg) => check(id, s(name), s(bg), 4.5)).reduce((a, b) => (b.ratio < a.ratio ? b : a));
   const checks: ContrastCheck[] = [
     check('linkBg', s('--s-accent'), s('--s-bg'), 4.5),
     check('linkSurface', s('--s-accent'), s('--s-surface'), 4.5),
@@ -333,10 +457,17 @@ export function buildTheme(
     check('onAccent', s('--s-on-accent'), s('--s-accent'), 4.5),
     // 淡い面の上の文字は AAA（7）を目標にする
     check('onSoft', s('--s-on-accent-soft'), s('--s-accent-soft'), 7),
+    onSiteSurfaces('ink', '--s-ink'),
+    onSiteSurfaces('ink2', '--s-ink-2'),
+    onSiteSurfaces('ink3', '--s-ink-3'),
+    onSiteSurfaces('do', '--s-do'),
+    onSiteSurfaces('dont', '--s-dont'),
+    onSiteSurfaces('caution', '--s-caution'),
     check('gassanPrimary', s('--g-on-accent'), s('--g-accent'), 4.5),
     check('gassanGated', s('--g-on-accent-muted'), s('--g-accent-muted'), 4.5),
     check('gassanBody', s('--g-fg'), s('--g-surface'), 4.5),
     check('gassanMuted', s('--g-fg-muted'), s('--g-surface'), 4.5),
+    check('gassanDanger', s('--g-danger'), s('--g-surface'), 4.5),
     check('focusRing', s('--g-focus'), s('--g-surface'), 3),
     check('fill', s('--g-accent'), s('--g-surface'), 3),
   ];

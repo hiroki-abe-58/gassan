@@ -3,7 +3,14 @@ import type { CSSProperties, ReactNode } from 'react';
 import { Phrase } from '@genelab/gassan';
 
 import { useT } from '../../i18n';
-import { PRESETS, hexToOklch, type ContrastCheck, type PresetId, type Scheme } from '../../theme/engine';
+import {
+  PRESETS,
+  TINTED_GASSAN_TOKENS,
+  hexToOklch,
+  type ContrastCheck,
+  type PresetId,
+  type Scheme,
+} from '../../theme/engine';
 import { themeFor, useTheme } from '../../theme/store';
 import { CodeBlock } from '../../ui/Code';
 import { md, Paras } from '../../ui/Markdown';
@@ -78,6 +85,9 @@ export function Theme(): ReactNode {
   const { nav, common, theme: t } = useT();
   const { state, theme } = useTheme();
   const schemes: readonly Scheme[] = ['light', 'dark'];
+  // 背景を色づけているときは、モーダルの面・枠線・文字の値もコードに足す
+  const tintedLines = TINTED_GASSAN_TOKENS.map((name) => `\n  ${name}: ${theme.vars[name] ?? ''};`).join('');
+  const tinted = state.tint === 'neutral' ? '' : `\n\n  /* ${t.own.tintedComment} */${tintedLines}`;
 
   return (
     <>
@@ -95,6 +105,10 @@ export function Theme(): ReactNode {
           <Swatch color={theme.accent.onAccent} label={t.now.tones.onAccent} />
           <Swatch color={theme.accent.soft} label={t.now.tones.soft} />
           <Swatch color={theme.accent.onSoft} label={t.now.tones.onSoft} />
+          <Swatch color={theme.vars['--s-bg'] ?? ''} label={t.now.tones.bg} />
+          <Swatch color={theme.vars['--s-surface'] ?? ''} label={t.now.tones.surface} />
+          <Swatch color={theme.vars['--s-surface-1'] ?? ''} label={t.now.tones.surface1} />
+          <Swatch color={theme.vars['--g-surface'] ?? ''} label={t.now.tones.modal} />
         </div>
         <ChecksTable checks={theme.checks} caption={t.now.tableCaption} />
       </Section>
@@ -172,7 +186,7 @@ export function Theme(): ReactNode {
       </Section>
 
       <Section id="own" title={t.own.title} intro={t.own.intro}>
-        <CodeBlock lang="css" caption="app.css" code={t.own.code(theme.accent.accent, theme.accent.onAccent)} />
+        <CodeBlock lang="css" caption="app.css" code={t.own.code(theme.accent.accent, theme.accent.onAccent, tinted)} />
         <Prose>
           <Paras items={t.own.body} />
         </Prose>

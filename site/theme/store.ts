@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
 import { data } from '../data';
-import { CUSTOM_PRESET_ID, PRESETS, buildTheme, type Scheme, type Theme } from './engine';
+import { CUSTOM_PRESET_ID, PRESETS, TINTS, buildTheme, type Scheme, type Theme, type Tint } from './engine';
 
 /**
  * サイトのテーマの状態と、その適用。
@@ -18,10 +18,12 @@ export interface ThemeState {
   preset: string;
   /** 任意の色（#rrggbb） */
   custom: string;
+  /** 背景の色づけ */
+  tint: Tint;
 }
 
 const STORAGE_KEY = 'gassan-site-theme';
-const INITIAL: ThemeState = { scheme: 'system', preset: 'default', custom: '#0b6bcb' };
+const INITIAL: ThemeState = { scheme: 'system', preset: 'default', custom: '#0b6bcb', tint: 'neutral' };
 const HEX = /^#[0-9a-f]{6}$/i;
 
 function load(): ThemeState {
@@ -35,7 +37,8 @@ function load(): ThemeState {
         ? (parsed.preset as string)
         : INITIAL.preset;
     const custom = typeof parsed.custom === 'string' && HEX.test(parsed.custom) ? parsed.custom : INITIAL.custom;
-    return { scheme, preset, custom };
+    const tint = TINTS.find((value) => value === parsed.tint) ?? INITIAL.tint;
+    return { scheme, preset, custom, tint };
   } catch {
     // 保存領域が使えない環境（プライベートブラウズ、無効化など）でも、既定のテーマで動く。
     return INITIAL;
@@ -78,7 +81,7 @@ export function themeFor(state: ThemeState, scheme: Scheme = resolveScheme(state
   const custom = state.preset === CUSTOM_PRESET_ID;
   const seed = custom ? state.custom : (preset?.seed ?? PRESETS[0]?.seed ?? '#3346d3');
   const themesGassan = custom ? true : (preset?.themesGassan ?? false);
-  return buildTheme(seed, scheme, gassanTokens(scheme), themesGassan);
+  return buildTheme(seed, scheme, gassanTokens(scheme), themesGassan, state.tint);
 }
 
 interface Snapshot {

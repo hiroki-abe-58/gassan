@@ -3,13 +3,13 @@ import { useId, type CSSProperties, type ReactNode } from 'react';
 import { Modal, Phrase } from '@genelab/gassan';
 
 import { useT } from '../i18n';
-import { CUSTOM_PRESET_ID, PRESETS } from '../theme/engine';
+import { CUSTOM_PRESET_ID, PRESETS, TINTS, type Tint } from '../theme/engine';
 import { resolveScheme, setTheme, themeFor, useTheme, type SchemeChoice } from '../theme/store';
 import { to } from '../router';
 
 const SCHEMES: readonly SchemeChoice[] = ['light', 'dark', 'system'];
 
-/** 表示とプライマリカラーを選ぶ部品。トップバーのポップオーバーとテーマのページの両方で使う。 */
+/** 表示・背景の色づけ・プライマリカラーを選ぶ部品。トップバーのポップオーバーとテーマのページの両方で使う。 */
 export function ThemeControls(): ReactNode {
   const t = useT().common.theme;
   const { state, theme } = useTheme();
@@ -26,6 +26,15 @@ export function ThemeControls(): ReactNode {
           value={state.scheme}
           onValueChange={(value) => setTheme({ scheme: value as SchemeChoice })}
           options={SCHEMES.map((value) => ({ value, label: t.schemes[value] }))}
+        />
+      </fieldset>
+
+      <fieldset className="s-theme-group">
+        <legend>{t.background}</legend>
+        <Modal.Segmented
+          value={state.tint}
+          onValueChange={(value) => setTheme({ tint: value as Tint })}
+          options={TINTS.map((value) => ({ value, label: t.tints[value] }))}
         />
       </fieldset>
 

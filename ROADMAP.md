@@ -35,7 +35,7 @@
 - [x] 要件監査・コントロールの合成レシピ・ライブラリ比較の3文書（`docs/`）
 - [x] `data-*` の受け渡し（D-11。E2E の選択子が通る。予約名は守り、落とすときは警告する）
 - [x] 156 項目の追跡表（`docs/traceability.md`）と、それを機械検証する `check:trace`
-- [x] 527 テスト / 型チェック / lint / dist 検品が CI で通る
+- [x] 531 テスト / 型チェック / lint / dist 検品が CI で通る
 - [x] 公開形態の整備（LICENSE / CHANGELOG / `publishConfig.access` / dual-package の型条件）
 
 **受け入れ条件（すべて満たした）**
@@ -43,7 +43,7 @@
 数値はこの木で `npm run verify` / `npm run check:dist` が出す実測値であり、
 `npm run check:trace` が文書との食い違いを落とす。v0.2.0 で先行着手したシート分を含む。
 
-- `npm run verify` が緑（typecheck → lint → 527 tests → trace → docs → build → dist → SSR → pack）
+- `npm run verify` が緑（typecheck → lint → 531 tests → trace → docs → build → dist → SSR → pack）
 - `dist/index.js` が gzip 35 KB 未満、`styles.css` が gzip 9 KB 未満
   （2026-10-18 に 22 KB / 6 KB から 34 KB / 9 KB に引き上げた。入力部品 18 個を本体に入れたため。名前つき import でモーダルの部品だけを使えば、入力部品は tree shaking で落ちる。
   同日、折り返しの崩れの洗い出し（仕様 §10-33）で JS を 35 KB に。`Phrase` は全部品が使うので tree shaking では落ちない）
