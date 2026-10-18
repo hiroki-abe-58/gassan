@@ -6,7 +6,7 @@
  *   - サイト内リンクは #/path で書く。言語の頭（#/en/...）は描くときに付く
  *   - 数や名前を差し込む文は関数にする
  */
-import type { CUSTOM_PRESET_ID, CheckId, PresetId } from '../../theme/engine';
+import type { CUSTOM_PRESET_ID, CheckId, PresetId, Tint } from '../../theme/engine';
 
 export default {
   siteTitle: 'gassan — ネイティブ dialog のためのモーダルシェル',
@@ -35,6 +35,8 @@ export default {
     close: '閉じる',
     scheme: '表示',
     schemes: { light: 'ライト', dark: 'ダーク', system: 'OS に合わせる' },
+    background: '背景',
+    tints: { neutral: '無彩色', soft: '淡い', strong: '濃い' } satisfies Record<Tint, string>,
     primary: 'プライマリカラー',
     presets: {
       default: '既定',
@@ -66,10 +68,17 @@ export default {
       linkSoft: 'リンク（淡い面の上）',
       onAccent: '塗りのボタンの文字',
       onSoft: '淡い面の文字（AAA を目標）',
+      ink: '本文（いちばん比の小さい面）',
+      ink2: '補足の文字（いちばん比の小さい面）',
+      ink3: '控えめな文字（いちばん比の小さい面）',
+      do: '「Do」の色の文字（いちばん比の小さい面）',
+      dont: "「Don't」の色の文字（いちばん比の小さい面）",
+      caution: '「Caution」の色の文字（いちばん比の小さい面）',
       gassanPrimary: 'モーダルの primary の文字',
       gassanGated: 'モーダルのゲート中の primary の文字',
       gassanBody: 'モーダルの本文',
       gassanMuted: 'モーダルの補足・tertiary',
+      gassanDanger: 'モーダルのエラー文',
       focusRing: 'フォーカスリング（非テキスト）',
       fill: 'スイッチ・選択中のチップの塗り（非テキスト）',
     } satisfies Record<CheckId, string>,
