@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { useModals } from '@genelab/gassan';
+import { Phrase, useModals } from '@genelab/gassan';
 import { fmt, useDemoText } from '../i18n';
 
 // t:host
@@ -19,7 +19,7 @@ export default function ImperativeConfirm(): ReactNode {
           setLog(`confirm → ${String(ok)}`);
         }}
       >
-        {t.callOne}
+        <Phrase>{t.callOne}</Phrase>
       </button>
       <button
         type="button"
@@ -31,9 +31,11 @@ export default function ImperativeConfirm(): ReactNode {
           setLog(fmt(t.secondLog, String(ok)));
         }}
       >
-        {t.callTwo}
+        <Phrase>{t.callTwo}</Phrase>
       </button>
-      <output className="s-demo-log">{log}</output>
+      <output className="s-demo-log">
+        <Phrase>{log}</Phrase>
+      </output>
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { Modal } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 import '@genelab/gassan/styles.css';
 import { useDemoText } from '../i18n';
 
@@ -11,7 +11,7 @@ export default function QuickStart(): ReactNode {
   return (
     <>
       <button type="button" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
 
       {/* t:alwaysMounted */}

@@ -100,6 +100,33 @@ const PREFIXES = new Set(['お', 'ご', 'この', 'その', 'あの', 'どの', 
 
 const lastChar = (s: string): string => s.slice(-1);
 
+/** 全角の句読点。後ろで必ず折ってよい（半角の「.」「,」は小数や桁区切りにも使うので含めない）。 */
+const TERMINAL = /[、。，．！？]/u;
+
+/**
+ * 長い文節（LONG 文字を超える）の中でだけ使う、2 番目の切れ目。
+ *
+ * 文節で折る規則だけだと、カタカナの複合語（「モジュールレベルディレクティブは」）や
+ * 補助的な動詞の連なり（「閉じ込められないようにするための」）が 1 つの長い塊になり、
+ * 狭い器（スマホのボタン・表のセル）では W-02 の安全弁が文字単位で折る（「…するため｜の」）。
+ * そこで、長い塊に限って、語として確かな切れ目でも折れるようにする。短い文節は今までどおり 1 つのまま。
+ *
+ *   - カタカナの語どうし。ただし両側とも 3 文字以上（ICU は辞書に無いカタカナ語を
+ *     「デ｜ィ｜レ｜ク」と 1 文字ずつに割るので、短い断片の間では折らない）
+ *   - 助詞の後の補助的な動詞（「…ように｜する」「…ことに｜なる」）
+ */
+const LONG = 9;
+const SMALL_KANA = /[ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ]/u;
+const AUXILIARY_VERBS = new Set(['する', 'なる', 'いる', 'ある', 'できる', 'みる', 'おく']);
+
+function canBreakLong(a: string, b: string): boolean {
+  const left = classOf(lastChar(a));
+  const right = classOf(b.charAt(0));
+  if (SMALL_KANA.test(b.charAt(0))) return false;
+  if (left === 'kata' && right === 'kata') return [...a].length >= 3 && [...b].length >= 3;
+  return PARTICLES.has(a) && AUXILIARY_VERBS.has(b);
+}
+
 /** 語 a と語 b の間で改行してよいか。before は a の直前の文字（a が先頭なら空）。 */
 function canBreak(a: string, b: string, before: string): boolean {
   const left = classOf(lastChar(a));
@@ -111,6 +138,8 @@ function canBreak(a: string, b: string, before: string): boolean {
   if (PREFIXES.has(a)) return false;
 
   const contentStarts = right === 'han' || right === 'kata' || right === 'alnum' || right === 'open';
+  // 句読点の後は、何が始まっても折ってよい（「…当てない。｜×ボタンに」）。記号で始まる文も行頭に立てる。
+  if (TERMINAL.test(lastChar(a))) return true;
   if (left === 'close') {
     // 「…」を ／ 120万円。｜4月 ／ はい、｜すぐに
     return contentStarts || (right === 'hira' && !FUNCTION_WORDS.has(b));
@@ -179,10 +208,24 @@ function getSegmenter(): SegmenterLike | null {
   return segmenter;
 }
 
+/**
+ * ICU の辞書が誤って切る並びを直す。て形の後の「はい」は感動詞ではなく、助詞「は」と動詞の頭
+ * （「し｜て｜はい｜け｜ない」→「し｜て｜は｜いけ｜ない」。直さないと「しては｜いけない」で折れない）。
+ */
+function repair(ws: string[]): string[] {
+  for (let i = 1; i < ws.length - 1; i += 1) {
+    if (ws[i] === 'はい' && /[てで]$/u.test(ws[i - 1] ?? '') && HIRAGANA.test(ws[i + 1]?.charAt(0) ?? '')) {
+      ws[i] = 'は';
+      ws[i + 1] = `い${ws[i + 1] ?? ''}`;
+    }
+  }
+  return ws;
+}
+
 /** 語の候補。Intl.Segmenter が無い環境では、同じ文字種の連なりで近似する。 */
 function words(text: string): string[] {
   const seg = getSegmenter();
-  if (seg) return [...seg.segment(text)].map((s) => s.segment);
+  if (seg) return repair([...seg.segment(text)].map((s) => s.segment));
   const out: string[] = [];
   for (const ch of text) {
     const prev = out[out.length - 1];
@@ -190,6 +233,109 @@ function words(text: string): string[] {
     else out.push(ch);
   }
   return out;
+}
+
+/**
+ * 文節の中で、ブラウザ自身が改行してしまう境目を「糊」で留める。W-01 / W-04。
+ *
+ * keep-all の器の中でも、Chrome は次の境目で折る（実測）。文節の中なら、付属語や単位が行頭に立つ。
+ *   「×｜ボタンに」「空｜＝条件」（記号の後）、「規約」｜が」（閉じ括弧の後のひらがな）、
+ *   「Esc｜を押す」「close()｜した」（英数字・記号＋空白の後の付属語）、「30｜日後」「第 2｜层」（数と単位の間の空白）。
+ * 英数字とかな・ハングルが空白なしで接する境目（「Rating과」）は、同じ器の中なら折らないが、
+ * 要素の境目（器の外の code の直後）では折るので、同じく留める。
+ *
+ * 文字を足さずにこれを止めるため、境目の前後の数文字を white-space: nowrap の器（.g-nobr）に入れる。
+ * 器は数文字なので、器より長くなって溢れることは無い。重なる・隣り合う糊は 1 つにまとめる。
+ * CJK の括弧と句読点の前後は留めない（行頭・行末の禁則は UAX #14 がもともと守る）。
+ *
+ * 返すのは [文字列, 糊か] の並び。連結すると必ず元の文字列に戻る。
+ */
+const LETTER = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}ー]/u;
+const JA_LETTER = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}ー]/u;
+const CJK_PUNCT = /[、。，．！？」』）〕】〉》］｝「『（〔【〈《［｛]/u;
+const CJK_CLOSE = /[」』）〕】〉》］｝]/u;
+const DIGIT = /\p{Nd}/u;
+/** 英文の区切り。「A, それ」の空白は折ってよい。 */
+const SENTENCE_END = /[,.;:!?]/u;
+
+/**
+ * 境目 i（chars[i - 1] と chars[i] の間）を留めるなら、留める範囲の長さ（i から何文字さかのぼるか）。0 は留めない。
+ */
+function gluesAt(chars: readonly string[], i: number, script: PhraseScript): number {
+  const a = chars[i - 1] ?? '';
+  const b = chars[i] ?? '';
+  if (!a || !b) return 0;
+  if (!SPACE.test(a) && !SPACE.test(b)) {
+    // 文節の中の「」が」「）は」。閉じ括弧の後でブラウザは折るが、続くひらがなは付属語（文節の切れ目なら <wbr> が先に入る）
+    if (CJK_CLOSE.test(a) && HIRAGANA.test(b)) return 1;
+    const letterA = LETTER.test(a);
+    if (letterA === LETTER.test(b)) return 0;
+    return CJK_PUNCT.test(letterA ? b : a) ? 0 : 1;
+  }
+  // 「英数字・記号 + 空白 + 付属語」と「数 + 空白 + 単位」の空白。日本語は「Esc を」「close() した」「30 日」「1 つ」、
+  // 中国語は数と量詞（「第 2 层」「30 天」）だけ。「overlay プロパティ」「DOM 検索」の空白は語の切れ目なので折ってよい。
+  // 韓国語は空白が語の切れ目なので留めない。空白を器の端に置くと、名前の計算で空白が落ちる実装がある
+  // （「Escを」と読まれる）ので、空白の前の文字から 3 文字を留める。
+  if (script === 'ko' || !SPACE.test(a) || SPACE.test(b)) return 0;
+  const before = chars[i - 2] ?? '';
+  if (!before || SPACE.test(before) || LETTER.test(before) || CJK_PUNCT.test(before) || SENTENCE_END.test(before)) return 0;
+  if (DIGIT.test(before)) return (script === 'ja' ? JA_LETTER : HAN).test(b) ? 2 : 0;
+  return script === 'ja' && HIRAGANA.test(b) ? 2 : 0;
+}
+
+export interface GlueResult {
+  /** [文字列, 糊か] の並び。連結すると必ず元の文字列に戻る。 */
+  segments: readonly (readonly [string, boolean])[];
+  /** 先頭の糊が、直前の要素（before の文字で終わる <a> や <strong>）と留まる。 */
+  joinsPrevious: boolean;
+}
+
+/**
+ * before は、この文字列の直前に並ぶ要素（リンク・強調・コード）の最後の文字。
+ * 「[recipes.md](…)에」「**Baseline** なので」のように、要素をまたぐ境目も同じ規則で留めるために使う。
+ */
+export function glueSegments(text: string, script: PhraseScript, before = ''): GlueResult {
+  const chars = before ? [before, ...text] : [...text];
+  const glued = new Array<boolean>(chars.length).fill(false);
+  for (let i = 1; i < chars.length; i += 1) {
+    const span = gluesAt(chars, i, script);
+    for (let k = 0; span > 0 && k <= span; k += 1) glued[i - k] = true;
+  }
+  const offset = before ? 1 : 0;
+  const joinsPrevious = before ? Boolean(glued[0] && glued[1]) : false;
+  const segments: [string, boolean][] = [];
+  chars.slice(offset).forEach((ch, i) => {
+    const isGlue = glued[i + offset] ?? false;
+    const last = segments[segments.length - 1];
+    if (last && last[1] === isGlue) last[0] += ch;
+    else segments.push([ch, isGlue]);
+  });
+  return { segments, joinsPrevious };
+}
+
+/**
+ * a で終わる要素と b で始まる要素の境目が、文節（中国語は語）の切れ目か。
+ * 要素の境目には <wbr> が入らず、両側の文字が keep-all の器にあると、そこでは折れない。
+ * 「」と」＋「**読み上げた**」のような境目を放っておくと、前後がつながった長い塊になり、
+ * 安全弁（W-02）が文節の途中で折る。「ための」＋「`history.back()`」のような、かなと英数字の境目も同じ。
+ * 境目の両側が文字（漢字・かな・英数字）で、英数字どうしではないときだけ見る。
+ */
+export function breaksBetween(a: string, b: string): boolean {
+  const tail = splitPhrases(a).at(-1) ?? '';
+  const head = splitPhrases(b)[0] ?? '';
+  const x = lastChar(tail);
+  const y = head.charAt(0);
+  const isWord = (ch: string): boolean => LETTER.test(ch) || ALNUM.test(ch);
+  if (!isWord(x) || !isWord(y) || (ALNUM.test(x) && ALNUM.test(y))) return false;
+  const script = scriptOf(tail + head);
+  if (script !== 'ja' && script !== 'zh') return false;
+  let at = 0;
+  for (const phrase of splitPhrases(tail + head)) {
+    at += phrase.length;
+    if (at === tail.length) return true;
+    if (at > tail.length) return false;
+  }
+  return false;
 }
 
 const cache = new Map<string, readonly string[]>();
@@ -211,20 +357,41 @@ export function splitPhrases(text: string): readonly string[] {
   if (cached) return cached;
 
   const ws = words(text);
-  const phrases: string[] = [];
-  let current = ws[0] ?? '';
+  // まず文節（語の並び）にまとめ、長すぎる文節だけを 2 番目の切れ目でさらに分ける。
+  const groups: string[][] = [];
+  let current: string[] = ws.length > 0 ? [ws[0] ?? ''] : [];
   for (let i = 1; i < ws.length; i += 1) {
     const prev = ws[i - 1] ?? '';
     const next = ws[i] ?? '';
     const before = lastChar(ws[i - 2] ?? '');
     if (script === 'ja' ? canBreak(prev, next, before) : canBreakZh(prev, next, ws[i + 1] ?? '')) {
-      phrases.push(current);
-      current = next;
+      groups.push(current);
+      current = [next];
     } else {
-      current += next;
+      current.push(next);
     }
   }
-  phrases.push(current);
+  groups.push(current);
+
+  const phrases: string[] = [];
+  for (const group of groups) {
+    const whole = group.join('');
+    if (script !== 'ja' || [...whole].length <= LONG) {
+      phrases.push(whole);
+      continue;
+    }
+    let part = group[0] ?? '';
+    for (let i = 1; i < group.length; i += 1) {
+      const next = group[i] ?? '';
+      if (canBreakLong(group[i - 1] ?? '', next)) {
+        phrases.push(part);
+        part = next;
+      } else {
+        part += next;
+      }
+    }
+    phrases.push(part);
+  }
 
   if (cache.size >= CACHE_LIMIT) cache.clear();
   cache.set(text, phrases);

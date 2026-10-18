@@ -58,7 +58,10 @@ describe('chart / B-14', () => {
     const figure = screen.getByRole('figure', { name: '月別の売上' });
     expect(figure).toHaveAccessibleDescription('3月が最大で、以降は横ばい。');
     // 要約は読み上げ専用ではなく、画面にも出ている。
-    expect(screen.getByText('3月が最大で、以降は横ばい。')).toBeVisible();
+    // getByText の完全一致では引かない。文節の中の糊（.g-nobr）で文字列が要素に分かれるため（W-01）。
+    const summary = document.getElementById(figure.getAttribute('aria-describedby') ?? '');
+    expect(summary).toHaveTextContent('3月が最大で、以降は横ばい。');
+    expect(summary).toBeVisible();
   });
 
   it('既定では視覚チャートを支援技術から隠す', () => {

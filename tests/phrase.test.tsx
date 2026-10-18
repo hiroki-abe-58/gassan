@@ -13,6 +13,7 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import { GassanProvider, Modal, Phrase, englishLabels, splitPhrases } from '../src';
+import { glueSegments, scriptOf } from '../src/internal/phrase';
 import { renderModal } from './utils';
 
 const noop = (): void => {};
@@ -49,6 +50,25 @@ describe('W-01 文節に分ける（splitPhrases）', () => {
     for (const phrase of splitPhrases(text).slice(1)) {
       expect(phrase).not.toMatch(/^[、。）」』]/);
     }
+  });
+
+  it('句読点の後は、記号で始まる文でも折ってよい（「当てない。｜×ボタンに」）', () => {
+    expect(splitPhrases('）。×ボタンに当てる')).toEqual(['）。', '×ボタンに', '当てる']);
+  });
+
+  it('長い文節だけは、カタカナの語の切れ目と「…ように｜する」でも折る（狭い器で文字単位に落ちない）', () => {
+    expect(splitPhrases('閉じ込められないようにするための濫用防止')).toEqual(['閉じ込められないように', 'するための', '濫用防止']);
+    expect(splitPhrases('モジュールレベルディレクティブは削除される')).toEqual(['モジュール', 'レベルディレクティブは', '削除される']);
+    // ICU が 1 文字ずつに割ったカタカナ語（ア｜ク｜セ…）の中では折らない。短い文節も分けない
+    expect(splitPhrases('アクセシビリティツリーで名前に混ざる')).toEqual(['アクセシビリティツリーで', '名前に', '混ざる']);
+    expect(splitPhrases('有効にする')).toEqual(['有効にする']);
+  });
+
+  it('ICU が「し｜て｜はい｜け｜ない」と切る「てはいけない」を、「しては｜いけない」で折る', () => {
+    expect(splitPhrases('閉じてはいけない。')).toEqual(['閉じては', 'いけない。']);
+    expect(splitPhrases('使ってはいられない')).toEqual(['使っては', 'いられない']);
+    // 文頭の感動詞の「はい」はそのまま
+    expect(splitPhrases('はい、閉じます')).toEqual(['はい、', '閉じます']);
   });
 
   it('複合語の中の送り仮名では折らない（置き｜配・読み｜込み）', () => {
@@ -109,6 +129,168 @@ describe('W-04 中国語は語の切れ目で分ける（splitPhrases）', () =>
     for (const text of ['只允许上传 JPG、PNG 格式的图片', '3月份最高，为120万元。4月以后持平。', '將此頁面加入書籤']) {
       expect(splitPhrases(text).join('')).toBe(text);
     }
+  });
+});
+
+describe('W-01 / W-04 文節の中でブラウザが折る境目を留める（glueSegments）', () => {
+  const glued = (text: string, script: 'ja' | 'zh' | 'ko'): string[] =>
+    glueSegments(text, script)
+      .segments.filter(([, isGlue]) => isGlue)
+      .map(([part]) => part);
+
+  it('かな・漢字・ハングルと英数字・記号の境目を留める（「Rating｜과」「×｜ボタン」にしない）', () => {
+    expect(glued('Rating과', 'ko')).toEqual(['g과']);
+    expect(glued('“연두색”을', 'ko')).toEqual(['“연', '색”을']);
+    expect(glued('×ボタンに', 'ja')).toEqual(['×ボ']);
+    expect(glued('「空＝条件が', 'ja')).toEqual(['空＝条']);
+  });
+
+  it('日本語で、英数字・記号の後の空白と付属語、数と単位を留める（「Esc｜を押す」「30｜日後」にしない）', () => {
+    // 空白を器の端に置かない（名前の計算で落ちる実装がある）。前の文字から 3 文字を留める
+    expect(glued('Esc を押す', 'ja')).toEqual(['c を']);
+    expect(glued('close() した', 'ja')).toEqual([') し']);
+    expect(glued('30 日後に', 'ja')).toEqual(['0 日']);
+    // 英単語の後の名詞は語の切れ目。英文の区切りの後も折ってよい
+    expect(glued('overlay プロパティ', 'ja')).toEqual([]);
+    expect(glued('DOM 検索', 'ja')).toEqual([]);
+    expect(glued('A, それ', 'ja')).toEqual([]);
+    // 韓国語は語を空白で区切るので、空白は留めない
+    expect(glued('Esc 키를', 'ko')).toEqual([]);
+    expect(glued('3 개', 'ko')).toEqual([]);
+  });
+
+  it('中国語は数と量詞の間の空白を留める（「第 2｜层」「30｜天」にしない）。語と語の間の空白は留めない', () => {
+    expect(glued('第 2 层和第 3 层', 'zh')).toEqual(['2 层', '3 层']);
+    expect(glued('至少 30 天通知', 'zh')).toEqual(['0 天']);
+    expect(glued('用 Modal 包装', 'zh')).toEqual([]);
+  });
+
+  it('文節の中の閉じ括弧と付属語を留める（「」｜が」で助詞を行頭に立たせない）', () => {
+    expect(glued('「規約」が', 'ja')).toEqual(['」が']);
+  });
+
+  it('CJK の括弧と句読点、かなどうし、英語どうしは留めない（禁則はもともと守られる）', () => {
+    expect(glued('「同意する」。', 'ja')).toEqual([]);
+    expect(glued('プロフィールを編集', 'ja')).toEqual([]);
+    expect(glued('Modal Field', 'ja')).toEqual([]);
+  });
+
+  it('要素をまたぐ境目も留める（「[recipes.md](…)｜에」「**Baseline**｜なので」）', () => {
+    const { container } = render(
+      <p>
+        <Phrase>
+          <a href="#x">recipes.md</a>에 있다. <strong>Baseline</strong> なので
+        </Phrase>
+      </p>,
+    );
+    const joined = [...container.querySelectorAll('.g-nobr')].map((el) => el.textContent);
+    expect(joined).toContain('recipes.md에');
+    expect(joined).toContain('Baseline な');
+    // 束は後ろの文節の器の中に入る。器の外だと、束の直後（「な｜ので」）で折れる
+    expect(container.querySelector('.g-phrase > .g-nobr > a')).not.toBeNull();
+    expect(container.querySelector('.g-phrase > .g-nobr > strong')?.parentElement?.parentElement?.textContent).toBe(
+      'Baseline なので',
+    );
+  });
+
+  it('束ねた要素の中は、最後の 1 文字より前を .g-wrap で折れるようにする（長いコードがはみ出さず、「break-word｜は」では折れない）', () => {
+    const { container } = render(
+      <p>
+        <Phrase>
+          器の<code>overflow-wrap: break-word</code> は使わない
+        </Phrase>
+      </p>,
+    );
+    expect(container.querySelector('.g-nobr')?.textContent).toBe('overflow-wrap: break-word は');
+    expect(container.querySelector('.g-nobr > code > .g-wrap')?.textContent).toBe('overflow-wrap: break-wor');
+    // 分けても文字列は元のまま
+    expect(container.querySelector('code')?.textContent).toBe('overflow-wrap: break-word');
+    expect(container.querySelector('p')?.textContent).toBe('器のoverflow-wrap: break-word は使わない');
+  });
+
+  it('入れ子の要素を束ねても、最後の 1 文字は束の側に残る（「**…非 Baseline**｜なので」で折れない）', () => {
+    const { container } = render(
+      <p>
+        <Phrase>
+          <strong>
+            ただし <code>overlay</code> は非 Baseline
+          </strong>
+          {' なので使う'}
+        </Phrase>
+      </p>,
+    );
+    const strong = container.querySelector('.g-nobr > strong');
+    if (!strong) throw new Error('strong が束ねられていない');
+    const walker = document.createTreeWalker(strong, NodeFilter.SHOW_TEXT);
+    let last: Node | null = null;
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) last = node;
+    expect(last?.textContent?.endsWith('e')).toBe(true);
+    // 最後の文字が .g-wrap（折れる側）に入ると、要素と「な」の境目でまた折れる
+    expect(last?.parentElement?.closest('.g-wrap')).toBeNull();
+    expect(container.querySelector('p')?.textContent).toBe('ただし overlay は非 Baseline なので使う');
+  });
+
+  it('かなと英数字の要素の境目も、文節の切れ目なら <wbr> を置く（「ための」＋「history.back()」）', () => {
+    const html = renderToString(
+      <Phrase>
+        片付けるための<code>history.back()</code>が届く
+      </Phrase>,
+    );
+    expect(html).toContain('ための<wbr aria-hidden="true"/></span><span class="g-phrase"><span class="g-nobr"><code>');
+  });
+
+  it('要素の境目が文節の切れ目なら <wbr> を置く（「」と」＋「**読み上げた**」を 1 つの塊にしない）', () => {
+    const html = renderToString(
+      <Phrase>
+        「閉じられません」と<strong>読み上げた直後に</strong>閉じた。<strong>中断</strong>として扱う
+      </Phrase>,
+    );
+    // <wbr> は文字列の器の末尾・頭に置く（要素の兄弟として置かない）
+    expect(html).toContain('」と</span><wbr aria-hidden="true"/></span><strong>');
+    expect(html).toContain('</strong><span class="g-phrase"><wbr aria-hidden="true"/>閉じた');
+    // 「中断として」は 1 つの文節。境目に <wbr> を置かない
+    expect(html).toContain('中断</span></strong><span class="g-phrase">として');
+  });
+
+  it('表の行・リスト・ブロックの間には、境目の <wbr> も糊も置かない（構造を壊さない）', () => {
+    const { container } = render(
+      <Phrase>
+        <table>
+          <tbody>
+            <tr>
+              <td>項目A</td>
+              <td>項目B</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul>
+          <li>設定の</li>
+          <li>読み上げ</li>
+        </ul>
+        <div>Esc</div> を押す
+      </Phrase>,
+    );
+    expect(container.querySelector('tr > wbr, ul > wbr')).toBeNull();
+    // ブロックの要素は糊で束ねない（「Esc を」は文の中の要素なら束ねる組み合わせ）
+    expect(container.querySelector('.g-nobr > div')).toBeNull();
+  });
+
+  it('韓国語は「·」で並べた語の後で折ってよい（長い並びを語の途中で折らない）', () => {
+    const html = renderToString(<Phrase>SearchInput·Textarea·NumberField 컴포넌트</Phrase>);
+    expect(html.match(/<wbr aria-hidden="true"\/>/g)).toHaveLength(2);
+  });
+
+  it('つなぎ直すと必ず元の文字列に戻り、名前も変わらない', () => {
+    for (const text of ['Esc を押すと 30 日後に閉じる', 'SearchInput·Rating과, 이전부터', '“연두색”을 색조']) {
+      expect(glueSegments(text, scriptOf(text) ?? 'ja').segments.map(([part]) => part).join('')).toBe(text);
+    }
+    const { container } = render(
+      <button type="button">
+        <Phrase>Esc を押すと閉じる</Phrase>
+      </button>,
+    );
+    expect(container.querySelector('.g-nobr')?.textContent).toBe('c を');
+    expect(screen.getByRole('button')).toHaveAccessibleName('Esc を押すと閉じる');
   });
 });
 
@@ -190,6 +372,38 @@ describe('W-05 効かせる場所', () => {
     for (const selector of ['.g-title-text', '.g-desc', '.g-footer-note', '.g-btn-label']) {
       expect(container.querySelector(`${selector} .g-phrase wbr`)).not.toBeNull();
     }
+  });
+
+  it('本文とセクションに直に書いた段落・リストの文字列も文節で折る', () => {
+    const { container } = renderModal({
+      children: (
+        <Modal.Body>
+          <p>
+            <strong>第1条</strong> 本サービスは利用者のデータを第三者へ提供しない。
+          </p>
+          <Modal.Section title="お知らせ">
+            <ul>
+              <li>規約を確認する</li>
+            </ul>
+          </Modal.Section>
+        </Modal.Body>
+      ),
+    });
+    expect(container.querySelector('.g-body-inner > p .g-phrase wbr')).not.toBeNull();
+    expect(container.querySelector('.g-section li .g-phrase wbr')).not.toBeNull();
+  });
+
+  it('select の選択肢には手を出さない（option は文字列しか持てない）', () => {
+    const { container } = renderModal({
+      children: (
+        <Modal.Body>
+          <select aria-label="配送方法" defaultValue="a">
+            <option value="a">通常便で届ける</option>
+          </select>
+        </Modal.Body>
+      ),
+    });
+    expect(container.querySelector('option')?.innerHTML).toBe('通常便で届ける');
   });
 
   it('表のセルの文字列にも効く（素の HTML 要素の中まで潜る）', () => {

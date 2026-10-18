@@ -38,7 +38,7 @@ export function Guideline({
           <span className="s-guideline-icon" aria-hidden="true">
             {tone === 'do' ? '✓' : tone === 'dont' ? '✕' : '!'}
           </span>
-          {t.common.guideline[tone]}
+          <Phrase>{t.common.guideline[tone]}</Phrase>
         </p>
         <div className="s-guideline-text">
           <Phrase>{children}</Phrase>
@@ -70,7 +70,9 @@ export function MockScreen({
     <div className="s-mock-screen" style={style} data-align={align}>
       <div className="s-mock-app">
         <span className="s-mock-appbar" />
-        <span className="s-mock-heading">{t.common.mock.heading}</span>
+        <span className="s-mock-heading">
+          <Phrase>{t.common.mock.heading}</Phrase>
+        </span>
         <span className="s-mock-grid">
           <i />
           <i />
@@ -111,23 +113,26 @@ export function MockPanel({
   children?: ReactNode;
 }): ReactNode {
   const style = { '--s-mock-w': `${String(width)}%` } as CSSProperties;
+  // 見本のパネルの中の文字（題・補足・ボタン）も、本物と同じく文節で折る。
   return (
-    <div className="s-mock-panel" style={style} data-sheet={sheet ? '' : undefined}>
-      {sheet ? <span className="s-mock-grip" /> : null}
-      {title ? <span className="s-mock-title">{title}</span> : null}
-      {Array.from({ length: lines }, (_, i) => (
-        <span key={i} className="s-mock-line" />
-      ))}
-      {children}
-      {buttons.length > 0 ? (
-        <span className="s-mock-footer" data-stack={stack ? '' : undefined}>
-          {buttons.map((button, i) => (
-            <span key={i} className="s-mock-btn" data-variant={button.variant ?? 'secondary'}>
-              {button.label}
-            </span>
-          ))}
-        </span>
-      ) : null}
-    </div>
+    <Phrase>
+      <div className="s-mock-panel" style={style} data-sheet={sheet ? '' : undefined}>
+        {sheet ? <span className="s-mock-grip" /> : null}
+        {title ? <span className="s-mock-title">{title}</span> : null}
+        {Array.from({ length: lines }, (_, i) => (
+          <span key={i} className="s-mock-line" />
+        ))}
+        {children}
+        {buttons.length > 0 ? (
+          <span className="s-mock-footer" data-stack={stack ? '' : undefined}>
+            {buttons.map((button, i) => (
+              <span key={i} className="s-mock-btn" data-variant={button.variant ?? 'secondary'}>
+                {button.label}
+              </span>
+            ))}
+          </span>
+        ) : null}
+      </div>
+    </Phrase>
   );
 }

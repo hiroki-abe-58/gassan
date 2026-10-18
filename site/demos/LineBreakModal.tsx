@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { GassanProvider, Modal } from '@genelab/gassan';
+import { GassanProvider, Modal, Phrase } from '@genelab/gassan';
 import { useDemoText } from '../i18n';
 
 export default function LineBreakModal(): ReactNode {
@@ -14,7 +14,7 @@ export default function LineBreakModal(): ReactNode {
         {t.toggle}
       </Modal.Switch>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
 
       {/* t:mode */}

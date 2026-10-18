@@ -625,6 +625,12 @@
     overflow-wrap: break-word;
     line-break: strict;
   }
+  /* 文節の中で、ブラウザ自身が折ってしまう境目（「×｜ボタン」「」｜が」「Esc｜を」）の前後数文字。
+   * keep-all は記号・閉じ括弧の後と、空白の後の改行を消さないので、数文字だけ折らせない。
+   * 要素をまたぐ「`close()` した」は要素ごと束ね（Phrase が文節の器の中に置く）、要素の中の最後の 1 文字より
+   * 前を .g-wrap で折れるようにする。長いコードもはみ出さず、要素と付属語の境目だけが留まる。 */
+  .g-nobr { white-space: nowrap; }
+  .g-wrap { white-space: normal; }
 
   /* --- 3.9 focus ---------------------------------------------------------
    * 既定のリング。:where() で詳細度を 0 にして、部品が自分で決めた値を必ず勝たせる。
@@ -757,15 +763,19 @@
 
   /* --- 5.3 footer ----------------------------------------------------------
    * [note][tertiary ………… secondary primary]
-   * ボタン列は残り幅を占め（flex: 1）、最初の tertiary だけを左へ分離する（F-03）。 */
+   * ボタン列は残り幅を占め、最初の tertiary だけを左へ分離する（F-03）。
+   * 基準幅は中身（flex: auto）。flex: 1 の基準幅 0 だと、補足と同じ行に収まらないときも折り返さず、
+   * ボタンが押し縮められて英語のラベルが「Save / draft」と割れた。収まらなければボタン列ごと次の行へ送り、
+   * 補足は auto margin で左に残す（同じ行にあるときは、伸びるボタン列が余白を取るので 0 になる）。 */
   .g-footer-note {
     margin: 0;
+    margin-inline-end: auto;
     font-size: 0.8125rem;
     color: var(--g-fg-muted);
     max-inline-size: 28ch;
   }
   .g-footer-actions {
-    flex: 1;
+    flex: auto;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -779,7 +789,7 @@
    * 5.3 の後に置くこと。前に置くと同じ詳細度の上の規則に負ける。 */
   @container g-panel (max-width: 400px) {
     .g-footer { flex-direction: column; align-items: stretch; }
-    .g-footer-note { max-inline-size: none; }
+    .g-footer-note { max-inline-size: none; margin-inline-end: 0; }
     .g-footer-actions {
       flex: none;
       flex-direction: column;

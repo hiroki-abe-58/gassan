@@ -58,6 +58,7 @@ export function ModalBody({
   ...rest
 }: ModalBodyProps): ReactNode {
   const labels = useLabels();
+  const phrase = usePhrase();
   const { ids, bodyRef, open, scrollBodyByPage } = useModalContext('Modal.Body');
   const innerRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -157,14 +158,15 @@ export function ModalBody({
       onScroll={handleScroll}
     >
       <div className="g-body-inner" ref={innerRef}>
-        {children}
+        {/* 本文に直に書いた段落やリストの文字列も文節で折る（W-05）。部品の中には潜らない（部品は自分で折る）。 */}
+        {phrase(children)}
         {readGate ? (
           <>
             {/* 交差観測用。視覚にも支援技術にも出さない。 */}
             <div ref={sentinelRef} className="g-sentinel" aria-hidden="true" />
             {/* フォーカス到達用。フォーカスされたときだけ可視になる。 */}
             <span className="g-end-marker" tabIndex={0} onFocus={markRead}>
-              {labels.endOfContent}
+              {phrase(labels.endOfContent)}
             </span>
           </>
         ) : null}
@@ -206,7 +208,7 @@ export function ModalSection({
   if (title === undefined || title === null || title === false) {
     return (
       <div {...domPassthrough(rest, 'Modal.Section')} className={classes}>
-        {children}
+        {phrase(children)}
       </div>
     );
   }
@@ -222,7 +224,7 @@ export function ModalSection({
       <Heading id={headingId} className="g-section-title">
         {phrase(title)}
       </Heading>
-      {children}
+      {phrase(children)}
     </section>
   );
 }

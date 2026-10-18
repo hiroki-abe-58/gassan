@@ -61,6 +61,29 @@ jobs:
       - name: Build documentation site
         run: npm run site:build
 
+  # 日本語・中国語・韓国語の折り返しを、実ブラウザで改行位置を測って確かめる（W-01〜W-05）。
+  # jsdom はレイアウトを持たないので単体テストでは書けない。全ページ・全言語・4 つの幅・デモのモーダルを開く。
+  line-breaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # サイトはシステムフォントで描くので、CJK のフォントが無いと豆腐になり、幅が実機とかけ離れる。
+      - name: Install CJK fonts
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+
+      - run: npm ci
+      - run: npm run site:build
+      - name: Check line breaks in the documentation site
+        run: npm run check:breaks
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+
   # 利用者の立場からの検証。tarball を実インストールし、ESM / CJS / CSS が引けるか、
   # bundler / node16 / nodenext の3方式すべてで型が解決できるかを見る。
   # ネットワークを使うので verify とは別ジョブにしてある。

@@ -86,7 +86,8 @@
     "check:trace": "node scripts/check-trace.mjs",
     "prepublishOnly": "npm run verify",
     "check:consumer": "node scripts/check-consumer.mjs",
-    "check:docs": "node scripts/check-docs.mjs"
+    "check:docs": "node scripts/check-docs.mjs",
+    "check:breaks": "node scripts/check-line-breaks.mjs"
   },
   "peerDependencies": {
     "react": "^18.2.0 || ^19.0.0",

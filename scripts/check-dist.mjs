@@ -19,10 +19,12 @@ import { gzipSync } from 'node:zlib';
  * （利用者の判断。別の入口に分けない）。増えた分は JS が約 11 KB・CSS が約 3 KB（どちらも gzip、未圧縮の dist）。
  * 名前つき import でモーダルの部品だけを使うアプリには、入力部品は tree shaking で載らない。
  * Modal 名前空間は全部品を参照するので、Modal.* で書くアプリには全部載る。
+ * 同日、JS を 34 → 35 KB に引き上げた。折り返しの崩れの洗い出し（§10-33）で、Phrase に要素の境目の扱い・
+ * keep-all が残す改行の糊・長い文節の切れ目を足したため（約 2 KB）。Phrase は全部品が使うので tree shaking では落ちない。
  */
 const BUDGETS = {
-  'dist/index.js': 34 * 1024,
-  'dist/index.cjs': 34 * 1024,
+  'dist/index.js': 35 * 1024,
+  'dist/index.cjs': 35 * 1024,
   'dist/styles.css': 9 * 1024,
 };
 

@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { Modal } from '@genelab/gassan';
+import { Modal, Phrase } from '@genelab/gassan';
 import { fmt, useDemoText } from '../i18n';
 
 export default function KindConsent(): ReactNode {
@@ -19,9 +19,11 @@ export default function KindConsent(): ReactNode {
   return (
     <>
       <button type="button" className="s-btn" onClick={() => setOpen(true)}>
-        {t.open}
+        <Phrase>{t.open}</Phrase>
       </button>
-      <output className="s-demo-log">{agreed ? t.agreed : ''}</output>
+      <output className="s-demo-log">
+        <Phrase>{agreed ? t.agreed : ''}</Phrase>
+      </output>
 
       {/* t:noDismiss */}
       <Modal.Root kind="consent" open={open} onOpenChange={setOpen}>
