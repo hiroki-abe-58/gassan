@@ -1,12 +1,12 @@
-# 追跡表 — 141 項目が「どこで」満たされているか
+# 追跡表 — 156 項目が「どこで」満たされているか
 
-対象: `@genelab/gassan` v0.1.0（+ v0.2.0 のシート分）/ 日付: 2026-10-16
+対象: `@genelab/gassan` v0.1.0（+ v0.2.0 のシート分）/ 日付: 2026-10-18
 
-[`modal.skill.md`](../modal.skill.md) §4 の 141 項目を、実装・テスト・CSS・ロードマップのどれに
+[`modal.skill.md`](../modal.skill.md) §4 の 156 項目を、実装・テスト・CSS・ロードマップのどれに
 結びつけたかを 1 行ずつ記録する。**この表は `npm run check:trace` が機械検証する。**
 ID の欠落・余剰、必須度の食い違い、存在しないテスト名の引用は CI で落ちる。
 
-「141 項目に対応した」は、書いただけなら主張にすぎない。検証できる形にするための表である。
+「156 項目に対応した」は、書いただけなら主張にすぎない。検証できる形にするための表である。
 
 ---
 
@@ -228,7 +228,7 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 | D-08 | M | 実装 | `T:充足済みのゲートは除外する` `T:未登録の名前は fail-closed（ブロックする）` |
 | D-09 | M | 実装 | `T:開いたまま unmount しても例外を投げず、dialog を閉じる` `S:vitest.setup.ts` |
 | D-10 | M | 実装 | `T:Esc は cancel を止めて自前のルートに合流する` `S:vitest.setup.ts` |
-| D-11 | M | 実装 | `T:Modal.Root は data-* をホスト要素へ渡す` `T:Modal.Header は data-* をホスト要素へ渡す` `T:Modal.Controls は data-* をホスト要素へ渡す` `T:Modal.Back は data-* をホスト要素へ渡す` `T:Modal.Close は data-* をホスト要素へ渡す` `T:Modal.Indicator は data-* をホスト要素へ渡す` `T:Modal.Title は data-* をホスト要素へ渡す` `T:Modal.Description は data-* をホスト要素へ渡す` `T:Modal.Body は data-* をホスト要素へ渡す` `T:Modal.Section は data-* をホスト要素へ渡す` `T:Modal.Footer は data-* をホスト要素へ渡す` `T:Modal.Button は data-* をホスト要素へ渡す` `T:Modal.Consent は data-* をホスト要素へ渡す` `T:Modal.GateStatus は data-* をホスト要素へ渡す` `T:Modal.Media は data-* をホスト要素へ渡す` `T:Modal.Gallery は data-* をホスト要素へ渡す` `T:Modal.Field は data-* をホスト要素へ渡す` `T:Modal.Chips は data-* をホスト要素へ渡す` `T:Modal.Switch は data-* をホスト要素へ渡す` `T:Modal.Table は data-* をホスト要素へ渡す` `T:Modal.Alert は data-* をホスト要素へ渡す` `T:Modal.Chart は data-* をホスト要素へ渡す` `T:Modal.Handle は data-* をホスト要素へ渡す` `T:公開コンポーネントは 1 つ残らず受け渡しを検査している` `T:gassan が書く data-kind は消費者の値で壊れない` `T:予約語を渡すと開発時に警告する` `T:aria-* は受け取らず、警告して落とす（名前は label / Modal.Title を使う）` `T:aria-* を渡しても label が無ければ名前は付かない（黙って名前が付く事故を防ぐ）` `T:src が書く data-* はすべて RESERVED_DATA に載っている` `T:消費者が置く data-g-no-swipe は予約していない` `T:Modal.Gate は要素を描かないので受け渡しの対象外` `T:gassan が書く data-* は 1 つ残らずスプレッドより後ろにある` `T:濾過を通さない生の {...rest} は 1 箇所も無い` `T:公開コンポーネントの数だけ濾過の呼び出しがある` `T:予約済みの data-* は無視して警告する` `T:予約外の data-* と aria-* はそのまま通す` |
+| D-11 | M | 実装 | `T:Modal.Root は data-* をホスト要素へ渡す` `T:Modal.Header は data-* をホスト要素へ渡す` `T:Modal.Controls は data-* をホスト要素へ渡す` `T:Modal.Back は data-* をホスト要素へ渡す` `T:Modal.Close は data-* をホスト要素へ渡す` `T:Modal.Indicator は data-* をホスト要素へ渡す` `T:Modal.Title は data-* をホスト要素へ渡す` `T:Modal.Description は data-* をホスト要素へ渡す` `T:Modal.Body は data-* をホスト要素へ渡す` `T:Modal.Section は data-* をホスト要素へ渡す` `T:Modal.Footer は data-* をホスト要素へ渡す` `T:Modal.Button は data-* をホスト要素へ渡す` `T:Modal.Consent は data-* をホスト要素へ渡す` `T:Modal.GateStatus は data-* をホスト要素へ渡す` `T:Modal.Media は data-* をホスト要素へ渡す` `T:Modal.Gallery は data-* をホスト要素へ渡す` `T:Modal.Field は data-* をホスト要素へ渡す` `T:Modal.Chips は data-* をホスト要素へ渡す` `T:Modal.Switch は data-* をホスト要素へ渡す` `T:Modal.Table は data-* をホスト要素へ渡す` `T:Modal.Alert は data-* をホスト要素へ渡す` `T:Modal.Chart は data-* をホスト要素へ渡す` `T:Modal.Handle は data-* をホスト要素へ渡す` `T:Modal.Fieldset は data-* をホスト要素へ渡す` `T:Modal.Input は data-* を input へ渡す` `T:Modal.PasswordInput は data-* を input へ渡す` `T:Modal.SearchInput は data-* を input へ渡す` `T:Modal.Textarea は data-* を textarea へ渡す` `T:Modal.NumberField は data-* をホスト要素へ渡す` `T:Modal.CodeInput は data-* をホスト要素へ渡す` `T:Modal.Checkbox は data-* をホスト要素へ渡す` `T:Modal.RadioGroup は data-* をホスト要素へ渡す` `T:Modal.Segmented は data-* をホスト要素へ渡す` `T:Modal.Rating は data-* をホスト要素へ渡す` `T:Modal.Slider は data-* をホスト要素へ渡す` `T:Modal.RangeSlider は data-* をホスト要素へ渡す` `T:Modal.Select は data-* をホスト要素へ渡す` `T:Modal.Combobox は data-* をホスト要素へ渡す` `T:Modal.DatePicker は data-* をホスト要素へ渡す` `T:Modal.FileDrop は data-* をホスト要素へ渡す` `T:公開コンポーネントは 1 つ残らず受け渡しを検査している` `T:gassan が書く data-kind は消費者の値で壊れない` `T:予約語を渡すと開発時に警告する` `T:aria-* は受け取らず、警告して落とす（名前は label / Modal.Title を使う）` `T:aria-* を渡しても label が無ければ名前は付かない（黙って名前が付く事故を防ぐ）` `T:src が書く data-* はすべて RESERVED_DATA に載っている` `T:消費者が置く data-g-no-swipe は予約していない` `T:Modal.Gate は要素を描かないので受け渡しの対象外` `T:gassan が書く data-* は 1 つ残らずスプレッドより後ろにある` `T:濾過を通さない生の {...rest} は 1 箇所も無い` `T:公開コンポーネントの数だけ濾過の呼び出しがある` `T:予約済みの data-* は無視して警告する` `T:予約外の data-* と aria-* はそのまま通す` |
 | D-12 | S | 実装 | `T:構造コンテナは children を省略できる` `T:名前を持つ部品は children を省略できない` `T:children なしの Body でもスクロール領域と名前が残る` `T:children なしの Section は、見出しが無ければただの div になる` `T:children なしでも title があれば section と見出しを出す` `T:children なしの Header / Footer も落ちずに枠だけ残る` `T:空の本文でも読了ゲートが満たされ、ボタンが押せる` `T:空の本文でも、測れないあいだは閉じたまま（fail-closed）` `S:src/body.tsx` |
 | D-13 | S | 実装 | `T:duplicateValues は重複だけを最初に現れた順で返す` `T:duplicateValues は一意なら空を返す` `T:Modal.Gallery の items[].id 重複を警告する` `T:Modal.Chips の options[].value 重複を警告する` `T:重複を黙って落とさない（渡した件数のまま描く）` `T:一意なら警告しない` `T:Modal.Gallery は items が空になっても落ちない` `T:Modal.Chips は options が空でも落ちない` `S:src/internal/dom.ts` |
 | D-14 | S | 実装 | `T:onIndexChange はマウントしただけでは鳴らない` `T:位置が動いたら onIndexChange が鳴る` `T:items が縮んで位置が切り詰められたら onIndexChange が鳴る` `T:onDetentChange もマウントしただけでは鳴らない` `T:同じ段に留まる操作では onDetentChange が鳴らない` `T:detents が縮んで段が丸められたら onDetentChange が鳴る（Gallery の切り詰めと揃える）` `T:開き直して既定の段へ戻ったら onDetentChange が鳴る` `T:onDetentChange が新しい段の名前で呼ばれる` |
@@ -243,6 +243,29 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 | W-04 | S | 実装 | `T:UI の文言を、語の途中ではない位置で分ける（「编辑个人资｜料」にしない）` `T:辞書に無い語が 1 文字ずつに割れても、その中では折らない（上｜传・验证｜码）` `T:「的・了・后」などは前の語に付け、行頭に置かない` `T:数と量詞・漢字と英数字の間では折らない（3个・版本2）` `T:つなぎ直すと必ず元の文字列に戻る` `T:中国語のボタンは語の切れ目に <wbr> を置く。名前は元のまま` `T:韓国語は器（keep-all）だけを付け、<wbr> は足さない（空白でだけ折る）` `T:W-04: 空白で区切る言語・タイ語・数字だけの文字列は分けない` `T:英語・タイ語の文言には span も <wbr> も足さない（タイ語に keep-all を掛けると、ブラウザの辞書の切れ目が消える）` `T:サーバーでも同じ位置に改行の機会を置く（hydration がずれない）` |
 | W-05 | S | 実装 | `T:ボタン・タイトル・説明・フッタの補足が文節で折れる` `T:表のセルの文字列にも効く（素の HTML 要素の中まで潜る）` `T:グラフの名前と傾向の要約にも効く` `T:同意文・ゲートの理由・チップ・スイッチ・ラベル・エラーにも効く` `T:Phrase で、gassan の外の UI にも同じ折り返しを効かせられる` |
 | W-06 | O | 実装 | `T:GassanProvider の lineBreak="browser" で元に戻せる` `T:内側の Provider が lineBreak を省略したら、外側の指定に従う（文言だけ差し替えても戻らない）` `T:内側の Provider が labels を省略したら、外側の文言に従う（lineBreak だけ指定しても日本語に戻らない）` |
+
+## I. 入力部品（15）
+
+テストは `tests/forms.test.tsx`。jsdom には popover API が無いので、ポップアップは「起点の直下に置く」側の経路で動かしている。
+top layer への描画・位置・見た目は実ブラウザで撮って確かめた（[`VERIFICATION.md`](../VERIFICATION.md) §2）。
+
+| ID | 度 | 状態 | 根拠 |
+|---|:-:|---|---|
+| I-01 | M | 実装 | `T:Field の配線を広げて渡すと、名前・説明・エラーの状態が部品に届く` `T:value を渡さなければ部品が自分で値を持つ（非制御）` `T:value を渡すと外の値に従う（制御）` `S:src/internal/controllable.ts` |
+| I-02 | M | 実装 | `T:一覧は開いている間だけ描き、popover="manual" で出す` `T:Esc はポップアップだけを閉じ、keydown を止めてモーダルを閉じさせない` `T:外を押すと閉じる` `S:src/internal/popup.tsx` |
+| I-03 | S | 実装 | `T:枠の前後に飾りを置き、input の属性と ref はそのまま input に届く` `C:.g-input:focus-within` |
+| I-04 | S | 実装 | `T:表示の切り替えは aria-pressed で状態を伝え、type を入れ替える` |
+| I-05 | S | 実装 | `T:消すボタンで値が空になり、利用側の onChange が呼ばれ、フォーカスが入力欄に戻る` `C:.g-search:has(.g-bare:placeholder-shown) .g-search-clear` |
+| I-06 | S | 実装 | `T:maxLength を渡すと文字数を出し、aria-describedby に足す` |
+| I-07 | S | 実装 | `T:− と + は step の桁で丸め、範囲の端で押せなくなる` `T:離れたときに範囲の外なら端へ戻す` `T:clampToStep は min を起点に格子へ乗せ、浮動小数の誤差を残さない` |
+| I-08 | S | 実装 | `T:入力欄は 1 つで、桁の箱は読み上げに出さない` `T:全角数字は半角に直し、数字以外は落とす` `T:全桁そろうと onComplete を呼ぶ` `T:貼り付けは全体の置き換え（埋まった後でも新しいコードが入る）` |
+| I-09 | M | 実装 | `T:Fieldset は legend で束に名前を付け、ヘルプとエラーを束の説明にする` `T:ラジオは同じ name で並び、選ぶと onValueChange が呼ばれる` `T:名前を渡さなければ radiogroup の役割を重ねない（Fieldset の中で名前の無い束を作らない）` `T:チェックボックスの indeterminate は mixed として伝わり、補足は説明になる` `T:セグメントはラジオで、選んだものだけが checked になる` `T:評価の各星は「5段階中3」の名前を持ち、選んだ星までが点く` |
+| I-10 | S | 実装 | `T:塗りは値の位置まで（--g-fill-end）で、formatValue は aria-valuetext にも使う` `T:2 つ摘みの名前は下限・上限で、下限は上限を越えない` `T:摘みと塗りはテーマのアクセント色（--g-accent）で描く` `C:var(--g-accent) var(--g-fill-start) var(--g-fill-end)` |
+| I-11 | M | 実装 | `T:<label for> で名前が付く（起点がボタンなので）` `T:↓で開き、↓↑で動き（無効な選択肢は飛ばす）、Enter で決めて閉じる` `T:文字を打つと、その文字で始まる選択肢へ飛ぶ` `T:Tab は指している選択肢を決めて閉じる` `T:選んでいる選択肢は aria-selected で、name を渡すと hidden input に値を載せる` `T:未選択のときは labels.choose を出す` |
+| I-12 | S | 実装 | `T:打つと絞り込み、最初の候補を指して Enter で決まる` `T:カタカナとひらがな、全角と半角、大文字と小文字を区別せずに当てる` `T:一覧にない文字列は値にせず、離れると選んでいた名前に戻す` `T:ちょうど一致する文字列で離れると、その候補を選ぶ` `T:空にして離れると選択を解く（null）` `T:候補が無いと「一致する候補がありません」を出す` `T:IME の変換中の Enter では決めない` |
+| I-13 | S | 実装 | `T:開くと選んでいる日にフォーカスが入り、月名は labels.locale で出す` `T:←→↑↓ で日と週、PageDown で月、Shift+PageDown で年を動かす` `T:Enter で決めて閉じ、ボタンへ戻る。Esc は決めずに閉じ、モーダルに届かせない` `T:min / max の外へは動けず、外の日は選べない` `T:月を足すと月末は寄せ、表は週の始まりから 42 日` |
+| I-14 | S | 実装 | `T:accept の規則（拡張子・ワイルドカード・型）` `T:ドロップにも accept を当て、合わないものは onReject へ回す` `T:選んだファイルは名前と大きさの一覧に出し、名前付きのボタンで取り除ける` `T:multiple でなければ 1 つに置き換える` |
+| I-15 | O | 記述 | `C:color-scheme: var(--g-color-scheme)` `T:日付・時刻・色の入力は枠に収め、--g-color-scheme で明暗を面に合わせる` |
 
 ---
 
@@ -277,7 +300,7 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 
 ## 関連
 
-- [`modal.skill.md`](../modal.skill.md) §4 — 141 項目の定義
+- [`modal.skill.md`](../modal.skill.md) §4 — 156 項目の定義
 - [`requirements-audit.md`](./requirements-audit.md) — 元依頼を要件に割り直した表
 - [`VERIFICATION.md`](../VERIFICATION.md) — 実行した検証と、jsdom では見られないもの
 - [`ROADMAP.md`](../ROADMAP.md) — 未実装項目の行き先
