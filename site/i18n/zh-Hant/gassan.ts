@@ -88,6 +88,10 @@ const labels: GassanLabels = {
   chooseTime: '選擇時間',
   notifications: '通知',
   closeNotification: '關閉通知',
+  copy: '複製',
+  copied: '已複製',
+  copyFailed: '無法複製',
+  moreCount: (count) => `另外 ${String(count)} 人`,
 };
 
 export default labels;

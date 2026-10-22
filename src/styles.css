@@ -2327,6 +2327,347 @@
   .g-toast-slot[data-exiting] .g-toast-meter-fill { animation-play-state: paused; }
 }
 
+/* ===========================================================================
+ * 9. ui parts（U-01〜U-16）
+ * ---------------------------------------------------------------------------
+ * ページの上で使う部品。色はトークンだけ。強調は文字・余白・控えめな地の色・区切り線で行い、
+ * 囲みや左の太い線は使わない（§5 の 21）。状態の色は data-tone から --g-tone に入れ、
+ * 薄い地はトーンの色 12%、その上の文字はトーンの色 85% に文字の色を混ぜる（明暗とも 4.5:1 以上。tokens.test.ts）。
+ * ページの上には既定のリング（ダイアログの中だけ）が効かないので、押せる部品は自分でリングを描く。
+ * ======================================================================== */
+
+@layer gassan.core {
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="neutral"] { --g-tone: var(--g-fg-muted); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="accent"] { --g-tone: var(--g-accent); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="success"] { --g-tone: var(--g-success); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="info"] { --g-tone: var(--g-info); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="warning"] { --g-tone: var(--g-warning); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="error"] { --g-tone: var(--g-danger); }
+
+  /* --- 9.1 buttons（U-01〜U-03） ---------------------------------------------
+   * 見た目と押した手応えは Modal.Button（.g-btn）と同じ。印と文字は別の器に置く（文節の span の間に隙間を入れない）。
+   * sm は見た目 36px で、当たりは ::before で 44px（--g-tap）に広げる。 */
+  .g-btn-body {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+  .g-btn-body > svg { flex: none; inline-size: 18px; block-size: 18px; }
+  .g-btn[data-loading] .g-btn-body { opacity: 0; }
+  .g-btn[data-size="sm"] { min-block-size: 36px; font-size: 0.875rem; }
+  .g-btn[data-size="sm"]:not([data-variant="tertiary"]) { padding-inline: 14px; }
+  .g-btn[data-size="sm"]::before { content: ""; position: absolute; inset: calc((36px - var(--g-tap)) / 2) 0; }
+  .g-btn[data-size="lg"] { min-block-size: 52px; font-size: 1rem; }
+  .g-btn[data-size="lg"]:not([data-variant="tertiary"]) { padding-inline: 24px; }
+  .g-btn[data-block] { display: grid; inline-size: 100%; }
+  a.g-btn { text-decoration: none; }
+  .g-iconbtn { position: relative; }
+  .g-iconbtn[data-variant="tonal"] { background: var(--g-hover); }
+  .g-iconbtn[data-variant="tonal"]:hover { background: color-mix(in srgb, var(--g-fg) 12%, transparent); }
+  .g-iconbtn[data-size="sm"] { inline-size: 36px; block-size: 36px; }
+  .g-iconbtn[data-size="sm"]::before { content: ""; position: absolute; inset: calc((36px - var(--g-tap)) / 2); }
+  .g-iconbtn[data-size="sm"] > svg { inline-size: 18px; block-size: 18px; }
+  :is(.g-btn, .g-iconbtn):focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-copy { display: inline-flex; }
+  .g-copy[data-state="copied"] .g-copy-icon { color: var(--g-success); }
+  .g-copy[data-state="failed"] .g-copy-icon { color: var(--g-danger); }
+
+  /* --- 9.2 badge（U-04） ------------------------------------------------------ */
+  .g-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-block-size: 22px;
+    padding: 1px 9px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--g-tone) 12%, var(--g-surface));
+    color: color-mix(in srgb, var(--g-tone) 85%, var(--g-fg));
+    font-size: 0.75rem;
+    font-weight: 650;
+    line-height: 1.4;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .g-badge-dot { flex: none; inline-size: 6px; block-size: 6px; border-radius: 50%; background: var(--g-tone); }
+
+  /* --- 9.3 avatar（U-05） -----------------------------------------------------
+   * 頭文字の地は、名前から決まる色相の中間色を面に混ぜる。面と混ぜるので、明暗どちらでも文字（--g-fg）が読める。 */
+  .g-avatar {
+    --g-avatar: 40px;
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--g-avatar);
+    block-size: var(--g-avatar);
+    overflow: hidden;
+    border-radius: 50%;
+    background: color-mix(in oklch, var(--g-surface) 78%, oklch(0.62 0.13 var(--g-avatar-hue, 250)));
+    color: var(--g-fg);
+    font-size: calc(var(--g-avatar) * 0.4);
+    font-weight: 650;
+    line-height: 1;
+    user-select: none;
+  }
+  .g-avatar[data-size="xs"],
+  .g-avatar-group[data-size="xs"] > .g-avatar { --g-avatar: 24px; }
+  .g-avatar[data-size="sm"],
+  .g-avatar-group[data-size="sm"] > .g-avatar { --g-avatar: 32px; }
+  .g-avatar[data-size="md"],
+  .g-avatar-group[data-size="md"] > .g-avatar { --g-avatar: 40px; }
+  .g-avatar[data-size="lg"],
+  .g-avatar-group[data-size="lg"] > .g-avatar { --g-avatar: 56px; }
+  .g-avatar[data-shape="square"] { border-radius: calc(var(--g-avatar) * 0.24); }
+  .g-avatar > img { inline-size: 100%; block-size: 100%; object-fit: cover; }
+  .g-avatar[data-more] { background: var(--g-hover); color: var(--g-fg-muted); font-size: calc(var(--g-avatar) * 0.34); }
+  .g-avatar-group { display: inline-flex; align-items: center; }
+  .g-avatar-group > .g-avatar { box-shadow: 0 0 0 2px var(--g-surface); }
+  /* 重ねるのは 5 分の 1 だけ（深く重ねると頭文字が隣に隠れる）。 */
+  .g-avatar-group > .g-avatar + .g-avatar { margin-inline-start: calc(var(--g-avatar) * -0.2); }
+
+  /* --- 9.4 kbd / divider（U-09 / U-10） --------------------------------------- */
+  .g-kbd {
+    display: inline-block;
+    min-inline-size: 1.7em;
+    padding: 1px 6px;
+    border: 1px solid var(--g-border-strong);
+    border-block-end-width: 2px;
+    border-radius: 6px;
+    background: var(--g-surface);
+    color: var(--g-fg);
+    font: 600 0.75rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .g-divider { margin-block: 16px; border: 0; border-block-start: 1px solid var(--g-border); }
+  .g-divider[data-orientation="vertical"] {
+    display: inline-block;
+    align-self: stretch;
+    min-block-size: 1em;
+    margin: 0 8px;
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--g-border);
+    vertical-align: middle;
+  }
+  .g-divider[data-label] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 0;
+    color: var(--g-fg-muted);
+    font-size: 0.8125rem;
+  }
+  .g-divider[data-label]::before,
+  .g-divider[data-label]::after { content: ""; flex: 1; border-block-start: 1px solid var(--g-border); }
+
+  /* --- 9.5 card（U-11） --------------------------------------------------------
+   * href を渡すと、見出しのリンクの ::after をカードいっぱいに広げる。中の操作は position: relative で、
+   * DOM 順が後ろなのでリンクより上に描かれ、押せる（z-index は使わない）。 */
+  .g-card {
+    position: relative;
+    display: grid;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius);
+    background: var(--g-surface);
+    color: var(--g-fg);
+  }
+  .g-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .g-card-heading { display: grid; gap: 4px; min-inline-size: 0; }
+  .g-card-title { margin: 0; font-size: 1rem; font-weight: 650; line-height: 1.4; }
+  .g-card-description { margin: 0; font-size: 0.875rem; line-height: 1.6; color: var(--g-fg-muted); }
+  .g-card-actions { position: relative; display: flex; flex: none; gap: 8px; }
+  .g-card-body { min-inline-size: 0; font-size: 0.9375rem; line-height: 1.6; }
+  .g-card-footer {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding-block-start: 12px;
+    border-block-start: 1px solid var(--g-border);
+  }
+  .g-card-link { color: inherit; text-decoration: none; }
+  .g-card-link::after { content: ""; position: absolute; inset: 0; border-radius: var(--g-radius); }
+  .g-card[data-link] { transition: border-color var(--g-dur-fast) linear, box-shadow var(--g-dur-fast) linear; }
+  .g-card[data-link]:hover { border-color: var(--g-border-strong); box-shadow: var(--g-shadow); }
+  /* リングはリンクの文字でなくカードに描く（当たりがカード全体なので）。 */
+  .g-card-link:focus-visible { outline: none; }
+  .g-card:has(.g-card-link:focus-visible) { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+
+  /* --- 9.6 stat（U-12） ---------------------------------------------------------- */
+  .g-stat { display: grid; gap: 4px; margin: 0; }
+  .g-stat-label { font-size: 0.8125rem; color: var(--g-fg-muted); }
+  .g-stat-value {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .g-stat-delta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+  .g-stat-delta[data-quality="good"] { color: var(--g-success); }
+  .g-stat-delta[data-quality="bad"] { color: var(--g-danger); }
+  .g-stat-delta[data-quality="flat"] { color: var(--g-fg-muted); }
+  .g-stat-arrow { flex: none; inline-size: 14px; block-size: 14px; }
+  .g-stat-description { margin: 0; font-weight: 400; color: var(--g-fg-muted); }
+
+  /* --- 9.7 empty state（U-13） --------------------------------------------------- */
+  .g-empty { display: grid; justify-items: center; gap: 8px; padding: 40px 24px; text-align: center; }
+  .g-empty-icon {
+    display: grid;
+    place-items: center;
+    inline-size: 56px;
+    block-size: 56px;
+    margin-block-end: 4px;
+    border-radius: 50%;
+    background: var(--g-hover);
+    color: var(--g-fg-muted);
+  }
+  .g-empty-icon > svg { inline-size: 28px; block-size: 28px; }
+  .g-empty-title { margin: 0; font-size: 1.0625rem; font-weight: 650; }
+  .g-empty-description { max-inline-size: 36em; margin: 0; font-size: 0.9375rem; line-height: 1.6; color: var(--g-fg-muted); }
+  .g-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-block-start: 8px; }
+
+  /* --- 9.8 description list（U-14） ----------------------------------------------
+   * 器が広いときだけ名前と値を横に並べる（ページの幅でなく器の幅で決める）。 */
+  .g-dl { container-type: inline-size; display: grid; margin: 0; }
+  .g-dl-row { display: grid; gap: 2px 16px; padding-block: 12px; border-block-end: 1px solid var(--g-border); }
+  .g-dl-row:last-child { border-block-end: 0; }
+  .g-dl dt { font-size: 0.875rem; color: var(--g-fg-muted); }
+  .g-dl dd { min-inline-size: 0; margin: 0; font-size: 0.9375rem; color: var(--g-fg); overflow-wrap: break-word; }
+  @container (min-width: 480px) {
+    .g-dl[data-layout="inline"] .g-dl-row { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  }
+
+  /* --- 9.9 timeline（U-15） -------------------------------------------------------
+   * 点と点を 1px の線で結ぶ（太い線で強調しない）。最後の項目の下には線を伸ばさない。 */
+  .g-timeline { display: grid; margin: 0; padding: 0; list-style: none; }
+  .g-timeline-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 12px;
+    padding-block-end: 20px;
+  }
+  .g-timeline-item:last-child { padding-block-end: 0; }
+  .g-timeline-item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    inset-block: 20px 0;
+    inset-inline-start: 9.5px;
+    inline-size: 1px;
+    background: var(--g-border-strong);
+  }
+  .g-timeline-dot {
+    inline-size: 10px;
+    block-size: 10px;
+    margin: 6px 5px 0;
+    border-radius: 50%;
+    background: var(--g-tone);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--g-tone) 18%, var(--g-surface));
+  }
+  .g-timeline-body { display: grid; gap: 2px; min-inline-size: 0; }
+  .g-timeline-title { margin: 0; font-size: 0.9375rem; font-weight: 600; line-height: 1.5; }
+  .g-timeline-time { font-size: 0.8125rem; color: var(--g-fg-muted); font-variant-numeric: tabular-nums; }
+  .g-timeline-description { margin-block-start: 4px; font-size: 0.875rem; line-height: 1.6; color: var(--g-fg-muted); }
+
+  /* --- 9.10 progress / spinner / skeleton（U-06〜U-08） --------------------------- */
+  .g-progress { display: grid; gap: 6px; }
+  .g-progress-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 0.875rem; }
+  .g-progress-label { font-weight: 600; }
+  .g-progress-value { color: var(--g-fg-muted); font-variant-numeric: tabular-nums; }
+  .g-progress-track {
+    position: relative;
+    overflow: hidden;
+    block-size: 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--g-tone) 16%, var(--g-surface));
+  }
+  .g-progress[data-size="sm"] .g-progress-track { block-size: 4px; }
+  .g-progress-fill {
+    display: block;
+    inline-size: calc(var(--g-progress, 0) * 100%);
+    block-size: 100%;
+    border-radius: inherit;
+    background: var(--g-tone);
+    transition: inline-size var(--g-dur-slow) var(--g-ease-move);
+  }
+  @keyframes g-progress-slide { from { translate: -100% 0; } to { translate: 250% 0; } }
+  .g-progress-track[data-indeterminate] > .g-progress-fill { inline-size: 40%; animation: g-progress-slide 1.4s ease-in-out infinite; }
+  .g-spinner { display: inline-grid; place-items: center; vertical-align: middle; }
+  .g-spinner-ring {
+    box-sizing: border-box;
+    inline-size: 20px;
+    block-size: 20px;
+    border: 2px solid color-mix(in srgb, currentColor 22%, transparent);
+    border-block-start-color: currentColor;
+    border-radius: 50%;
+    animation: g-spin 700ms linear infinite;
+  }
+  .g-spinner[data-size="sm"] .g-spinner-ring { inline-size: 14px; block-size: 14px; }
+  .g-spinner[data-size="lg"] .g-spinner-ring { inline-size: 32px; block-size: 32px; border-width: 3px; }
+  @keyframes g-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+  .g-skeleton {
+    display: block;
+    inline-size: 100%;
+    block-size: 0.875em;
+    border-radius: 6px;
+    background:
+      linear-gradient(90deg, var(--g-hover) 0%, color-mix(in srgb, var(--g-hover) 35%, transparent) 50%, var(--g-hover) 100%)
+      0 0 / 200% 100%;
+    animation: g-shimmer 1.6s ease-in-out infinite;
+  }
+  .g-skeleton[data-shape="circle"] { inline-size: 40px; block-size: 40px; border-radius: 50%; }
+  .g-skeleton[data-shape="rect"] { block-size: 120px; border-radius: var(--g-radius-control); }
+  .g-skeleton-lines { display: grid; gap: 0.6em; }
+  /* 光が流れる動きは飾りなので、動きの段 none の器の中では止める（動きを減らす設定は末尾）。 */
+  :where([data-g-motion="none"]) .g-skeleton { animation: none; }
+
+  /* --- 9.11 banner（U-16） --------------------------------------------------------
+   * 帯が狭いとき（480px 以下）は、操作を文の下へ回して文の幅を空ける（横に並べたままだと、文が文節の途中で折れる）。
+   * × は右上に置き、その分だけ右に余白を取る（DOM の順は 文 → 操作 → × のまま）。 */
+  .g-banner {
+    position: relative;
+    container-type: inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px 10px;
+    padding: 12px 14px;
+    border-radius: var(--g-radius-control);
+    background: color-mix(in srgb, var(--g-tone) 10%, var(--g-surface));
+    color: var(--g-fg);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+  .g-banner:has(> .g-iconbtn) { padding-inline-end: 48px; }
+  .g-banner-icon { flex: none; inline-size: 20px; block-size: 20px; margin-block-start: 2px; color: color-mix(in srgb, var(--g-tone) 85%, var(--g-fg)); }
+  .g-banner-body { flex: 1 1 0; min-inline-size: 0; }
+  .g-banner-title { margin: 0; font-weight: 650; color: color-mix(in srgb, var(--g-tone) 85%, var(--g-fg)); }
+  .g-banner-action { flex: none; align-self: center; }
+  .g-banner > .g-iconbtn { position: absolute; inset-block-start: 6px; inset-inline-end: 6px; }
+  @container (max-width: 480px) {
+    .g-banner-action { flex-basis: 100%; }
+    /* 印のある帯では、操作の頭を文の頭にそろえる（印 20px と隙間 10px）。 */
+    .g-banner-icon ~ .g-banner-action { padding-inline-start: 30px; }
+  }
+}
+
 @layer gassan.theme {
   @media (prefers-reduced-motion: reduce) {
     .g-popup,
@@ -2374,10 +2715,18 @@
     .g-switch-track { transition: none; }
     /* メーターは残り時間を伝える情報なので止めない。滑らかに縮めず、1 秒ごとに刻む。N-02。 */
     .g-toast-meter-fill { animation-timing-function: steps(var(--g-toast-steps), end); }
-    .g-toast-spinner { animation-duration: 2s; }
+    :is(.g-toast-spinner, .g-spinner-ring) { animation-duration: 2s; }
+    /* 骨組みの光は飾りなので止める。値の分からない進捗は情報なので、流れを遅くして残す。 */
+    .g-skeleton { animation: none; }
+    .g-progress-track[data-indeterminate] > .g-progress-fill { animation-duration: 4s; }
+    .g-progress-fill { transition: none; }
   }
   @media (forced-colors: active) {
     .g-toast-meter-fill { forced-color-adjust: none; background: Highlight; }
+    /* 地の色が消えるので、地で分けていた部品には線を出す。 */
+    :is(.g-badge, .g-banner) { border: 1px solid CanvasText; }
+    .g-progress-track { border: 1px solid CanvasText; }
+    :is(.g-progress-fill, .g-timeline-dot, .g-badge-dot) { forced-color-adjust: none; background: Highlight; }
     .g-chip[aria-pressed="true"] {
       forced-color-adjust: none;
       background: Highlight;

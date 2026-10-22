@@ -32,11 +32,13 @@ import { gzipSync } from 'node:zlib';
  * 2026-10-23、JS を 45 → 49 KB、CSS を 11 → 12 KB に引き上げた。トースト（N-01〜N-08）で、store とホスト・
  * 残り時間のメーター・払って閉じる操作・モーダルの中への移動・出入りの動きを足したため（JS 約 3.4 KB・CSS 約 1.1 KB）。
  * トーストは名前つき import（toast / ToastHost）でだけ使うので、使わないアプリには tree shaking で載らない。
+ * 同日、JS を 49 → 53 KB、CSS を 12 → 14 KB に引き上げた。ページの部品 18 個（U-01〜U-16）と、フォーム部品の
+ * 中立の名前を足したため（JS 約 4.2 KB・CSS 約 2.2 KB）。部品は Modal 名前空間に入れていないので、使わない部品の JS は載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 49 * 1024,
-  'dist/index.cjs': 49 * 1024,
-  'dist/styles.css': 12 * 1024,
+  'dist/index.js': 53 * 1024,
+  'dist/index.cjs': 53 * 1024,
+  'dist/styles.css': 14 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -113,6 +115,53 @@ const REQUIRED_EXPORTS = [
   'toast',
   'ToastHost',
   'resetToasts',
+  // ページの上の部品。U-01〜U-16。
+  'Button',
+  'ButtonLink',
+  'IconButton',
+  'CopyButton',
+  'Badge',
+  'Avatar',
+  'AvatarGroup',
+  'Kbd',
+  'Divider',
+  'Card',
+  'Stat',
+  'EmptyState',
+  'DescriptionList',
+  'Timeline',
+  'Progress',
+  'Spinner',
+  'Skeleton',
+  'Banner',
+  // フォーム部品の中立の名前（ModalInput などと同じもの）。
+  'Field',
+  'Fieldset',
+  'Input',
+  'PasswordInput',
+  'SearchInput',
+  'Textarea',
+  'NumberField',
+  'CodeInput',
+  'Checkbox',
+  'RadioGroup',
+  'Segmented',
+  'Rating',
+  'Slider',
+  'RangeSlider',
+  'Select',
+  'Combobox',
+  'DatePicker',
+  'DateRangePicker',
+  'Calendar',
+  'RangeCalendar',
+  'TimePicker',
+  'FileDrop',
+  'Chips',
+  'Switch',
+  'Table',
+  'Alert',
+  'Chart',
 ];
 
 let failed = false;

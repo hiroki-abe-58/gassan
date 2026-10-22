@@ -1,0 +1,30 @@
+import type ja from '../../ja/demos/dashboardSample';
+
+export default {
+  revenue: 'Revenue this month',
+  churn: 'Churn rate',
+  active: 'Weekly active users',
+  vsLastMonth: 'vs. last month',
+  vsLastWeek: 'vs. last week',
+  usage: 'Usage',
+  nearLimit: 'Near the limit',
+  storage: 'Storage',
+  gb: '{0} / {1} GB',
+  seats: 'Seats',
+  people: '{0} / {1} people',
+  plan: 'Plan',
+  planValue: 'Pro (annual)',
+  renewal: 'Renews on',
+  renewalValue: 'Apr 1, 2027',
+  activity: 'Recent activity',
+  invited: 'Invited Aoi Sato',
+  invitedAt: 'Today 9:12',
+  exported: 'Exported invoices',
+  exportedAt: 'Yesterday 18:40',
+  failedSync: 'Calendar sync failed',
+  failedSyncAt: 'Yesterday 8:05',
+  failedSyncDetail: 'The integration’s access has expired. Reconnect it from Settings.',
+  comments: {
+    churn: 'For churn, lower is better. goodWhen="down" draws the drop in the success color (U-12)',
+  },
+} satisfies typeof ja;

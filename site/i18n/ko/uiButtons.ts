@@ -1,0 +1,60 @@
+import type ja from '../ja/uiButtons';
+
+export default {
+  lead: '페이지 위에서 쓰는 버튼. 겉모습과 누를 때의 손맛은 모달의 버튼과 같고, 모달 밖에서도 쓸 수 있다. 강도와 크기를 고르며, 처리 중에는 이름을 지우지 않고 “처리 중”을 덧붙인다.',
+  variants: {
+    title: '강도',
+    intro: 'primary는 한 화면에 하나. 되돌릴 수 없는 작업에는 danger를 쓰고, 나머지는 secondary(기본값)나 tertiary로 낮춘다.',
+  },
+  sizes: {
+    title: '크기',
+    intro: 'sm은 겉보기 높이가 36px이지만, 누를 수 있는 영역은 44px 그대로다(손가락으로 눌러도 빗나가지 않는다). lg는 가입이나 로그인 같은 주요 작업에 쓴다.',
+  },
+  states: {
+    title: '상태와 형태',
+    intro: '처리 중에는 눌러도 아무것도 하지 않으며, 이름을 지우지 않은 채 “처리 중”을 설명에 더한다. 다른 페이지로 이동한다면, 역할이 링크 그대로인 ButtonLink를 쓴다.',
+  },
+  icon: {
+    title: '아이콘만 있는 버튼',
+    intro: 'IconButton에는 반드시 이름(label)을 넘긴다. 아이콘만으로는 무슨 버튼인지 읽어 줄 때 알 수 없다. title 속성의 말풍선에는 기대지 않는다.',
+  },
+  copy: {
+    title: '복사',
+    intro: 'CopyButton은 누르면 클립보드에 복사하고, 아이콘을 체크 표시로 바꾼 뒤 “복사했습니다”를 읽어 준다. 아이콘만 있을 때는 무엇을 복사하는지 알 수 있는 이름을 붙인다.',
+    value: 'https://example.com/invite/7Hq2',
+    label: '초대 링크 복사',
+  },
+  labels: {
+    primary: 'primary',
+    secondary: 'secondary(기본값)',
+    tertiary: 'tertiary',
+    danger: 'danger',
+    sm: 'sm(36px)',
+    md: 'md(44px·기본값)',
+    lg: 'lg(52px)',
+    loading: '처리 중',
+    iconStart: '아이콘 포함',
+    block: '전체 너비',
+    link: '링크(ButtonLink)',
+    ghost: 'ghost(기본값)',
+    tonal: 'tonal',
+    small: 'sm',
+    copyIcon: '아이콘만',
+    copyText: '텍스트 포함',
+  },
+  sample: {
+    save: '저장하기',
+    cancel: '취소',
+    details: '자세히 보기',
+    remove: '계정 삭제',
+    create: '새 프로젝트',
+    pricing: '요금 보기',
+    settings: '설정 열기',
+    more: '다른 작업',
+    filter: '필터',
+    copyLink: '링크 복사',
+  },
+  code: "import { Button, ButtonLink, IconButton, CopyButton } from '@genelab/gassan';\n\n// 누르면 처리 중이 되고, 끝날 때까지 다시 누를 수 없다\n<Button variant=\"primary\" onAction={save}>저장하기</Button>\n\n<ButtonLink href=\"/pricing\" variant=\"secondary\">요금 보기</ButtonLink>\n\n<IconButton label=\"설정 열기\"><SettingsIcon aria-hidden /></IconButton>\n\n<CopyButton value={inviteUrl} label=\"초대 링크 복사\" />",
+  codeCaption: '사용법',
+  a11yCaption: '버튼이 충족하는 명세',
+} satisfies typeof ja;

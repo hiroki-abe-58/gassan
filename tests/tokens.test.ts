@@ -342,6 +342,25 @@ describe('tokens / contrast (G-10 K-07 F-06 S-07)', () => {
     expect(shortfalls('dark')).toEqual([]);
   });
 
+  it('トーンの薄い地の上の文字（バッジ・知らせの帯）は、明暗とも 4.5:1 以上', () => {
+    // CSS の color-mix と同じ式で計算する（地 = トーンの色 12% と面、文字 = トーンの色 85% と文字の色）。
+    expect(block('.g-badge')).toMatch(/background:\s*color-mix\(in srgb, var\(--g-tone\) 12%, var\(--g-surface\)\);/);
+    expect(block('.g-badge')).toMatch(/color:\s*color-mix\(in srgb, var\(--g-tone\) 85%, var\(--g-fg\)\);/);
+    const mix = (a: string, b: string, weight: number): string =>
+      `#${[1, 3, 5]
+        .map((at) => Math.round(Number.parseInt(a.slice(at, at + 2), 16) * weight + Number.parseInt(b.slice(at, at + 2), 16) * (1 - weight)))
+        .map((channel) => channel.toString(16).padStart(2, '0'))
+        .join('')}`;
+    const failures = (['light', 'dark'] as const).flatMap((scheme) => {
+      const color = palette(scheme);
+      return ['fg-muted', 'accent', 'success', 'info', 'warning', 'danger'].flatMap((tone) => {
+        const ratio = contrastRatio(mix(color(tone), color('fg'), 0.85), mix(color(tone), color('surface'), 0.12));
+        return ratio >= 4.5 ? [] : [`${scheme} --g-${tone}: ${ratio.toFixed(2)}:1`];
+      });
+    });
+    expect(failures).toEqual([]);
+  });
+
   it('スイッチの摘みは、入っている間はアクセントの上の文字色で塗る（明るいアクセントで摘みが溶けない）', () => {
     // 白で固定していた頃、ダークの既定（--g-accent: #eef0f4）では白い摘みが白い線に溶けていた。
     // --g-on-accent / --g-accent は上の組の検査で 4.5:1 以上が保証されている。
@@ -474,6 +493,8 @@ describe('tokens / focus ring (K-07)', () => {
       '.g-code-input': '.g-code:focus-within .g-code-cell[data-current]',
       // 時刻の列は端を薄く消しているので、リングは真ん中の選んでいる項目に描く（I-20）。
       '.g-time-col:focus-visible': '.g-time-col:focus-visible > [aria-selected="true"]',
+      // カードのリンクは当たりがカード全体なので、リングはカードに描く（U-11）。
+      '.g-card-link:focus-visible': '.g-card:has(.g-card-link:focus-visible)',
     };
     const naked = [...css.matchAll(/([^\n{}]*)\{[^{}]*outline:\s*none[^{}]*\}/g)].map((m) =>
       (m[1] ?? '').trim(),

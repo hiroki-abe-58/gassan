@@ -1,0 +1,30 @@
+import type ja from '../../ja/demos/dashboardSample';
+
+export default {
+  revenue: 'ยอดขายเดือนนี้',
+  churn: 'อัตราการยกเลิก',
+  active: 'ผู้ใช้ที่ใช้งานรายสัปดาห์',
+  vsLastMonth: 'เทียบกับเดือนก่อน',
+  vsLastWeek: 'เทียบกับสัปดาห์ก่อน',
+  usage: 'ปริมาณการใช้งาน',
+  nearLimit: 'เหลือน้อย',
+  storage: 'พื้นที่จัดเก็บ',
+  gb: '{0} / {1} GB',
+  seats: 'ที่นั่ง',
+  people: '{0} / {1} คน',
+  plan: 'แพ็กเกจ',
+  planValue: 'Pro (รายปี)',
+  renewal: 'วันต่ออายุ',
+  renewalValue: '1 เมษายน 2570',
+  activity: 'กิจกรรมล่าสุด',
+  invited: 'เชิญคุณสมชายแล้ว',
+  invitedAt: 'วันนี้ 9:12',
+  exported: 'ส่งออกใบแจ้งหนี้แล้ว',
+  exportedAt: 'เมื่อวาน 18:40',
+  failedSync: 'ซิงก์ปฏิทินไม่สำเร็จ',
+  failedSyncAt: 'เมื่อวาน 8:05',
+  failedSyncDetail: 'สิทธิ์ของการเชื่อมต่อหมดอายุแล้ว กรุณาเชื่อมต่อใหม่จากการตั้งค่า',
+  comments: {
+    churn: 'อัตราการยกเลิกยิ่งลดยิ่งดี ใช้ goodWhen="down" เพื่อให้ส่วนต่างที่ลดลงเป็นสีของโทนสำเร็จ (U-12)',
+  },
+} satisfies typeof ja;

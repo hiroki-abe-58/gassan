@@ -1,0 +1,30 @@
+import type ja from '../../ja/demos/dashboardSample';
+
+export default {
+  revenue: '이번 달 매출',
+  churn: '해지율',
+  active: '주간 활성 사용자',
+  vsLastMonth: '전월 대비',
+  vsLastWeek: '전주 대비',
+  usage: '사용량',
+  nearLimit: '얼마 남지 않음',
+  storage: '저장 용량',
+  gb: '{0} / {1} GB',
+  seats: '좌석',
+  people: '{0} / {1}명',
+  plan: '요금제',
+  planValue: 'Pro(연 결제)',
+  renewal: '갱신일',
+  renewalValue: '2027년 4월 1일',
+  activity: '최근 활동',
+  invited: '김지아 님을 초대했습니다',
+  invitedAt: '오늘 9:12',
+  exported: '청구서를 내보냈습니다',
+  exportedAt: '어제 18:40',
+  failedSync: '캘린더 동기화에 실패했습니다',
+  failedSyncAt: '어제 8:05',
+  failedSyncDetail: '연동 권한이 만료되었습니다. 설정에서 다시 연결해 주세요.',
+  comments: {
+    churn: '해지율은 내려가는 것이 좋은 수치. goodWhen="down"으로 내려간 차이를 성공 색으로 한다(U-12)',
+  },
+} satisfies typeof ja;

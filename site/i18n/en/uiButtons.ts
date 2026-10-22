@@ -1,0 +1,60 @@
+import type ja from '../ja/uiButtons';
+
+export default {
+  lead: 'Buttons for use on the page. They look and respond to a press just like the modal’s buttons, and work outside a modal too. Choose an emphasis and a size; while loading, the name stays and “Working” is added.',
+  variants: {
+    title: 'Emphasis',
+    intro: 'One primary per screen. Use danger for actions that cannot be undone, and drop everything else to secondary (the default) or tertiary.',
+  },
+  sizes: {
+    title: 'Size',
+    intro: 'sm looks 36px tall, but its hit area stays 44px (so a finger does not miss it). Use lg for the main action of a sign-up or sign-in.',
+  },
+  states: {
+    title: 'States and shapes',
+    intro: 'While loading, pressing it does nothing; the name stays and “Working” is added to the description. If it goes to another page, use ButtonLink, so its role stays a link.',
+  },
+  icon: {
+    title: 'Icon-only buttons',
+    intro: 'Always pass IconButton a name (label). With an icon alone, a screen reader cannot tell what the button is for. Do not rely on the tooltip of the title attribute.',
+  },
+  copy: {
+    title: 'Copy',
+    intro: 'When pressed, CopyButton copies to the clipboard, swaps its icon for a check mark and announces “Copied”. When it shows only an icon, give it a name that says what it copies.',
+    value: 'https://example.com/invite/7Hq2',
+    label: 'Copy invite link',
+  },
+  labels: {
+    primary: 'primary',
+    secondary: 'secondary (default)',
+    tertiary: 'tertiary',
+    danger: 'danger',
+    sm: 'sm (36px)',
+    md: 'md (44px, default)',
+    lg: 'lg (52px)',
+    loading: 'Loading',
+    iconStart: 'With an icon',
+    block: 'Full width',
+    link: 'Link (ButtonLink)',
+    ghost: 'ghost (default)',
+    tonal: 'tonal',
+    small: 'sm',
+    copyIcon: 'Icon only',
+    copyText: 'With text',
+  },
+  sample: {
+    save: 'Save',
+    cancel: 'Cancel',
+    details: 'Learn more',
+    remove: 'Delete account',
+    create: 'New project',
+    pricing: 'See pricing',
+    settings: 'Open settings',
+    more: 'More actions',
+    filter: 'Filter',
+    copyLink: 'Copy link',
+  },
+  code: "import { Button, ButtonLink, IconButton, CopyButton } from '@genelab/gassan';\n\n// Once pressed, it shows loading and cannot be pressed again until it finishes\n<Button variant=\"primary\" onAction={save}>Save</Button>\n\n<ButtonLink href=\"/pricing\" variant=\"secondary\">See pricing</ButtonLink>\n\n<IconButton label=\"Open settings\"><SettingsIcon aria-hidden /></IconButton>\n\n<CopyButton value={inviteUrl} label=\"Copy invite link\" />",
+  codeCaption: 'Usage',
+  a11yCaption: 'Specification items buttons satisfy',
+} satisfies typeof ja;

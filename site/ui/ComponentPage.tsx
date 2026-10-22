@@ -9,6 +9,8 @@ export interface ComponentPageProps {
   rest: readonly string[];
   title: ReactNode;
   lead: ReactNode;
+  /** 題名の上の節名。既定は「コンポーネント」。 */
+  eyebrow?: string;
   ids: readonly string[];
   overview: () => ReactNode;
   api: () => ReactNode;
@@ -16,11 +18,11 @@ export interface ComponentPageProps {
 }
 
 /** 部品ページの共通の骨格。「概要 / API / アクセシビリティ」の 3 タブ。 */
-export function ComponentPage({ path, rest, title, lead, ids, overview, api, a11y }: ComponentPageProps): ReactNode {
+export function ComponentPage({ path, rest, title, lead, eyebrow, ids, overview, api, a11y }: ComponentPageProps): ReactNode {
   const t = useT().common.component;
   return (
     <>
-      <PageHeader eyebrow={t.eyebrow} title={title} lead={lead} ids={ids} />
+      <PageHeader eyebrow={eyebrow ?? t.eyebrow} title={title} lead={lead} ids={ids} />
       <Tabs
         label={t.tabs}
         basePath={path}
