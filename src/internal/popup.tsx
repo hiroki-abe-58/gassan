@@ -6,29 +6,40 @@ import { useEvent } from './use-event';
 const GAP = 4;
 const MARGIN = 8;
 
+/** ポップアップの置き方。 */
+export interface PlaceOptions {
+  /** 先に試す側。既定 'below'（入らなければ反対の側）。ツールチップは 'above'。 */
+  side?: 'below' | 'above';
+  /** 横のそろえ方。既定 'start'（起点の始まりにそろえる）。ツールチップは 'center'、行の端の「…」のメニューは 'end'。 */
+  align?: 'start' | 'center' | 'end';
+  /** 起点の幅を最小の幅にする。既定 true（一覧・カレンダー）。ツールチップとポップオーバーは false。 */
+  matchWidth?: boolean;
+}
+
 /**
- * ポップアップを起点の下（入らなければ上）に置く。I-02。
+ * ポップアップを起点の先に試す側（既定は下）に置き、入らなければ反対の側に置く。I-02。
  *
  * top layer の要素は祖先の transform の影響を受けないので、
  * 画面座標をそのまま position: fixed の座標として使える。
  * 拡大の原点は起点の中央に合わせる（V-04。起点から広がって見える）。
  */
-export function placePopup(anchor: HTMLElement, popup: HTMLElement): void {
+export function placePopup(anchor: HTMLElement, popup: HTMLElement, { side = 'below', align = 'start', matchWidth = true }: PlaceOptions = {}): void {
   const rect = anchor.getBoundingClientRect();
   const viewportBlock = window.innerHeight;
   const viewportInline = document.documentElement.clientWidth;
   const below = viewportBlock - rect.bottom - GAP - MARGIN;
   const above = rect.top - GAP - MARGIN;
-  popup.style.minInlineSize = `${String(rect.width)}px`;
-  // 上限（CSS の --g-popup-room）を外した高さで「下に入るか」を決め、入る高さを戻す。
+  if (matchWidth) popup.style.minInlineSize = `${String(rect.width)}px`;
+  // 上限（CSS の --g-popup-room）を外した高さで「先に試す側に入るか」を決め、入る高さを戻す。
   popup.style.removeProperty('--g-popup-room');
   const natural = popup.offsetHeight;
-  const downward = below >= natural || below >= above;
+  const downward = side === 'below' ? below >= natural || below >= above : !(above >= natural || above >= below);
   popup.style.setProperty('--g-popup-room', `${String(Math.max(0, downward ? below : above))}px`);
   const height = popup.offsetHeight;
   const width = popup.offsetWidth;
-  const rtl = getComputedStyle(anchor).direction === 'rtl';
-  const start = rtl ? rect.right - width : rect.left;
+  // 右から左の言語では、始まりと終わりの側が入れ替わる。
+  const toRight = (align === 'end') !== (getComputedStyle(anchor).direction === 'rtl');
+  const start = align === 'center' ? rect.left + rect.width / 2 - width / 2 : toRight ? rect.right - width : rect.left;
   const left = Math.min(Math.max(MARGIN, start), Math.max(MARGIN, viewportInline - MARGIN - width));
   popup.style.top = `${String(downward ? rect.bottom + GAP : rect.top - GAP - height)}px`;
   popup.style.left = `${String(left)}px`;
@@ -54,7 +65,7 @@ export function transitionMs(element: Element): number {
   return Math.max(0, ...durations.map((duration, index) => duration + (delays[index] ?? delays[0] ?? 0)));
 }
 
-export interface PopupProps extends Omit<HTMLAttributes<HTMLDivElement>, 'popover'> {
+export interface PopupProps extends Omit<HTMLAttributes<HTMLDivElement>, 'popover'>, PlaceOptions {
   /** 開いているか。閉じても退出を描き終えるまでは描く（V-04）。 */
   open: boolean;
   /** 位置の基準。トリガーや入力欄を囲む要素。 */
@@ -80,7 +91,10 @@ export interface PopupProps extends Omit<HTMLAttributes<HTMLDivElement>, 'popove
  *
  * popover API の無い環境（jsdom・古いブラウザ）では、起点の直下に absolute で置く。
  */
-export function Popup({ open, anchorRef, onDismiss, children, className, ...attributes }: PopupProps): ReactNode {
+export function Popup({ open, anchorRef, onDismiss, children, className, side, align, matchWidth, ...attributes }: PopupProps): ReactNode {
+  // 置き方の指定は、effect の中から最新の値を読む（依存に入れて置き直しの登録をやり直さない）。
+  const placement = useRef<PlaceOptions>({});
+  placement.current = { side, align, matchWidth };
   const ref = useRef<HTMLDivElement>(null);
   const inTopLayer = useRef(false);
   const dismiss = useEvent(onDismiss);
@@ -97,7 +111,7 @@ export function Popup({ open, anchorRef, onDismiss, children, className, ...attr
     inTopLayer.current = top;
     if (top) {
       popup.showPopover();
-      placePopup(anchor, popup);
+      placePopup(anchor, popup, placement.current);
     } else {
       popup.dataset.inline = '';
     }
@@ -107,7 +121,7 @@ export function Popup({ open, anchorRef, onDismiss, children, className, ...attr
       if (!top || frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
-        placePopup(anchor, popup);
+        placePopup(anchor, popup, placement.current);
       });
     };
     const handlePointerDown = (event: PointerEvent): void => {
@@ -149,7 +163,7 @@ export function Popup({ open, anchorRef, onDismiss, children, className, ...attr
   useLayoutEffect(() => {
     const popup = ref.current;
     const anchor = anchorRef.current;
-    if (open && popup && anchor && inTopLayer.current) placePopup(anchor, popup);
+    if (open && popup && anchor && inTopLayer.current) placePopup(anchor, popup, placement.current);
   });
 
   if (!present) return null;

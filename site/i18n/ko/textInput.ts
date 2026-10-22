@@ -1,7 +1,7 @@
 import type ja from '../ja/textInput';
 
 export default {
-  lead: 'Input·PasswordInput·SearchInput·Textarea·NumberField·CodeInput. 안쪽은 네이티브 input과 textarea 그대로이며, gassan은 테두리와, 네이티브에 없는 작은 약속(표시 전환·지우기·글자 수·증감·자릿수 상자)만 더한다.',
+  lead: 'Input·PasswordInput·SearchInput·Textarea·NumberField·CodeInput·TagInput·PasswordStrength. 안쪽은 네이티브 input과 textarea 그대로이며, gassan은 테두리와, 네이티브에 없는 작은 약속(표시 전환·지우기·글자 수·증감·자릿수 상자·태그·강도)만 더한다.',
   gallery: {
     title: '견본',
     intro: '상태별로 늘어놓은 실제 컴포넌트. 모달 밖에서도 같은 컴포넌트를 쓸 수 있다. 오른쪽 위의 테마를 바꾸면 포커스 링의 색이 바뀐다.',
@@ -27,6 +27,37 @@ export default {
       invalidValue: 'hana@',
     },
   },
+  tags: {
+    title: '태그',
+    intro: 'Enter나 쉼표(、와 ，도 포함)로 붙이고, ×나 빈 입력란의 Backspace로 뗀다(Backspace는 마지막 태그를 입력란으로 되돌리므로, 지우지 않고 고칠 수 있다). 붙여 넣은 “영업, 개발, 채용”은 3개로 나뉘며, 조합 중의 Enter로는 붙지 않는다.',
+    items: {
+      plain: '붙이고 떼기',
+      suggestions: '후보 포함',
+      limit: '3개까지',
+    },
+    samples: {
+      design: '디자인',
+      billing: '청구',
+      placeholder: '태그를 입력하고 Enter',
+      sales: '영업',
+      engineering: '개발',
+      support: '고객 지원',
+      hiring: '채용',
+    },
+  },
+  strength: {
+    title: '비밀번호 강도',
+    intro: '네 칸으로 나뉜 미터와 강도를 나타내는 말, 조건별 표시와 상태를 보여 준다. 입력할 때마다 읽어 주지 않고, 입력란의 aria-describedby로 가리켜 두어 입력란에 들어갔을 때 조건을 읽게 한다.',
+    items: {
+      live: '입력해 보기',
+      custom: '조건 바꾸기',
+    },
+    samples: {
+      password: 'Gassan2026',
+      passphrase: 'correct horse battery',
+      longRule: '15자 이상',
+    },
+  },
   modal: {
     title: '모달 안에서',
     intro: 'Modal.Field의 render prop이 넘기는 연결을 그대로 펼쳐서 넘긴다.',
@@ -44,6 +75,8 @@ export default {
       { part: 'Modal.Textarea', adds: 'maxLength를 넘겼을 때의 “n / max”. 설명으로 읽히게 하고, 입력할 때마다 끼어들게 하지는 않는다. 높이는 내용에 맞춰 늘어난다' },
       { part: 'Modal.NumberField', adds: '−와 +. 범위의 끝에서는 누를 수 없게 되고, step의 자릿수로 반올림한다. 포커스가 벗어날 때 범위 밖이면 끝 값으로 되돌린다' },
       { part: 'Modal.CodeInput', adds: '자릿수 상자. 입력란은 하나 그대로이므로 SMS 자동 입력과 붙여넣기가 동작한다. 전각 숫자도 받는다' },
+      { part: 'Modal.TagInput', adds: '태그를 붙이고 떼는 일과 그 읽어 주기. 구분 문자·붙여넣기·조합 중의 Enter·Backspace를 맡는다. name을 넘기면 태그마다 hidden input을 둔다' },
+      { part: 'Modal.PasswordStrength', adds: '강도 미터와 조건 목록. 색과 표시에 말을 곁들이고, 입력할 때마다 읽어 주지 않는다' },
     ],
   },
   apiNote: 'PasswordInput과 SearchInput은 ModalInputProps에서 type·start·end를 뺀 것, Textarea는 textarea의 속성을 그대로 받는다. 모두 ref는 안쪽 요소에 전달된다.',

@@ -9,6 +9,23 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
 
 ## [Unreleased]
 
+### 追加（ページの部品の 2 段目・タグ・パスワードの強さ）
+
+画面の中を行き来する部品と、起点の脇に出る部品を足した。仕様書は v1.14（U-17〜U-24・I-21・I-22。193 → 203 項目）。
+
+- **タブ**（U-17）: `Tabs`（WAI-ARIA APG の tabs。選んでいるタブだけが Tab で止まり、←→・Home / End で移る。使えないタブは飛ばし、右から左の言語では ←→ が入れ替わる。`activation="manual"` は Enter / Space で選ぶ。下線（line）と塗り（pill）の印が 1 枚で滑る。選んでいない中身は `hidden` で残す）。
+- **アコーディオン**（U-18）: `Accordion`（`details` / `summary` で作る。1 つだけ開く形は `name` 属性と JS の両方で守る。高さの動きは `::details-content` と `interpolate-size` を使えるブラウザでだけ付く）。
+- **ツールチップ**（U-19）: `Tooltip`（乗せて 400ms 待つか、キーボードでフォーカスすると出る。吹き出しの上へ移っても消えず、Esc で消せる（WCAG 1.4.13）。文は起点の説明として読ませ、名前と同じ文なら二度は読ませない。続けて隣へ乗ると待たずに出る）。
+- **ポップオーバー**（U-20）: `Popover`（モーダルでない小さな窓。開くと中の最初の操作へフォーカスを移し、Esc・外の押下・Tab で外へ出ると閉じる）。
+- **メニュー**（U-21）: `Menu`（WAI-ARIA APG の menu button。キーで開くと最初の項目、ポインタで開くとメニューそのものへ。↑↓・Home / End・頭文字で移り、選ぶと起点へ戻る。区切り・名前のあるまとまり・ショートカットの表記・リンクの項目・取り消せない操作の色。`align="end"` で行の端の「…」に右端をそろえる）。
+- **パンくず・ページ送り・ステップ**（U-22〜U-24）: `Breadcrumbs`（最後が今のページ）、`Pagination`（最初・最後・今のページと両脇を出して「…」で詰め、項目の数をどのページでも同じにする。端へ送って押せなくなった「次へ」のフォーカスは今のページへ移す。器が狭いと「3 / 10」に畳む。`getHref` でリンクにも）、`Steps`（状態を文字でも添える。器が広いときだけ横に並べる）。
+- **タグの入力**（I-21）: `TagInput` / `Modal.TagInput`（Enter・カンマ・読点で付け、貼り付けた並びは全部に分ける。IME の変換中は付けない。空の入力欄の Backspace は最後のタグを入力欄へ戻す。付けた・外したことを読み上げる。`name` でタグごとに hidden の input）。
+- **パスワードの強さ**（I-22）: `PasswordStrength` / `Modal.PasswordStrength`（4 つの区切りのメーター・強さの言葉・条件ごとの状態。条件は差し替えられ、強さは外の推定（zxcvbn など）から渡せる）。
+- `Button` / `ButtonLink` / `IconButton` を `forwardRef` にした（React 18 でもツールチップ・メニューの起点にできる）。ポップアップに置き方の指定（`side` / `align` / `matchWidth`）を足した。`Tabs` の中身と `Popover` の本文にも、ほかの器（`Card` / `Modal.Body`）と同じく文節の折り返しを効かせる。
+- **型の破壊的変更:** `GassanLabels` に 16 個のキー（`breadcrumbs` / `pagination` / `previousPage` / `nextPage` / `pageNumber` / `stepStatus` / `removeTag` / `tagAdded` / `tagRemoved` / `passwordStrength` / `passwordLength` / `passwordNumber` / `passwordSymbol` / `passwordCase` / `ruleMet` / `ruleUnmet`）を足した。部分指定の `labels={{ … }}` には影響しない。
+- `tests/navigation.test.tsx`（12 件）・`tests/overlay.test.tsx`（12 件）・入力部品の 7 件・data-* の受け渡しの 2 件。SSR の検査に 10 項目。公開 API は 111 → 123。予算を 60 / 60 / 16 KB に引き上げた（JS 約 7.2 KB・CSS 約 2.4 KB 増）。
+- ドキュメントサイト: 「UI 部品」に「タブとページ送り」（プロジェクトの設定の見本つき）と「ツールチップとメニュー」（一覧のツールバーの見本と、モーダルとの使い分けの表つき）の 2 ページ、「テキスト入力」にタグとパスワードの強さ。見本の枠を全幅にできるようにした。6 言語に訳した。
+
 ### 追加（ページの部品）
 
 モーダルの外、ページの上で使う部品を足した。SaaS の画面の大半はこれらの組み合わせで組める。仕様書は v1.13（カテゴリ U、16 項目。177 → 193 項目）。

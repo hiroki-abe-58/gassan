@@ -24,6 +24,8 @@ import uiBadges from './uiBadges';
 import uiButtons from './uiButtons';
 import uiFeedback from './uiFeedback';
 import uiLayout from './uiLayout';
+import uiNavigation from './uiNavigation';
+import uiOverlays from './uiOverlays';
 import kinds from './kinds';
 import layers from './layers';
 import layout from './layout';
@@ -88,6 +90,8 @@ export default {
   uiBadges,
   uiFeedback,
   uiLayout,
+  uiNavigation,
+  uiOverlays,
   provider,
   spec,
   verification,

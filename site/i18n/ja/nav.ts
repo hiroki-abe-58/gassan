@@ -47,6 +47,8 @@ export default {
     uiBadges: 'バッジとアバター',
     uiFeedback: '進み具合と知らせ',
     uiLayout: 'カードと要約',
+    uiNavigation: 'タブとページ送り',
+    uiOverlays: 'ツールチップとメニュー',
     provider: 'GassanProvider',
     spec: '振る舞い仕様',
     verification: '検証',

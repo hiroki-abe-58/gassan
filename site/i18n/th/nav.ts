@@ -48,6 +48,8 @@ export default {
     uiBadges: 'แบดจ์และอวาตาร์',
     uiFeedback: 'ความคืบหน้าและการแจ้งเตือน',
     uiLayout: 'การ์ดและสรุปตัวเลข',
+    uiNavigation: 'แท็บและการแบ่งหน้า',
+    uiOverlays: 'Tooltip และเมนู',
     provider: 'GassanProvider',
     spec: 'สเปกพฤติกรรม',
     verification: 'การตรวจสอบ',

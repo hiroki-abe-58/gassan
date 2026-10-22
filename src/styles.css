@@ -1914,8 +1914,9 @@
   .g-calendar-grid[data-phase="0"] > tbody { animation: g-turn-0 var(--g-dur-in) var(--g-ease-in); }
   .g-calendar-grid[data-phase="1"] > tbody { animation: g-turn-1 var(--g-dur-in) var(--g-ease-in); }
   /* 月・年の一覧へ切り替えたときは、その場で浮かび上がる。 */
-  @keyframes g-cal-view { from { opacity: 0; scale: var(--g-motion-scale); } }
-  .g-cal:not([data-view="days"]) > .g-cal-body { animation: g-cal-view var(--g-dur-in) var(--g-ease-in); }
+  /* 小さく縮んだ所から出る。月と年の一覧・付けたタグ（9.20）が使う。 */
+  @keyframes g-pop { from { opacity: 0; scale: var(--g-motion-scale); } }
+  .g-cal:not([data-view="days"]) > .g-cal-body { animation: g-pop var(--g-dur-in) var(--g-ease-in); }
 
   /* ページの上に置くカレンダー（Calendar・RangeCalendar）。ポップアップと同じ面と枠。 */
   .g-calendar-inline {
@@ -2127,17 +2128,18 @@
     from { opacity: 0; translate: 0 calc(var(--g-motion-distance) / 2); }
   }
   .g-dialog[open] .g-body-inner > *,
-  .g-popup:popover-open :is(.g-listbox, .g-time-cols) > * {
+  .g-popup:popover-open :is(.g-listbox, .g-time-cols) > *,
+  .g-menu:popover-open > * {
     animation: var(--g-enter) var(--g-dur-in) var(--g-ease-in) both;
     animation-delay: calc(var(--g-i, 0) * var(--g-stagger));
   }
-  :is(.g-body-inner, .g-listbox, .g-time-cols) > :nth-child(2) { --g-i: 1; }
-  :is(.g-body-inner, .g-listbox, .g-time-cols) > :nth-child(3) { --g-i: 2; }
-  :is(.g-body-inner, .g-listbox) > :nth-child(4) { --g-i: 3; }
-  :is(.g-body-inner, .g-listbox) > :nth-child(5) { --g-i: 4; }
-  :is(.g-body-inner, .g-listbox) > :nth-child(6) { --g-i: 5; }
-  :is(.g-body-inner, .g-listbox) > :nth-child(7) { --g-i: 6; }
-  :is(.g-body-inner, .g-listbox) > :nth-child(n + 8) { --g-i: 7; }
+  :is(.g-body-inner, .g-listbox, .g-time-cols, .g-menu) > :nth-child(2) { --g-i: 1; }
+  :is(.g-body-inner, .g-listbox, .g-time-cols, .g-menu) > :nth-child(3) { --g-i: 2; }
+  :is(.g-body-inner, .g-listbox, .g-menu) > :nth-child(4) { --g-i: 3; }
+  :is(.g-body-inner, .g-listbox, .g-menu) > :nth-child(5) { --g-i: 4; }
+  :is(.g-body-inner, .g-listbox, .g-menu) > :nth-child(6) { --g-i: 5; }
+  :is(.g-body-inner, .g-listbox, .g-menu) > :nth-child(7) { --g-i: 6; }
+  :is(.g-body-inner, .g-listbox, .g-menu) > :nth-child(n + 8) { --g-i: 7; }
 }
 
 /* ===========================================================================
@@ -2328,7 +2330,7 @@
 }
 
 /* ===========================================================================
- * 9. ui parts（U-01〜U-16）
+ * 9. ui parts（U-01〜U-24・I-21・I-22）
  * ---------------------------------------------------------------------------
  * ページの上で使う部品。色はトークンだけ。強調は文字・余白・控えめな地の色・区切り線で行い、
  * 囲みや左の太い線は使わない（§5 の 21）。状態の色は data-tone から --g-tone に入れ、
@@ -2337,12 +2339,12 @@
  * ======================================================================== */
 
 @layer gassan.core {
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="neutral"] { --g-tone: var(--g-fg-muted); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="accent"] { --g-tone: var(--g-accent); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="success"] { --g-tone: var(--g-success); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="info"] { --g-tone: var(--g-info); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="warning"] { --g-tone: var(--g-warning); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item)[data-tone="error"] { --g-tone: var(--g-danger); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="neutral"] { --g-tone: var(--g-fg-muted); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="accent"] { --g-tone: var(--g-accent); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="success"] { --g-tone: var(--g-success); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="info"] { --g-tone: var(--g-info); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="warning"] { --g-tone: var(--g-warning); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="error"] { --g-tone: var(--g-danger); }
 
   /* --- 9.1 buttons（U-01〜U-03） ---------------------------------------------
    * 見た目と押した手応えは Modal.Button（.g-btn）と同じ。印と文字は別の器に置く（文節の span の間に隙間を入れない）。
@@ -2666,6 +2668,401 @@
     /* 印のある帯では、操作の頭を文の頭にそろえる（印 20px と隙間 10px）。 */
     .g-banner-icon ~ .g-banner-action { padding-inline-start: 30px; }
   }
+
+  /* --- 9.12 tabs（U-17） -----------------------------------------------------------
+   * 選んでいるタブの印は 1 枚で、選び直すと前の位置から滑る（V-05。Segmented と同じ仕組み）。
+   * 印の箱はタブと同じ大きさで、line は下端の 2px だけを塗り、pill は箱ごと面の色で塗る。
+   * 測る前（SSR と初回の描画）は印を隠し、選んでいるタブそのものに同じ印を描く。
+   * タブが器に入らないときは横に送る（折り返すと下線の行が割れる）。 */
+  .g-tabs { display: grid; gap: 16px; min-inline-size: 0; }
+  .g-tablist {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    min-inline-size: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  /* 区切り線は内側の影で引く（枠線だと下線の印が線の上に乗り、重ならない）。 */
+  .g-tabs[data-variant="line"] > .g-tablist { box-shadow: inset 0 -1px 0 var(--g-border); }
+  .g-tabs[data-variant="pill"] > .g-tablist {
+    justify-self: start;
+    max-inline-size: 100%;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--g-hover);
+  }
+  .g-tab {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    min-block-size: var(--g-tap);
+    padding-inline: 12px;
+    border: 0;
+    border-radius: var(--g-radius-control) var(--g-radius-control) 0 0;
+    background: transparent;
+    color: var(--g-fg-muted);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color var(--g-dur-slow) var(--g-ease-settle), background-color var(--g-dur-fast) linear;
+  }
+  .g-tabs[data-variant="pill"] .g-tab { min-block-size: 36px; padding-inline: 14px; border-radius: 999px; font-size: 0.875rem; }
+  .g-tab:hover:not([aria-selected="true"], [aria-disabled="true"]) { color: var(--g-fg); }
+  .g-tabs[data-variant="line"] .g-tab:hover:not([aria-selected="true"], [aria-disabled="true"]) { background: var(--g-hover); }
+  .g-tab[aria-selected="true"] { color: var(--g-fg); }
+  .g-tab[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+  .g-tab:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+  .g-tab-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--g-ind-w, 0);
+    height: var(--g-ind-h, 0);
+    translate: var(--g-ind-x, 0) var(--g-ind-y, 0);
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .g-tablist[data-indicator] > .g-tab-indicator {
+    opacity: 1;
+    transition:
+      translate var(--g-dur-slow) var(--g-ease-move),
+      width var(--g-dur-slow) var(--g-ease-move),
+      height var(--g-dur-slow) var(--g-ease-move);
+  }
+  .g-tabs[data-variant="line"] .g-tab-indicator { background: linear-gradient(var(--g-accent), var(--g-accent)) 0 100% / 100% 2px no-repeat; }
+  .g-tabs[data-variant="line"] > .g-tablist:not([data-indicator]) > .g-tab[aria-selected="true"] { box-shadow: inset 0 -2px 0 var(--g-accent); }
+  .g-tabs[data-variant="pill"] .g-tab-indicator { background: var(--g-surface); box-shadow: 0 1px 3px rgb(0 0 0 / 0.14); }
+  .g-tabs[data-variant="pill"] > .g-tablist:not([data-indicator]) > .g-tab[aria-selected="true"] { background: var(--g-surface); }
+  .g-tab-label { display: inline-flex; }
+  .g-tabpanel { min-inline-size: 0; animation: g-rise var(--g-dur-in) var(--g-ease-in); }
+  .g-tabpanel:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 4px; border-radius: 4px; }
+
+  /* --- 9.13 accordion（U-18） --------------------------------------------------------
+   * 項目の間を 1px の線で区切る。開閉の高さの動きは ::details-content と interpolate-size を
+   * 使えるブラウザでだけ付く（使えなければ、その場で開く）。 */
+  .g-accordion { display: grid; interpolate-size: allow-keywords; }
+  .g-accordion-item { border-block-end: 1px solid var(--g-border); }
+  .g-accordion-item:first-child { border-block-start: 1px solid var(--g-border); }
+  .g-accordion-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-block-size: var(--g-tap);
+    padding-block: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+    list-style: none;
+    cursor: pointer;
+  }
+  .g-accordion-summary::-webkit-details-marker { display: none; }
+  .g-accordion-summary:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; border-radius: 4px; }
+  .g-accordion-summary[aria-disabled="true"] { color: var(--g-fg-muted); cursor: not-allowed; }
+  .g-accordion-title { min-inline-size: 0; }
+  .g-accordion-icon {
+    flex: none;
+    inline-size: 18px;
+    block-size: 18px;
+    color: var(--g-fg-muted);
+    transition: rotate var(--g-dur-slow) var(--g-ease-move);
+  }
+  .g-accordion-summary:hover .g-accordion-icon { color: var(--g-fg); }
+  .g-accordion-item[open] > .g-accordion-summary .g-accordion-icon { rotate: 180deg; }
+  .g-accordion-item::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size var(--g-dur-slow) var(--g-ease-move),
+      content-visibility var(--g-dur-slow) allow-discrete;
+  }
+  .g-accordion-item[open]::details-content { block-size: auto; }
+  .g-accordion-content { padding-block-end: 16px; font-size: 0.9375rem; line-height: 1.7; color: var(--g-fg-muted); }
+
+  /* --- 9.14 tooltip（U-19） -----------------------------------------------------------
+   * 地と文字を入れ替えて、ページの面から浮かせる（明暗とも文字と地の比はページの文字と同じ）。 */
+  .g-popup.g-tooltip {
+    max-inline-size: min(18rem, calc(100vw - 16px));
+    padding: 6px 10px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 8px;
+    background: var(--g-fg);
+    color: var(--g-surface);
+    /* 小さな面に一覧と同じ深い影を付けると、周りが滲んで見える。浅い影だけにする。 */
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* --- 9.15 popover（U-20） ----------------------------------------------------------- */
+  .g-popup.g-popover {
+    inline-size: max-content;
+    max-inline-size: min(22rem, calc(100vw - 16px));
+    padding: 14px 16px 16px;
+  }
+  .g-popover:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-popover-title { margin: 0 0 10px; font-size: 0.9375rem; font-weight: 650; line-height: 1.4; }
+  .g-popover-body { font-size: 0.9375rem; line-height: 1.6; }
+
+  /* --- 9.16 menu（U-21） ---------------------------------------------------------------
+   * フォーカスのある項目を薄い地で示す（ポインタを乗せるとフォーカスが移るので、乗せた項目も同じ地）。
+   * キーで動かしたときはリングも出す。 */
+  .g-popup.g-menu { min-inline-size: 12rem; max-inline-size: min(20rem, calc(100vw - 16px)); }
+  .g-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-block-size: 40px;
+    padding: 8px 10px;
+    border-radius: calc(var(--g-radius-control) - 4px);
+    color: var(--g-fg);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+  }
+  .g-menu-item:focus { background: var(--g-hover); }
+  .g-menu-item:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+  .g-menu-item[aria-disabled="true"] { color: var(--g-fg-muted); cursor: not-allowed; }
+  .g-menu-item[data-tone="danger"]:not([aria-disabled="true"]) { color: var(--g-danger); }
+  /* フォーカス中の地と文字は、バッジと同じ式（地 12%・文字 85%）。危険の色そのままでは、ダークの地の上で 4.5:1 に届かない。 */
+  .g-menu-item[data-tone="danger"]:not([aria-disabled="true"]):focus {
+    background: color-mix(in srgb, var(--g-danger) 12%, var(--g-surface));
+    color: color-mix(in srgb, var(--g-danger) 85%, var(--g-fg));
+  }
+  .g-menu-icon { display: inline-grid; flex: none; color: var(--g-fg-muted); }
+  .g-menu-item[data-tone="danger"] .g-menu-icon { color: inherit; }
+  .g-menu-icon > svg { inline-size: 18px; block-size: 18px; }
+  .g-menu-label { flex: 1 1 auto; min-inline-size: 0; }
+  .g-menu-shortcut { padding-inline-start: 16px; color: var(--g-fg-muted); font: inherit; font-size: 0.8125rem; white-space: nowrap; }
+  .g-menu-separator { block-size: 1px; margin: 4px 6px; background: var(--g-border); }
+  .g-menu-group-label { padding: 8px 10px 4px; color: var(--g-fg-muted); font-size: 0.75rem; font-weight: 650; }
+
+  /* --- 9.17 breadcrumbs（U-22） --------------------------------------------------------- */
+  .g-breadcrumbs-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+  }
+  .g-breadcrumbs-item { display: inline-flex; align-items: center; gap: 6px; min-inline-size: 0; }
+  .g-breadcrumbs-link,
+  .g-breadcrumbs-text { display: inline-flex; align-items: center; min-block-size: 24px; }
+  .g-breadcrumbs-link { border-radius: 4px; color: var(--g-fg-muted); text-decoration: none; }
+  .g-breadcrumbs-link:hover { color: var(--g-fg); text-decoration: underline; text-underline-offset: 3px; }
+  .g-breadcrumbs-link:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-breadcrumbs-text { color: var(--g-fg-muted); }
+  .g-breadcrumbs-text[aria-current="page"] { color: var(--g-fg); font-weight: 600; }
+  .g-breadcrumbs-separator { flex: none; inline-size: 14px; block-size: 14px; color: var(--g-fg-muted); }
+  .g-breadcrumbs-separator:dir(rtl) { scale: -1 1; }
+
+  /* --- 9.18 pagination（U-23） ------------------------------------------------------------
+   * 器が狭い（400px 以下）ときは数字を畳み、「3 / 10」と前後だけにする（器の幅で決めるので、器いっぱいに置く）。 */
+  .g-pagination { container-type: inline-size; inline-size: 100%; }
+  .g-pagination-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .g-pagination-link {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 40px;
+    block-size: 40px;
+    padding-inline: 8px;
+    border: 0;
+    border-radius: var(--g-radius-control);
+    background: transparent;
+    color: var(--g-fg);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--g-dur-fast) linear,
+      color var(--g-dur-fast) linear,
+      scale var(--g-dur-fast) var(--g-ease-move);
+  }
+  .g-pagination-link:hover { background: var(--g-hover); }
+  .g-pagination-link:active { scale: var(--g-press-scale); }
+  .g-pagination-link[aria-current="page"] { background: var(--g-accent); color: var(--g-on-accent); font-weight: 650; }
+  .g-pagination-link:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-pagination-link:is(:disabled, [aria-disabled="true"]) { background: transparent; color: var(--g-fg-muted); opacity: 0.45; cursor: not-allowed; scale: 1; }
+  .g-pagination-link > svg { inline-size: 18px; block-size: 18px; }
+  .g-pagination-link > svg:dir(rtl) { scale: -1 1; }
+  .g-pagination-gap { display: inline-grid; place-items: center; min-inline-size: 24px; color: var(--g-fg-muted); }
+  .g-pagination-compact { display: none; padding-inline: 12px; color: var(--g-fg-muted); font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+  @container (max-width: 400px) {
+    :is(.g-pagination-page, .g-pagination-gap) { display: none; }
+    .g-pagination-compact { display: block; }
+  }
+
+  /* --- 9.19 steps（U-24） -----------------------------------------------------------------
+   * 既定の形は縦（印の下へ線を伸ばす）。orientation="horizontal" は器が 480px より広いときだけ横に並べる。
+   * 段を結ぶ線は、終えた段から次の段へ伸びるように塗る（右から左の言語では右から）。 */
+  .g-steps {
+    container-type: inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .g-step {
+    position: relative;
+    display: grid;
+    flex: 1 0 100%;
+    grid-template-columns: 28px minmax(0, 1fr);
+    /* 横に並べると、説明の無い段も行の高さまで伸びる。伸びた分を行に配らず、上に詰める。 */
+    align-content: start;
+    align-items: start;
+    column-gap: 12px;
+    padding-block-end: 20px;
+  }
+  .g-step:last-child { padding-block-end: 0; }
+  .g-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-block: 34px 6px;
+    inset-inline-start: 13px;
+    inline-size: 2px;
+    border-radius: 1px;
+    background: linear-gradient(var(--g-accent), var(--g-accent)) 0 0 / 100% 0% no-repeat, var(--g-border);
+    transition: background-size var(--g-dur-slow) var(--g-ease-move);
+  }
+  .g-step[data-state="complete"]::after { background-size: 100% 100%, auto; }
+  .g-step-marker {
+    display: grid;
+    place-items: center;
+    inline-size: 28px;
+    block-size: 28px;
+    box-sizing: border-box;
+    border: 1px solid var(--g-border-strong);
+    border-radius: 50%;
+    background: var(--g-surface);
+    color: var(--g-fg-muted);
+    font-size: 0.8125rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color var(--g-dur-slow) var(--g-ease-settle),
+      border-color var(--g-dur-slow) var(--g-ease-settle),
+      box-shadow var(--g-dur-slow) var(--g-ease-settle),
+      color var(--g-dur-slow) var(--g-ease-settle);
+  }
+  .g-step[data-state="current"] .g-step-marker {
+    border-color: var(--g-accent);
+    color: var(--g-fg);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--g-accent) 16%, transparent);
+  }
+  .g-step[data-state="complete"] .g-step-marker { border-color: var(--g-accent); background: var(--g-accent); color: var(--g-on-accent); }
+  .g-step-marker > svg { inline-size: 16px; block-size: 16px; }
+  /* 印は線を引くように出る（V-07。チェックボックスと同じ）。 */
+  @keyframes g-draw { from { stroke-dashoffset: 1; } }
+  .g-step-marker > svg > path { stroke-width: 2.2; stroke-dasharray: 1; animation: g-draw var(--g-dur-slow) var(--g-ease-in) both; }
+  .g-step-text { display: grid; gap: 2px; min-inline-size: 0; padding-block-start: 3px; }
+  .g-step-label { font-size: 0.9375rem; font-weight: 600; line-height: 1.45; }
+  .g-step[data-state="upcoming"] .g-step-label { color: var(--g-fg-muted); }
+  .g-step-description { color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.5; }
+  @container (min-width: 481px) {
+    .g-steps[data-orientation="horizontal"] > .g-step {
+      flex: 1 1 0;
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 8px;
+      padding-block-end: 0;
+      padding-inline-end: 12px;
+    }
+    .g-steps[data-orientation="horizontal"] > .g-step:not(:last-child)::after {
+      inset-block: 13px auto;
+      inset-inline: 36px 8px;
+      inline-size: auto;
+      block-size: 2px;
+      background-size: 0% 100%, auto;
+    }
+    .g-steps[data-orientation="horizontal"] > .g-step[data-state="complete"]::after { background-size: 100% 100%, auto; }
+    .g-steps[data-orientation="horizontal"] > .g-step:dir(rtl)::after { background-position: 100% 0, 0 0; }
+  }
+
+  /* --- 9.20 tag input（I-21） ------------------------------------------------------------
+   * 入力欄の枠（.g-input）の中に、タグと入力欄を折り返して並べる。一覧（ul）は display: contents で
+   * 並びから外し、タグを枠の中の並びに直に置く（一覧の意味は残る）。 */
+  .g-tags { flex-wrap: wrap; gap: 6px; padding: 6px 8px; }
+  .g-tags-list { display: contents; }
+  .g-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    max-inline-size: 100%;
+    min-block-size: 28px;
+    padding-inline: 10px 2px;
+    border-radius: 999px;
+    background: var(--g-hover);
+    color: var(--g-fg);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    animation: g-pop var(--g-dur-in) var(--g-ease-in);
+  }
+  .g-tag-label { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .g-tag-remove {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: 24px;
+    block-size: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--g-fg-muted);
+    cursor: pointer;
+  }
+  .g-tag-remove:hover:not(:disabled) { background: var(--g-hover); color: var(--g-fg); }
+  .g-tag-remove:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 0; }
+  .g-tag-remove:disabled { cursor: not-allowed; }
+  .g-tag-remove > svg { inline-size: 14px; block-size: 14px; }
+  .g-tags > .g-tags-input { flex: 1 1 8ch; min-inline-size: 8ch; min-block-size: 28px; padding-inline: 4px; }
+  /* 候補（datalist）の黒い三角は、セレクトのように見えて紛らわしい。候補は打つと出る。 */
+  .g-tags > .g-tags-input::-webkit-calendar-picker-indicator { display: none; }
+  .g-tags[data-disabled] { opacity: 0.55; }
+
+  /* --- 9.21 password strength（I-22） ---------------------------------------------------
+   * 4 つの区切りを、強さの色で左から順に塗る。言葉の色はトーンの色 85% に文字の色を混ぜる（9 の冒頭）。 */
+  .g-strength { display: grid; gap: 8px; font-size: 0.8125rem; line-height: 1.5; }
+  .g-strength-row { display: flex; align-items: center; gap: 12px; min-block-size: 20px; }
+  .g-strength-meter { display: grid; flex: 1 1 auto; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .g-strength-segment {
+    block-size: 4px;
+    border-radius: 2px;
+    background: var(--g-border);
+    transition: background-color var(--g-dur-slow) var(--g-ease-settle);
+  }
+  .g-strength-segment:nth-child(2) { transition-delay: calc(var(--g-stagger) * 1); }
+  .g-strength-segment:nth-child(3) { transition-delay: calc(var(--g-stagger) * 2); }
+  .g-strength-segment:nth-child(4) { transition-delay: calc(var(--g-stagger) * 3); }
+  .g-strength-segment[data-filled] { background: var(--g-tone); }
+  .g-strength-label { min-inline-size: 6em; margin: 0; color: color-mix(in srgb, var(--g-tone) 85%, var(--g-fg)); font-weight: 650; text-align: end; }
+  .g-strength-rules { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; color: var(--g-fg-muted); }
+  .g-strength-rule { display: flex; align-items: center; gap: 6px; transition: color var(--g-dur-fast) linear; }
+  .g-strength-rule[data-state="met"] { color: var(--g-fg); }
+  .g-strength-mark { flex: none; inline-size: 14px; block-size: 14px; }
+  .g-strength-rule[data-state="met"] .g-strength-mark { color: var(--g-success); }
 }
 
 @layer gassan.theme {
@@ -2743,5 +3140,17 @@
     }
     .g-alert { border: 1px solid CanvasText; }
     .g-btn[data-gated] { color: GrayText; border-color: GrayText; }
+    /* 9.12〜9.21。選んでいる・終えた・塗った所は Highlight で残す。 */
+    .g-tabs[data-variant="line"] .g-tab-indicator { forced-color-adjust: none; background: linear-gradient(Highlight, Highlight) 0 100% / 100% 2px no-repeat; }
+    .g-tabs[data-variant="pill"] .g-tab-indicator { forced-color-adjust: none; background: Highlight; }
+    .g-tabs[data-variant="pill"] > .g-tablist[data-indicator] > .g-tab[aria-selected="true"] { forced-color-adjust: none; color: HighlightText; }
+    .g-menu-item:focus { outline: 2px solid Highlight; outline-offset: -2px; }
+    :is(.g-popup.g-tooltip, .g-tag) { border: 1px solid CanvasText; }
+    .g-pagination-link[aria-current="page"] { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+    .g-step:not(:last-child)::after { forced-color-adjust: none; background: GrayText; }
+    .g-step[data-state="complete"]:not(:last-child)::after { background: Highlight; }
+    .g-step[data-state="complete"] .g-step-marker { forced-color-adjust: none; background: Highlight; border-color: Highlight; color: HighlightText; }
+    .g-strength-segment { outline: 1px solid CanvasText; }
+    .g-strength-segment[data-filled] { forced-color-adjust: none; background: Highlight; }
   }
 }

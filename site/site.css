@@ -969,6 +969,65 @@
   justify-content: flex-start;
 }
 
+/* タブとページ送りのページの見本（プロジェクトの設定）。行は 1px の線で区切る */
+.s-settings {
+  display: grid;
+  gap: 16px;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 46rem;
+  padding: 20px 24px 24px;
+  border: 1px solid var(--g-border);
+  border-radius: 16px;
+  background: var(--g-surface);
+  color: var(--g-fg);
+}
+.s-settings-members {
+  display: grid;
+  gap: 12px;
+}
+.s-member-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.s-member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-block-size: 52px;
+  border-block-end: 1px solid var(--g-border);
+}
+.s-member-name {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 器が狭いときのページ送り（数字を畳む）を見せる */
+.s-narrow {
+  inline-size: min(100%, 320px);
+}
+
+/* ツールチップとメニューのページの見本 */
+.s-popover-form {
+  display: grid;
+  gap: 4px;
+  min-inline-size: 14rem;
+}
+.s-popover-text {
+  margin: 0 0 12px;
+}
+
+/* パスワードの強さの見本 */
+.s-strength-sample {
+  display: grid;
+  gap: 10px;
+  inline-size: min(100%, 22rem);
+}
+
 /* トーストの「元に戻す」のデモ。下書きの行 */
 .s-draft-list {
   display: grid;
@@ -3255,6 +3314,9 @@
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
   gap: 12px;
   margin: 16px 0 24px;
+}
+.s-specimens-wide {
+  grid-template-columns: minmax(0, 1fr);
 }
 .s-specimen {
   display: grid;

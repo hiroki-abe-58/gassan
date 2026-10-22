@@ -48,6 +48,8 @@ export default {
     uiBadges: '배지와 아바타',
     uiFeedback: '진행 상황과 알림',
     uiLayout: '카드와 요약',
+    uiNavigation: '탭과 페이지 이동',
+    uiOverlays: '툴팁과 메뉴',
     provider: 'GassanProvider',
     spec: '동작 명세',
     verification: '검증',

@@ -3,6 +3,8 @@
  * ブラウザ専用 API に触るものは必ず存在チェックを通す（SSR と jsdom の両方で落ちないため）。
  */
 
+import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent } from 'react';
+
 interface MaybeProcess {
   process?: { env?: Record<string, string | undefined> };
 }
@@ -158,6 +160,19 @@ export function isTextEntry(el: Element | null | undefined): boolean {
     return TEXT_INPUT_TYPES.has(type);
   }
   return (el as HTMLElement).isContentEditable === true;
+}
+
+/** IME で変換中のキーは、確定の Enter も含めて部品が扱わない。 */
+export function isComposing(event: ReactKeyboardEvent): boolean {
+  return event.nativeEvent.isComposing || event.keyCode === 229;
+}
+
+/** 入力欄の枠の余白を押しても、中の入力欄にフォーカスを移す。中のボタンやリンクはそのまま。 */
+export function focusInputOnFrame(event: ReactMouseEvent<HTMLElement>): void {
+  const target = event.target as Element;
+  if (target.closest('input, button, a, textarea, select')) return;
+  event.preventDefault();
+  event.currentTarget.querySelector('input')?.focus();
 }
 
 /** 実際に focus() を受け取れる見込みがあるか。ざっくりで良い。 */

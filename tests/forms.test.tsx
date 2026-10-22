@@ -632,3 +632,113 @@ describe('ネイティブ入力の明暗 / I-15', () => {
     expect(screen.getByLabelText('日付').closest('.g-input')).not.toBeNull();
   });
 });
+
+/* ========================================================================== */
+/* I-21 タグ                                                                   */
+/* ========================================================================== */
+
+describe('タグ / I-21', () => {
+  /** 付いているタグ（× の名前から読む）。 */
+  const tags = (): string[] => [...document.querySelectorAll('.g-tag-label')].map((tag) => tag.textContent ?? '');
+
+  it('Enter で付けて読み上げ、空の Enter は止めない（フォームを送れる）', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Modal.TagInput aria-label="タグ" onValueChange={onValueChange} />);
+    const input = screen.getByRole('textbox', { name: 'タグ' });
+    await user.type(input, '  請求   書 {Enter}');
+    expect(tags()).toEqual(['請求 書']);
+    expect(onValueChange).toHaveBeenLastCalledWith(['請求 書']);
+    expect(screen.getByRole('status')).toHaveTextContent('請求 書 を追加しました');
+    expect(input).toHaveValue('');
+    expect(fireEvent.keyDown(input, { key: 'Enter' })).toBe(true);
+  });
+
+  it('区切り（カンマ・読点）を打つと手前を付け、貼り付けは全部に分ける。同じタグは 2 度付けない', async () => {
+    const user = userEvent.setup();
+    render(<Modal.TagInput aria-label="タグ" />);
+    const input = screen.getByRole('textbox', { name: 'タグ' });
+    await user.type(input, 'design、');
+    expect(tags()).toEqual(['design']);
+    await user.type(input, 'api,doc');
+    expect(tags()).toEqual(['design', 'api']);
+    expect(input).toHaveValue('doc');
+    await user.clear(input);
+    await user.paste('ops, design\nqa\tsales');
+    expect(tags()).toEqual(['design', 'api', 'ops', 'qa', 'sales']);
+  });
+
+  it('上限と validate で弾いたタグは付けずに入力欄へ残す', async () => {
+    const user = userEvent.setup();
+    render(<Modal.TagInput aria-label="タグ" max={2} validate={(tag) => tag.length <= 8} defaultValue={['a']} />);
+    const input = screen.getByRole('textbox', { name: 'タグ' });
+    await user.type(input, 'とても長いタグの名前です{Enter}');
+    expect(tags()).toEqual(['a']);
+    expect(input).toHaveValue('とても長いタグの名前です');
+    await user.clear(input);
+    await user.type(input, 'b{Enter}c{Enter}');
+    expect(tags()).toEqual(['a', 'b']);
+    expect(input).toHaveValue('c');
+  });
+
+  it('空の入力欄の Backspace は最後のタグを入力欄へ戻し、× は名前付きで外して入力欄へ戻る', async () => {
+    const user = userEvent.setup();
+    render(<Modal.TagInput aria-label="タグ" defaultValue={['営業', '開発']} name="tags" />);
+    const input = screen.getByRole('textbox', { name: 'タグ' });
+    expect([...document.querySelectorAll<HTMLInputElement>('input[type="hidden"][name="tags"]')].map((hidden) => hidden.value)).toEqual(['営業', '開発']);
+    await user.click(input);
+    await user.keyboard('{Backspace}');
+    expect(tags()).toEqual(['営業']);
+    expect(input).toHaveValue('開発');
+    await user.click(screen.getByRole('button', { name: '営業 を取り除く' }));
+    expect(screen.getByRole('status')).toHaveTextContent('営業 を取り除きました');
+    expect(input).toHaveFocus();
+  });
+
+  it('IME の変換中の Enter と読点では付けない（確定してから分ける）', () => {
+    render(<Modal.TagInput aria-label="タグ" />);
+    const input = screen.getByRole('textbox', { name: 'タグ' });
+    fireEvent.compositionStart(input);
+    fireEvent.change(input, { target: { value: 'せいきゅう、' } });
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
+    expect(tags()).toEqual([]);
+    fireEvent.compositionEnd(input);
+    expect(tags()).toEqual(['せいきゅう']);
+  });
+});
+
+/* ========================================================================== */
+/* I-22 パスワードの強さ                                                        */
+/* ========================================================================== */
+
+describe('パスワードの強さ / I-22', () => {
+  it('既定の 4 つの条件の満ち方から強さを決め、条件ごとの状態を言葉でも添える', () => {
+    const { rerender } = render(<Modal.PasswordStrength id="strength" value="" />);
+    const root = document.getElementById('strength')!;
+    expect(root).not.toHaveAttribute('role');
+    expect(within(root).getAllByRole('listitem')).toHaveLength(4);
+    expect(root).toHaveTextContent('8 文字以上');
+    expect(root.querySelector('.g-strength-label')).toBeNull();
+    rerender(<Modal.PasswordStrength id="strength" value="abcdefgh" />);
+    expect(root).toHaveTextContent('弱い');
+    expect(root).toHaveAttribute('data-tone', 'error');
+    rerender(<Modal.PasswordStrength id="strength" value="Abcdefg1!" />);
+    expect(root).toHaveTextContent('とても強い');
+    expect(root).toHaveAttribute('data-tone', 'success');
+    expect(root.querySelectorAll('[data-filled]')).toHaveLength(4);
+    expect(within(root).getAllByRole('listitem')[0]).toHaveTextContent('満たしています');
+  });
+
+  it('条件は差し替えられ、強さは score で外から渡せる（長さを重く見る推定を使うとき）', () => {
+    render(
+      <Modal.PasswordStrength
+        value="correct horse battery staple"
+        rules={[{ id: 'long', label: '15 文字以上', test: (password) => password.length >= 15 }]}
+        score={4}
+      />,
+    );
+    expect(screen.getAllByRole('listitem')).toHaveLength(1);
+    expect(screen.getByRole('listitem')).toHaveTextContent('15 文字以上満たしています');
+    expect(document.querySelector('.g-strength-label')).toHaveTextContent('とても強い');
+  });
+});

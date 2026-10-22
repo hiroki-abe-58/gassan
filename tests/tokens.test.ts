@@ -346,7 +346,11 @@ describe('tokens / contrast (G-10 K-07 F-06 S-07)', () => {
     // CSS の color-mix と同じ式で計算する（地 = トーンの色 12% と面、文字 = トーンの色 85% と文字の色）。
     expect(block('.g-badge')).toMatch(/background:\s*color-mix\(in srgb, var\(--g-tone\) 12%, var\(--g-surface\)\);/);
     expect(block('.g-badge')).toMatch(/color:\s*color-mix\(in srgb, var\(--g-tone\) 85%, var\(--g-fg\)\);/);
-    const mix = (a: string, b: string, weight: number): string =>
+    // メニューの取り消せない項目も、フォーカス中は同じ式で塗る（下の計算の danger が保証する）。
+    const danger = block('.g-menu-item[data-tone="danger"]:not([aria-disabled="true"]):focus');
+    expect(danger).toMatch(/background:\s*color-mix\(in srgb, var\(--g-danger\) 12%, var\(--g-surface\)\);/);
+    expect(danger).toMatch(/color:\s*color-mix\(in srgb, var\(--g-danger\) 85%, var\(--g-fg\)\);/);
+    const mix =(a: string, b: string, weight: number): string =>
       `#${[1, 3, 5]
         .map((at) => Math.round(Number.parseInt(a.slice(at, at + 2), 16) * weight + Number.parseInt(b.slice(at, at + 2), 16) * (1 - weight)))
         .map((channel) => channel.toString(16).padStart(2, '0'))

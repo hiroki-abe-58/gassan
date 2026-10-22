@@ -1,12 +1,12 @@
-# 追跡表 — 193 項目が「どこで」満たされているか
+# 追跡表 — 203 項目が「どこで」満たされているか
 
 対象: `@genelab/gassan` v0.1.0（+ v0.2.0 のシート分）/ 日付: 2026-10-18
 
-[`modal.skill.md`](../modal.skill.md) §4 の 193 項目を、実装・テスト・CSS・ロードマップのどれに
+[`modal.skill.md`](../modal.skill.md) §4 の 203 項目を、実装・テスト・CSS・ロードマップのどれに
 結びつけたかを 1 行ずつ記録する。**この表は `npm run check:trace` が機械検証する。**
 ID の欠落・余剰、必須度の食い違い、存在しないテスト名の引用は CI で落ちる。
 
-「193 項目に対応した」は、書いただけなら主張にすぎない。検証できる形にするための表である。
+「203 項目に対応した」は、書いただけなら主張にすぎない。検証できる形にするための表である。
 
 ---
 
@@ -228,7 +228,7 @@ ID の欠落・余剰、必須度の食い違い、存在しないテスト名�
 | D-08 | M | 実装 | `T:充足済みのゲートは除外する` `T:未登録の名前は fail-closed（ブロックする）` |
 | D-09 | M | 実装 | `T:開いたまま unmount しても例外を投げず、dialog を閉じる` `S:vitest.setup.ts` |
 | D-10 | M | 実装 | `T:Esc は cancel を止めて自前のルートに合流する` `S:vitest.setup.ts` |
-| D-11 | M | 実装 | `T:Modal.Root は data-* をホスト要素へ渡す` `T:Modal.Header は data-* をホスト要素へ渡す` `T:Modal.Controls は data-* をホスト要素へ渡す` `T:Modal.Back は data-* をホスト要素へ渡す` `T:Modal.Close は data-* をホスト要素へ渡す` `T:Modal.Indicator は data-* をホスト要素へ渡す` `T:Modal.Title は data-* をホスト要素へ渡す` `T:Modal.Description は data-* をホスト要素へ渡す` `T:Modal.Body は data-* をホスト要素へ渡す` `T:Modal.Section は data-* をホスト要素へ渡す` `T:Modal.Footer は data-* をホスト要素へ渡す` `T:Modal.Button は data-* をホスト要素へ渡す` `T:Modal.Consent は data-* をホスト要素へ渡す` `T:Modal.GateStatus は data-* をホスト要素へ渡す` `T:Modal.Media は data-* をホスト要素へ渡す` `T:Modal.Gallery は data-* をホスト要素へ渡す` `T:Modal.Field は data-* をホスト要素へ渡す` `T:Modal.Chips は data-* をホスト要素へ渡す` `T:Modal.Switch は data-* をホスト要素へ渡す` `T:Modal.Table は data-* をホスト要素へ渡す` `T:Modal.Alert は data-* をホスト要素へ渡す` `T:Modal.Chart は data-* をホスト要素へ渡す` `T:Modal.Handle は data-* をホスト要素へ渡す` `T:Modal.Fieldset は data-* をホスト要素へ渡す` `T:Modal.Input は data-* を input へ渡す` `T:Modal.PasswordInput は data-* を input へ渡す` `T:Modal.SearchInput は data-* を input へ渡す` `T:Modal.Textarea は data-* を textarea へ渡す` `T:Modal.NumberField は data-* をホスト要素へ渡す` `T:Modal.CodeInput は data-* をホスト要素へ渡す` `T:Modal.Checkbox は data-* をホスト要素へ渡す` `T:Modal.RadioGroup は data-* をホスト要素へ渡す` `T:Modal.Segmented は data-* をホスト要素へ渡す` `T:Modal.Rating は data-* をホスト要素へ渡す` `T:Modal.Slider は data-* をホスト要素へ渡す` `T:Modal.RangeSlider は data-* をホスト要素へ渡す` `T:Modal.Select は data-* をホスト要素へ渡す` `T:Modal.Combobox は data-* をホスト要素へ渡す` `T:Modal.DatePicker は data-* をホスト要素へ渡す` `T:Modal.DateRangePicker は data-* をホスト要素へ渡す` `T:Modal.Calendar は data-* をホスト要素へ渡す` `T:Modal.RangeCalendar は data-* をホスト要素へ渡す` `T:Modal.TimePicker は data-* をホスト要素へ渡す` `T:Modal.FileDrop は data-* をホスト要素へ渡す` `T:ページの上の部品は 1 つ残らず data-* をホスト要素へ渡す` `T:公開コンポーネントは 1 つ残らず受け渡しを検査している` `T:gassan が書く data-kind は消費者の値で壊れない` `T:予約語を渡すと開発時に警告する` `T:aria-* は受け取らず、警告して落とす（名前は label / Modal.Title を使う）` `T:aria-* を渡しても label が無ければ名前は付かない（黙って名前が付く事故を防ぐ）` `T:src が書く data-* はすべて RESERVED_DATA に載っている` `T:消費者が置く data-g-no-swipe は予約していない` `T:Modal.Gate は要素を描かないので受け渡しの対象外` `T:gassan が書く data-* は 1 つ残らずスプレッドより後ろにある` `T:濾過を通さない生の {...rest} は 1 箇所も無い` `T:公開コンポーネントの数だけ濾過の呼び出しがある` `T:予約済みの data-* は無視して警告する` `T:予約外の data-* と aria-* はそのまま通す` |
+| D-11 | M | 実装 | `T:Modal.Root は data-* をホスト要素へ渡す` `T:Modal.Header は data-* をホスト要素へ渡す` `T:Modal.Controls は data-* をホスト要素へ渡す` `T:Modal.Back は data-* をホスト要素へ渡す` `T:Modal.Close は data-* をホスト要素へ渡す` `T:Modal.Indicator は data-* をホスト要素へ渡す` `T:Modal.Title は data-* をホスト要素へ渡す` `T:Modal.Description は data-* をホスト要素へ渡す` `T:Modal.Body は data-* をホスト要素へ渡す` `T:Modal.Section は data-* をホスト要素へ渡す` `T:Modal.Footer は data-* をホスト要素へ渡す` `T:Modal.Button は data-* をホスト要素へ渡す` `T:Modal.Consent は data-* をホスト要素へ渡す` `T:Modal.GateStatus は data-* をホスト要素へ渡す` `T:Modal.Media は data-* をホスト要素へ渡す` `T:Modal.Gallery は data-* をホスト要素へ渡す` `T:Modal.Field は data-* をホスト要素へ渡す` `T:Modal.Chips は data-* をホスト要素へ渡す` `T:Modal.Switch は data-* をホスト要素へ渡す` `T:Modal.Table は data-* をホスト要素へ渡す` `T:Modal.Alert は data-* をホスト要素へ渡す` `T:Modal.Chart は data-* をホスト要素へ渡す` `T:Modal.Handle は data-* をホスト要素へ渡す` `T:Modal.Fieldset は data-* をホスト要素へ渡す` `T:Modal.Input は data-* を input へ渡す` `T:Modal.PasswordInput は data-* を input へ渡す` `T:Modal.SearchInput は data-* を input へ渡す` `T:Modal.Textarea は data-* を textarea へ渡す` `T:Modal.NumberField は data-* をホスト要素へ渡す` `T:Modal.CodeInput は data-* をホスト要素へ渡す` `T:Modal.Checkbox は data-* をホスト要素へ渡す` `T:Modal.RadioGroup は data-* をホスト要素へ渡す` `T:Modal.Segmented は data-* をホスト要素へ渡す` `T:Modal.Rating は data-* をホスト要素へ渡す` `T:Modal.Slider は data-* をホスト要素へ渡す` `T:Modal.RangeSlider は data-* をホスト要素へ渡す` `T:Modal.Select は data-* をホスト要素へ渡す` `T:Modal.Combobox は data-* をホスト要素へ渡す` `T:Modal.DatePicker は data-* をホスト要素へ渡す` `T:Modal.DateRangePicker は data-* をホスト要素へ渡す` `T:Modal.Calendar は data-* をホスト要素へ渡す` `T:Modal.RangeCalendar は data-* をホスト要素へ渡す` `T:Modal.TimePicker は data-* をホスト要素へ渡す` `T:Modal.TagInput は data-* をホスト要素へ渡す` `T:Modal.PasswordStrength は data-* をホスト要素へ渡す` `T:Modal.FileDrop は data-* をホスト要素へ渡す` `T:ページの上の部品は 1 つ残らず data-* をホスト要素へ渡す` `T:公開コンポーネントは 1 つ残らず受け渡しを検査している` `T:gassan が書く data-kind は消費者の値で壊れない` `T:予約語を渡すと開発時に警告する` `T:aria-* は受け取らず、警告して落とす（名前は label / Modal.Title を使う）` `T:aria-* を渡しても label が無ければ名前は付かない（黙って名前が付く事故を防ぐ）` `T:src が書く data-* はすべて RESERVED_DATA に載っている` `T:消費者が置く data-g-no-swipe は予約していない` `T:Modal.Gate は要素を描かないので受け渡しの対象外` `T:gassan が書く data-* は 1 つ残らずスプレッドより後ろにある` `T:濾過を通さない生の {...rest} は 1 箇所も無い` `T:公開コンポーネントの数だけ濾過の呼び出しがある` `T:予約済みの data-* は無視して警告する` `T:予約外の data-* と aria-* はそのまま通す` |
 | D-12 | S | 実装 | `T:構造コンテナは children を省略できる` `T:名前を持つ部品は children を省略できない` `T:children なしの Body でもスクロール領域と名前が残る` `T:children なしの Section は、見出しが無ければただの div になる` `T:children なしでも title があれば section と見出しを出す` `T:children なしの Header / Footer も落ちずに枠だけ残る` `T:空の本文でも読了ゲートが満たされ、ボタンが押せる` `T:空の本文でも、測れないあいだは閉じたまま（fail-closed）` `S:src/body.tsx` |
 | D-13 | S | 実装 | `T:duplicateValues は重複だけを最初に現れた順で返す` `T:duplicateValues は一意なら空を返す` `T:Modal.Gallery の items[].id 重複を警告する` `T:Modal.Chips の options[].value 重複を警告する` `T:重複を黙って落とさない（渡した件数のまま描く）` `T:一意なら警告しない` `T:Modal.Gallery は items が空になっても落ちない` `T:Modal.Chips は options が空でも落ちない` `S:src/internal/dom.ts` |
 | D-14 | S | 実装 | `T:onIndexChange はマウントしただけでは鳴らない` `T:位置が動いたら onIndexChange が鳴る` `T:items が縮んで位置が切り詰められたら onIndexChange が鳴る` `T:onDetentChange もマウントしただけでは鳴らない` `T:同じ段に留まる操作では onDetentChange が鳴らない` `T:detents が縮んで段が丸められたら onDetentChange が鳴る（Gallery の切り詰めと揃える）` `T:開き直して既定の段へ戻ったら onDetentChange が鳴る` `T:onDetentChange が新しい段の名前で呼ばれる` |
@@ -271,6 +271,8 @@ top layer への描画・位置・見た目は実ブラウザで撮って確か�
 | I-18 | O | 実装 | `T:見出しで月の一覧、もう一度で年の一覧。選ぶと 1 段ずつ降り、Esc で 1 段戻る（ポップアップは閉じない）` `T:「今日」で今日へ移る` `T:2 か月並べると月の外の日は描かず（同じ日が 2 つにならない）、PageDown で 1 か月ずつ送る` |
 | I-19 | O | 実装 | `T:isDateDisabled の日は移れても選べない` `T:marks の日には点を付け、読み上げ名に「予定あり」を添える` |
 | I-20 | S | 実装 | `T:開くと時の列にフォーカスが入り、各列は選んでいる項目を aria-activedescendant で指す` `T:↑↓ で値、→ で次の列。Enter で決めて閉じ、ボタンへ戻る` `T:列の端を越えると反対の端へ回る。PageUp / PageDown は列の 4 分の 1、Home / End は端` `T:数字を打つとその時刻へ飛ぶ。続けて打つと桁がつながり、上限を越えたら 1 桁からやり直す` `T:step で分を刻み、min / max の外は選べない。刻みに乗らない値は、開くといちばん近い時刻を指す` `T:時を押すと分の列へ進み、分を押すと決めて閉じる` `T:12 時間制は午前・午後の列を足す。値は 24 時間のまま、A / P でも切り替わる` `T:hourCycle で時計を選べる。日本語の 12 時間制は午前・午後を Intl の名前で出し、最後の列を押すと決まる` `T:値が無いときは今の時刻に近い刻みを指し、「現在時刻」でそこへ戻る` `T:Esc は決めずに閉じ、モーダルの cancel まで届かせない。name を渡すと隠しフィールドで送る` `T:開いた直後は列をその場で合わせ、値を動かすと滑らせる（列の中だけを動かす）` |
+| I-21 | O | 実装 | `T:Enter で付けて読み上げ、空の Enter は止めない（フォームを送れる）` `T:区切り（カンマ・読点）を打つと手前を付け、貼り付けは全部に分ける。同じタグは 2 度付けない` `T:上限と validate で弾いたタグは付けずに入力欄へ残す` `T:空の入力欄の Backspace は最後のタグを入力欄へ戻し、× は名前付きで外して入力欄へ戻る` `T:IME の変換中の Enter と読点では付けない（確定してから分ける）` `C:.g-tags-list { display: contents; }` |
+| I-22 | O | 実装 | `T:既定の 4 つの条件の満ち方から強さを決め、条件ごとの状態を言葉でも添える` `T:条件は差し替えられ、強さは score で外から渡せる（長さを重く見る推定を使うとき）` `C:.g-strength-segment[data-filled] { background: var(--g-tone); }` |
 
 ### V. 動き
 
@@ -318,6 +320,14 @@ top layer への描画・位置・見た目は実ブラウザで撮って確か�
 | U-14 | O | 実装 | `T:DescriptionList は dt / dd の組で書く` `C:@container (min-width: 480px)` |
 | U-15 | O | 実装 | `T:Timeline は順序のある一覧で、日時は time 要素（機械が読む値と見せる値を分ける）` |
 | U-16 | S | 実装 | `T:Banner は既定では読み上げの領域にならず、live で後から出すときだけ status（error は alert）。× は「閉じる」` `T:トーンの薄い地の上の文字（バッジ・知らせの帯）は、明暗とも 4.5:1 以上` |
+| U-17 | S | 実装 | `T:tablist に名前があり、選んでいるタブだけが Tab で止まり、その中身だけを見せる` `T:←→ で隣へ移って選び（使えないタブは飛ばし、端で回る）、Home / End で端へ` `T:activation='manual' では矢印はフォーカスだけを動かし、Enter / Space で選ぶ` `C:.g-tablist[data-indicator] > .g-tab-indicator` |
+| U-18 | S | 実装 | `T:details / summary で作り、defaultValue の項目を開いておく` `T:type='single' は同じ name を持ち、1 つ開くと他を閉じて、開いている value を知らせる` `T:使えない項目は押しても開かない` `C:.g-accordion-item::details-content` |
+| U-19 | S | 実装 | `T:文は起点の説明になり、出ていない間も DOM にある。名前と同じ文なら説明にしない` `T:ポインタを乗せて待つと出て、離れると少し待って消える。触れたときは出さない` `T:Esc は吹き出しだけを消し、keydown を止めて外（モーダル）に届かせない` `T:キーボードでフォーカスするとすぐ出て、離れると消える。押すと消える` `C:.g-popup.g-tooltip` |
+| U-20 | O | 実装 | `T:起点は aria-haspopup="dialog" と aria-expanded を持ち、開くと見出しが名前の窓の最初の操作へフォーカスが入る` `T:Esc で閉じて起点へ戻り、keydown を止める。外を押しても閉じる` `T:最初から開いているときはフォーカスを奪わない` |
+| U-21 | S | 実装 | `T:起点は aria-haspopup="menu"。↓で開くと最初の項目、↑で開くと最後の項目へ` `T:↑↓ は端で回り、Home / End で端へ、頭文字で次の項目へ。使えない項目にも止まる` `T:Enter で選ぶと閉じて起点へ戻り、onSelect に value が届く。使えない項目は選べない` `T:ポインタで開くとメニューそのものへフォーカスを移し（項目を先回りして光らせない）、押した項目を選ぶ` `T:Esc は keydown を止める。区切りは separator、まとまりは名前のある group` `T:トーンの薄い地の上の文字（バッジ・知らせの帯）は、明暗とも 4.5:1 以上` `C:.g-menu:popover-open > *` |
+| U-22 | S | 実装 | `T:名前のある nav の中の順序のある一覧で、最後が今のページ（リンクにしない）` `C:.g-breadcrumbs-separator:dir(rtl)` |
+| U-23 | S | 実装 | `T:最初・最後・今のページと両脇を出して間を「…」で詰め、項目の数はどのページでも同じ` `T:各ページは「3ページ目」の名前で、今のページは aria-current。端では前へ・次へを押せない` `T:次へで最後のページへ着き、次へが押せなくなったら、フォーカスを今のページへ移す` `T:getHref を渡すとリンクになり、端の前へ・次へは行き先を持たない` `C:@container (max-width: 400px)` |
+| U-24 | O | 実装 | `T:順序のある一覧で、今の段は aria-current="step"。状態は文字でも添え、番号の印は読ませない` `C:@container (min-width: 481px)` |
 
 ---
 

@@ -95,6 +95,22 @@ const labels: GassanLabels = {
   copied: '복사했습니다',
   copyFailed: '복사하지 못했습니다',
   moreCount: (count) => `외 ${String(count)}명`,
+  breadcrumbs: '이동 경로',
+  pagination: '페이지 이동',
+  previousPage: '이전 페이지',
+  nextPage: '다음 페이지',
+  pageNumber: (page) => `${String(page)}페이지`,
+  stepStatus: (state) => ({ complete: '완료', current: '진행 중', upcoming: '시작 전' })[state],
+  removeTag: (tag) => `${tag} 제거`,
+  tagAdded: (tag) => `${tag} 추가함`,
+  tagRemoved: (tag) => `${tag} 제거함`,
+  passwordStrength: (score) => (['너무 약함', '약함', '보통', '강함', '매우 강함'] as const)[score],
+  passwordLength: (min) => `${String(min)}자 이상`,
+  passwordNumber: '숫자 포함',
+  passwordSymbol: '기호 포함',
+  passwordCase: '대문자와 소문자 포함',
+  ruleMet: '충족',
+  ruleUnmet: '아직 충족하지 않음',
 };
 
 export default labels;
