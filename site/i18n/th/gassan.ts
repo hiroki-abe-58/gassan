@@ -93,6 +93,8 @@ const labels: GassanLabels = {
   dayPeriod: 'ช่วงเวลา',
   now: 'ตอนนี้',
   chooseTime: 'เลือกเวลา',
+  notifications: 'การแจ้งเตือน',
+  closeNotification: 'ปิดการแจ้งเตือน',
 };
 
 export default labels;

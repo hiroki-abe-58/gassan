@@ -27,6 +27,7 @@ import { FooterPage } from './pages/components/FooterPage';
 import { GatePage } from './pages/components/GatePage';
 import { HeaderPage } from './pages/components/HeaderPage';
 import { ImperativePage } from './pages/components/ImperativePage';
+import { ToastPage } from './pages/components/ToastPage';
 import { MediaPage } from './pages/components/MediaPage';
 import { ProviderPage } from './pages/components/ProviderPage';
 import { RootPage } from './pages/components/RootPage';
@@ -87,6 +88,7 @@ export const PAGES: readonly PageDef[] = [
   { path: '/components/chart', key: 'chart', section: 'components', Component: ChartPage },
   { path: '/components/sheet', key: 'sheet', section: 'components', Component: SheetPage },
   { path: '/components/imperative', key: 'imperative', section: 'components', Component: ImperativePage },
+  { path: '/components/toast', key: 'toast', section: 'components', Component: ToastPage },
   { path: '/components/provider', key: 'provider', section: 'components', Component: ProviderPage },
 
   // 公開済みのリンクを壊さないよう、パスは /components の下のまま。ナビの節だけを分ける。

@@ -59,6 +59,11 @@
     --g-danger: #b3251e;
     --g-on-danger: #ffffff;
 
+    /* 成功・注意・お知らせの色（トーストの印とメーター）。文字にも使えるよう、どれも面と 4.5:1 以上。N-02。 */
+    --g-success: #1a7f45;
+    --g-warning: #9a5800;
+    --g-info: #245fd0;
+
     /* 日曜・祝日と土曜の文字（カレンダー）。日本の暦の慣習。どちらも面と 4.5:1 以上。I-16。
      * 曜日を色で分けない地域向けには、利用者が --g-fg を入れればよい。 */
     --g-sunday: #c4321f;
@@ -130,6 +135,9 @@
       --g-on-accent-muted: #eef0f4;
       --g-danger: #e35d54;   /* #e0564d は面との比が 4.45:1 で、ボタンにもエラー文にも足りなかった */
       --g-on-danger: #1b1e25;
+      --g-success: #4cc97f;
+      --g-warning: #f0b14a;
+      --g-info: #86b2ff;
       --g-sunday: #ff8f84;
       --g-saturday: #8ab6ff;
       --g-color-scheme: dark;
@@ -2132,6 +2140,193 @@
   :is(.g-body-inner, .g-listbox) > :nth-child(n + 8) { --g-i: 7; }
 }
 
+/* ===========================================================================
+ * 8. notifications（N-01〜N-08）
+ * ---------------------------------------------------------------------------
+ * トースト。領域は popover で top layer に出す（UA の popover の見た目は全部外す）。
+ * 領域は押下を受けず、トーストの列だけが受ける（下のページを塞がない）。
+ * 囲みの強調は使わない（§5 の 21）。色は印とメーターにだけ載せ、面は他の部品と同じ。
+ * ======================================================================== */
+
+@layer gassan.core {
+  .g-toast-region {
+    position: fixed;
+    inset: auto;
+    box-sizing: border-box;
+    inline-size: min(100vw, 392px);
+    max-block-size: 100dvh;
+    margin: 0;
+    padding: 16px;
+    border: 0;
+    background: transparent;
+    color: var(--g-fg);
+    overflow: visible;
+    pointer-events: none;
+    color-scheme: var(--g-color-scheme);
+    /* 入る向き（端の側から）と、閉じる向き（端の外へ）。位置ごとに下で決める。 */
+    --g-toast-enter: calc(var(--g-motion-distance) * 2);
+    --g-toast-side: 0;
+    --g-toast-flip: 1;
+    --g-toast-exit-y: 0px;
+  }
+  .g-toast-region:dir(rtl) { --g-toast-flip: -1; }
+  .g-toast-region[data-position^="bottom"] { inset-block-end: 0; padding-block-end: max(16px, env(safe-area-inset-bottom)); }
+  .g-toast-region[data-position^="top"] {
+    inset-block-start: 0;
+    padding-block-start: max(16px, env(safe-area-inset-top));
+    --g-toast-enter: calc(var(--g-motion-distance) * -2);
+  }
+  .g-toast-region[data-position$="-end"] { inset-inline-end: 0; --g-toast-side: 1; }
+  .g-toast-region[data-position$="-start"] { inset-inline-start: 0; --g-toast-side: -1; }
+  .g-toast-region[data-position$="-center"] { inset-inline: 0; margin-inline: auto; --g-toast-exit-y: var(--g-toast-enter); }
+
+  .g-toast-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+  .g-toast-list:has(> .g-toast-slot) { pointer-events: auto; }
+
+  /* 1 つの枠は 1 行の grid。行の高さを 0fr ⇄ 1fr で動かして、出入りのたびに隣が滑って詰まる。 */
+  .g-toast-slot {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows var(--g-dur-in) var(--g-ease-move);
+  }
+  @starting-style {
+    .g-toast-slot { grid-template-rows: 0fr; }
+  }
+  .g-toast-slot[data-exiting] {
+    grid-template-rows: 0fr;
+    pointer-events: none;
+    transition-duration: var(--g-dur-out);
+    transition-timing-function: var(--g-ease-out);
+  }
+  /* トーストは行に引き伸ばされず自分の高さのまま（0fr の行からはみ出す分は、縮む間だけ切り取る。
+   * いつも切ると影まで切れる）。 */
+  .g-toast-slot > .g-toast { align-self: start; min-block-size: 0; }
+  .g-toast-slot[data-exiting] { overflow: hidden; }
+
+  .g-toast {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-block-start: 8px;
+    padding: 12px 8px 15px 14px;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius);
+    background: var(--g-surface);
+    color: var(--g-fg);
+    box-shadow: var(--g-shadow);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    /* 下端のメーターを角の丸みで切る。 */
+    overflow: hidden;
+    /* 縦は画面のスクロールに任せ、横の払いだけを受ける（N-04）。 */
+    touch-action: pan-y;
+    opacity: 1;
+    scale: 1;
+    translate: var(--g-toast-drag, 0px) 0;
+    filter: none;
+    transition:
+      opacity var(--g-dur-in) var(--g-ease-in),
+      scale var(--g-dur-in) var(--g-ease-in),
+      translate var(--g-dur-in) var(--g-ease-in),
+      filter var(--g-dur-in) var(--g-ease-in);
+  }
+  .g-toast-region[data-position^="top"] .g-toast { margin-block: 0 8px; }
+  @starting-style {
+    .g-toast { opacity: 0; scale: var(--g-motion-scale); translate: 0 var(--g-toast-enter); filter: blur(var(--g-motion-blur)); }
+  }
+  .g-toast[data-dragging] { transition: none; cursor: grabbing; }
+  /* 閉じるときは端の外へ流す（払ったならその向きへ）。中央の位置では端の側へ沈める。 */
+  .g-toast-slot[data-exiting] > .g-toast {
+    opacity: 0;
+    scale: var(--g-motion-scale);
+    translate:
+      calc(var(--g-toast-away, calc(var(--g-toast-side) * var(--g-toast-flip))) * (100% + 24px))
+      var(--g-toast-exit-y);
+    transition-duration: var(--g-dur-out);
+    transition-timing-function: var(--g-ease-out);
+  }
+
+  .g-toast[data-tone="neutral"] { --g-toast-tone: var(--g-accent); }
+  .g-toast[data-tone="success"] { --g-toast-tone: var(--g-success); }
+  .g-toast[data-tone="info"] { --g-toast-tone: var(--g-info); }
+  .g-toast[data-tone="warning"] { --g-toast-tone: var(--g-warning); }
+  .g-toast[data-tone="error"] { --g-toast-tone: var(--g-danger); }
+  .g-toast[data-tone="loading"] { --g-toast-tone: var(--g-fg-muted); }
+  .g-toast-icon { flex: none; inline-size: 20px; block-size: 20px; margin-block-start: 1.5px; color: var(--g-toast-tone); }
+  .g-toast-spinner {
+    flex: none;
+    box-sizing: border-box;
+    inline-size: 18px;
+    block-size: 18px;
+    margin: 2.5px 1px 0;
+    border: 2px solid var(--g-toast-tone);
+    border-block-start-color: transparent;
+    border-radius: 50%;
+    animation: g-spin 700ms linear infinite;
+  }
+  .g-toast-body { display: grid; flex: 1; gap: 2px; min-inline-size: 0; }
+  .g-toast-message { font-weight: 600; overflow-wrap: anywhere; }
+  .g-toast-description { font-size: 0.875rem; color: var(--g-fg-muted); overflow-wrap: anywhere; }
+  /* 既定の墨色のテーマでも押せるものに見えるよう、薄い地の色を敷く（文字だけだと本文と見分けにくい）。 */
+  .g-toast-action {
+    justify-self: start;
+    min-block-size: 32px;
+    margin-block: 6px -2px;
+    padding-inline: 12px;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--g-accent) 9%, transparent);
+    color: var(--g-accent);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 650;
+    cursor: pointer;
+  }
+  .g-toast-close {
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: 32px;
+    block-size: 32px;
+    margin-block: -5px -6px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--g-fg-muted);
+    cursor: pointer;
+  }
+  /* 見た目は 32px、当たりは 44px（--g-tap）。 */
+  .g-toast-close::before { content: ""; position: absolute; inset: calc((32px - var(--g-tap)) / 2); }
+  .g-toast-close > svg { inline-size: 16px; block-size: 16px; }
+  .g-toast-action:hover { background: color-mix(in srgb, var(--g-accent) 15%, transparent); }
+  .g-toast-close:hover { background: var(--g-hover); color: var(--g-fg); }
+  :is(.g-toast-action, .g-toast-close):focus-visible { outline: 2px solid var(--g-focus); outline-offset: 1px; }
+
+  /* 残り時間のメーター（N-02）。薄い下地の上を、トーンの色の線が残り時間に比例して縮む。 */
+  .g-toast-meter {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: 3px;
+    background: color-mix(in srgb, var(--g-toast-tone) 16%, transparent);
+  }
+  @keyframes g-toast-meter { to { scale: 0 1; } }
+  .g-toast-meter-fill {
+    display: block;
+    block-size: 100%;
+    background: var(--g-toast-tone);
+    transform-origin: left center;
+    animation: g-toast-meter var(--g-toast-duration) linear var(--g-toast-elapsed) both;
+  }
+  .g-toast-meter-fill:dir(rtl) { transform-origin: right center; }
+  /* 止めている間（ポインタ・フォーカス・隠れたタブ・指で動かしている間）と閉じる間は、メーターも止める。N-03。 */
+  .g-toast-region[data-paused] .g-toast-meter-fill,
+  .g-toast-slot[data-exiting] .g-toast-meter-fill { animation-play-state: paused; }
+}
+
 @layer gassan.theme {
   @media (prefers-reduced-motion: reduce) {
     .g-popup,
@@ -2177,8 +2372,12 @@
     .g-panel[data-g-blocked] { animation: none; }
     .g-switch-thumb,
     .g-switch-track { transition: none; }
+    /* メーターは残り時間を伝える情報なので止めない。滑らかに縮めず、1 秒ごとに刻む。N-02。 */
+    .g-toast-meter-fill { animation-timing-function: steps(var(--g-toast-steps), end); }
+    .g-toast-spinner { animation-duration: 2s; }
   }
   @media (forced-colors: active) {
+    .g-toast-meter-fill { forced-color-adjust: none; background: Highlight; }
     .g-chip[aria-pressed="true"] {
       forced-color-adjust: none;
       background: Highlight;

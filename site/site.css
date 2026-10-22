@@ -927,6 +927,71 @@
   color: var(--s-ink-2);
   font-size: 0.9375rem;
 }
+/* トーストの「元に戻す」のデモ。下書きの行 */
+.s-draft-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.s-draft {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 8px 14px;
+  border-radius: 12px;
+  background: var(--s-surface-1);
+}
+.s-draft-name {
+  min-inline-size: 0;
+}
+.s-link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--s-accent);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+/* トーストの出す場所。画面に見立てた枠の四隅と上下の中央 */
+.s-toast-positions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto minmax(48px, 1fr) auto;
+  gap: 8px;
+  max-inline-size: 30rem;
+  min-block-size: 200px;
+  margin-block-end: 16px;
+  padding: 12px;
+  border: 1px solid var(--s-line);
+  border-radius: 16px;
+  background: var(--s-surface-1);
+}
+.s-toast-position {
+  min-block-size: 44px;
+  padding: 6px 10px;
+  border: 1px solid var(--s-line-strong);
+  border-radius: 10px;
+  background: var(--s-surface);
+  color: var(--s-ink);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.s-toast-position[aria-pressed="true"] {
+  border-color: var(--s-accent);
+  background: var(--s-accent);
+  color: var(--s-on-accent);
+  font-weight: 600;
+}
+.s-toast-position[data-at^="bottom"] { grid-row: 3; }
+.s-toast-position[data-at$="-start"] { grid-column: 1; }
+.s-toast-position[data-at$="-center"] { grid-column: 2; }
+.s-toast-position[data-at$="-end"] { grid-column: 3; }
 /* 以下はモーダルの中に置くデモ用の部品。gassan のトークンで色を合わせる */
 .s-demo-fieldset {
   margin: 0;

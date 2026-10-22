@@ -550,6 +550,10 @@ describe('sheet detents and handle', () => {
       '--g-sheet-detent',
       '--g-swipe-y',
       '--g-title-lines',
+      // トーストのメーター（N-02）。長さ・経った時間・動きを減らす設定での刻みの数。
+      '--g-toast-duration',
+      '--g-toast-elapsed',
+      '--g-toast-steps',
     ]);
     const missing = [...css.matchAll(/var\((--g-[\w-]+)(\s*,)?/g)]
       .filter((m) => !m[2] && !defined.has(m[1] ?? '') && !setByScript.has(m[1] ?? ''))

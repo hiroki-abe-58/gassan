@@ -42,6 +42,11 @@ export function modalDepth(): number {
   return stack.length;
 }
 
+/** 最前面のモーダル。無ければ null。常駐の UI（トースト）を inert にしないための置き場所。 */
+export function topModal(): HTMLDialogElement | null {
+  return stack[stack.length - 1] ?? null;
+}
+
 export function subscribeDepth(listener: Listener): () => void {
   listeners.add(listener);
   return () => {

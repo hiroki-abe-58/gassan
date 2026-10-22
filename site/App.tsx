@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
-import { GassanProvider, Modal, ModalHost, Phrase } from '@genelab/gassan';
+import { GassanProvider, Modal, ModalHost, Phrase, ToastHost } from '@genelab/gassan';
 
 import { data } from './data';
 import { DEFAULT_LANG, loadLang, useI18n } from './i18n';
@@ -9,6 +9,7 @@ import { to, useRoute } from './router';
 import { LangPicker } from './ui/LangPicker';
 import { md } from './ui/Markdown';
 import { ThemePicker } from './ui/ThemePicker';
+import { useToastPosition } from './ui/toaster';
 
 export function Logo(): ReactNode {
   // 4 枚の層。いちばん上（層4: Flow）だけが gassan の仕事、という構図。
@@ -67,6 +68,8 @@ export function App(): ReactNode {
   const mainRef = useRef<HTMLElement>(null);
   const firstRender = useRef(true);
   const title = t.nav.pages[page.key];
+  /** トーストの出す場所。トーストのページの「出す場所」で変わる。 */
+  const toastPosition = useToastPosition();
 
   // URL の言語が変わったら、その言語の文言を読む。読み終えるまでは前の言語で描く。
   useEffect(() => {
@@ -215,6 +218,7 @@ export function App(): ReactNode {
         </Modal.Root>
 
         <ModalHost />
+        <ToastHost position={toastPosition} />
       </div>
     </GassanProvider>
   );

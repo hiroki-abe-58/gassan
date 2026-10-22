@@ -61,6 +61,7 @@ export { ModalSelect, ModalCombobox } from './select';
 export { ModalDatePicker } from './date-picker';
 export { ModalCalendar, ModalRangeCalendar, ModalDateRangePicker, commonDateRanges } from './calendar';
 export { ModalTimePicker } from './time-picker';
+export { toast, ToastHost, resetToasts } from './toast';
 export { ModalFileDrop } from './file-drop';
 export { ModalChart } from './chart';
 export { ModalHandle } from './sheet';
@@ -137,6 +138,14 @@ export type { SelectOption, ModalSelectProps, ModalComboboxProps } from './selec
 export type { ModalDatePickerProps, CalendarOptions } from './date-picker';
 export type { ModalCalendarProps, ModalRangeCalendarProps, ModalDateRangePickerProps, DateRangePreset } from './calendar';
 export type { ModalTimePickerProps } from './time-picker';
+export type {
+  ToastAction,
+  ToastHostProps,
+  ToastOptions,
+  ToastPosition,
+  ToastPromiseMessages,
+  ToastTone,
+} from './toast';
 export type { ModalFileDropProps } from './file-drop';
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';

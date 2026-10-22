@@ -114,6 +114,10 @@ export interface GassanLabels {
   now: string;
   /** 時刻の選択の窓の名前。I-20。 */
   chooseTime: string;
+  /** トーストの領域の名前（region のランドマーク）。N-05。 */
+  notifications: string;
+  /** トーストの × ボタン。N-04。 */
+  closeNotification: string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -176,6 +180,8 @@ export const japaneseLabels: GassanLabels = {
   dayPeriod: '午前・午後',
   now: '現在時刻',
   chooseTime: '時刻を選ぶ',
+  notifications: '通知',
+  closeNotification: '通知を閉じる',
 };
 
 export const englishLabels: GassanLabels = {
@@ -245,6 +251,8 @@ export const englishLabels: GassanLabels = {
   dayPeriod: 'AM/PM',
   now: 'Now',
   chooseTime: 'Choose a time',
+  notifications: 'Notifications',
+  closeNotification: 'Dismiss notification',
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

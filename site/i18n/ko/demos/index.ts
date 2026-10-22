@@ -25,6 +25,10 @@ import sheetDetents from './sheetDetents';
 import sliderForm from './sliderForm';
 import textForm from './textForm';
 import titleClamp from './titleClamp';
+import toastInModal from './toastInModal';
+import toastPromise from './toastPromise';
+import toastTones from './toastTones';
+import toastUndo from './toastUndo';
 
 export default {
   bodyScroll,
@@ -53,4 +57,8 @@ export default {
   sliderForm,
   textForm,
   titleClamp,
+  toastInModal,
+  toastPromise,
+  toastTones,
+  toastUndo,
 } satisfies typeof ja;

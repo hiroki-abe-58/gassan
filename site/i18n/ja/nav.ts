@@ -41,6 +41,7 @@ export default {
     chart: 'Modal.Chart',
     sheet: 'シートと Handle',
     imperative: '命令的 API',
+    toast: 'トースト',
     provider: 'GassanProvider',
     spec: '振る舞い仕様',
     verification: '検証',

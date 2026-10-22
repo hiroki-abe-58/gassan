@@ -16,6 +16,7 @@ import {
   Modal,
   ModalHost,
   Phrase,
+  ToastHost,
   englishLabels,
 } from '../dist/index.js';
 
@@ -320,6 +321,11 @@ const englishTime = renderToString(h(GassanProvider, { labels: englishLabels }, 
 // ICU の版によって、時刻と AM / PM の間は普通の空白か狭い空白（U+202F）。
 if (/9:05\sPM/.test(englishTime)) ok('TimePicker renders a 12-hour value for English labels on the server');
 else fail(`TimePicker did not render 9:05 PM on the server: ${englishTime}`);
+
+// トースト（N-01）。領域は popover で、置き場所（最前面の dialog か body）はクライアントでしか決まらない。
+const toastHtml = renderToString(h(ToastHost));
+if (toastHtml === '') ok('ToastHost renders nothing on the server (the region mounts on the client)');
+else fail(`ToastHost rendered markup on the server: ${toastHtml}`);
 
 if (failed) {
   console.error('\nssr smoke test failed.');

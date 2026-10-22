@@ -29,11 +29,14 @@ import { gzipSync } from 'node:zlib';
  * 足したため（JS 約 6 KB・CSS 約 1.2 KB）。日本語の既定の文言（japaneseLabels）が祝日を引くので、
  * 祝日の計算は labels を使う全部品に載る（名前の表のうち英語の分も一緒に載る。分けると API が割れるので分けない）。
  * 同日、JS を 43 → 45 KB に引き上げた。時刻の選択（I-20）で、時・分・午前午後の列とキー操作を足したため（約 2.8 KB）。
+ * 2026-10-23、JS を 45 → 49 KB、CSS を 11 → 12 KB に引き上げた。トースト（N-01〜N-08）で、store とホスト・
+ * 残り時間のメーター・払って閉じる操作・モーダルの中への移動・出入りの動きを足したため（JS 約 3.4 KB・CSS 約 1.1 KB）。
+ * トーストは名前つき import（toast / ToastHost）でだけ使うので、使わないアプリには tree shaking で載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 45 * 1024,
-  'dist/index.cjs': 45 * 1024,
-  'dist/styles.css': 11 * 1024,
+  'dist/index.js': 49 * 1024,
+  'dist/index.cjs': 49 * 1024,
+  'dist/styles.css': 12 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -106,6 +109,10 @@ const REQUIRED_EXPORTS = [
   'japaneseHolidayResolver',
   // 時刻の選択。I-20。
   'ModalTimePicker',
+  // トースト。N-01〜N-08。
+  'toast',
+  'ToastHost',
+  'resetToasts',
 ];
 
 let failed = false;

@@ -42,6 +42,7 @@ export default {
     chart: 'Modal.Chart',
     sheet: '底部面板与 Handle',
     imperative: '命令式 API',
+    toast: '轻提示',
     provider: 'GassanProvider',
     spec: '行为规范',
     verification: '验证',
