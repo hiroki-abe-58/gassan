@@ -10,7 +10,7 @@ import { ApiTable } from '../../ui/ApiTable';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, Prose, Section } from '../../ui/Page';
+import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 export function SheetPage({ rest }: PageProps): ReactNode {
@@ -52,7 +52,7 @@ export function SheetPage({ rest }: PageProps): ReactNode {
             <Prose>
               <Paras items={t.release.body} />
             </Prose>
-            <Callout>{md(t.release.callout)}</Callout>
+            <KeyPoint>{md(t.release.callout)}</KeyPoint>
           </Section>
         </>
       )}

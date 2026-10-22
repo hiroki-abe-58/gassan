@@ -10,7 +10,7 @@ import { ApiTable } from '../../ui/ApiTable';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md } from '../../ui/Markdown';
-import { Callout, Section } from '../../ui/Page';
+import { KeyPoint, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { Specimens } from '../../ui/Specimens';
 
@@ -114,7 +114,7 @@ export function ChoicePage({ rest }: PageProps): ReactNode {
           </Section>
 
           <Section id="fieldset" title={t.fieldset.title}>
-            <Callout>{md(t.fieldset.callout)}</Callout>
+            <KeyPoint>{md(t.fieldset.callout)}</KeyPoint>
           </Section>
         </>
       )}

@@ -9,7 +9,7 @@ import { BreakCompare, ButtonSamples, type SampleButton } from '../../ui/BreakCo
 import { CodeBlock } from '../../ui/Code';
 import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 /**
@@ -382,7 +382,7 @@ export function LineBreak(): ReactNode {
             </tbody>
           </table>
         </div>
-        <Callout>{tt.name.callout}</Callout>
+        <KeyPoint>{tt.name.callout}</KeyPoint>
       </Section>
 
       <Section id="use" title={tt.use.title} intro={tt.use.intro}>

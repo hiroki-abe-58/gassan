@@ -5,7 +5,7 @@ import { SPEC_LANG, useT } from '../../i18n';
 import { CodeBlock } from '../../ui/Code';
 import { LayerStack } from '../../ui/LayerStack';
 import { MdTable, md, Paras } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 
 export function Layers(): ReactNode {
   const { nav, layers: t } = useT();
@@ -27,7 +27,7 @@ export function Layers(): ReactNode {
       </Section>
 
       <Section id="effort" title={t.effort.title}>
-        <Callout>{md(t.effort.callout)}</Callout>
+        <KeyPoint>{md(t.effort.callout)}</KeyPoint>
         <Prose>
           <Paras items={t.effort.body} />
         </Prose>

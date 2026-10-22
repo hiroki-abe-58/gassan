@@ -10,7 +10,7 @@ import { ComponentPage } from '../../ui/ComponentPage';
 import { DataTable } from '../../ui/DataTable';
 import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, Prose, Section } from '../../ui/Page';
+import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 /** gassan の入力部品と、それを載せたページ。部品の名前はコードなので訳さない。 */
@@ -67,7 +67,7 @@ export function FieldPage({ rest }: PageProps): ReactNode {
           </Section>
 
           <Section id="errors" title={t.errors.title}>
-            <Callout>{md(t.errors.callout)}</Callout>
+            <KeyPoint>{md(t.errors.callout)}</KeyPoint>
           </Section>
         </>
       )}

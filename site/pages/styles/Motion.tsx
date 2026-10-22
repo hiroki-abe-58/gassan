@@ -7,7 +7,7 @@ import { bezier, durationMs, token } from '../../data/tokens';
 import { SPEC_LANG, useT } from '../../i18n';
 import { CodeBlock } from '../../ui/Code';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 /** cubic-bezier の曲線を描く。図は飾りで、値は隣の表に書いてある。 */
@@ -106,7 +106,7 @@ export function Motion(): ReactNode {
       </Section>
 
       <Section id="reduced" title={t.reduced.title}>
-        <Callout>{md(t.reduced.callout)}</Callout>
+        <KeyPoint>{md(t.reduced.callout)}</KeyPoint>
         <SpecTable ids={['L-04', 'L-05', 'L-06', 'L-07', 'S-03', 'S-05']} caption={t.reduced.tableCaption} />
       </Section>
     </>

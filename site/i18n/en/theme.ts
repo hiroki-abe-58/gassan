@@ -64,7 +64,7 @@ export default {
       },
       {
         title: 'Aim for 7:1 for text on soft surfaces',
-        body: 'Soft surfaces carry long text, such as the selected navigation item or supplementary callouts, so the target is AAA rather than AA.',
+        body: 'Soft surfaces carry long text, such as the selected navigation item or the highlight behind selected text, so the target is AAA rather than AA.',
       },
       {
         title: 'Mix the primary hue into the background',

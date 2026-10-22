@@ -14,7 +14,7 @@ import {
 import { themeFor, useTheme } from '../../theme/store';
 import { CodeBlock } from '../../ui/Code';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 import { ThemeControls } from '../../ui/ThemePicker';
 
 function Swatch({ color, label }: { color: string; label: string }): ReactNode {
@@ -182,7 +182,7 @@ export function Theme(): ReactNode {
             ))}
           </Phrase>
         </ol>
-        <Callout>{md(t.how.callout(presetHue('yellow'), presetHue('lime')))}</Callout>
+        <KeyPoint>{md(t.how.callout(presetHue('yellow'), presetHue('lime')))}</KeyPoint>
       </Section>
 
       <Section id="own" title={t.own.title} intro={t.own.intro}>

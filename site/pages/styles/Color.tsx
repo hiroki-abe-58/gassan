@@ -8,7 +8,7 @@ import { token } from '../../data/tokens';
 import { useT } from '../../i18n';
 import { CodeBlock } from '../../ui/Code';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 
 function Swatch({ value }: { value: string }): ReactNode {
   return <span className="s-swatch" style={{ '--s-swatch': value } as CSSProperties} aria-hidden="true" />;
@@ -134,7 +134,7 @@ export function Color(): ReactNode {
       <Section id="contrast" title={t.contrast.title} intro={t.contrast.intro}>
         <ContrastTable scheme="light" />
         <ContrastTable scheme="dark" />
-        <Callout>{md(t.contrast.callout)}</Callout>
+        <KeyPoint>{md(t.contrast.callout)}</KeyPoint>
       </Section>
 
       <Section id="gated" title={t.gated.title}>

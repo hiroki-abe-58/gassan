@@ -88,6 +88,8 @@ export default {
     hide: '코드 닫기',
   },
 
+  keyPoint: { caution: '주의' },
+
   component: {
     eyebrow: '컴포넌트',
     tabs: '이 페이지의 내용',

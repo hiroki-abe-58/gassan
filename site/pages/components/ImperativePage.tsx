@@ -9,7 +9,7 @@ import { CodeBlock } from '../../ui/Code';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, Prose, Section } from '../../ui/Page';
+import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 export function ImperativePage({ rest }: PageProps): ReactNode {
@@ -43,7 +43,7 @@ export function ImperativePage({ rest }: PageProps): ReactNode {
                 ))}
               </ul>
             </Prose>
-            <Callout>{md(t.host.callout)}</Callout>
+            <KeyPoint>{md(t.host.callout)}</KeyPoint>
           </Section>
         </>
       )}

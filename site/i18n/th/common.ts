@@ -88,6 +88,8 @@ export default {
     hide: 'ซ่อนโค้ด',
   },
 
+  keyPoint: { caution: 'ข้อควรระวัง' },
+
   component: {
     eyebrow: 'คอมโพเนนต์',
     tabs: 'เนื้อหาในหน้านี้',

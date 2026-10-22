@@ -9,7 +9,7 @@ import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { Guideline, Guidelines, MockPanel, MockScreen } from '../../ui/Guidelines';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, Prose, Section } from '../../ui/Page';
+import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 export function FooterPage({ rest }: PageProps): ReactNode {
@@ -42,7 +42,7 @@ export function FooterPage({ rest }: PageProps): ReactNode {
             <Prose>
               <Paras items={t.loading.body} />
             </Prose>
-            <Callout>{md(t.loading.callout)}</Callout>
+            <KeyPoint>{md(t.loading.callout)}</KeyPoint>
           </Section>
 
           <Section id="danger" title={t.danger.title}>

@@ -13,7 +13,7 @@ import { CodeBlock } from '../../ui/Code';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, Prose, Section } from '../../ui/Page';
+import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 export function GatePage({ rest }: PageProps): ReactNode {
@@ -76,7 +76,7 @@ export function GatePage({ rest }: PageProps): ReactNode {
           </Section>
 
           <Section id="rules" title={t.rules.title}>
-            <Callout tone="warn">{md(t.rules.callout)}</Callout>
+            <KeyPoint tone="caution">{md(t.rules.callout)}</KeyPoint>
             <CodeBlock lang="tsx" caption={t.rules.codeCaption} code={t.rules.code} />
           </Section>
         </>

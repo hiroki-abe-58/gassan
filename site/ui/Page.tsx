@@ -69,10 +69,17 @@ export function Prose({ children }: { children: ReactNode }): ReactNode {
   );
 }
 
-/** 強調したい 1 文を大きく置く。 */
-export function Callout({ children, tone = 'info' }: { children: ReactNode; tone?: 'info' | 'warn' }): ReactNode {
+/**
+ * 強調したい 1 文を大きく置く。
+ *
+ * 箱で囲まない（コールアウト・Admonition・左の太い線は使わない）。文字を一段大きく太くし、
+ * 上の区切り線と前後の余白で本文から切り離す。注意は色の付いた見出し語で伝える（線や塗りに頼らない）。
+ */
+export function KeyPoint({ children, tone = 'info' }: { children: ReactNode; tone?: 'info' | 'caution' }): ReactNode {
+  const t = useT().common.keyPoint;
   return (
-    <div className="s-callout" data-tone={tone}>
+    <div className="s-keypoint" data-tone={tone}>
+      {tone === 'caution' ? <p className="s-keypoint-label">{t.caution}</p> : null}
       <Phrase>{children}</Phrase>
     </div>
   );

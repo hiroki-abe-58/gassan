@@ -18,7 +18,7 @@ import { CodeBlock } from '../../ui/Code';
 import { Example } from '../../ui/Example';
 import { Guideline, Guidelines, MockPanel, MockScreen } from '../../ui/Guidelines';
 import { MdTable, md, Paras } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 
 export function Kinds(): ReactNode {
   const { nav, kinds: t } = useT();
@@ -82,7 +82,7 @@ export function Kinds(): ReactNode {
       {placement ? (
         <Section id="placement" title={t.placement.title}>
           <MdTable table={placement} caption={t.placement.tableCaption} />
-          <Callout>{md(t.placement.callout)}</Callout>
+          <KeyPoint>{md(t.placement.callout)}</KeyPoint>
         </Section>
       ) : null}
 
