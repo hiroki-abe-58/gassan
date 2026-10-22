@@ -1192,7 +1192,7 @@
 }
 
 /* ===========================================================================
- * 6. form controls（I-01〜I-15）
+ * 6. form controls（I-01〜I-20）
  * ---------------------------------------------------------------------------
  * 中身はネイティブの要素（input / button）で、描き替えるのは枠と印だけ。
  * 色はトークンだけを使う。テーマが --g-accent を変えれば、摘み・塗り・印が一緒に変わる。
@@ -1357,7 +1357,7 @@
     color: var(--g-fg-muted);
     transition: rotate var(--g-dur-fast) var(--g-ease-move);
   }
-  .g-select:not(.g-date) > [aria-expanded="true"] > .g-select-icon,
+  .g-select:not(.g-date, .g-time-picker) > [aria-expanded="true"] > .g-select-icon,
   .g-combobox:has(> [aria-expanded="true"]) > .g-input-action > svg { rotate: 180deg; }
 
   /* --- 6.4 popup / listbox -------------------------------------------------
@@ -1877,7 +1877,8 @@
     padding-inline: 4px;
   }
   .g-cal-note { min-inline-size: 0; font-size: 0.8125rem; color: var(--g-sunday); }
-  .g-cal-today {
+  /* 「今日」と、時刻の選択の「現在時刻」。 */
+  :is(.g-cal-today, .g-time-now) {
     flex: none;
     min-block-size: 32px;
     padding-inline: 10px;
@@ -1890,9 +1891,9 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .g-cal-today:hover { background: var(--g-hover); }
+  :is(.g-cal-today, .g-time-now):hover { background: var(--g-hover); }
   .g-cal-today[aria-disabled="true"] { color: var(--g-fg-muted); cursor: not-allowed; }
-  .g-cal-today:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 1px; }
+  :is(.g-cal-today, .g-time-now):focus-visible { outline: 2px solid var(--g-focus); outline-offset: 1px; }
 
   /* 月を送ると、表が向きのある動きで入れ替わる（V のトークン）。名前を 2 つ持つのは、続けて送ったときに
    * 動きをやり直すため（同じ名前のままだと、2 回目からは動かない）。 */
@@ -2028,6 +2029,78 @@
     white-space: nowrap;
   }
   .g-file-size { flex: none; font-size: 0.8125rem; font-variant-numeric: tabular-nums; color: var(--g-fg-muted); }
+
+  /* --- 6.12 time ------------------------------------------------------------
+   * I-20。時・分（12 時間制なら午前・午後も）の列を並べる。列は 5 行ぶんの高さで、選んでいる項目を真ん中に置く。
+   * 上下に 2 行ぶんの余白を持つので、最初と最後の項目も真ん中まで来る。端は薄く消して、続きがあることを見せる。
+   * 数字の並び（時:分）は右から左の言語でも左から右なので、列の並びは ltr に固定する。 */
+  .g-time { --g-time-row: 40px; padding: 8px; }
+  .g-time-display {
+    margin: 2px 0 6px;
+    font-size: 1.75rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-align: center;
+  }
+  /* 値が変わるたびに付け直される。短く刻んで、動いたことを目に伝える（V のトークン）。 */
+  @keyframes g-time-tick { from { opacity: 0.4; translate: 0 calc(var(--g-motion-distance) / 3); } }
+  .g-time-display > span { display: inline-block; animation: g-time-tick var(--g-dur-fast) var(--g-ease-in); }
+  .g-time-cols { display: flex; justify-content: center; align-items: center; gap: 4px; direction: ltr; }
+  .g-time-group { display: flex; align-items: center; gap: 4px; }
+  .g-time-sep { font-size: 1.25rem; font-weight: 650; color: var(--g-fg-muted); }
+  .g-time-col {
+    /* 項目の offsetTop を列から測るため。 */
+    position: relative;
+    box-sizing: border-box;
+    inline-size: 64px;
+    block-size: calc(var(--g-time-row) * 5);
+    padding-block: calc(var(--g-time-row) * 2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+  }
+  .g-time-col::-webkit-scrollbar { display: none; }
+  .g-time-col[data-column="period"] { inline-size: auto; min-inline-size: 64px; }
+  /* フォーカスは列が持つが、列の端は薄く消しているので、輪は真ん中の選んでいる項目に出す。 */
+  .g-time-col:focus-visible { outline: none; }
+  .g-time-col:focus-visible > [aria-selected="true"] { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-time-option {
+    display: grid;
+    place-items: center;
+    block-size: var(--g-time-row);
+    padding-inline: 10px;
+    border-radius: calc(var(--g-radius-control) - 2px);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--g-dur-fast) linear,
+      color var(--g-dur-fast) linear,
+      scale var(--g-dur-fast) var(--g-ease-move);
+  }
+  .g-time-option:hover { background: var(--g-hover); }
+  .g-time-option:active { scale: var(--g-press-scale); }
+  .g-time-option[aria-selected="true"] { background: var(--g-accent); color: var(--g-on-accent); font-weight: 650; }
+  .g-time-option[aria-disabled="true"] { background: transparent; color: var(--g-fg-muted); opacity: 0.45; cursor: not-allowed; scale: 1; }
+  .g-time-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-block-start: 6px; }
+  .g-time-ok {
+    min-block-size: 32px;
+    padding-inline: 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--g-accent);
+    color: var(--g-on-accent);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: scale var(--g-dur-fast) var(--g-ease-move);
+  }
+  .g-time-ok:active { scale: var(--g-press-scale); }
+  .g-time-ok:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
 }
 
 /* ===========================================================================
@@ -2046,12 +2119,12 @@
     from { opacity: 0; translate: 0 calc(var(--g-motion-distance) / 2); }
   }
   .g-dialog[open] .g-body-inner > *,
-  .g-popup:popover-open .g-listbox > * {
+  .g-popup:popover-open :is(.g-listbox, .g-time-cols) > * {
     animation: var(--g-enter) var(--g-dur-in) var(--g-ease-in) both;
     animation-delay: calc(var(--g-i, 0) * var(--g-stagger));
   }
-  :is(.g-body-inner, .g-listbox) > :nth-child(2) { --g-i: 1; }
-  :is(.g-body-inner, .g-listbox) > :nth-child(3) { --g-i: 2; }
+  :is(.g-body-inner, .g-listbox, .g-time-cols) > :nth-child(2) { --g-i: 1; }
+  :is(.g-body-inner, .g-listbox, .g-time-cols) > :nth-child(3) { --g-i: 2; }
   :is(.g-body-inner, .g-listbox) > :nth-child(4) { --g-i: 3; }
   :is(.g-body-inner, .g-listbox) > :nth-child(5) { --g-i: 4; }
   :is(.g-body-inner, .g-listbox) > :nth-child(6) { --g-i: 5; }
@@ -2077,7 +2150,8 @@
       .g-segment-input:checked + .g-segment-label,
       td[aria-selected="true"] > .g-day,
       td:is([data-range="start"], [data-range="end"], [data-range="single"]) > .g-day,
-      .g-cal-pick[data-roving]
+      .g-cal-pick[data-roving],
+      .g-time-option[aria-selected="true"]
     ) {
       forced-color-adjust: none;
       background: Highlight;

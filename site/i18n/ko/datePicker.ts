@@ -1,14 +1,17 @@
 import type ja from '../ja/datePicker';
 
 export default {
-  lead: 'DatePicker와 DateRangePicker는 팝업 달력이고, Calendar와 RangeCalendar는 페이지 위에 두는 달력이다. 모두 일본의 공휴일과 주말을 색과 이름으로 보여 주고, 제목에서 월과 연도로 건너뛸 수 있다. 월 이름과 요일은 GassanProvider의 locale로 Intl에서 만들므로, 언어를 바꾸면 달력도 바뀐다.',
+  lead: 'DatePicker와 DateRangePicker는 팝업 달력이고, Calendar와 RangeCalendar는 페이지 위에 두는 달력이다. 모두 일본의 공휴일과 주말을 색과 이름으로 보여 주고, 제목에서 월과 연도로 건너뛸 수 있다. TimePicker는 시와 분의 열에서 시간을 고른다. 월 이름·요일·시간 표기는 GassanProvider의 locale로 Intl에서 만들므로, 언어를 바꾸면 함께 바뀐다.',
   gallery: {
     title: '견본',
-    intro: '선택한 날은 강조색으로 채우고, 오늘에는 가는 링을 두른다. 일요일과 공휴일은 빨강, 토요일은 파랑.',
+    intro: '선택한 날과 시간은 강조색으로 채우고, 오늘에는 가는 링을 두른다. 일요일과 공휴일은 빨강, 토요일은 파랑.',
     items: {
       datePicker: '달력',
       rangePicker: '기간',
       limited: '오늘부터 30일까지',
+      timePicker: '시간',
+      time12: '12시간제',
+      businessHours: '10:00~18:00, 15분 간격',
       date: '날짜(네이티브)',
       time: '시간(네이티브)',
       color: '색(네이티브)',
@@ -43,11 +46,33 @@ export default {
     codeCaption: '공휴일 표시 방법 바꾸기',
     code: "import { japaneseHolidayResolver, japaneseHoliday } from '@genelab/gassan';\n\n// 회사의 휴무일을 더한다\nconst closed: Record<string, string> = { '2026-12-29': '연말 휴무', '2026-12-30': '연말 휴무' };\nconst holidays = (date: string) => closed[date] ?? japaneseHolidayResolver()(date);\n\n<Modal.DatePicker holidays={holidays} />\n\n// 공휴일을 표시하지 않는다\n<Modal.DatePicker holidays={null} />\n\n// 하루만 조회한다\njapaneseHoliday('2026-09-22'); // { date: '2026-09-22', key: 'citizens', name: \"国民の休日\" } (이름은 기본으로 일본어)",
   },
+  time: {
+    title: '시간',
+    intro: '시와 분(12시간제라면 오전·오후도)의 열에서 고른다. 열은 선택한 값을 한가운데에 두고, 값을 움직이면 미끄러지듯 따라간다.',
+    body: [
+      '값은 네이티브 `type="time"`과 같은 24시간제 `HH:mm`이며, 12시간제로 골라도 바뀌지 않는다. 24시간제로 표시할지 12시간제로 표시할지와 오전·오후의 이름은 `labels.locale`의 Intl을 따르며, `hourCycle`로 한쪽에 고정할 수 있다.',
+      '`step`(분) 간격에 맞지 않는 시간과 `min` / `max` 밖은 고를 수 없다. 간격에 맞지 않는 값을 넘기면 버튼에는 그대로 표시하고, 열면 가장 가까운 시간을 가리킨다.',
+      '포인터로 조작할 때는 시를 누르면 분의 열로 넘어가고, 분을 누르면 확정된다(12시간제에서는 오전·오후를 누르면 확정된다). 확정하지 않고 비교해 보고 싶을 때는 키로 움직인 뒤 “확인”을 누른다.',
+    ],
+    codeCaption: '시간 선택',
+    code: "// 12시간제든 24시간제든 값은 24시간제 'HH:mm'\n<Modal.TimePicker aria-label=\"시작 시간\" value={time} onValueChange={setTime} />\n\n// 15분 간격, 영업시간 안에서만\n<Modal.TimePicker step={15} min=\"10:00\" max=\"18:00\" />\n\n// 12시간제로 고정한다(생략하면 labels.locale의 관습을 따른다)\n<Modal.TimePicker hourCycle=\"h12\" />",
+    keysCaption: '시간 선택의 키 조작',
+    keys: [
+      { key: '↑ / ↓', action: '이전·다음 값(끝을 넘으면 반대쪽 끝으로 돌아간다)' },
+      { key: 'PageUp / PageDown', action: '열의 4분의 1씩' },
+      { key: 'Home / End', action: '열의 처음·마지막' },
+      { key: '← / →', action: '이전·다음 열' },
+      { key: '0〜9', action: '그 시간으로 건너뛴다(연달아 입력하면 자릿수가 이어진다)' },
+      { key: 'A / P', action: '오전·오후(12시간제)' },
+      { key: 'Enter / Space', action: '확정하고 닫은 뒤 버튼으로 돌아간다' },
+      { key: 'Esc', action: '확정하지 않고 닫은 뒤 버튼으로 돌아간다(모달은 닫지 않는다)' },
+    ],
+  },
   modal: {
     title: '모달 안에서',
-    intro: '달력은 popover로 top layer에 나타난다. Esc는 달력만 닫고, 버튼으로 포커스를 되돌린다.',
+    intro: '달력과 시간의 열은 popover로 top layer에 나타난다. Esc는 팝업만 닫고, 버튼으로 포커스를 되돌린다.',
     exampleTitle: '예약하기',
-    exampleDescription: '날짜는 달력으로, 시간은 네이티브 입력으로 고른다. 지난 날짜는 고를 수 없다.',
+    exampleDescription: '날짜는 달력으로, 시간은 15분 간격의 열로 고른다. 지난 날짜와 영업시간 밖은 고를 수 없다.',
   },
   keys: {
     title: '키 조작',
@@ -65,9 +90,10 @@ export default {
     note: '제목(“2026년 10월”)을 누르면 월 목록, 한 번 더 누르면 연도 목록이 된다. 목록 안에서도 화살표 키로 움직이고, Enter로 한 단계 내려간다. “오늘”을 누르면 오늘로 돌아간다.',
   },
   native: {
-    title: '네이티브 날짜 입력과 구분해 쓰기',
+    title: '네이티브 날짜·시간 입력과 구분해 쓰기',
     body: [
       '스마트폰에서는 OS의 날짜 휠이 더 빠른 경우가 많다. 요일이나 공휴일을 보면서 고르게 하고 싶을 때, 고를 수 없는 날을 보여 주고 싶을 때, 기간을 고르게 하고 싶을 때, 겉모습을 다른 컴포넌트와 맞추고 싶을 때는 DatePicker를 쓴다. 그렇지 않으면 `type="date"`를 Modal.Input에 넣는다. 테두리와 명암(`--g-color-scheme`)은 똑같아진다(I-15).',
+      '시간도 마찬가지다. 네이티브 `type="time"`은 팝업의 겉모습이 테마를 따르지 않고, 간격에 맞지 않거나 범위 밖인 시간도 입력할 수 있다. 간격과 범위를 눈으로 보여 주고 싶을 때, 테마의 색으로 고르게 하고 싶을 때는 TimePicker를 쓴다.',
     ],
   },
   apiCaption: {
@@ -75,6 +101,7 @@ export default {
     rangePicker: 'Modal.DateRangePicker',
     calendar: 'Modal.Calendar',
     rangeCalendar: 'Modal.RangeCalendar',
+    timePicker: 'Modal.TimePicker',
   },
   a11yCaption: '날짜와 시간이 충족하는 명세',
 } satisfies typeof ja;

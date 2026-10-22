@@ -122,6 +122,14 @@ export function prefersReducedMotion(): boolean {
   return matchMediaSafe('(prefers-reduced-motion: reduce)')?.matches ?? false;
 }
 
+/**
+ * スクロールを滑らせずにその場で移るか。OS の「動きを減らす」か、動きの段 none のとき（V-01 / V-02）。
+ * 段は CSS のトークンにしか現れないので、要素に効いている --g-dur-fast を見る（どちらも 1ms にする。styles.css 1b）。
+ */
+export function motionStill(el: Element | null | undefined): boolean {
+  return prefersReducedMotion() || readCssDurationMs(el, '--g-dur-fast', Number.POSITIVE_INFINITY) <= 1;
+}
+
 const TEXT_INPUT_TYPES = new Set([
   'text',
   'search',

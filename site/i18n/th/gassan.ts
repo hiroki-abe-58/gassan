@@ -88,6 +88,11 @@ const labels: GassanLabels = {
   dropFiles: 'วางไฟล์ที่นี่',
   chooseFiles: 'เลือกไฟล์',
   removeFile: (name) => `นำ ${name} ออก`,
+  hour: 'ชั่วโมง',
+  minute: 'นาที',
+  dayPeriod: 'ช่วงเวลา',
+  now: 'ตอนนี้',
+  chooseTime: 'เลือกเวลา',
 };
 
 export default labels;

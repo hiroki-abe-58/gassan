@@ -28,10 +28,11 @@ import { gzipSync } from 'node:zlib';
  * 名前の表（日本語・英語）・共有の月の表（月と年の一覧・期間・印）・DateRangePicker・Calendar・RangeCalendar を
  * 足したため（JS 約 6 KB・CSS 約 1.2 KB）。日本語の既定の文言（japaneseLabels）が祝日を引くので、
  * 祝日の計算は labels を使う全部品に載る（名前の表のうち英語の分も一緒に載る。分けると API が割れるので分けない）。
+ * 同日、JS を 43 → 45 KB に引き上げた。時刻の選択（I-20）で、時・分・午前午後の列とキー操作を足したため（約 2.8 KB）。
  */
 const BUDGETS = {
-  'dist/index.js': 43 * 1024,
-  'dist/index.cjs': 43 * 1024,
+  'dist/index.js': 45 * 1024,
+  'dist/index.cjs': 45 * 1024,
   'dist/styles.css': 11 * 1024,
 };
 
@@ -103,6 +104,8 @@ const REQUIRED_EXPORTS = [
   'japaneseHolidays',
   'japaneseHolidayNames',
   'japaneseHolidayResolver',
+  // 時刻の選択。I-20。
+  'ModalTimePicker',
 ];
 
 let failed = false;

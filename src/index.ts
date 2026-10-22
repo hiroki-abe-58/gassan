@@ -22,6 +22,7 @@ import {
 } from './inputs';
 import { ModalCombobox, ModalSelect } from './select';
 import { ModalRangeSlider, ModalSlider } from './slider';
+import { ModalTimePicker } from './time-picker';
 import { ModalButton, ModalFooter } from './footer';
 import { ModalConsent, ModalGate, ModalGateStatus } from './gate';
 import {
@@ -59,6 +60,7 @@ export { ModalSlider, ModalRangeSlider } from './slider';
 export { ModalSelect, ModalCombobox } from './select';
 export { ModalDatePicker } from './date-picker';
 export { ModalCalendar, ModalRangeCalendar, ModalDateRangePicker, commonDateRanges } from './calendar';
+export { ModalTimePicker } from './time-picker';
 export { ModalFileDrop } from './file-drop';
 export { ModalChart } from './chart';
 export { ModalHandle } from './sheet';
@@ -134,6 +136,7 @@ export type { ModalSliderProps, ModalRangeSliderProps } from './slider';
 export type { SelectOption, ModalSelectProps, ModalComboboxProps } from './select';
 export type { ModalDatePickerProps, CalendarOptions } from './date-picker';
 export type { ModalCalendarProps, ModalRangeCalendarProps, ModalDateRangePickerProps, DateRangePreset } from './calendar';
+export type { ModalTimePickerProps } from './time-picker';
 export type { ModalFileDropProps } from './file-drop';
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';
@@ -201,6 +204,7 @@ export const Modal = {
   DateRangePicker: ModalDateRangePicker,
   Calendar: ModalCalendar,
   RangeCalendar: ModalRangeCalendar,
+  TimePicker: ModalTimePicker,
   FileDrop: ModalFileDrop,
   Chips: ModalChips,
   Switch: ModalSwitch,

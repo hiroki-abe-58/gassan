@@ -472,6 +472,8 @@ describe('tokens / focus ring (K-07)', () => {
       '.g-bare': '.g-input:focus-within',
       '.g-range:focus-visible': '.g-range:focus-visible::-webkit-slider-thumb',
       '.g-code-input': '.g-code:focus-within .g-code-cell[data-current]',
+      // 時刻の列は端を薄く消しているので、リングは真ん中の選んでいる項目に描く（I-20）。
+      '.g-time-col:focus-visible': '.g-time-col:focus-visible > [aria-selected="true"]',
     };
     const naked = [...css.matchAll(/([^\n{}]*)\{[^{}]*outline:\s*none[^{}]*\}/g)].map((m) =>
       (m[1] ?? '').trim(),

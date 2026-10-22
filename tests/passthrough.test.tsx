@@ -184,6 +184,7 @@ const CASES: Array<{ name: string; render: () => void }> = [
   { name: 'Modal.DateRangePicker', render: () => inRoot(<Modal.DateRangePicker aria-label="r" data-testid={TID} />) },
   { name: 'Modal.Calendar', render: () => inRoot(<Modal.Calendar aria-label="c" data-testid={TID} />) },
   { name: 'Modal.RangeCalendar', render: () => inRoot(<Modal.RangeCalendar aria-label="c" data-testid={TID} />) },
+  { name: 'Modal.TimePicker', render: () => inRoot(<Modal.TimePicker aria-label="t" data-testid={TID} />) },
   { name: 'Modal.FileDrop', render: () => inRoot(<Modal.FileDrop aria-label="f" data-testid={TID} />) },
   {
     name: 'Modal.Chart',
@@ -261,6 +262,7 @@ describe('data-* の受け渡し（D-11）', () => {
   it('Modal.DateRangePicker は data-* をホスト要素へ渡す', () => sweep('Modal.DateRangePicker'));
   it('Modal.Calendar は data-* をホスト要素へ渡す', () => sweep('Modal.Calendar'));
   it('Modal.RangeCalendar は data-* をホスト要素へ渡す', () => sweep('Modal.RangeCalendar'));
+  it('Modal.TimePicker は data-* をホスト要素へ渡す', () => sweep('Modal.TimePicker'));
   it('Modal.FileDrop は data-* をホスト要素へ渡す', () => sweep('Modal.FileDrop'));
 
   it('Modal.Gate は要素を描かないので受け渡しの対象外', () => {

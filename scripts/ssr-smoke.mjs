@@ -312,6 +312,15 @@ const englishCalendar = renderToString(h(GassanProvider, { labels: englishLabels
 if (!englishCalendar.includes('data-holiday')) ok('English labels show no holidays by default on the server');
 else fail('English labels still marked holidays on the server');
 
+// 時刻の選択（I-20）。時計の慣習（24 時間 / 12 時間）は言語の Intl から決まる。
+const timeHtml = renderToString(h(Modal.TimePicker, { 'aria-label': 't', defaultValue: '09:05' }));
+if (timeHtml.includes('09:05')) ok('TimePicker renders the 24-hour value for Japanese labels on the server');
+else fail(`TimePicker did not render 09:05 on the server: ${timeHtml}`);
+const englishTime = renderToString(h(GassanProvider, { labels: englishLabels }, h(Modal.TimePicker, { 'aria-label': 't', defaultValue: '21:05' })));
+// ICU の版によって、時刻と AM / PM の間は普通の空白か狭い空白（U+202F）。
+if (/9:05\sPM/.test(englishTime)) ok('TimePicker renders a 12-hour value for English labels on the server');
+else fail(`TimePicker did not render 9:05 PM on the server: ${englishTime}`);
+
 if (failed) {
   console.error('\nssr smoke test failed.');
   process.exit(1);
