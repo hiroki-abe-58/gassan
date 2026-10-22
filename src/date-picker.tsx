@@ -211,85 +211,84 @@ export function ModalDatePicker({
         </span>
         <Icon name="calendar" className="g-select-icon" />
       </button>
-      {open ? (
-        <Popup
-          anchorRef={anchorRef}
-          onDismiss={() => close(false)}
-          className="g-calendar"
-          role="dialog"
-          aria-labelledby={titleId}
-          onKeyDown={(event) => {
-            if (event.key !== 'Escape') return;
-            // モーダルの cancel まで届かせない。閉じるのはカレンダーだけ。
-            event.preventDefault();
-            close(true);
-          }}
-          onBlur={(event) => {
-            // Tab で外へ出たときだけ閉じる。行き先が null（押した要素が消えた・何もない所を押した）は
-            // 外側の押下で閉じるか、カレンダーの中に留まっているので、ここでは閉じない。
-            const next = event.relatedTarget;
-            if (next && !event.currentTarget.contains(next) && next !== triggerRef.current) close(false);
-          }}
-        >
-          <div className="g-calendar-head">
-            <button
-              type="button"
-              className="g-iconbtn"
-              aria-label={labels.previousMonth}
-              onClick={() => go(addMonths(focused, -1), false)}
-            >
-              <Icon name="chevronLeft" />
-            </button>
-            <span className="g-calendar-title" id={titleId} aria-live="polite">
-              {formatter(locale, { year: 'numeric', month: 'long' }).format(parse(focused))}
-            </span>
-            <button
-              type="button"
-              className="g-iconbtn"
-              aria-label={labels.nextMonth}
-              onClick={() => go(addMonths(focused, 1), false)}
-            >
-              <Icon name="chevronRight" />
-            </button>
-          </div>
-          <table ref={gridRef} className="g-calendar-grid" role="grid" aria-labelledby={titleId} onKeyDown={handleGridKeyDown}>
-            <thead>
-              <tr>
-                {weekdays.map((day) => (
-                  <th key={day.getUTCDay()} scope="col" abbr={long.format(day)}>
-                    {narrow.format(day)}
-                  </th>
+      <Popup
+        open={open}
+        anchorRef={anchorRef}
+        onDismiss={() => close(false)}
+        className="g-calendar"
+        role="dialog"
+        aria-labelledby={titleId}
+        onKeyDown={(event) => {
+          if (event.key !== 'Escape') return;
+          // モーダルの cancel まで届かせない。閉じるのはカレンダーだけ。
+          event.preventDefault();
+          close(true);
+        }}
+        onBlur={(event) => {
+          // Tab で外へ出たときだけ閉じる。行き先が null（押した要素が消えた・何もない所を押した）は
+          // 外側の押下で閉じるか、カレンダーの中に留まっているので、ここでは閉じない。
+          const next = event.relatedTarget;
+          if (next && !event.currentTarget.contains(next) && next !== triggerRef.current) close(false);
+        }}
+      >
+        <div className="g-calendar-head">
+          <button
+            type="button"
+            className="g-iconbtn"
+            aria-label={labels.previousMonth}
+            onClick={() => go(addMonths(focused, -1), false)}
+          >
+            <Icon name="chevronLeft" />
+          </button>
+          <span className="g-calendar-title" id={titleId} aria-live="polite">
+            {formatter(locale, { year: 'numeric', month: 'long' }).format(parse(focused))}
+          </span>
+          <button
+            type="button"
+            className="g-iconbtn"
+            aria-label={labels.nextMonth}
+            onClick={() => go(addMonths(focused, 1), false)}
+          >
+            <Icon name="chevronRight" />
+          </button>
+        </div>
+        <table ref={gridRef} className="g-calendar-grid" role="grid" aria-labelledby={titleId} onKeyDown={handleGridKeyDown}>
+          <thead>
+            <tr>
+              {weekdays.map((day) => (
+                <th key={day.getUTCDay()} scope="col" abbr={long.format(day)}>
+                  {narrow.format(day)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {[0, 1, 2, 3, 4, 5].map((week) => (
+              <tr key={week}>
+                {days.slice(week * 7, week * 7 + 7).map((iso, index) => (
+                  // 位置で key を振る。月送りで日付が入れ替わっても、フォーカス中のボタンが消えない。
+                  <td key={index} aria-selected={iso === selected}>
+                    <button
+                      type="button"
+                      className="g-day"
+                      tabIndex={iso === focused ? 0 : -1}
+                      aria-label={full.format(parse(iso))}
+                      aria-current={iso === today ? 'date' : undefined}
+                      aria-disabled={outOfRange(iso) ? true : undefined}
+                      data-outside={iso.slice(0, 7) !== month ? '' : undefined}
+                      onClick={() => {
+                        if (!outOfRange(iso)) pick(iso);
+                      }}
+                    >
+                      {parse(iso).getUTCDate()}
+                    </button>
+                  </td>
                 ))}
               </tr>
-            </thead>
-            <tbody>
-              {[0, 1, 2, 3, 4, 5].map((week) => (
-                <tr key={week}>
-                  {days.slice(week * 7, week * 7 + 7).map((iso, index) => (
-                    // 位置で key を振る。月送りで日付が入れ替わっても、フォーカス中のボタンが消えない。
-                    <td key={index} aria-selected={iso === selected}>
-                      <button
-                        type="button"
-                        className="g-day"
-                        tabIndex={iso === focused ? 0 : -1}
-                        aria-label={full.format(parse(iso))}
-                        aria-current={iso === today ? 'date' : undefined}
-                        aria-disabled={outOfRange(iso) ? true : undefined}
-                        data-outside={iso.slice(0, 7) !== month ? '' : undefined}
-                        onClick={() => {
-                          if (!outOfRange(iso)) pick(iso);
-                        }}
-                      >
-                        {parse(iso).getUTCDate()}
-                      </button>
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Popup>
-      ) : null}
+            ))}
+          </tbody>
+        </table>
+      </Popup>
       {name ? <input type="hidden" name={name} value={selected ?? ''} /> : null}
     </div>
   );

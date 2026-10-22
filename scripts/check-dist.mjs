@@ -21,10 +21,13 @@ import { gzipSync } from 'node:zlib';
  * Modal 名前空間は全部品を参照するので、Modal.* で書くアプリには全部載る。
  * 同日、JS を 34 → 35 KB に引き上げた。折り返しの崩れの洗い出し（§10-33）で、Phrase に要素の境目の扱い・
  * keep-all が残す改行の糊・長い文節の切れ目を足したため（約 2 KB）。Phrase は全部品が使うので tree shaking では落ちない。
+ * 2026-10-22、JS を 35 → 36 KB に引き上げた。動きの段（V-01〜V-08）で、ポップアップの退出を待つ処理・
+ * セグメントの板を測るフック・Provider の器を足したため（約 0.8 KB）。Popup は一覧とカレンダーが共有するので、
+ * 入力部品を使うアプリには載る。
  */
 const BUDGETS = {
-  'dist/index.js': 35 * 1024,
-  'dist/index.cjs': 35 * 1024,
+  'dist/index.js': 36 * 1024,
+  'dist/index.cjs': 36 * 1024,
   'dist/styles.css': 9 * 1024,
 };
 
@@ -84,6 +87,8 @@ const REQUIRED_EXPORTS = [
   // 日本語の文節折り返しを gassan の外の UI にも効かせる入口。W-05。
   'Phrase',
   'splitPhrases',
+  // 動きの段の名前（none / subtle / standard / expressive）。選ぶ UI を作る側が並べるのに使う。V-01。
+  'MOTION_PRESETS',
 ];
 
 let failed = false;

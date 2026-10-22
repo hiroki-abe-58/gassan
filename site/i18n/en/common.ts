@@ -31,6 +31,8 @@ export default {
     schemes: { light: 'Light', dark: 'Dark', system: 'Match system' },
     background: 'Background',
     tints: { neutral: 'Neutral', soft: 'Soft', strong: 'Strong' },
+    motion: 'Motion',
+    motions: { none: 'None', subtle: 'Subtle', standard: 'Standard', expressive: 'Expressive' },
     primary: 'Primary color',
     presets: {
       default: 'Default',

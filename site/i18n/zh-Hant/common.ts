@@ -29,6 +29,8 @@ export default {
     schemes: { light: '淺色', dark: '深色', system: '跟隨系統' },
     background: '背景',
     tints: { neutral: '無彩色', soft: '淡', strong: '濃' },
+    motion: '動態',
+    motions: { none: '無', subtle: '克制', standard: '標準', expressive: '豐富' },
     primary: '主色',
     presets: {
       default: '預設',

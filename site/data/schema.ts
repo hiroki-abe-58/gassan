@@ -83,6 +83,13 @@ export interface TokenGroup {
   tokens: DesignToken[];
 }
 
+/** 動きの段（`:where([data-g-motion="…"])`）1 つと、それが書くトークン。V-01。 */
+export interface MotionPresetTokens {
+  name: string;
+  /** トークン名（--g- 付き）→ 値。 */
+  tokens: Record<string, string>;
+}
+
 export interface SiteMeta {
   packageName: string;
   version: string;
@@ -112,4 +119,6 @@ export interface GassanData {
   statusLegend: MdTable;
   api: Record<string, ApiInterface>;
   tokens: TokenGroup[];
+  /** 動きの段。CSS に書かれた順（弱い順）。 */
+  motionPresets: MotionPresetTokens[];
 }

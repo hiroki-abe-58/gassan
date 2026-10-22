@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 /**
  * 依存を増やさないためのインライン SVG。装飾なので aria-hidden。A-06。
  * 20×20 の線画で、色は currentColor に従う（塗りが要るものは CSS の fill で塗る）。
+ * 線の長さは pathLength="1" で 1 にそろえる。線を引くように出す動き（V-07）を、形に依らず
+ * stroke-dasharray: 1 で書けるようにするため。dash を使わない限り描画は変わらない。
  */
 export const ICONS = {
   chevronDown: 'm5 7.5 5 5 5-5',
@@ -23,7 +25,14 @@ export const ICONS = {
 export function Icon({ name, className }: { name: keyof typeof ICONS; className?: string }): ReactNode {
   return (
     <svg className={className} viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
-      <path d={ICONS[name]} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d={ICONS[name]}
+        pathLength={1}
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

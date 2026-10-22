@@ -4,6 +4,7 @@ import type { ChipOption } from './fields';
 import { useControllable } from './internal/controllable';
 import { warnDuplicateKeys } from './internal/dom';
 import { Icon } from './internal/icons';
+import { useIndicator } from './internal/indicator';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
@@ -229,9 +230,15 @@ export interface ModalSegmentedProps extends GroupAria, DataAttributes {
   className?: string;
 }
 
+/** 選択中の区画（ラジオを包む label）。 */
+function checkedSegment(container: HTMLElement): HTMLElement | null {
+  return container.querySelector<HTMLInputElement>('.g-segment-input:checked')?.parentElement ?? null;
+}
+
 /**
  * 横並びの択一（表示の切り替えなど、2〜5 個の短い選択肢）。I-09。
  * 中身はラジオなので、キー操作は RadioGroup と同じ。選んだ区画はテーマのアクセント色で塗る。
+ * 塗りは 1 枚の板で、選び直すと前の区画から滑って移る（V-05）。
  */
 export function ModalSegmented({
   options,
@@ -251,14 +258,18 @@ export function ModalSegmented({
     if (next !== null) onValueChange?.(next);
   });
   useWarnDuplicateValues('Modal.Segmented', options);
+  const containerRef = useRef<HTMLDivElement>(null);
+  useIndicator(containerRef, checkedSegment, selected);
 
   return (
     <div
       {...domPassthrough(rest, 'Modal.Segmented')}
       {...groupRole({ 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy })}
+      ref={containerRef}
       className={className ? `g-segmented ${className}` : 'g-segmented'}
       data-disabled={disabled ? '' : undefined}
     >
+      <span className="g-segment-indicator" aria-hidden="true" />
       {options.map((option) => (
         <label key={option.value} className="g-segment">
           <input
