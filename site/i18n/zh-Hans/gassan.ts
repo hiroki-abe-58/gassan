@@ -2,7 +2,7 @@
  * gassan 输出的文字（关闭、读屏播报、门控的原因等）。App 把它传给 GassanProvider。
  * 键与 src/labels.ts 的 japaneseLabels / englishLabels 相同。
  */
-import type { GassanLabels } from '@genelab/gassan';
+import { japaneseHolidayResolver, type GassanLabels } from '@genelab/gassan';
 
 const labels: GassanLabels = {
   close: '关闭',
@@ -40,6 +40,48 @@ const labels: GassanLabels = {
   rating: (value, max) => `${String(max)} 分中的 ${String(value)} 分`,
   previousMonth: '上个月',
   nextMonth: '下个月',
+  // 文档站点演示的是日本的节假日，名称译成中文。
+  holidays: japaneseHolidayResolver({
+    newYear: '元旦',
+    comingOfAge: '成人节',
+    foundation: '建国纪念日',
+    emperorBirthday: '天皇诞辰',
+    vernalEquinox: '春分节',
+    showa: '昭和日',
+    greenery: '绿之日',
+    constitution: '宪法纪念日',
+    children: '儿童节',
+    marine: '海之日',
+    mountain: '山之日',
+    respectForAged: '敬老节',
+    autumnalEquinox: '秋分节',
+    healthSports: '体育节',
+    sports: '体育日',
+    culture: '文化节',
+    laborThanksgiving: '勤劳感谢日',
+    substitute: '补休日',
+    citizens: '国民休息日',
+    wedding1959: '皇太子明仁亲王结婚典礼',
+    funeral1989: '昭和天皇大丧之礼',
+    enthronementCeremony: '即位礼正殿之仪',
+    wedding1993: '皇太子德仁亲王结婚典礼',
+    enthronement: '天皇即位日',
+  }),
+  today: '今天',
+  previousYear: '上一年',
+  nextYear: '下一年',
+  previousYears: '前 12 年',
+  nextYears: '后 12 年',
+  chooseMonth: (current) => `${current}，选择月份`,
+  chooseYear: (current) => `${current}，选择年份`,
+  startDate: '开始日期',
+  endDate: '结束日期',
+  pickStart: '请选择开始日期',
+  pickEnd: '请选择结束日期',
+  chooseRange: '选择日期范围',
+  marked: '有日程',
+  rangePreset: (key) =>
+    ({ today: '今天', yesterday: '昨天', last7: '最近 7 天', last30: '最近 30 天', thisMonth: '本月', lastMonth: '上个月' })[key],
   dropFiles: '将文件拖放到此处',
   chooseFiles: '选择文件',
   removeFile: (name) => `移除 ${name}`,

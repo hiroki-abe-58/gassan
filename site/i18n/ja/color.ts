@@ -25,6 +25,8 @@ export default {
       'on-accent-muted': 'ゲート中の primary（G-10）',
       'on-danger': 'danger ボタン（F-06）',
       danger: 'エラー文・必須の印',
+      sunday: 'カレンダーの日曜と祝日（I-16）',
+      saturday: 'カレンダーの土曜（I-16）',
       focus: 'フォーカスリング（K-07。非テキストは 3:1）',
     },
     pass: (min: number): string => `合格（${String(min)}:1 以上）`,

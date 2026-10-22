@@ -1,12 +1,17 @@
 import type { ReactNode } from 'react';
 
-import { Modal } from '@genelab/gassan';
+import { Modal, commonDateRanges, japaneseHolidays, useLabels } from '@genelab/gassan';
 
 import type { PageProps } from '../../routes';
+import BookingCalendar from '../../demos/BookingCalendar';
+import bookingCalendarSource from '../../demos/BookingCalendar.tsx?raw';
 import DateForm from '../../demos/DateForm';
 import dateFormSource from '../../demos/DateForm.tsx?raw';
+import RangeReport from '../../demos/RangeReport';
+import rangeReportSource from '../../demos/RangeReport.tsx?raw';
 import { useT } from '../../i18n';
 import { ApiTable } from '../../ui/ApiTable';
+import { CodeBlock } from '../../ui/Code';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { DataTable } from '../../ui/DataTable';
 import { Example } from '../../ui/Example';
@@ -22,6 +27,30 @@ function localISO(days = 0): string {
   return date.toLocaleDateString('sv-SE');
 }
 
+/** 今年の祝日と休日。名前はサイトの言語の labels.holidays から引く（カレンダーと同じ出どころ）。 */
+function HolidayTable(): ReactNode {
+  const t = useT().datePicker.holidays;
+  const labels = useLabels();
+  const year = new Date().getFullYear();
+  const format = new Intl.DateTimeFormat(labels.locale, { month: 'short', day: 'numeric', weekday: 'short', timeZone: 'UTC' });
+  return (
+    <DataTable
+      caption={t.tableCaption(year)}
+      head={[t.head.date, t.head.name]}
+      rows={japaneseHolidays(year).map((holiday) => [
+        format.format(new Date(`${holiday.date}T00:00:00Z`)),
+        labels.holidays?.(holiday.date) ?? holiday.name,
+      ])}
+    />
+  );
+}
+
+/** よく使う期間は、サイトの言語の labels.rangePreset から作る。 */
+function RangeSpecimen({ labelledBy }: { labelledBy: string }): ReactNode {
+  const labels = useLabels();
+  return <Modal.DateRangePicker aria-labelledby={labelledBy} presets={commonDateRanges(labels)} />;
+}
+
 export function DatePickerPage({ rest }: PageProps): ReactNode {
   const { nav, datePicker: t } = useT();
   const { items } = t.gallery;
@@ -31,7 +60,7 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
       rest={rest}
       title={nav.pages.datePicker}
       lead={t.lead}
-      ids={['I-13', 'I-15']}
+      ids={['I-13', 'I-16', 'I-17', 'I-18', 'I-19', 'I-15']}
       overview={() => (
         <>
           <Section id="gallery" title={t.gallery.title} intro={t.gallery.intro}>
@@ -42,6 +71,7 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
                   label: items.datePicker,
                   render: (id) => <Modal.DatePicker aria-labelledby={id} defaultValue={localISO()} />,
                 },
+                { label: items.rangePicker, render: (id) => <RangeSpecimen labelledBy={id} /> },
                 {
                   label: items.limited,
                   render: (id) => <Modal.DatePicker aria-labelledby={id} min={localISO()} max={localISO(30)} />,
@@ -51,6 +81,34 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
                 { label: items.color, render: (id) => <Modal.Input aria-labelledby={id} type="color" defaultValue="#3346d3" /> },
               ]}
             />
+          </Section>
+
+          <Section id="inline" title={t.inline.title} intro={t.inline.intro}>
+            <Example
+              title={t.inline.exampleTitle}
+              description={t.inline.exampleDescription}
+              code={bookingCalendarSource}
+              demo="bookingCalendar"
+            >
+              <BookingCalendar />
+            </Example>
+          </Section>
+
+          <Section id="range" title={t.range.title} intro={t.range.intro}>
+            <Example title={t.range.exampleTitle} description={t.range.exampleDescription} code={rangeReportSource} demo="rangeReport">
+              <RangeReport />
+            </Example>
+            <Prose>
+              <Paras items={t.range.body} />
+            </Prose>
+          </Section>
+
+          <Section id="holidays" title={t.holidays.title} intro={t.holidays.intro}>
+            <HolidayTable />
+            <Prose>
+              <Paras items={t.holidays.body} />
+            </Prose>
+            <CodeBlock lang="tsx" caption={t.holidays.codeCaption} code={t.holidays.code} />
           </Section>
 
           <Section id="modal" title={t.modal.title} intro={t.modal.intro}>
@@ -65,6 +123,9 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
               head={[t.keys.head.key, t.keys.head.action]}
               rows={t.keys.rows.map((row) => [<kbd key="key">{row.key}</kbd>, row.action])}
             />
+            <Prose>
+              <Paras items={[t.keys.note]} />
+            </Prose>
           </Section>
 
           <Section id="native" title={t.native.title}>
@@ -74,8 +135,20 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
           </Section>
         </>
       )}
-      api={() => <ApiTable name="ModalDatePickerProps" title="Modal.DatePicker" />}
-      a11y={() => <SpecTable ids={['I-01', 'I-02', 'I-13', 'I-15']} caption={t.a11yCaption} />}
+      api={() => (
+        <>
+          <ApiTable name="ModalDatePickerProps" title={t.apiCaption.datePicker} />
+          <ApiTable name="ModalDateRangePickerProps" title={t.apiCaption.rangePicker} />
+          <ApiTable name="ModalCalendarProps" title={t.apiCaption.calendar} />
+          <ApiTable name="ModalRangeCalendarProps" title={t.apiCaption.rangeCalendar} />
+          <ApiTable name="CalendarOptions" />
+          <ApiTable name="DateRange" />
+          <ApiTable name="DateRangePreset" />
+        </>
+      )}
+      a11y={() => (
+        <SpecTable ids={['I-01', 'I-02', 'I-13', 'I-15', 'I-16', 'I-17', 'I-18', 'I-19', 'V-04']} caption={t.a11yCaption} />
+      )}
     />
   );
 }

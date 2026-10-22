@@ -1,5 +1,7 @@
 import { createContext, createElement, useContext, type ReactNode } from 'react';
 
+import { japaneseHolidayResolver, type HolidayResolver } from './holidays';
+import type { DateRangePresetKey } from './internal/dates';
 import { LineBreakContext, type LineBreakMode } from './phrase';
 import { DEFAULT_BLOCKED_MESSAGE, DEFAULT_UNRESOLVED_GATE_MESSAGE, type MotionPreset } from './types';
 
@@ -77,6 +79,33 @@ export interface GassanLabels {
   dropFiles: string;
   chooseFiles: string;
   removeFile: (name: string) => string;
+  /**
+   * 日付の脇に出す祝日の名前（日付 → 名前、祝日でなければ null）。null なら祝日を出さない。I-16。
+   * 日本語の既定は日本の祝日（japaneseHolidayResolver）、英語の既定は null。
+   */
+  holidays: HolidayResolver | null;
+  /** カレンダーの「今日」。I-18。 */
+  today: string;
+  /** 月の一覧での年送りと、年の一覧での 12 年送り。I-18。 */
+  previousYear: string;
+  nextYear: string;
+  previousYears: string;
+  nextYears: string;
+  /** 見出しのボタン。押すと月の一覧・年の一覧へ移る。引数はいまの見出し（「2026年10月」）。I-18。 */
+  chooseMonth: (current: string) => string;
+  chooseYear: (current: string) => string;
+  /** 期間の両端。日の読み上げ名に添える。I-17。 */
+  startDate: string;
+  endDate: string;
+  /** いまどちらの端を選ぶ番か。role="status" で伝える。I-17。 */
+  pickStart: string;
+  pickEnd: string;
+  /** 期間をまだ選んでいないときの表示。I-17。 */
+  chooseRange: string;
+  /** 印（marks）の付いた日の読み上げ。I-19。 */
+  marked: string;
+  /** よく使う期間の名前。I-17。 */
+  rangePreset: (key: DateRangePresetKey) => string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -118,6 +147,22 @@ export const japaneseLabels: GassanLabels = {
   dropFiles: 'ここにファイルをドロップ',
   chooseFiles: 'ファイルを選ぶ',
   removeFile: (name) => `${name} を取り除く`,
+  holidays: japaneseHolidayResolver(),
+  today: '今日',
+  previousYear: '前の年',
+  nextYear: '次の年',
+  previousYears: '前の12年',
+  nextYears: '次の12年',
+  chooseMonth: (current) => `${current}。月を選ぶ`,
+  chooseYear: (current) => `${current}。年を選ぶ`,
+  startDate: '開始日',
+  endDate: '終了日',
+  pickStart: '開始日を選んでください',
+  pickEnd: '終了日を選んでください',
+  chooseRange: '期間を選ぶ',
+  marked: '予定あり',
+  rangePreset: (key) =>
+    ({ today: '今日', yesterday: '昨日', last7: '過去7日間', last30: '過去30日間', thisMonth: '今月', lastMonth: '先月' })[key],
 };
 
 export const englishLabels: GassanLabels = {
@@ -159,6 +204,29 @@ export const englishLabels: GassanLabels = {
   dropFiles: 'Drop files here',
   chooseFiles: 'Choose files',
   removeFile: (name) => `Remove ${name}`,
+  holidays: null,
+  today: 'Today',
+  previousYear: 'Previous year',
+  nextYear: 'Next year',
+  previousYears: 'Previous 12 years',
+  nextYears: 'Next 12 years',
+  chooseMonth: (current) => `${current}, choose a month`,
+  chooseYear: (current) => `${current}, choose a year`,
+  startDate: 'Start date',
+  endDate: 'End date',
+  pickStart: 'Choose a start date',
+  pickEnd: 'Choose an end date',
+  chooseRange: 'Choose dates…',
+  marked: 'Has events',
+  rangePreset: (key) =>
+    ({
+      today: 'Today',
+      yesterday: 'Yesterday',
+      last7: 'Last 7 days',
+      last30: 'Last 30 days',
+      thisMonth: 'This month',
+      lastMonth: 'Last month',
+    })[key],
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

@@ -301,6 +301,17 @@ const phraseOff = renderToString(h(GassanProvider, { lineBreak: 'browser' }, h(P
 if (phraseOff === 'プロフィールを編集') ok('lineBreak="browser" leaves the text untouched on the server');
 else fail(`lineBreak="browser" still changed the markup: ${phraseOff}`);
 
+// カレンダー（I-16〜I-19）。祝日の計算と Intl の書式はサーバーでも同じ結果になる。
+const calendarHtml = renderToString(h(Modal.Calendar, { 'aria-label': 'c', defaultValue: '2026-01-07', size: 'lg' }));
+if (calendarHtml.includes('成人の日') && calendarHtml.includes('data-holiday')) ok('Calendar renders Japanese holiday names on the server');
+else fail('Calendar did not render the holiday name on the server');
+const rangeHtml = renderToString(h(Modal.DateRangePicker, { 'aria-label': 'r' }));
+if (rangeHtml.includes('期間を選ぶ')) ok('DateRangePicker renders its placeholder on the server');
+else fail('DateRangePicker did not render its placeholder on the server');
+const englishCalendar = renderToString(h(GassanProvider, { labels: englishLabels }, h(Modal.Calendar, { 'aria-label': 'c', defaultValue: '2026-01-07' })));
+if (!englishCalendar.includes('data-holiday')) ok('English labels show no holidays by default on the server');
+else fail('English labels still marked holidays on the server');
+
 if (failed) {
   console.error('\nssr smoke test failed.');
   process.exit(1);

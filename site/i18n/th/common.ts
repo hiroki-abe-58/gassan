@@ -72,6 +72,8 @@ export default {
       gassanBody: 'เนื้อหาของโมดอล',
       gassanMuted: 'ข้อความเสริมและ tertiary ของโมดอล',
       gassanDanger: 'ข้อความแจ้งข้อผิดพลาดของโมดอล',
+      gassanSunday: 'วันอาทิตย์และวันหยุดในปฏิทิน',
+      gassanSaturday: 'วันเสาร์ในปฏิทิน',
       focusRing: 'focus ring (ไม่ใช่ข้อความ)',
       fill: 'สีพื้นของสวิตช์และชิปที่ถูกเลือก (ไม่ใช่ข้อความ)',
     },

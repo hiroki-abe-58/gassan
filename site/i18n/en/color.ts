@@ -26,6 +26,8 @@ export default {
       'on-accent-muted': 'Gated primary (G-10)',
       'on-danger': 'danger button (F-06)',
       danger: 'Error text, required marker',
+      sunday: 'Calendar Sundays and holidays (I-16)',
+      saturday: 'Calendar Saturdays (I-16)',
       focus: 'Focus ring (K-07; 3:1 for non-text)',
     },
     pass: (min: number): string => `Pass (${String(min)}:1 or more)`,

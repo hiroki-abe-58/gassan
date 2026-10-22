@@ -83,6 +83,8 @@ export default {
       gassanBody: 'モーダルの本文',
       gassanMuted: 'モーダルの補足・tertiary',
       gassanDanger: 'モーダルのエラー文',
+      gassanSunday: 'カレンダーの日曜・祝日',
+      gassanSaturday: 'カレンダーの土曜',
       focusRing: 'フォーカスリング（非テキスト）',
       fill: 'スイッチ・選択中のチップの塗り（非テキスト）',
     } satisfies Record<CheckId, string>,

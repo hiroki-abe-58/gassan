@@ -74,6 +74,8 @@ export default {
       gassanBody: 'Modal body text',
       gassanMuted: 'Modal secondary text and tertiary',
       gassanDanger: 'Modal error text',
+      gassanSunday: 'Calendar Sundays and holidays',
+      gassanSaturday: 'Calendar Saturdays',
       focusRing: 'Focus ring (non-text)',
       fill: 'Switch and selected chip fills (non-text)',
     },

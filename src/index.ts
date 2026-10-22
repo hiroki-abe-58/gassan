@@ -8,6 +8,7 @@
 import { ModalBody, ModalSection } from './body';
 import { ModalChart } from './chart';
 import { ModalCheckbox, ModalRadioGroup, ModalRating, ModalSegmented } from './choices';
+import { ModalCalendar, ModalDateRangePicker, ModalRangeCalendar } from './calendar';
 import { ModalDatePicker } from './date-picker';
 import { ModalAlert, ModalChips, ModalField, ModalFieldset, ModalSwitch, ModalTable } from './fields';
 import { ModalFileDrop } from './file-drop';
@@ -57,11 +58,16 @@ export { ModalCheckbox, ModalRadioGroup, ModalSegmented, ModalRating } from './c
 export { ModalSlider, ModalRangeSlider } from './slider';
 export { ModalSelect, ModalCombobox } from './select';
 export { ModalDatePicker } from './date-picker';
+export { ModalCalendar, ModalRangeCalendar, ModalDateRangePicker, commonDateRanges } from './calendar';
 export { ModalFileDrop } from './file-drop';
 export { ModalChart } from './chart';
 export { ModalHandle } from './sheet';
 export { ModalHost, useModals, confirm, resetModalQueue } from './imperative';
 export { GassanProvider, japaneseLabels, englishLabels, useLabels } from './labels';
+export { japaneseHoliday, japaneseHolidays, japaneseHolidayNames, japaneseHolidayResolver } from './holidays';
+export type { Holiday, HolidayResolver, JapaneseHolidayKey } from './holidays';
+export { DATE_RANGE_PRESETS } from './internal/dates';
+export type { DateRange, DateRangePresetKey } from './internal/dates';
 export { Phrase } from './phrase';
 export { splitPhrases } from './internal/phrase';
 
@@ -126,7 +132,8 @@ export type {
 } from './choices';
 export type { ModalSliderProps, ModalRangeSliderProps } from './slider';
 export type { SelectOption, ModalSelectProps, ModalComboboxProps } from './select';
-export type { ModalDatePickerProps } from './date-picker';
+export type { ModalDatePickerProps, CalendarOptions } from './date-picker';
+export type { ModalCalendarProps, ModalRangeCalendarProps, ModalDateRangePickerProps, DateRangePreset } from './calendar';
 export type { ModalFileDropProps } from './file-drop';
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';
@@ -191,6 +198,9 @@ export const Modal = {
   Select: ModalSelect,
   Combobox: ModalCombobox,
   DatePicker: ModalDatePicker,
+  DateRangePicker: ModalDateRangePicker,
+  Calendar: ModalCalendar,
+  RangeCalendar: ModalRangeCalendar,
   FileDrop: ModalFileDrop,
   Chips: ModalChips,
   Switch: ModalSwitch,

@@ -26,6 +26,8 @@ export default {
       'on-accent-muted': 'primary ที่ติด gate (G-10)',
       'on-danger': 'ปุ่ม danger (F-06)',
       danger: 'ข้อความข้อผิดพลาด, เครื่องหมายช่องจำเป็น',
+      sunday: 'วันอาทิตย์และวันหยุดในปฏิทิน (I-16)',
+      saturday: 'วันเสาร์ในปฏิทิน (I-16)',
       focus: 'focus ring (K-07 สิ่งที่ไม่ใช่ข้อความใช้ 3:1)',
     },
     pass: (min: number): string => `ผ่าน (${String(min)}:1 ขึ้นไป)`,

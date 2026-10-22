@@ -26,6 +26,8 @@ export default {
       'on-accent-muted': '门控中的 primary（G-10）',
       'on-danger': 'danger 按钮（F-06）',
       danger: '错误文字、必填标记',
+      sunday: '日历的周日与节假日（I-16）',
+      saturday: '日历的周六（I-16）',
       focus: '焦点环（K-07。非文本为 3:1）',
     },
     pass: (min: number): string => `达标（${String(min)}:1 以上）`,
