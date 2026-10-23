@@ -1,16 +1,60 @@
 import type ja from '../ja/home';
 
 export default {
-  eyebrow: 'React 모달 셸',
-  heroTitle: ['레이어 1은', '브라우저에 맡긴다.'],
-  lead: 'gassan은 네이티브 `<dialog>`를 토대로 한 React 모달 셸이다. 포커스 트랩도 Esc도 배경의 inert 처리도 한 줄도 구현하지 않았다. 그 대신 기존 라이브러리가 거의 손대지 않은 레이어, 즉 정보 구조·활성화 게이트·닫기 이유에 모든 힘을 쏟는다.',
+  eyebrow: 'SaaS를 위한 React UI 라이브러리',
+  heroTitle: ['로그인부터 결제까지,', '컴포넌트 하나만 두면 된다.'],
+  lead: 'gassan은 네이티브 `<dialog>`를 토대로 한 React UI 라이브러리다. 모달·폼 요소·UI 요소·토스트·명령 팔레트부터 로그인·오류·요금·설정·멤버·결제 페이지까지 갖추고 있다. 포커스 트랩도 Esc도 배경의 inert 처리도 브라우저에 맡기고, 그만큼 스크린 리더·키보드·일본어 줄바꿈을 명세에 써서 테스트로 확인한다.',
   start: '시작하기',
-  philosophy: '설계 철학 읽기',
+  templates: '템플릿 보기',
   stats: {
+    exports: '공개 API',
     items: '열거한 동작',
     tests: '자동 테스트',
-    proven: '테스트로 증명된 동작',
     trap: '자체 포커스 트랩',
+  },
+  showcase: {
+    title: '견본 앱',
+    intro: '가상의 SaaS “Atlas”. 내비게이션과 버튼을 따라 홈·멤버·요금제와 결제·설정·로그인·요금제 화면을 돌아다닐 수 있다. 화면은 gassan의 템플릿과 컴포넌트로 짰고, 더한 것은 로고와 견본 데이터, 홈의 숫자 배치뿐이다. “스마트폰”으로 바꾸면 좁은 화면의 모양이 된다.',
+    frameTitle: 'Atlas',
+    variants: { dashboard: '홈', members: '멤버', billing: '요금제와 결제', settings: '설정', signIn: '로그인', pricing: '요금제' },
+  },
+  features: {
+    title: '갖추고 있는 것',
+    intro: 'SaaS 화면에 필요한 것을 컴포넌트와 페이지 단위로. 모두 named import로 쓰며, 쓰지 않는 것은 앱에 들어가지 않는다.',
+    items: {
+      modal: {
+        title: '모달',
+        body: '5가지 유형·활성화 게이트·제목 생략·닫기 이유·디텐트에서 멈추는 시트. 포커스와 Esc와 배경은 브라우저에 맡긴다.',
+      },
+      forms: {
+        title: '폼 요소',
+        body: '입력란·선택지·셀렉트·일본 공휴일과 기간 선택을 갖춘 달력·시간·태그·비밀번호 강도·파일.',
+      },
+      ui: {
+        title: 'UI 요소',
+        body: '버튼·배지·카드·수치 요약·탭·메뉴·브레드크럼·페이지 이동·단계·데이터 표·명령 팔레트.',
+      },
+      feedback: {
+        title: '알림',
+        body: '남은 시간 미터가 줄어드는 토스트·알림 배너·진행 상황. 멈춰서 읽을 수 있고, 스와이프로도 직접 눌러서도 닫을 수 있다.',
+      },
+      templates: {
+        title: '페이지 템플릿',
+        body: '로그인·가입·2단계 인증·비밀번호 재설정·오류·점검·요금·자주 묻는 질문·약관·문의하기·업데이트 내역.',
+      },
+      app: {
+        title: '앱 화면',
+        body: '앱 셸과, 설정·멤버·요금제와 결제·초기 설정·초대 수락 페이지. 데이터와 처리 함수만 넘기면 동작한다.',
+      },
+      motion: {
+        title: '움직임',
+        body: '4단계의 움직임 중에서 고를 수 있다. 누를 때의 반응·퇴장·스프링의 되돌아옴까지 갖추었고, 동작 줄이기 설정은 반드시 따른다.',
+      },
+      a11y: {
+        title: '스크린 리더와 키보드',
+        body: '이름·상태·포커스가 갈 곳을 컴포넌트마다 명세에 쓰고 테스트로 확인한다. 색만으로 전하지 않는다.',
+      },
+    },
   },
   languages: {
     title: '일본어·중국어·한국어 화면을 위해',
@@ -35,7 +79,7 @@ export default {
     },
   },
   promises: {
-    title: '다른 라이브러리가 풀지 못한 4가지',
+    title: '모달의 핵심 — 다른 라이브러리가 풀지 못한 4가지',
     intro: '레이어 1(top layer·포커스·Esc)은 브라우저가 이미 해결했다. gassan이 시간을 쓰는 것은 그 위의 설계 작업이다.',
     gate: {
       title: '활성화 게이트',
@@ -89,6 +133,8 @@ export default {
   install: {
     title: '설치하기',
     caption: '설치',
+    cssCaption: '스타일 불러오기',
+    css: "import '@genelab/gassan/styles.css';\n// 페이지 템플릿을 쓸 때만(styles.css 다음에 불러온다)\nimport '@genelab/gassan/templates.css';",
     more: '최소 예제와 브라우저 요구 사항 →',
   },
 } satisfies typeof ja;

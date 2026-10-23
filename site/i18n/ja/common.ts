@@ -11,7 +11,7 @@ import type { MotionPreset } from '@genelab/gassan';
 import type { CUSTOM_PRESET_ID, CheckId, PresetId, Tint } from '../../theme/engine';
 
 export default {
-  siteTitle: 'gassan — ネイティブ dialog のためのモーダルシェル',
+  siteTitle: 'gassan — SaaS のための React UI ライブラリ',
   skipToMain: '本文へ移動',
   openMenu: 'メニューを開く',
   menu: 'メニュー',

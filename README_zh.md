@@ -2,17 +2,19 @@
 
 [English](./README.md) · [日本語](./README_ja.md) · **简体中文** · [繁體中文](./README_zh-Hant.md) · [한국어](./README_ko.md) · [ไทย](./README_th.md)
 
-基于原生 `<dialog>` 的 React 模态框外壳（modal shell）。
+基于原生 `<dialog>`、面向 SaaS 的 React UI 库。
+
+从模态框、表单部件、UI 部件、轻提示、命令面板，到登录、错误、价格页面，以及内含设置、成员、账单的应用外框，每一样都只需放一个组件。
 焦点陷阱、Esc、背景 inert 化、top layer **一行都没有自己实现**，全部交给浏览器。
+日语、中文、韩语的换行和无障碍，都写进了规范，并用测试验证。
 
-取而代之，gassan 专注于现有库几乎没有触及的那一层。
-
-- **激活门控（activation gate）** — 不使用 `disabled`，做出“读到最后”“勾选之后”才能按下的按钮
-- **标题截断** — 不截断 DOM 文本也能省略显示，可访问名称（accessible name）始终完整
-- **关闭原因** — 区分 8 种 `CloseReason`，拒绝关闭时必定给出理由
-- **遮罩层（scrim）** — 不再写死 60% 的黑色，改为按意图划分的 4 级令牌
+- **模态框** — 五种类型。激活门控（不使用 `disabled`，做出“读到最后”“勾选之后”才能按下的按钮）。始终保持可访问名称（accessible name）完整的标题截断。8 种 `CloseReason`（拒绝关闭时必定给出理由）。按档位停靠的底部面板。不再写死 60% 的黑色、按意图划分的 4 级遮罩层（scrim）
+- **表单部件** — 文本、密码、搜索、数值、验证码、复选框、单选、分段控件、评分、开关、标签组、滑块、下拉选择、组合框、带日本节假日和区间选择的日历、时间选择、标签、密码强度、文件。里面仍是原生元素，只重绘边框和标记，颜色跟随主题的强调色。列表和日历显示在 top layer，不会被模态框裁切
+- **UI 部件** — 按钮、徽标、头像、进度、骨架屏、卡片、数值摘要、空状态、名称与值的列表、时间线、通知横幅、标签页、折叠面板、工具提示、弹出框、菜单、面包屑、分页、步骤条、页面标题栏、数据表格（排序、行选择、批量操作）、命令面板（⌘K）
+- **轻提示** — 用计时条显示消失前的剩余时间。指针悬停或焦点位于其中时暂停，轻扫或手动都能关闭
+- **页面模板** — 登录、创建账号、两步验证、重置密码、验证邮箱、退出登录、4xx / 5xx 与离线时的错误、维护、条款与隐私政策、常见问题、价格、联系我们、更新日志。以及应用外框，和其中的设置、成员、套餐与账单、初始设置、接受邀请页面
 - **日语、中文、韩语的换行** — 无论按钮、标题、表格单元格还是图表摘要，文字都不会在词的中间换行。日语在文节边界处换行（是「プロフィールを｜編集」，而不是「プロフィールを編｜集」），中文在词的边界处换行，韩语只在空格处换行。泰语和英语交给浏览器处理，浏览器本来就能正确换行
-- **表单部件** — 文本、密码、搜索、数值、验证码、复选框、单选、分段控件、评分、滑块、下拉选择、组合框、日历、文件等 18 个部件。里面仍是原生元素，只重绘边框和标记，颜色跟随主题的强调色。列表和日历显示在 top layer，不会被模态框裁切
+- **动效与主题** — 可以从 4 个级别的动效中选择（始终遵从“减弱动态效果”的设置）。浅色与深色，以及任意主色。无论选择哪种颜色，文字与填充色都会被推导为满足 WCAG 对比度要求的颜色
 
 **文档站点：<https://hiroki-abe-58.github.io/gassan/#/zh-Hans>**
 — 以类似 Material Design 3 指南的形式，阅读设计理念（模态框存在的理由、四层模型、五种类型、无障碍）、
@@ -93,6 +95,37 @@ function Example() {
 
 **模态框要始终保持挂载。** 不要写成 `{open && <Modal.Root .../>}`。
 条件挂载会让关闭动画从原理上无法绘制。
+
+---
+
+## 页面模板
+
+在应用的根部放一个 `SiteProvider`（产品名称、标志、各个跳转地址、路由的链接组件），每个页面只需放一个组件。
+模板的样式在 `templates.css` 中，在 `styles.css` 之后加载。
+
+```tsx
+import { SiteProvider, SignInPage } from '@genelab/gassan';
+import '@genelab/gassan/styles.css';
+import '@genelab/gassan/templates.css';
+
+export function SignIn() {
+  return (
+    <SiteProvider name="Atlas" links={{ home: '/', signUp: '/signup', forgotPassword: '/forgot' }}>
+      <SignInPage
+        onSubmit={async ({ email, password }) => {
+          const ok = await signIn(email, password);
+          // 失败时显示默认的提示（不透露是哪一项错了）
+          if (!ok) return { error: true };
+        }}
+      />
+    </SiteProvider>
+  );
+}
+```
+
+登录之后，`AppShell` 提供左侧的导航栏、顶部栏，以及窄屏时的导航面板，其中的内容用 `SettingsPage`、`MembersPage`、`BillingPage`、`OnboardingPage`、`InviteAcceptPage` 填充。
+只需传入数据和处理函数。处理函数返回 `{ error }` 时会播报这段文字，也不会重复提交。
+日期和时间按 `SiteProvider` 的 `timeZone` 绘制。没有指定时按浏览者所在的时区绘制，在 hydration 完成之前按 UTC 绘制，因此服务端与浏览器的文字不会不一致。
 
 ---
 
@@ -227,9 +260,20 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Chart` | 图表的容器。关联名称（`label`）和趋势的文字替代（`summary`），并用 `<details>` 展开原始数据。本身不负责绘制 |
 | `Modal.Handle` | 底部面板（sheet）的拖动把手。有档位（detent）时是 `role="slider"` 的控件，没有时只是装饰性的抓取区域 |
 | `ModalHost` `useModals` | 命令式 API（`await confirm()`） |
+| `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | 带日本节假日和区间选择的日历，以及按主题绘制的时间选择 |
+| `Modal.TagInput` `Modal.PasswordStrength` | 标签（支持粘贴和输入法）与新密码的强度 |
+| `toast` `ToastHost` | 带剩余时间计时条的轻提示 |
+| `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | 在页面上（模态框之外）使用的按钮和标记 |
+| `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 容器、数值、进度与通知 |
+| `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | 导航类部件，以及显示在触发元素旁边的部件 |
+| `PageHeader` `DataTable` `CommandPalette` | 页面标题栏、数据表格（排序、行选择、批量操作）、命令面板（⌘K） |
+| `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | 登录与账号相关的页面（`templates.css`） |
+| `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | 错误、维护与公开页面 |
+| `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | 应用外框及其中的页面 |
 | `GassanProvider` | 替换界面文案（默认日语，随附 `englishLabels`），并切换换行方式（`lineBreak`） |
 | `Phrase` `splitPhrases` | 让你自己的 UI 中的日语、中文和韩语文字也采用同样的换行方式（gassan 组件内部默认已启用） |
 
+表单部件还有不带 `Modal` 的中性名称（`Field`、`Input`、`Select`、`Calendar` …），在页面上也能直接使用。
 表单部件里面是原生元素，直接展开 `Modal.Field` 的 render prop 参数来接收。
 选项组（单选、多选、评分、双手柄滑块）用 `Modal.Fieldset`（`fieldset` / `legend`）命名，而不是 `label`。
 列表和日历通过 popover API 显示在 top layer，打开时按 Esc 只会关闭列表。

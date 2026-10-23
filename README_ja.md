@@ -2,17 +2,19 @@
 
 [English](./README.md) · **日本語** · [简体中文](./README_zh.md) · [繁體中文](./README_zh-Hant.md) · [한국어](./README_ko.md) · [ไทย](./README_th.md)
 
-ネイティブ `<dialog>` を土台にした React のモーダルシェル。
+ネイティブ `<dialog>` を土台にした、SaaS のための React UI ライブラリ。
+
+モーダル・フォーム部品・UI 部品・トースト・コマンドパレットから、ログイン・エラー・料金のページ、設定・メンバー・請求を中に持つアプリの枠まで、どれも部品を 1 つ置くだけで出せる。
 フォーカストラップ・Esc・背景の inert 化・top layer は**一行も実装していない**。ブラウザに任せている。
+日本語・中国語・韓国語の折り返しとアクセシビリティは、仕様に書いてテストで確かめている。
 
-その代わり、既存ライブラリがほぼ手を付けていない層に集中する。
-
-- **活性化ゲート** — 「最後まで読んだら」「チェックしたら」押せるボタンを、`disabled` を使わずに作る
-- **タイトルの省略** — DOM のテキストを切らずに省略し、アクセシブルネームを完全に保つ
-- **閉じる理由** — 8種類の `CloseReason` を区別し、拒否するときは必ず理由を返す
-- **スクリム** — 黒60%の決め打ちをやめ、意図別の4段階トークンにする
+- **モーダル** — 5 つの類型。活性化ゲート（「最後まで読んだら」「チェックしたら」押せるボタンを、`disabled` を使わずに作る）。アクセシブルネームを完全に保つタイトルの省略。8 種類の `CloseReason`（拒否するときは必ず理由を返す）。段で止まるシート。黒 60% の決め打ちをやめた、意図別の 4 段階のスクリム
+- **フォーム部品** — テキスト・パスワード・検索・数値・確認コード・チェックボックス・ラジオ・セグメント・評価・スイッチ・チップ・スライダー・セレクト・コンボボックス・日本の祝日と期間の選択を持つカレンダー・時刻・タグ・パスワードの強さ・ファイル。中身はネイティブの要素のまま枠と印を描き替え、色はテーマのアクセントに従う。一覧とカレンダーは top layer に出るので、モーダルに切り取られない
+- **UI 部品** — ボタン・バッジ・アバター・進み具合・骨組み・カード・数の要約・空の状態・名前と値の一覧・出来事の並び・知らせの帯・タブ・アコーディオン・ツールチップ・ポップオーバー・メニュー・パンくず・ページ送り・ステップ・ページの見出しの帯・データの表（並べ替え・行の選択・まとめての操作）・コマンドパレット（⌘K）
+- **トースト** — 消えるまでの残り時間をメーターで見せる。ポインタとフォーカスで止まり、払っても手でも閉じられる
+- **ページのテンプレート** — ログイン・アカウントの作成・2 段階認証・パスワードの再設定・メールの確認・ログアウト・4xx / 5xx とオフラインのエラー・メンテナンス・規約とプライバシーポリシー・よくある質問・料金・お問い合わせ・更新履歴。アプリの枠と、その中の設定・メンバー・料金と請求・はじめの設定・招待を受けるページ
 - **日本語・中国語・韓国語の折り返し** — ボタンもタイトルも表のセルもグラフの要約も、語の途中では改行しない。日本語は文節（「プロフィールを｜編集」であって、「プロフィールを編｜集」にはしない）、中国語は語、韓国語は空白の切れ目でだけ折る。タイ語と英語はブラウザがもともと正しく折るので、手を出さない
-- **入力部品** — テキスト・パスワード・検索・数値・確認コード・チェックボックス・ラジオ・セグメント・評価・スライダー・セレクト・コンボボックス・カレンダー・ファイルなど 18 部品。中身はネイティブの要素のまま枠と印を描き替え、色はテーマのアクセントに従う。一覧とカレンダーは top layer に出るので、モーダルに切り取られない
+- **動きとテーマ** — 4 段の動きから選べる（動きを減らす設定には必ず従う）。ライトとダーク、任意のプライマリカラー。どの色を選んでも、文字と塗りが WCAG のコントラスト比を満たすように導く
 
 **ドキュメントサイト: <https://hiroki-abe-58.github.io/gassan/>**
 — 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・テーマ・寸法・折り返し・モーション）、
@@ -92,6 +94,37 @@ function Example() {
 
 **モーダルは常時マウントする。** `{open && <Modal.Root .../>}` と書いてはいけない。
 条件マウントにすると、閉じるアニメーションが原理的に描けなくなる。
+
+---
+
+## ページのテンプレート
+
+アプリのルートに `SiteProvider` を 1 つ置き（製品の名前・ロゴ・行き先・ルーターのリンク部品）、ページは部品を 1 つ置くだけで出す。
+テンプレートの見た目は `templates.css` にある。`styles.css` の後に読み込む。
+
+```tsx
+import { SiteProvider, SignInPage } from '@genelab/gassan';
+import '@genelab/gassan/styles.css';
+import '@genelab/gassan/templates.css';
+
+export function SignIn() {
+  return (
+    <SiteProvider name="Atlas" links={{ home: '/', signUp: '/signup', forgotPassword: '/forgot' }}>
+      <SignInPage
+        onSubmit={async ({ email, password }) => {
+          const ok = await signIn(email, password);
+          // 失敗なら既定の文を出す（どちらが違うかを明かさない）
+          if (!ok) return { error: true };
+        }}
+      />
+    </SiteProvider>
+  );
+}
+```
+
+ログインした後は `AppShell` が左の案内の帯・上の帯・狭い画面での案内の面を持ち、その中を `SettingsPage`・`MembersPage`・`BillingPage`・`OnboardingPage`・`InviteAcceptPage` で埋める。
+渡すのはデータと処理だけ。処理が `{ error }` を返すとその文を読み上げ、二度押しは起きない。
+日時は `SiteProvider` の `timeZone` で描く。無ければ見ている人の時間帯で描き、hydration を終えるまでは UTC で描くので、サーバーとブラウザで文字が食い違わない。
 
 ---
 
@@ -226,9 +259,20 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Chart` | グラフの器。名前（`label`）と傾向のテキスト代替（`summary`）を配線し、元データを `<details>` で開閉する。描画はしない |
 | `Modal.Handle` | シートのつまみ。段があれば `role="slider"` の操作子、無ければ掴みどころの飾り |
 | `ModalHost` `useModals` | 命令的 API（`await confirm()`） |
+| `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | 日本の祝日と期間の選択を持つカレンダーと、テーマで描く時刻の選択 |
+| `Modal.TagInput` `Modal.PasswordStrength` | タグ（貼り付けと IME に対応）と、新しいパスワードの強さ |
+| `toast` `ToastHost` | 残り時間のメーターつきのトースト |
+| `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | ページの上（モーダルの外）で使うボタンと印 |
+| `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 器・数・進み具合・知らせ |
+| `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | 行き来の部品と、起点の脇に出る部品 |
+| `PageHeader` `DataTable` `CommandPalette` | ページの見出しの帯・データの表（並べ替え・行の選択・まとめての操作）・コマンドパレット（⌘K） |
+| `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | ログインとアカウントのページ（`templates.css`） |
+| `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | エラー・メンテナンス・公開ページ |
+| `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | アプリの枠と、その中のページ |
 | `GassanProvider` | 文言の差し替え（既定は日本語、`englishLabels` も同梱）と、折り返しの切り替え（`lineBreak`） |
 | `Phrase` `splitPhrases` | 自分の UI の日本語・中国語・韓国語にも同じ折り返しを効かせる（gassan の部品の中では既定で効いている） |
 
+フォーム部品には `Modal` を付けない中立の名前（`Field`・`Input`・`Select`・`Calendar` …）もあり、ページの上でもそのまま使える。
 入力部品は中身がネイティブの要素で、`Modal.Field` の render prop をそのまま広げて受ける。
 選択肢の束（ラジオ・複数チェック・評価・2 つ摘みのスライダー）は `label` ではなく `Modal.Fieldset`（`fieldset` / `legend`）で名前を付ける。
 一覧とカレンダーは popover API で top layer に出し、開いているときの Esc は一覧だけを閉じる。

@@ -1,7 +1,7 @@
 import type ja from '../ja/common';
 
 export default {
-  siteTitle: 'gassan — 네이티브 dialog를 위한 모달 셸',
+  siteTitle: 'gassan — SaaS를 위한 React UI 라이브러리',
   skipToMain: '본문으로 이동',
   openMenu: '메뉴 열기',
   menu: '메뉴',

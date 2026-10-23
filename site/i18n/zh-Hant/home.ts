@@ -1,16 +1,60 @@
 import type ja from '../ja/home';
 
 export default {
-  eyebrow: 'React 的模態視窗外殼',
-  heroTitle: ['第 1 層，', '交給瀏覽器。'],
-  lead: 'gassan 是以原生 `<dialog>` 為基礎的 React 模態視窗外殼。焦點陷阱、Esc、背景的 inert 化，一行都沒有自己實作。取而代之，它把全部心力投注在現有函式庫幾乎沒碰過的那一層——資訊架構、啟用門控、關閉原因。',
+  eyebrow: '為 SaaS 打造的 React UI 函式庫',
+  heroTitle: ['從登入到帳單，', '只要放一個元件。'],
+  lead: 'gassan 是以原生 `<dialog>` 為基礎的 React UI 函式庫。從模態視窗、表單元件、UI 元件、快顯通知、命令面板，到登入、錯誤、價格、設定、成員、帳單的頁面，都包含在內。焦點陷阱、Esc、背景的 inert 化都交給瀏覽器，省下的心力用來把朗讀、鍵盤與日文換行寫進規格，並以測試確認。',
   start: '開始使用',
-  philosophy: '閱讀設計理念',
+  templates: '查看範本',
   stats: {
+    exports: '公開的 API',
     items: '列舉的行為',
     tests: '自動化測試',
-    proven: '已由測試證明的行為',
     trap: '自己實作的焦點陷阱',
+  },
+  showcase: {
+    title: '範例應用程式',
+    intro: '「Atlas」是一個虛構的 SaaS。透過導覽與按鈕，可以在首頁、成員、方案與帳單、設定、登入、方案與價格之間四處瀏覽。畫面以 gassan 的範本與元件組成，額外加上的只有標誌、範例資料，以及首頁數字的排列方式。切換到「手機」，就會變成窄螢幕的樣子。',
+    frameTitle: 'Atlas',
+    variants: { dashboard: '首頁', members: '成員', billing: '方案與帳單', settings: '設定', signIn: '登入', pricing: '方案與價格' },
+  },
+  features: {
+    title: '包含的內容',
+    intro: 'SaaS 畫面需要的東西，以元件與頁面為單位提供。每一項都以具名 import 引入，沒用到的不會被打包進應用程式。',
+    items: {
+      modal: {
+        title: '模態視窗',
+        body: '五種類型、啟用門控、標題截斷、關閉原因、停在檔位的底部面板。焦點、Esc 與背景交給瀏覽器。',
+      },
+      forms: {
+        title: '表單元件',
+        body: '輸入欄位、選項、下拉選單、具備日本國定假日與期間選擇的月曆、時間、標籤、密碼強度、檔案。',
+      },
+      ui: {
+        title: 'UI 元件',
+        body: '按鈕、徽章、卡片、數值摘要、頁籤、選單、麵包屑、分頁、步驟條、資料表格、命令面板。',
+      },
+      feedback: {
+        title: '通知',
+        body: '計時條隨剩餘時間縮短的快顯通知、通知橫幅、進度。可以暫停下來閱讀，滑動或手動都能關閉。',
+      },
+      templates: {
+        title: '頁面範本',
+        body: '登入、註冊、兩步驟驗證、重設密碼、錯誤、維護、價格、常見問題、條款、聯絡我們、更新紀錄。',
+      },
+      app: {
+        title: '應用程式畫面',
+        body: '應用程式外框，以及設定、成員、方案與帳單、初始設定、接受邀請的頁面。只要傳入資料與處理函式就能運作。',
+      },
+      motion: {
+        title: '動態效果',
+        body: '可從 4 個等級的動態效果中選擇。按下時的手感、退場、彈簧的回彈都已齊備，並始終遵從「減少動態效果」的設定。',
+      },
+      a11y: {
+        title: '朗讀與鍵盤',
+        body: '名稱、狀態、焦點的去向，依元件逐一寫進規格，並以測試確認。不只靠顏色傳達。',
+      },
+    },
   },
   languages: {
     title: '為日文、中文、韓文的畫面而做',
@@ -35,7 +79,7 @@ export default {
     },
   },
   promises: {
-    title: '其他函式庫沒有解決的 4 件事',
+    title: '模態視窗的核心——其他函式庫沒有解決的 4 件事',
     intro: '第 1 層（top layer、焦點、Esc）瀏覽器早已解決。gassan 把時間花在那之上的設計工作。',
     gate: {
       title: '啟用門控',
@@ -89,6 +133,8 @@ export default {
   install: {
     title: '安裝',
     caption: '安裝',
+    cssCaption: '載入樣式',
+    css: "import '@genelab/gassan/styles.css';\n// 只在使用頁面範本時（在 styles.css 之後載入）\nimport '@genelab/gassan/templates.css';",
     more: '最小範例與瀏覽器需求 →',
   },
 } satisfies typeof ja;
