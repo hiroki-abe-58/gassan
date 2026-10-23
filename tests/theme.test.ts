@@ -22,7 +22,7 @@ import {
 } from '../site/theme/engine';
 
 /** styles.css の gassan のトークン（その表示の値）。ダークで上書きされるものは上書き後の値。 */
-function gassanTokens(scheme: Scheme): Record<string, string> {
+function readGassanTokens(scheme: Scheme): Record<string, string> {
   const css = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
   const start = css.indexOf('@layer gassan.tokens {');
   const dark = css.indexOf('@media (prefers-color-scheme: dark)', start);
@@ -34,6 +34,13 @@ function gassanTokens(scheme: Scheme): Record<string, string> {
 }
 
 const SCHEMES: readonly Scheme[] = ['light', 'dark'];
+
+/*
+ * 表示ごとに 1 度だけ読む。総当たりの検査は色 × 表示 × 背景で約 3,000 回トークンを引くので、
+ * 毎回 styles.css を読んでコメントを落としていたころは CI（Node 20）で 5 秒の上限を超えていた。
+ */
+const TOKENS: Readonly<Record<Scheme, Record<string, string>>> = { light: readGassanTokens('light'), dark: readGassanTokens('dark') };
+const gassanTokens = (scheme: Scheme): Record<string, string> => TOKENS[scheme];
 
 /** 基準を割った項目を「どの色・どの表示・どの背景・何の組か: 実測」で返す。空なら合格。背景の 3 段すべてを見る。 */
 function failures(seed: string, themesGassan = true): string[] {
