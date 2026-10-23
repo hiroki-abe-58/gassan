@@ -52,6 +52,7 @@ export default {
     uiNavigation: 'Tabs and pagination',
     uiOverlays: 'Tooltips and menus',
     uiData: 'Page headers and tables',
+    uiCommand: 'Command palette',
     templatesAuth: 'Sign-in and sign-up',
     templatesStatus: 'Errors and maintenance',
     templatesPublic: 'Pricing, FAQ and legal',

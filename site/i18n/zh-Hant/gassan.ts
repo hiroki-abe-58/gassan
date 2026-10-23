@@ -115,6 +115,11 @@ const labels: GassanLabels = {
   sortedBy: (column, direction) => `已依${column}${direction === 'ascending' ? '遞增' : '遞減'}排序`,
   rowActions: '操作',
   emptyTable: '沒有可顯示的項目',
+  commandPalette: '命令面板',
+  commandPlaceholder: '搜尋命令',
+  commandResults: (count) => (count === 0 ? '沒有符合的結果' : `${String(count)} 個結果`),
+  commandMove: '移動',
+  commandSelect: '選擇',
 };
 
 export default labels;

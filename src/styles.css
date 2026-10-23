@@ -842,7 +842,9 @@
     .g-tab,
     .g-menu-shortcut,
     .g-tag-label,
-    .g-data-table :is(th, td):not([data-wrap], .g-data-table-empty)
+    .g-data-table :is(th, td):not([data-wrap], .g-data-table-empty),
+    .g-command-label,
+    .g-command-description
   ) wbr { display: none; }
 
   /* --- 3.9 focus ---------------------------------------------------------
@@ -3254,6 +3256,53 @@
   }
   .g-data-table-count { margin: 0; font-size: 0.875rem; font-weight: 600; }
   .g-data-table-bulk-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-inline-end: auto; }
+
+  /* --- 9.24 command palette（U-27） ---------------------------------------------------------
+   * 画面の上に出すモーダル。検索欄・候補の一覧・キーの案内の 3 段（パネルの 3 行に入る）。検索欄は SearchInput の枠を
+   * そのまま使い、リングも同じ規則で描く。候補の名前は 1 行で出し、当てはまった所は太さで示す（色だけにしない）。 */
+  .g-dialog.g-command {
+    --g-panel-max: 40rem;
+    padding-block-start: max(min(12dvh, 120px), var(--g-viewport-pad), env(safe-area-inset-top));
+  }
+  .g-command-head { padding: 12px 12px 8px; }
+  .g-command-head .g-input { min-block-size: 48px; font-size: 1.0625rem; }
+  .g-command-body { min-block-size: 0; max-block-size: min(26rem, 60dvh); overflow-y: auto; overscroll-behavior: contain; padding: 0 8px 8px; }
+  .g-command-list,
+  .g-command-group { display: grid; gap: 2px; }
+  .g-command-group + .g-command-group,
+  .g-command-item + .g-command-group { margin-block-start: 6px; }
+  .g-command-group-title { padding: 8px 10px 4px; color: var(--g-fg-muted); font-size: 0.75rem; font-weight: 650; }
+  .g-command-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-block-size: 44px;
+    padding: 6px 10px;
+    border-radius: calc(var(--g-radius-control) - 2px);
+    cursor: pointer;
+  }
+  .g-command-item[data-active] { background: var(--g-hover); }
+  .g-command-item[aria-disabled="true"] { color: var(--g-fg-muted); opacity: 0.6; cursor: not-allowed; }
+  .g-command-icon { display: grid; flex: none; place-items: center; inline-size: 20px; block-size: 20px; color: var(--g-fg-muted); }
+  .g-command-icon > svg { inline-size: 18px; block-size: 18px; }
+  .g-command-text { display: grid; flex: 1 1 auto; min-inline-size: 0; }
+  .g-command-label,
+  .g-command-description { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .g-command-label { font-weight: 500; }
+  .g-command-description { color: var(--g-fg-muted); font-size: 0.8125rem; }
+  .g-command-mark { background: none; color: inherit; font-weight: 750; }
+  .g-command-shortcut { display: flex; flex: none; gap: 4px; }
+  .g-command-empty { margin: 0; padding: 24px 12px; color: var(--g-fg-muted); font-size: 0.9375rem; text-align: center; }
+  .g-command-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding: 10px 16px;
+    border-block-start: 1px solid var(--g-border);
+    color: var(--g-fg-muted);
+    font-size: 0.75rem;
+  }
+  .g-command-hint { display: inline-flex; align-items: center; gap: 4px; }
 }
 
 @layer gassan.theme {
@@ -3268,7 +3317,7 @@
   }
   @media (forced-colors: active) {
     /* box-shadow と背景色は塗り替えられる。状態は Highlight と枠線で残す。 */
-    .g-option[data-active] { outline: 2px solid Highlight; outline-offset: -2px; }
+    :is(.g-option, .g-command-item)[data-active] { outline: 2px solid Highlight; outline-offset: -2px; }
     :is(
       .g-radio:checked,
       .g-segment-input:checked + .g-segment-label,

@@ -18,6 +18,10 @@ export default {
   menuBody: 'サイト内のページ',
   siteNav: 'サイト内',
   home: 'ホーム',
+  /** トップバーの検索（コマンドパレット）。 */
+  search: '検索',
+  searchPalette: 'サイト内を探す',
+  searchPlaceholder: 'ページの名前を打つ',
   spec: '仕様',
   pager: '前後のページ',
   prev: '前へ',

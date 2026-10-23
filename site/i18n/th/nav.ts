@@ -52,6 +52,7 @@ export default {
     uiNavigation: 'แท็บและการแบ่งหน้า',
     uiOverlays: 'Tooltip และเมนู',
     uiData: 'ส่วนหัวของหน้าและตาราง',
+    uiCommand: 'แผงคำสั่ง',
     templatesAuth: 'เข้าสู่ระบบและสมัครสมาชิก',
     templatesStatus: 'ข้อผิดพลาดและการปิดปรับปรุง',
     templatesPublic: 'ราคา คำถามที่พบบ่อย และข้อกำหนด',

@@ -122,6 +122,11 @@ const labels: GassanLabels = {
   sortedBy: (column, direction) => `เรียงตาม ${column} ${direction === 'ascending' ? 'จากน้อยไปมาก' : 'จากมากไปน้อย'}`,
   rowActions: 'การดำเนินการ',
   emptyTable: 'ไม่มีข้อมูลที่จะแสดง',
+  commandPalette: 'แผงคำสั่ง',
+  commandPlaceholder: 'ค้นหาคำสั่ง',
+  commandResults: (count) => (count === 0 ? 'ไม่พบรายการที่ตรงกัน' : `${String(count)} รายการ`),
+  commandMove: 'เลื่อน',
+  commandSelect: 'เลือก',
 };
 
 export default labels;

@@ -16,6 +16,7 @@ import {
   AppShell,
   BillingPage,
   Breadcrumbs,
+  CommandPalette,
   DataTable,
   ChangelogPage,
   ContactPage,
@@ -472,11 +473,14 @@ const tableHtml = renderToString(
 const appHtml = renderToString(
   site(h(AppShell, { nav: [{ title: '設定', items: [{ label: 'メンバー', href: '/app/members' }] }], current: '/app/members', account: { name: '佐藤 葵', menu: [] } }, h('p', null, '本文'))),
 );
+// コマンドパレット（U-27）。開くキーは effect で付けるので、サーバーでは閉じたダイアログと検索欄だけを描く。
+const paletteHtml = renderToString(h(CommandPalette, { items: [{ id: 'members', label: 'メンバー', group: 'ページ' }] }));
 for (const [label, passed] of [
   ['PageHeader renders the breadcrumbs, the h1 and the actions on the server', /<nav[^>]*aria-label="パンくずリスト"/.test(tableHtml) && tableHtml.includes('<h1')],
   ['DataTable renders the sorted order and aria-sort on the server', /aria-sort="ascending"/.test(tableHtml) && tableHtml.indexOf('INV-1') < tableHtml.indexOf('INV-2')],
   ['DataTable names the row checkboxes by the row headers on the server', /aria-label="すべて選択"/.test(tableHtml) && /aria-labelledby="[^"]+-row-0"/.test(tableHtml)],
   ['AppShell renders the navigation with the current page and a closed drawer on the server', appHtml.includes('aria-current="page"') && /class="g-app-menu"[^>]*aria-expanded="false"|aria-expanded="false"[^>]*class="g-app-menu"/.test(appHtml)],
+  ['CommandPalette renders a closed dialog with its combobox on the server', /<dialog[^>]*class="[^"]*g-command/.test(paletteHtml) && !/<dialog[^>]*\sopen/.test(paletteHtml) && /role="combobox"/.test(paletteHtml)],
 ]) {
   if (passed) ok(label);
   else fail(label);

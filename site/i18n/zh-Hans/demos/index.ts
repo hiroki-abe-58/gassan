@@ -4,6 +4,7 @@ import bookingCalendar from './bookingCalendar';
 import chartReport from './chartReport';
 import dashboardSample from './dashboardSample';
 import choiceForm from './choiceForm';
+import commandMenu from './commandMenu';
 import dateForm from './dateForm';
 import fieldForm from './fieldForm';
 import fileForm from './fileForm';
@@ -39,6 +40,7 @@ export default {
   bookingCalendar,
   chartReport,
   choiceForm,
+  commandMenu,
   dashboardSample,
   dateForm,
   fieldForm,

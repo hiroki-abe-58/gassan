@@ -119,6 +119,11 @@ const labels: GassanLabels = {
   sortedBy: (column, direction) => `已按${column}${direction === 'ascending' ? '升序' : '降序'}排序`,
   rowActions: '操作',
   emptyTable: '没有可显示的项目',
+  commandPalette: '命令面板',
+  commandPlaceholder: '搜索命令',
+  commandResults: (count) => (count === 0 ? '没有匹配的结果' : `${String(count)} 个结果`),
+  commandMove: '移动',
+  commandSelect: '选择',
 };
 
 export default labels;

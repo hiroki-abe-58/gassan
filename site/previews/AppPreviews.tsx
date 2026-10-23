@@ -5,6 +5,7 @@ import {
   Badge,
   BillingPage,
   Button,
+  CommandPalette,
   DescriptionList,
   IconButton,
   InviteAcceptPage,
@@ -18,6 +19,7 @@ import {
   SettingsPage,
   toast,
   type BillingStatus,
+  type CommandItem,
   type MemberInvitation,
   type SettingsSession,
   type WorkspaceMember,
@@ -209,34 +211,47 @@ export function AtlasApp({ page }: { page: AppPreviewName }): ReactNode {
   const { templateSamples: s } = useT();
   const app = s.app;
   const Content = APP_PAGES[page];
+  const [searchOpen, setSearchOpen] = useState(false);
+  // 案内の帯と、検索（コマンドパレット）のページの候補は、同じ一覧から作る
+  const sections: { title?: string; items: { target: string; label: string; icon: string; badge?: ReactNode }[] }[] = [
+    {
+      items: [
+        { target: 'app-dashboard', label: app.home, icon: ICON_PATHS.home },
+        { target: 'app-members', label: app.members, icon: ICON_PATHS.members, badge: <Badge>6</Badge> },
+      ],
+    },
+    {
+      title: app.workspace,
+      items: [
+        { target: 'app-billing', label: app.billing, icon: ICON_PATHS.billing },
+        { target: 'app-settings', label: app.settings, icon: ICON_PATHS.settings },
+      ],
+    },
+    {
+      title: s.footer.support,
+      items: [
+        { target: 'changelog', label: app.changelog, icon: ICON_PATHS.changelog },
+        { target: 'faq', label: app.help, icon: ICON_PATHS.help },
+      ],
+    },
+  ];
+  const commands: CommandItem[] = [
+    ...sections.flatMap((section) =>
+      section.items.map((item) => ({ id: item.target, group: app.pagesGroup, label: item.label, icon: <NavIcon d={item.icon} />, href: preview(item.target) })),
+    ),
+    { id: 'new-project', group: app.actionsGroup, label: app.newProject, shortcut: ['C'], onSelect: () => toast.success(app.created) },
+    { id: 'sign-out', group: app.actionsGroup, label: app.signOut, href: preview('sign-out-confirm') },
+  ];
   return (
     <AppShell
       current={preview(page)}
-      nav={[
-        {
-          items: [
-            { label: app.home, href: preview('app-dashboard'), icon: <NavIcon d={ICON_PATHS.home} /> },
-            { label: app.members, href: preview('app-members'), icon: <NavIcon d={ICON_PATHS.members} />, badge: <Badge>6</Badge> },
-          ],
-        },
-        {
-          title: app.workspace,
-          items: [
-            { label: app.billing, href: preview('app-billing'), icon: <NavIcon d={ICON_PATHS.billing} /> },
-            { label: app.settings, href: preview('app-settings'), icon: <NavIcon d={ICON_PATHS.settings} /> },
-          ],
-        },
-        {
-          title: s.footer.support,
-          items: [
-            { label: app.changelog, href: preview('changelog'), icon: <NavIcon d={ICON_PATHS.changelog} /> },
-            { label: app.help, href: preview('faq'), icon: <NavIcon d={ICON_PATHS.help} /> },
-          ],
-        },
-      ]}
+      nav={sections.map((section) => ({
+        title: section.title,
+        items: section.items.map((item) => ({ label: item.label, href: preview(item.target), icon: <NavIcon d={item.icon} />, badge: item.badge })),
+      }))}
       actions={
         <>
-          <IconButton label={app.search} onClick={() => toast(app.searchHint)}>
+          <IconButton label={app.search} aria-haspopup="dialog" onClick={() => setSearchOpen(true)}>
             <NavIcon d={ICON_PATHS.search} />
           </IconButton>
           <IconButton label={app.notifications} onClick={() => toast(app.noNotifications)}>
@@ -256,6 +271,8 @@ export function AtlasApp({ page }: { page: AppPreviewName }): ReactNode {
       sidebarFooter={<Progress label={app.seats} value={6} max={10} valueText={(value, max) => fmt(app.seatsValue, String(value), String(max))} />}
     >
       <Content />
+      {/* 上の帯の虫眼鏡か ⌘K / Ctrl+K で開く */}
+      <CommandPalette items={commands} open={searchOpen} onOpenChange={setSearchOpen} placeholder={app.searchPlaceholder} />
     </AppShell>
   );
 }

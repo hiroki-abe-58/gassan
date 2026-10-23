@@ -1,0 +1,20 @@
+export default {
+  open: 'コマンドパレットを開く',
+  placeholder: 'ページや操作を探す',
+  pages: 'ページ',
+  actions: '操作',
+  home: 'ホーム',
+  homeDescription: 'ダッシュボードと最近の出来事',
+  members: 'メンバー',
+  billing: '料金と請求',
+  settings: '設定',
+  settingsDescription: 'プロフィール・パスワード・2 段階認証',
+  invite: 'メンバーを招待',
+  project: 'プロジェクトを作る',
+  export: 'データを書き出す',
+  exportDescription: 'Pro のプランで使えます',
+  ran: '「{0}」を選びました',
+  comments: {
+    hotkey: 'このサイトの検索が ⌘K を使うので、見本はボタンで開く（hotkey={false}）。アプリでは hotkey を省けば、⌘K / Ctrl+K で開く',
+  },
+};

@@ -118,6 +118,11 @@ const labels: GassanLabels = {
   sortedBy: (column, direction) => `${column} 기준 ${direction === 'ascending' ? '오름차순' : '내림차순'}으로 정렬함`,
   rowActions: '작업',
   emptyTable: '표시할 항목이 없습니다',
+  commandPalette: '명령 팔레트',
+  commandPlaceholder: '명령 검색',
+  commandResults: (count) => (count === 0 ? '일치하는 항목이 없습니다' : `결과 ${String(count)}개`),
+  commandMove: '이동',
+  commandSelect: '선택',
 };
 
 export default labels;

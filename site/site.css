@@ -335,8 +335,10 @@
   .s-sidenav {
     display: none;
   }
+  /* 狭い画面でページの一覧を開く唯一のボタン。トップバーが詰まっても縮めない */
   .s-menu-btn {
     display: inline-grid;
+    flex-shrink: 0;
   }
   .s-topbar {
     padding-inline: 4px 12px;
@@ -348,10 +350,20 @@
     padding-block-start: 28px;
   }
 }
-@media (max-width: 520px) {
-  .s-version {
+/* トップバーに収めるため、幅に応じて省く。720px で版の札と検索の文字、600px で仕様へのリンク、
+ * 520px で言語とテーマの名前、420px で GitHub へのリンク（メニューのボタンは最後まで残す） */
+@media (max-width: 720px) {
+  .s-version,
+  .s-search-label {
     display: none;
   }
+}
+@media (max-width: 600px) {
+  .s-topbar-spec {
+    display: none;
+  }
+}
+@media (max-width: 520px) {
   .s-pager {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -3048,7 +3060,8 @@
 .s-lang-btn {
   flex-shrink: 0;
 }
-.s-lang-icon {
+.s-lang-icon,
+.s-search-icon {
   flex-shrink: 0;
   inline-size: 18px;
   block-size: 18px;
@@ -3059,6 +3072,32 @@
 .s-lang-panel {
   inline-size: min(280px, calc(100vw - 24px));
   padding: 16px 12px 12px;
+}
+/* サイトの検索（gassan の CommandPalette を開く）。開くキーを添え、狭い画面では虫眼鏡だけにする */
+.s-search-btn {
+  flex-shrink: 0;
+  color: var(--s-ink-2);
+}
+.s-search-kbd {
+  padding: 0 6px;
+  border: 1px solid var(--s-line-strong);
+  border-radius: 6px;
+  color: var(--s-ink-2);
+  font: 600 0.75rem/1.6 var(--s-mono);
+}
+@media (max-width: 760px) {
+  .s-search-kbd {
+    display: none;
+  }
+}
+/* キーの並び（「⌘ K / Ctrl K」） */
+.s-keys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--s-ink-2);
 }
 .s-lang-title {
   margin: 0 8px 8px;
@@ -3105,11 +3144,8 @@
 }
 
 @media (max-width: 520px) {
-  /* トップバーに収めるため、仕様へのリンクはメニューに任せる */
-  .s-topbar-spec {
-    display: none;
-  }
-  /* 言語のボタンは地球の印だけにする。名前は読み上げ用に残す */
+  /* 言語は地球の印・テーマは色の丸だけにする。名前は読み上げ用に残す */
+  .s-theme-name,
   .s-lang-name {
     position: absolute;
     inline-size: 1px;
@@ -3118,8 +3154,15 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .s-lang-btn {
+  .s-theme-btn {
     padding-inline: 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  /* 320px でもメニューのボタンまで収めるため、GitHub へのリンクは外す */
+  .s-topbar-github {
+    display: none;
   }
 }
 

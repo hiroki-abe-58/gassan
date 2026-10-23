@@ -71,7 +71,7 @@ export { ModalChart } from './chart';
 
 /* ------------------------------------------------------------------- ui parts */
 
-// ページの上で使う部品（U-01〜U-26）。モーダルの部品ではないので Modal 名前空間には入れない。
+// ページの上で使う部品（U-01〜U-27）。モーダルの部品ではないので Modal 名前空間には入れない。
 export { Button, ButtonLink, IconButton, CopyButton } from './button';
 export { Badge, Avatar, AvatarGroup, Kbd, Divider, Card, Stat, EmptyState, DescriptionList, Timeline } from './display';
 export { Progress, Spinner, Skeleton, Banner } from './feedback';
@@ -81,6 +81,7 @@ export { Tooltip, Popover, Menu } from './overlay';
 export { Breadcrumbs, Pagination, Steps } from './navigation';
 export { PageHeader } from './page-header';
 export { DataTable } from './data-table';
+export { CommandPalette } from './command-palette';
 
 /* ------------------------------------------------------------------ templates */
 
@@ -227,6 +228,7 @@ export type { ProgressProps, SpinnerProps, SkeletonProps, BannerProps } from './
 export type { TabItem, TabsProps } from './tabs';
 export type { PageHeaderProps } from './page-header';
 export type { DataTableColumn, DataTableProps, DataTableSort, DataTableSortValue } from './data-table';
+export type { CommandItem, CommandPaletteProps } from './command-palette';
 export type { AccordionItem, AccordionProps } from './disclosure';
 export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps } from './overlay';
 export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, StepsProps } from './navigation';
