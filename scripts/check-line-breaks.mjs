@@ -18,6 +18,7 @@
  * Phrase の規則の穴で起きる。ただし、行の中に改行してよい位置が 1 つも無いまま折れたものは、
  * 1 行に収まらない塊を W-02 の安全弁が折ったものなので、崩れに数えない（forced）。
  * 文字が行の器の右端からはみ出したもの（overflow）は崩れに数える。
+ * 文書そのものが画面より広くなり、横にスクロールできてしまうもの（scroll。WCAG 1.4.10）も崩れに数える。
  * jsdom はレイアウトを持たないので、この検査は単体テストでは書けない。
  *
  * 環境変数:
@@ -224,6 +225,50 @@ const AUDIT = `(${(scope) => {
   return findings;
 }})`;
 
+/**
+ * 文書が画面より広くなっていないか（横スクロールが出ないか）。出ていれば、はみ出している要素のうち、
+ * どのスクロールの器にも切り抜かれていない、いちばん外側のものを 3 つまで返す。
+ * 切り抜く器は親ではなく「位置の基準」をたどって探す。position: absolute の要素（読み上げ専用の文字など）は、
+ * position を持たないスクロールの器の外の祖先を基準に置かれ、器に切り抜かれずに文書を広げる。
+ */
+const PAGE_SCROLL = `(${() => {
+  const root = document.documentElement;
+  const width = root.clientWidth;
+  if (root.scrollWidth <= width) return [];
+  const containerOf = (el) => {
+    const style = getComputedStyle(el);
+    if (style.position === 'fixed') return undefined; // 画面に固定したもの（と top layer）は文書を広げない
+    if (style.position !== 'absolute') return el.parentElement;
+    for (let a = el.parentElement; a; a = a.parentElement) {
+      const s = getComputedStyle(a);
+      if (s.position !== 'static' || s.transform !== 'none' || s.contain.includes('paint')) return a;
+    }
+    return root;
+  };
+  /** 文書の広さに効くか。途中で横を切る器に入っていれば効かない。固定したものの中も効かない。 */
+  const widens = (el) => {
+    for (let a = containerOf(el); ; a = containerOf(a)) {
+      if (a === undefined) return false;
+      if (a === null || a === root || a === document.body) return true;
+      if (getComputedStyle(a).overflowX !== 'visible') return false;
+    }
+  };
+  const name = (el) => {
+    const cls = [...el.classList].slice(0, 2).join('.');
+    return cls ? `${el.tagName.toLowerCase()}.${cls}` : el.tagName.toLowerCase();
+  };
+  const culprits = [];
+  for (const el of document.body.querySelectorAll('*')) {
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0 || rect.right <= width + 1 || !widens(el)) continue;
+    const parent = containerOf(el);
+    if (parent && parent !== root && parent.getBoundingClientRect().right > width + 1 && widens(parent)) continue;
+    culprits.push(`${name(el)} (${parent && parent !== root ? `in ${name(parent)}, ` : ''}right ${String(Math.round(rect.right))}px)`);
+    if (culprits.length === 3) break;
+  }
+  return [{ kind: 'scroll', text: `scrollWidth ${String(root.scrollWidth)} > ${String(width)}`, where: culprits.join(' / ') || '?' }];
+}})()`;
+
 /* -------------------------------------------------------------------------- */
 /* Chrome と preview                                                          */
 /* -------------------------------------------------------------------------- */
@@ -378,6 +423,7 @@ for (const lang of LANGS) {
       await setWidth(width);
       await sleep(120);
       record(lang, path, width, await audit());
+      record(lang, path, width, await evaluate(PAGE_SCROLL));
       views += 1;
     }
 
@@ -431,18 +477,19 @@ for (const lang of LANGS) {
 
 const all = [...seen.values()];
 const of = (kind) => all.filter((f) => f.kind === kind);
-const [cjk, overflow, latin, forced] = ['cjk', 'overflow', 'latin', 'forced'].map(of);
-const LABEL = { cjk: 'FAIL', overflow: 'FAIL', latin: 'warn', forced: 'W-02' };
+const [cjk, overflow, scroll, latin, forced] = ['cjk', 'overflow', 'scroll', 'latin', 'forced'].map(of);
+const LABEL = { cjk: 'FAIL', overflow: 'FAIL', scroll: 'FAIL', latin: 'warn', forced: 'W-02' };
 console.log(`checked ${String(views)} views (${LANGS.join(', ')} × ${String(targets.length)} pages × ${WIDTHS.join('/')} px)`);
-for (const f of [...cjk, ...overflow, ...latin, ...(process.env.VERBOSE === '1' ? forced : [])]) {
-  const what = f.kind === 'overflow' ? `overflow ${f.text}` : f.text;
+for (const f of [...cjk, ...overflow, ...scroll, ...latin, ...(process.env.VERBOSE === '1' ? forced : [])]) {
+  const what = f.kind === 'cjk' || f.kind === 'latin' || f.kind === 'forced' ? f.text : `${f.kind} ${f.text}`;
   console.log(`  ${LABEL[f.kind]}  [${f.lang}] ${f.page} @${f.widths.join('/')}  ${what}   (${f.where})`);
 }
 if (errors.length) console.log(`  page errors: ${String(errors.length)}\n    ${errors.slice(0, 5).join('\n    ')}`);
 console.log(
   `${String(cjk.length)} CJK breaks outside phrase boundaries, ${String(overflow.length)} overflows, ` +
+    `${String(scroll.length)} pages wider than the screen, ` +
     `${String(latin.length)} mid-word Latin breaks, ${String(forced.length)} forced breaks (W-02, VERBOSE=1 で一覧)`,
 );
 ws.close();
 cleanup();
-process.exit(cjk.length + overflow.length > 0 ? 1 : 0);
+process.exit(cjk.length + overflow.length + scroll.length > 0 ? 1 : 0);

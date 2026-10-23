@@ -678,6 +678,7 @@
 
   .g-gallery { display: grid; gap: 8px; }
   .g-gallery-track {
+    position: relative;
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 100%;
@@ -1143,6 +1144,7 @@
 
   /* --- 5.8 table ----------------------------------------------------------- */
   .g-table-wrap {
+    position: relative;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     border: 1px solid var(--g-border);
@@ -1168,7 +1170,7 @@
    * ここが持つのは名前・テキスト代替・元データの開閉だけ。 */
   .g-chart { margin: 0; display: grid; gap: 8px; min-inline-size: 0; }
   .g-chart-caption { font-size: 0.875rem; font-weight: 650; }
-  .g-chart-visual { min-inline-size: 0; overflow-x: auto; overscroll-behavior-x: contain; }
+  .g-chart-visual { position: relative; min-inline-size: 0; overflow-x: auto; overscroll-behavior-x: contain; }
   .g-chart-visual > :is(svg, canvas, img) { display: block; max-inline-size: 100%; block-size: auto; }
   .g-chart-summary { margin: 0; font-size: 0.8125rem; line-height: 1.6; color: var(--g-fg-muted); }
   .g-chart-data > summary {
@@ -2010,6 +2012,7 @@
   /* 期間のポップアップ。よく使う期間を左に、月を右に並べる。狭いときは上下に積む。 */
   .g-range-picker:has(> .g-range-presets) { display: grid; grid-template-columns: auto 1fr; gap: 8px; }
   .g-range-presets {
+    position: relative;
     display: grid;
     align-content: start;
     gap: 2px;
@@ -3166,6 +3169,7 @@
   /* 横に送れるときは、送れる側の端に影を出す（列が隠れていることが見て分かる）。影は器に、覆いは中身に付け
    * （background-attachment: local）、端まで送ると覆いが影を隠す。見出しと行の地は半透明にして影を隠さない。 */
   .g-data-table-scroll {
+    position: relative;
     overflow-x: auto;
     border: 1px solid var(--g-border);
     border-radius: var(--g-radius);
