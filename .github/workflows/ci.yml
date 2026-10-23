@@ -65,6 +65,9 @@ jobs:
   # jsdom はレイアウトを持たないので単体テストでは書けない。全ページ・全言語・4 つの幅・デモのモーダルを開く。
   line-breaks:
     runs-on: ubuntu-latest
+    # ふだんは 20 分前後（崩れがあると、はみ出した要素を探すので 40 分ほど）。apt のミラーが止まり、
+    # 既定の上限の 6 時間まで待ったことがある（2026-10-22）ので、1 時間で打ち切る。
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -76,6 +79,7 @@ jobs:
       # サイトはシステムフォントで描くので、CJK のフォントが無いと豆腐になり、幅が実機とかけ離れる。
       - name: Install CJK fonts
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+        timeout-minutes: 10
 
       - run: npm ci
       - run: npm run site:build
