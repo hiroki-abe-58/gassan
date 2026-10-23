@@ -1314,9 +1314,13 @@
   .g-select-trigger[aria-invalid="true"] { border-color: var(--g-danger); }
   .g-input[data-disabled] { opacity: 0.55; cursor: not-allowed; }
 
+  /* 幅は % で持つ。input と textarea は、幅が % なら最小幅に寄与しない（CSS Sizing の compressible な置換要素）。
+   * auto のままだと固有の幅（size の 20 文字ぶん。字幅の広い Linux のフォントで 194px）が最小幅に入り、
+   * 幅 320px の FAQ の検索欄が器を押し広げて文書が横に広がった。好みの幅（max-content）は変わらない（§10-37）。 */
   .g-bare {
     flex: 1;
     align-self: stretch;
+    inline-size: 100%;
     min-inline-size: 0;
     padding: 0 8px;
     border: 0;

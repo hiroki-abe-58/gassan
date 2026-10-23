@@ -254,7 +254,7 @@ top layer への描画・位置・見た目は実ブラウザで撮って確か�
 |---|:-:|---|---|
 | I-01 | M | 実装 | `T:Field の配線を広げて渡すと、名前・説明・エラーの状態が部品に届く` `T:value を渡さなければ部品が自分で値を持つ（非制御）` `T:value を渡すと外の値に従う（制御）` `S:src/internal/controllable.ts` `T:フォーム部品の中立の名前は、Modal の部品と同じものを指す` |
 | I-02 | M | 実装 | `T:一覧は開いている間だけ描き、popover="manual" で出す` `T:Esc はポップアップだけを閉じ、keydown を止めてモーダルを閉じさせない` `T:外を押すと閉じる` `S:src/internal/popup.tsx` |
-| I-03 | S | 実装 | `T:枠の前後に飾りを置き、input の属性と ref はそのまま input に届く` `C:.g-input:focus-within` |
+| I-03 | S | 実装 | `T:枠の前後に飾りを置き、input の属性と ref はそのまま input に届く` `C:.g-input:focus-within` `T:枠の中の input は幅を % で持ち、固有の幅（size の 20 文字ぶん）を最小幅に入れない` |
 | I-04 | S | 実装 | `T:表示の切り替えは aria-pressed で状態を伝え、type を入れ替える` |
 | I-05 | S | 実装 | `T:消すボタンで値が空になり、利用側の onChange が呼ばれ、フォーカスが入力欄に戻る` `C:.g-search:has(.g-bare:placeholder-shown) .g-search-clear` |
 | I-06 | S | 実装 | `T:maxLength を渡すと文字数を出し、aria-describedby に足す` |
