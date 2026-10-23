@@ -97,6 +97,14 @@ export default {
     hide: 'Hide code',
   },
 
+  frame: {
+    variant: 'Example',
+    width: 'Preview width',
+    wide: 'Desktop',
+    phone: 'Phone',
+    open: 'Open full screen',
+  },
+
   keyPoint: { caution: 'Caution' },
 
   component: {

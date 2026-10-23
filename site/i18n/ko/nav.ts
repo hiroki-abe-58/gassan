@@ -8,6 +8,7 @@ export default {
     components: '컴포넌트',
     ui: 'UI 요소',
     forms: '폼 요소',
+    templates: '템플릿',
     reference: '명세와 검증',
   },
   pages: {
@@ -50,6 +51,9 @@ export default {
     uiLayout: '카드와 요약',
     uiNavigation: '탭과 페이지 이동',
     uiOverlays: '툴팁과 메뉴',
+    templatesAuth: '로그인과 가입',
+    templatesStatus: '오류와 점검',
+    templatesPublic: '요금·FAQ·약관',
     provider: 'GassanProvider',
     spec: '동작 명세',
     verification: '검증',

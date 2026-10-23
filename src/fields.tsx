@@ -52,16 +52,18 @@ function useMessages(baseId: string, help: ReactNode, error: ReactNode) {
   return { describedBy, messages };
 }
 
-/** ラベルの中身。文言と「必須 / 任意」のバッジ。 */
-function LabelContent({ label, required }: { label: ReactNode; required: boolean }): ReactNode {
+/** ラベルの中身。文言と「必須 / 任意」のバッジ（requiredBadge が false なら「任意」だけ）。 */
+function LabelContent({ label, required, requiredBadge }: { label: ReactNode; required: boolean; requiredBadge: boolean }): ReactNode {
   const labels = useLabels();
   const phrase = usePhrase();
   return (
     <>
       <span className="g-label-text">{phrase(label)}</span>
-      <span className="g-label-badge" data-required={required ? '' : undefined}>
-        {required ? labels.required : labels.optional}
-      </span>
+      {required && !requiredBadge ? null : (
+        <span className="g-label-badge" data-required={required ? '' : undefined}>
+          {required ? labels.required : labels.optional}
+        </span>
+      )}
     </>
   );
 }
@@ -72,6 +74,8 @@ export interface ModalFieldProps extends DataAttributes {
   help?: ReactNode;
   error?: ReactNode;
   required?: boolean;
+  /** 「必須」のバッジを出すか。既定 true。false は全部が必須の短いフォーム（ログインなど）向けで、任意の項目にだけ「任意」を出す。 */
+  requiredBadge?: boolean;
   id?: string;
   className?: string;
 }
@@ -92,6 +96,7 @@ export function ModalField({
   help,
   error,
   required = false,
+  requiredBadge = true,
   id,
   className,
   ...rest
@@ -107,7 +112,7 @@ export function ModalField({
       data-invalid={error ? '' : undefined}
     >
       <label className="g-label" htmlFor={fieldId}>
-        <LabelContent label={label} required={required} />
+        <LabelContent label={label} required={required} requiredBadge={requiredBadge} />
       </label>
 
       {children({
@@ -133,6 +138,8 @@ export interface ModalFieldsetProps extends DataAttributes {
   help?: ReactNode;
   error?: ReactNode;
   required?: boolean;
+  /** 「必須」のバッジを出すか。既定 true（Field と同じ）。 */
+  requiredBadge?: boolean;
   id?: string;
   className?: string;
 }
@@ -150,6 +157,7 @@ export function ModalFieldset({
   help,
   error,
   required = false,
+  requiredBadge = true,
   id,
   className,
   ...rest
@@ -165,7 +173,7 @@ export function ModalFieldset({
       aria-describedby={describedBy}
     >
       <legend className="g-label">
-        <LabelContent label={label} required={required} />
+        <LabelContent label={label} required={required} requiredBadge={requiredBadge} />
       </legend>
       {children}
       {messages}

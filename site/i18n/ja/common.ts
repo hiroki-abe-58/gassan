@@ -106,6 +106,15 @@ export default {
     hide: 'コードを閉じる',
   },
 
+  /** テンプレートの見本の枠（iframe）。 */
+  frame: {
+    variant: '見本',
+    width: 'プレビューの幅',
+    wide: 'パソコン',
+    phone: 'スマートフォン',
+    open: '全画面で開く',
+  },
+
   /** 要点（KeyPoint）。注意のときだけ、見出し語を色の付いた文字で添える。 */
   keyPoint: { caution: '注意' },
 

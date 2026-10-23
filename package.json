@@ -44,6 +44,8 @@
     },
     "./styles.css": "./dist/styles.css",
     "./styles.source.css": "./dist/styles.source.css",
+    "./templates.css": "./dist/templates.css",
+    "./templates.source.css": "./dist/templates.source.css",
     "./package.json": "./package.json"
   },
   "files": [

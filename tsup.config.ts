@@ -18,17 +18,19 @@ export default defineConfig({
   // 出力に残らない。App Router から import した瞬間にサーバーコンポーネント扱いになり、
   // useState を使っている、という実行時エラーになる。
   onSuccess: async () => {
-    // CSS は2つ出す。
-    //   styles.css        … 配布用。コメントを落として gzip を稼ぐ
-    //   styles.source.css … 原文。なぜこの値なのかが書いてあるので、読む人向けに残す
-    const source = readFileSync('src/styles.css', 'utf8');
-    writeFileSync('dist/styles.source.css', source);
-    const stripped = source
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/[ \t]+$/gm, '')
-      .replace(/\n{2,}/g, '\n')
-      .trim();
-    writeFileSync('dist/styles.css', `${stripped}\n`);
+    // CSS はそれぞれ2つ出す（部品の styles と、ページのテンプレートの templates）。
+    //   <name>.css        … 配布用。コメントを落として gzip を稼ぐ
+    //   <name>.source.css … 原文。なぜこの値なのかが書いてあるので、読む人向けに残す
+    for (const name of ['styles', 'templates']) {
+      const source = readFileSync(`src/${name}.css`, 'utf8');
+      writeFileSync(`dist/${name}.source.css`, source);
+      const stripped = source
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/[ \t]+$/gm, '')
+        .replace(/\n{2,}/g, '\n')
+        .trim();
+      writeFileSync(`dist/${name}.css`, `${stripped}\n`);
+    }
 
     for (const file of ['dist/index.js', 'dist/index.cjs']) {
       const content = readFileSync(file, 'utf8');

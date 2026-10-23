@@ -44,6 +44,9 @@ import sheet from './sheet';
 import slider from './slider';
 import spec from './spec';
 import start from './start';
+import templateDocs from './templateDocs';
+import templateSamples from './templateSamples';
+import templates from './templates';
 import textInput from './textInput';
 import theme from './theme';
 import title from './title';
@@ -92,6 +95,9 @@ const messages = {
   uiLayout,
   uiNavigation,
   uiOverlays,
+  templates,
+  templateDocs,
+  templateSamples,
   provider,
   spec,
   verification,

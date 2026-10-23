@@ -14,7 +14,13 @@ import { renderToString } from 'react-dom/server';
 import {
   Accordion,
   Breadcrumbs,
+  ChangelogPage,
+  ContactPage,
+  DocumentPage,
+  ErrorPage,
+  FaqPage,
   GassanProvider,
+  MaintenancePage,
   Menu,
   Modal,
   ModalHost,
@@ -22,6 +28,9 @@ import {
   PasswordStrength,
   Phrase,
   Popover,
+  PricingPage,
+  SignInPage,
+  SiteProvider,
   Steps,
   Tabs,
   TagInput,
@@ -367,6 +376,62 @@ for (const [label, passed] of [
   ['Steps marks the current step on the server', partsHtml.includes('aria-current="step"')],
   ['TagInput renders named remove buttons on the server', partsHtml.includes('aria-label="営業 を取り除く"')],
   ['PasswordStrength renders the strength word on the server', partsHtml.includes('とても強い')],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// ページのテンプレート（P-01〜P-11）。Next.js ではページごとサーバーで描かれる。
+// 残り時間（Retry-After）は初めの描画では渡した秒数ちょうどになるので、サーバーとクライアントで食い違わない。
+// React は autoComplete・dateTime を書いたままの綴りで出す（HTML の属性名は大文字と小文字を区別しない）。
+const site = (...pages) =>
+  h(
+    SiteProvider,
+    {
+      name: 'Atlas',
+      links: { home: '/', signIn: '/login', signUp: '/signup', forgotPassword: '/forgot', terms: '/terms', privacy: '/privacy', contact: '/contact' },
+      nav: [{ href: '/pricing', label: '料金' }],
+    },
+    ...pages,
+  );
+const render = (page) => renderToString(site(page));
+const textOf = (markup) => markup.replace(/<[^>]+>/g, '');
+const signInHtml = render(h(SignInPage, { onSubmit: noop }));
+const notFoundHtml = render(h(ErrorPage, { status: 404 }));
+const unavailableHtml = render(h(ErrorPage, { status: 503, retryAfter: 30 }));
+const maintenanceHtml = render(h(MaintenancePage, { start: '2026-10-24T02:00:00+09:00', end: '2026-10-24T04:00:00+09:00', timeZone: 'Asia/Tokyo' }));
+const pricingHtml = render(
+  h(PricingPage, {
+    plans: [
+      { id: 'free', name: 'Free', monthly: 0, features: ['3 人まで'], cta: { label: '始める', href: '/signup' } },
+      { id: 'pro', name: 'Pro', monthly: 1500, features: ['無制限'], cta: { label: '選ぶ', href: '/signup' }, recommended: true },
+    ],
+  }),
+);
+const documentHtml = render(
+  h(DocumentPage, {
+    title: '利用規約',
+    effective: '2026-04-01',
+    numbering: 'article',
+    sections: ['目的', '定義', '禁止事項'].map((title, index) => ({ id: `s${String(index)}`, title, content: h('p', null, '本文') })),
+  }),
+);
+const faqHtml = render(h(FaqPage, { search: true, items: [{ id: 'q1', question: '解約できますか', answer: 'できます', category: '契約' }] }));
+const contactHtml = render(h(ContactPage, { onSubmit: noop }));
+const changelogHtml = render(
+  h(ChangelogPage, { entries: [{ version: '1.2.0', date: '2026-10-01', title: '検索を速くしました', tags: ['improved'], content: h('p', null, '本文') }] }),
+);
+for (const [label, passed] of [
+  ['SignInPage renders the autofill attributes on the server', /autocomplete="username"/i.test(signInHtml) && /autocomplete="current-password"/i.test(signInHtml)],
+  ['ErrorPage renders the status code and the way home on the server', notFoundHtml.includes('404') && notFoundHtml.includes('href="/"')],
+  ['ErrorPage starts the Retry-After countdown at the given seconds on the server', textOf(unavailableHtml).includes('30 秒後') && /<button[^>]*aria-disabled="true"/.test(unavailableHtml)],
+  ['MaintenancePage writes the schedule in the given time zone on the server', textOf(maintenanceHtml).includes('10月24日(土) 2:00〜4:00 (JST)')],
+  ['PricingPage formats prices and marks the recommended plan on the server', pricingHtml.includes('1,500') && pricingHtml.includes('data-recommended')],
+  ['DocumentPage renders the table of contents and the effective date on the server', documentHtml.includes('data-toc') && /datetime="2026-04-01"/i.test(documentHtml)],
+  ['FaqPage renders the search box and the questions on the server', faqHtml.includes('type="search"') && textOf(faqHtml).includes('解約できますか')],
+  ['ContactPage renders the form with autofill attributes on the server', /autocomplete="email"/i.test(contactHtml)],
+  ['ChangelogPage renders the entries with their dates on the server', changelogHtml.includes('1.2.0') && /datetime="2026-10-01"/i.test(changelogHtml)],
+  ['SiteLayout renders the skip link and a collapsed menu button on the server', pricingHtml.includes('g-skip') && pricingHtml.includes('aria-expanded="false"')],
 ]) {
   if (passed) ok(label);
   else fail(label);

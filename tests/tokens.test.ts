@@ -19,6 +19,8 @@ import { CONTRAST_PAIRS, contrastRatio } from '../site/data/color';
 const raw = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8');
 /** コメントを落とした本文。コメント中の語に反応させないため。 */
 const css = raw.replace(/\/\*[\s\S]*?\*\//g, '');
+/** ページのテンプレートの CSS（P-01〜）。styles.css のトークンを使うので、変数の定義の検査は両方を合わせて見る。 */
+const templates = readFileSync(resolve(process.cwd(), 'src/templates.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 
 /** `--name: value;` を最初の 1 件だけ取る。 */
 function token(name: string): string {
@@ -379,7 +381,7 @@ describe('tokens / contrast (G-10 K-07 F-06 S-07)', () => {
 describe('tokens / emphasis without boxes (§5-21)', () => {
   it('強調に太い横の線を使わない（コールアウトの左の帯を、ライブラリにもサイトにも作らない）', () => {
     const site = readFileSync(resolve(process.cwd(), 'site/site.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-    for (const sheet of [css, site]) {
+    for (const sheet of [css, templates, site]) {
       expect(sheet).not.toMatch(/border-(?:inline-start|inline-end|left|right)(?:-width)?\s*:\s*(?:[2-9]|\d{2,})(?:\.\d+)?px/);
       expect(sheet).not.toMatch(/box-shadow:\s*inset\s+-?(?:[2-9]|\d{2,})px\s+0\s/);
     }
@@ -565,7 +567,9 @@ describe('sheet detents and handle', () => {
 
   it('参照するカスタムプロパティは、CSS で定義されているか、JS が書くか、フォールバックを持つ', () => {
     // 未定義の var() は宣言ごと無効になる。見た目は何も起きないので、目で見ても気づけない。
-    const defined = new Set([...css.matchAll(/(?:^|[{;\s])(--g-[\w-]+)\s*:/g)].map((m) => m[1]));
+    // templates.css は styles.css のトークンを使う（両方を読み込む前提）ので、合わせて見る。
+    const sheets = `${css}\n${templates}`;
+    const defined = new Set([...sheets.matchAll(/(?:^|[{;\s])(--g-[\w-]+)\s*:/g)].map((m) => m[1]));
     const setByScript = new Set([
       '--g-dur-out',
       '--g-fill-end',
@@ -580,7 +584,7 @@ describe('sheet detents and handle', () => {
       '--g-toast-elapsed',
       '--g-toast-steps',
     ]);
-    const missing = [...css.matchAll(/var\((--g-[\w-]+)(\s*,)?/g)]
+    const missing = [...sheets.matchAll(/var\((--g-[\w-]+)(\s*,)?/g)]
       .filter((m) => !m[2] && !defined.has(m[1] ?? '') && !setByScript.has(m[1] ?? ''))
       .map((m) => m[1]);
     expect([...new Set(missing)]).toEqual([]);

@@ -95,6 +95,14 @@ export default {
     hide: '코드 닫기',
   },
 
+  frame: {
+    variant: '견본',
+    width: '미리 보기 너비',
+    wide: '데스크톱',
+    phone: '스마트폰',
+    open: '전체 화면으로 열기',
+  },
+
   keyPoint: { caution: '주의' },
 
   component: {

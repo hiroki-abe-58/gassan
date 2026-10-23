@@ -85,6 +85,37 @@ describe('ボタン / U-01〜U-03', () => {
     expect(screen.getByRole('button', { name: '既定' })).toHaveAttribute('data-variant', 'secondary');
   });
 
+  it('aria-disabled の Button と IconButton は、フォーカスは止まり、押しても何もしない（Button はゲートと同じ見た目）', async () => {
+    const user = userEvent.setup();
+    const onAction = vi.fn();
+    const onClick = vi.fn();
+    const onIconClick = vi.fn();
+    const onSubmit = vi.fn((event: { preventDefault: () => void }) => event.preventDefault());
+    render(
+      <form onSubmit={onSubmit}>
+        <p id="why">30 秒後に送れます</p>
+        <Button type="submit" aria-disabled aria-describedby="why" onAction={onAction} onClick={onClick}>
+          送る
+        </Button>
+        <IconButton label="消す" aria-disabled onClick={onIconClick}>
+          <svg aria-hidden="true" />
+        </IconButton>
+      </form>,
+    );
+    const button = screen.getByRole('button', { name: '送る' });
+    expect(button).toHaveAttribute('data-gated');
+    expect(button).toHaveAccessibleDescription('30 秒後に送れます');
+    await user.tab();
+    expect(button).toHaveFocus();
+    await user.click(button);
+    await user.keyboard('{Enter}');
+    await user.click(screen.getByRole('button', { name: '消す' }));
+    expect(onAction).not.toHaveBeenCalled();
+    expect(onClick).not.toHaveBeenCalled();
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(onIconClick).not.toHaveBeenCalled();
+  });
+
   it('ButtonLink はボタンの見た目のリンクで、役割はリンクのまま。印は文字の外に置く', () => {
     render(
       <ButtonLink href="/pricing" variant="primary" block iconEnd={<svg aria-hidden="true" data-testid="end" />}>

@@ -7,6 +7,8 @@
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { Fragment, createElement, type ReactNode } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import { fillDemoText, fmt, type DemoText } from '../site/i18n/demo-text';
@@ -74,13 +76,21 @@ describe('site/i18n / デモのコード', () => {
   });
 });
 
-/** 関数の文言を見本の引数で呼ぶ。数を受ける関数と、文字列の配列を受ける関数（並べて読ませる文）がある。 */
+/**
+ * 関数の文言を見本の引数で呼ぶ。数を受ける関数・文字列の配列を受ける関数（並べて読ませる文）・
+ * 文字列を受ける関数（テンプレートの「〜を入力してください」）がある。
+ * リンクを挟む文（ReactNode を返す関数）は、描いた文字で調べる（String() では中身が見えない）。
+ */
 function call(fn: (...args: unknown[]) => unknown): string {
-  try {
-    return String(fn(1, 2, 3));
-  } catch {
-    return String(fn(['a', 'b']));
+  for (const args of [[1, 2, 3], [['a', 'b']], ['a', 'b', 'c']]) {
+    try {
+      const value = fn(...args);
+      return typeof value === 'string' ? value : renderToStaticMarkup(createElement(Fragment, null, value as ReactNode)).replace(/<[^>]+>/g, '');
+    } catch {
+      // 次の見本の引数で試す
+    }
   }
+  throw new Error('どの見本の引数でも呼べない');
 }
 
 /** 文言の木から文字列を集める。関数（数を差し込む文）は見本の引数で呼ぶ。 */

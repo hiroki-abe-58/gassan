@@ -95,6 +95,14 @@ export default {
     hide: '收合程式碼',
   },
 
+  frame: {
+    variant: '範例',
+    width: '預覽寬度',
+    wide: '電腦',
+    phone: '手機',
+    open: '以全螢幕開啟',
+  },
+
   keyPoint: { caution: '注意' },
 
   component: {

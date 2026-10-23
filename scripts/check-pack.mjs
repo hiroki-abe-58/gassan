@@ -75,6 +75,9 @@ if (files.length === 0) {
     'dist/index.d.cts',
     'dist/styles.css',
     'dist/styles.source.css',
+    // ページのテンプレートの見た目（P-01〜）。styles.css の後に読み込む。
+    'dist/templates.css',
+    'dist/templates.source.css',
   ];
   const missing = REQUIRED.filter((name) => !files.includes(name));
   if (missing.length > 0) fail(`tarball is missing: ${missing.join(', ')}`);

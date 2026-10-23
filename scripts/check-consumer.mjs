@@ -65,7 +65,9 @@ try {
      if (!require('@genelab/gassan').Modal?.Root) throw new Error('cjs export missing');
      require('node:fs').accessSync(require.resolve('@genelab/gassan/styles.css'));
      require('node:fs').accessSync(require.resolve('@genelab/gassan/styles.source.css'));
-     console.log('  ok    ESM / CJS / styles.css / styles.source.css all resolve');
+     require('node:fs').accessSync(require.resolve('@genelab/gassan/templates.css'));
+     require('node:fs').accessSync(require.resolve('@genelab/gassan/templates.source.css'));
+     console.log('  ok    ESM / CJS / styles.css / styles.source.css / templates.css / templates.source.css all resolve');
     `,
   );
   process.stdout.write(run('node', ['runtime.mjs'], work));

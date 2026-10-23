@@ -95,6 +95,14 @@ export default {
     hide: 'ซ่อนโค้ด',
   },
 
+  frame: {
+    variant: 'ตัวอย่าง',
+    width: 'ความกว้างของตัวอย่าง',
+    wide: 'เดสก์ท็อป',
+    phone: 'มือถือ',
+    open: 'เปิดเต็มจอ',
+  },
+
   keyPoint: { caution: 'ข้อควรระวัง' },
 
   component: {

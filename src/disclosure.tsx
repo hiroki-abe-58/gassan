@@ -10,6 +10,8 @@ export interface AccordionItem {
   title: ReactNode;
   content: ReactNode;
   disabled?: boolean;
+  /** details 要素の id（その項目へのリンク（#id）を作るとき）。 */
+  id?: string;
 }
 
 export interface AccordionProps extends DataAttributes {
@@ -50,6 +52,7 @@ export function Accordion({ items, type = 'multiple', defaultValue = [], onValue
       {items.map((item) => (
         <details
           key={item.value}
+          id={item.id}
           className="g-accordion-item"
           name={type === 'single' ? name : undefined}
           open={defaultValue.includes(item.value) || undefined}

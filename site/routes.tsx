@@ -44,6 +44,9 @@ import { TextInputPage } from './pages/components/TextInputPage';
 import { TitlePage } from './pages/components/TitlePage';
 import { Spec } from './pages/reference/Spec';
 import { Verification } from './pages/reference/Verification';
+import { AuthTemplatesPage } from './pages/templates/AuthTemplatesPage';
+import { PublicTemplatesPage } from './pages/templates/PublicTemplatesPage';
+import { StatusTemplatesPage } from './pages/templates/StatusTemplatesPage';
 
 export interface PageProps {
   /** ページのパスより後ろのセグメント（タブ名・項目 ID など）。 */
@@ -62,7 +65,7 @@ export interface PageDef {
   Component: ComponentType<PageProps>;
 }
 
-export const SECTIONS: readonly SectionId[] = ['start', 'foundations', 'styles', 'components', 'ui', 'forms', 'reference'];
+export const SECTIONS: readonly SectionId[] = ['start', 'foundations', 'styles', 'components', 'ui', 'forms', 'templates', 'reference'];
 
 /** ナビの並び順がそのまま「前へ / 次へ」の順になる。 */
 export const PAGES: readonly PageDef[] = [
@@ -112,6 +115,10 @@ export const PAGES: readonly PageDef[] = [
   { path: '/components/slider', key: 'slider', section: 'forms', Component: SliderPage },
   { path: '/components/date-picker', key: 'datePicker', section: 'forms', Component: DatePickerPage },
   { path: '/components/file-drop', key: 'fileDrop', section: 'forms', Component: FileDropPage },
+
+  { path: '/templates/auth', key: 'templatesAuth', section: 'templates', Component: AuthTemplatesPage },
+  { path: '/templates/status', key: 'templatesStatus', section: 'templates', Component: StatusTemplatesPage },
+  { path: '/templates/public', key: 'templatesPublic', section: 'templates', Component: PublicTemplatesPage },
 
   { path: '/spec', key: 'spec', section: 'reference', Component: Spec },
   { path: '/verification', key: 'verification', section: 'reference', Component: Verification },
