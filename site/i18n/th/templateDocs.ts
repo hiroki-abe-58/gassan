@@ -91,4 +91,18 @@ export default {
     },
     a11yCaption: 'สเปกที่เทมเพลตของหน้าสาธารณะทำตาม',
   },
+  app: {
+    lead: 'โครงของหน้าจอหลังเข้าสู่ระบบ ประกอบด้วยแถบนำทางด้านซ้าย แถบด้านบน (ค้นหา การแจ้งเตือน และบัญชี) และเนื้อหา เมื่อคอนเทนเนอร์แคบ จะเปิดเมนูนำทางเป็นแผงด้านข้างจาก “เมนู” ในแถบด้านบน ส่วนเนื้อหาประกอบขึ้นจากส่วนหัวของหน้า สรุปตัวเลข และตารางข้อมูล',
+    setup: {
+      title: 'วิธีใช้',
+      intro: 'ส่งเมนูนำทางเป็นกลุ่ม ๆ และส่งปลายทางของหน้าปัจจุบันให้ current ส่วนชื่อกับโลโก้ของผลิตภัณฑ์ และคอมโพเนนต์ที่ใช้วาดลิงก์ (เช่น Link ของ Next.js) จะดึงมาจาก SiteProvider',
+      code: "import { AppShell, PageHeader, DataTable } from '@genelab/gassan';\n\n<AppShell\n  current={pathname}\n  nav={[\n    { items: [{ label: 'หน้าแรก', href: '/app', icon: <HomeIcon /> }] },\n    { title: 'เวิร์กสเปซ', items: [{ label: 'สมาชิก', href: '/app/members' }] },\n  ]}\n  actions={<IconButton label=\"ค้นหา\"><SearchIcon /></IconButton>}\n  account={{ name: 'ณัฐวุฒิ ศรีสุข', menu: [{ value: 'sign-out', label: 'ออกจากระบบ', onSelect: signOut }] }}\n>\n  <PageHeader title=\"สมาชิก\" actions={<Button variant=\"primary\">เชิญ</Button>} />\n  <DataTable label=\"สมาชิก\" rows={members} columns={columns} getRowId={(m) => m.id} selectable />\n</AppShell>",
+    },
+    shell: {
+      title: 'โครงแอป',
+      intro: 'เมื่อคอนเทนเนอร์กว้าง จะวางแถบนำทางไว้ด้านซ้าย และบอกหน้าปัจจุบันด้วยสีพื้นและตัวหนา เมื่อสลับเป็น “มือถือ” เมนูนำทางจะพับเก็บ และเปิดเป็นแผงด้านข้างได้จาก “เมนู” (ปิดได้ด้วย Esc หรือกดข้างนอก และจะปิดเมื่อกดลิงก์ในเมนูนำทางด้วย) ในหน้าสมาชิก เปิดรายละเอียดเป็นแผงด้านข้างได้จาก “…” ของแต่ละแถว',
+      variants: { dashboard: 'หน้าแรก (แดชบอร์ด)', members: 'สมาชิก (ตารางข้อมูล)' },
+    },
+    a11yCaption: 'สเปกที่โครงแอปทำตาม',
+  },
 } satisfies typeof ja;

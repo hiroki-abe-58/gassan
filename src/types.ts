@@ -27,8 +27,11 @@ export type ScrimToken = 'none' | 'subtle' | 'default' | 'strong' | 'immersive';
 /** C-01。 */
 export type SizeToken = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 
-/** 解決済みの配置。DOM に出るのは必ずこの3つのどれか。 */
-export type PlacementToken = 'center' | 'top' | 'sheet';
+/**
+ * 解決済みの配置。DOM に出るのは必ずこのどれか。
+ * start / end は画面の横の端から出る面（ナビゲーションの引き出し・詳細の面。C-13）。'auto' はこれに解決しない。
+ */
+export type PlacementToken = 'center' | 'top' | 'sheet' | 'start' | 'end';
 
 /** 利用側が指定できる配置。'auto' は JS 側で解決してから DOM に流す（§3-2）。 */
 export type PlacementOption = PlacementToken | 'auto';

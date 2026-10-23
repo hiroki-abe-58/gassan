@@ -1,0 +1,41 @@
+export default {
+  lead: 'ページの見出しの帯と、データの表。一覧の画面は「見出し・操作・絞り込み・表・ページ送り」でできていて、表は並べ替えと行の選択までを持つ。',
+  example: {
+    title: '組み合わせ',
+    intro: 'メンバーの一覧。見出しの帯に主な操作を 1 つ置き、名前で探し、表で並べ替えと選択をする。行の「…」から詳細を開くと、横から出る面（placement="end"）で一覧を見ながら確かめられる。',
+    exampleTitle: 'メンバー',
+    exampleDescription: '列の見出しを押すと並べ替わり、読み上げられる。行を選ぶと、選んだ数とまとめての操作が表の上に出る。',
+  },
+  pageHeader: {
+    title: 'ページの見出しの帯',
+    intro: '道筋・見出し・補足・操作をこの順に並べる。囲みや地の色ではなく、見出しの大きさと余白で示す。操作は器が狭くなると見出しの下へ回る。',
+  },
+  table: {
+    title: 'データの表',
+    intro: 'table 要素のまま描き、caption を名前に、列と行の見出しを持つ。数と金額は終わりにそろえ、桁をそろえる。行が無いときは文か空の状態を、読み込み中は骨組みを出す。器より広いときだけ、表を横に送る領域がフォーカスできるようになる。',
+  },
+  labels: {
+    full: '道筋と操作',
+    narrow: '狭い器',
+    compact: '詰めた行（compact）',
+    loading: '読み込み中',
+    empty: '行が無いとき',
+  },
+  sample: {
+    settings: '設定',
+    billing: '請求',
+    billingDescription: 'プラン・支払い方法・請求書。請求書は PDF で保存できる。',
+    download: '請求書をまとめて保存',
+    changePlan: 'プランを変える',
+    invoices: '請求書',
+    number: '番号',
+    date: '日付',
+    amount: '金額',
+    status: '状態',
+    paid: '支払い済み',
+    due: '未払い',
+  },
+  codeCaption: '使い方',
+  code: "import { DataTable, PageHeader, Button } from '@genelab/gassan';\n\n<PageHeader title=\"メンバー\" actions={<Button variant=\"primary\">招待する</Button>} />\n<DataTable\n  label=\"メンバー\"\n  rows={members}\n  getRowId={(m) => m.id}\n  columns={[\n    { key: 'name', header: '名前', cell: (m) => m.name, sortValue: (m) => m.name },\n    { key: 'seats', header: '席', cell: (m) => m.seats, sortValue: (m) => m.seats, align: 'end' },\n  ]}\n  selectable\n  bulkActions={(ids) => <Button onClick={() => remove(ids)}>外す</Button>}\n/>",
+  a11yCaption: 'ページの見出しの帯とデータの表の振る舞い',
+};

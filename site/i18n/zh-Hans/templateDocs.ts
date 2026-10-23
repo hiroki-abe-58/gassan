@@ -91,4 +91,18 @@ export default {
     },
     a11yCaption: '公开页面模板满足的规范',
   },
+  app: {
+    lead: '登录之后的界面外框。左侧的导航栏、顶部栏（搜索、通知、账户）和正文。容器较窄时，从顶部栏的“菜单”以侧边面板打开导航。内容由页面标题栏、数值摘要和数据表格组成。',
+    setup: {
+      title: '用法',
+      intro: '导航按分组传入，并把当前页面的跳转地址传给 current。产品的名称和标志，以及渲染链接的组件（Next.js 的 Link 等），都从 SiteProvider 中获取。',
+      code: "import { AppShell, PageHeader, DataTable } from '@genelab/gassan';\n\n<AppShell\n  current={pathname}\n  nav={[\n    { items: [{ label: '首页', href: '/app', icon: <HomeIcon /> }] },\n    { title: '工作区', items: [{ label: '成员', href: '/app/members' }] },\n  ]}\n  actions={<IconButton label=\"搜索\"><SearchIcon /></IconButton>}\n  account={{ name: '王芳', menu: [{ value: 'sign-out', label: '退出登录', onSelect: signOut }] }}\n>\n  <PageHeader title=\"成员\" actions={<Button variant=\"primary\">邀请</Button>} />\n  <DataTable label=\"成员\" rows={members} columns={columns} getRowId={(m) => m.id} selectable />\n</AppShell>",
+    },
+    shell: {
+      title: '应用外框',
+      intro: '容器较宽时，在左侧放置导航栏，并用底色和粗体标示当前页面。切换到“手机”后，导航会收起，可以从“菜单”以侧边面板打开（按 Esc 或点击外部即可关闭，点击导航中的链接也会关闭）。在成员界面中，可以从行末的“…”以侧边面板打开详情。',
+      variants: { dashboard: '首页（仪表盘）', members: '成员（数据表格）' },
+    },
+    a11yCaption: '应用外框满足的规范',
+  },
 } satisfies typeof ja;

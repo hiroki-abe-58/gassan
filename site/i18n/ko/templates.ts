@@ -213,4 +213,9 @@ export default {
     tags: { new: '새 기능', improved: '개선', fixed: '수정', security: '보안', breaking: '중요한 변경' },
     subscribe: 'RSS로 구독하기',
   },
+  app: {
+    nav: '앱 내비게이션',
+    menu: '메뉴',
+    account: (name) => `${name}의 계정`,
+  },
 } satisfies typeof ja;

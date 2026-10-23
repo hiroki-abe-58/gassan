@@ -13,6 +13,7 @@ import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  AppShell,
   ChangelogPage,
   ContactPage,
   DocumentPage,
@@ -33,6 +34,7 @@ import {
   englishLabels,
   type SiteLinkProps,
 } from '../src';
+import * as appShell from '../src/templates/app-shell';
 import * as auth from '../src/templates/auth';
 import * as layouts from '../src/templates/layouts';
 import * as publicPages from '../src/templates/public';
@@ -148,8 +150,13 @@ describe('骨組みと共有の設定 / P-01', () => {
       PricingPage: () => <PricingPage plans={[]} data-testid="probe" />,
       ContactPage: () => <ContactPage onSubmit={vi.fn()} data-testid="probe" />,
       ChangelogPage: () => <ChangelogPage entries={[]} data-testid="probe" />,
+      AppShell: () => (
+        <AppShell nav={[]} data-testid="probe">
+          x
+        </AppShell>
+      ),
     };
-    const exported = [layouts, auth, status, siteLayout, publicPages]
+    const exported = [layouts, auth, status, siteLayout, publicPages, appShell]
       .flatMap((module) => Object.entries(module))
       .filter(([name, value]) => /^[A-Z]/.test(name) && typeof value === 'function')
       .map(([name]) => name)
@@ -416,6 +423,65 @@ describe('公開ページの外枠 / P-01', () => {
     expect(button).toHaveAttribute('aria-expanded', 'true');
     expect(button.closest('.g-site-bar')).toHaveAttribute('data-open');
     expect(screen.queryByRole('menu')).toBeNull();
+  });
+});
+
+describe('アプリの枠 / P-12', () => {
+  const APP_NAV = [
+    { items: [{ label: 'ホーム', href: '/app' }, { label: 'プロジェクト', href: '/app/projects' }] },
+    { title: '設定', items: [{ label: 'メンバー', href: '/app/members' }, { label: '請求', href: '/app/billing' }] },
+  ];
+  const ACCOUNT = { name: '佐藤 花', menu: [{ value: 'profile', label: 'プロフィール' }, { value: 'sign-out', label: 'ログアウト' }] };
+  const renderApp = () =>
+    render(
+      <SiteProvider name="Atlas" links={{ home: '/app' }}>
+        <AppShell nav={APP_NAV} current="/app/members" account={ACCOUNT}>
+          <h1>メンバー</h1>
+        </AppShell>
+      </SiteProvider>,
+    );
+  /** 左の帯の案内（狭い器で開く面の中にも同じ案内がある）。 */
+  const sidebar = (): HTMLElement => {
+    const element = document.querySelector<HTMLElement>('.g-app-sidebar');
+    if (!element) throw new Error('sidebar missing');
+    return element;
+  };
+
+  it('本文へ飛ぶリンク・名前のある案内・banner・main を持ち、まとまりの名前で案内を分け、いまのページに aria-current を付ける', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    const nav = within(sidebar()).getByRole('navigation', { name: 'アプリの案内' });
+    expect(within(nav).getByRole('list', { name: '設定' })).toBeInTheDocument();
+    expect(within(nav).getByRole('link', { name: 'メンバー' })).toHaveAttribute('aria-current', 'page');
+    expect(within(nav).getByRole('link', { name: 'ホーム' })).not.toHaveAttribute('aria-current');
+    expect(screen.getByRole('banner')).toContainElement(screen.getByRole('button', { name: 'メニュー' }));
+    await user.click(screen.getByRole('link', { name: '本文へ移動' }));
+    expect(screen.getByRole('main')).toHaveFocus();
+  });
+
+  it('狭い器の「メニュー」は横の面（placement="start"）で案内を開き、案内のリンクを押すと閉じる', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    const menu = screen.getByRole('button', { name: 'メニュー' });
+    expect(menu).toHaveAttribute('aria-haspopup', 'dialog');
+    await user.click(menu);
+    const dialog = screen.getByRole('dialog', { name: 'アプリの案内' });
+    expect(dialog).toHaveAttribute('data-placement', 'start');
+    expect(menu).toHaveAttribute('aria-expanded', 'true');
+    const link = within(dialog).getByRole('link', { name: 'プロジェクト' });
+    link.addEventListener('click', (event) => event.preventDefault());
+    await user.click(link);
+    expect(menu).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('アカウントのメニューの起点は、見えている名前で始まる名前を持ち、メニューを開く', async () => {
+    const user = userEvent.setup();
+    renderApp();
+    const trigger = screen.getByRole('button', { name: '佐藤 花のアカウント' });
+    expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
+    expect(trigger).toHaveTextContent('佐藤 花');
+    await user.click(trigger);
+    expect(screen.getByRole('menuitem', { name: 'ログアウト' })).toBeInTheDocument();
   });
 });
 

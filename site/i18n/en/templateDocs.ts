@@ -91,4 +91,18 @@ export default {
     },
     a11yCaption: 'Specification items the public page templates satisfy',
   },
+  app: {
+    lead: 'The frame around the screens people see after signing in: a navigation sidebar on the left, a top bar (search, notifications and account) and the content. When the container is narrow, the navigation opens in a side panel from “Menu” in the top bar. The content is built from a page header, stats and a data table.',
+    setup: {
+      title: 'Usage',
+      intro: 'Pass the navigation in groups, and pass the href of the current page to current. The product’s name and logo, and the component that renders links (such as Next.js’s Link), come from SiteProvider.',
+      code: "import { AppShell, PageHeader, DataTable } from '@genelab/gassan';\n\n<AppShell\n  current={pathname}\n  nav={[\n    { items: [{ label: 'Home', href: '/app', icon: <HomeIcon /> }] },\n    { title: 'Workspace', items: [{ label: 'Members', href: '/app/members' }] },\n  ]}\n  actions={<IconButton label=\"Search\"><SearchIcon /></IconButton>}\n  account={{ name: 'Olivia Chen', menu: [{ value: 'sign-out', label: 'Sign out', onSelect: signOut }] }}\n>\n  <PageHeader title=\"Members\" actions={<Button variant=\"primary\">Invite</Button>} />\n  <DataTable label=\"Members\" rows={members} columns={columns} getRowId={(m) => m.id} selectable />\n</AppShell>",
+    },
+    shell: {
+      title: 'App shell',
+      intro: 'When the container is wide, the navigation sits in a sidebar on the left, and the current page is marked with a background color and bold text. Switch to “Phone”, and the navigation folds away and opens in a side panel from “Menu” (Esc or a press outside closes it, and so does pressing a link in the navigation). On the members screen, the “…” on a row opens the details in a side panel.',
+      variants: { dashboard: 'Home (dashboard)', members: 'Members (data table)' },
+    },
+    a11yCaption: 'Specification items the app shell satisfies',
+  },
 } satisfies typeof ja;

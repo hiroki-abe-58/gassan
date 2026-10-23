@@ -61,7 +61,8 @@ export function MockScreen({
 }: {
   scrim?: number;
   blur?: number;
-  align?: 'center' | 'top' | 'bottom';
+  /** パネルの置き場所。start / end は横の端から出る面（C-13）。 */
+  align?: 'center' | 'top' | 'bottom' | 'start' | 'end';
   children?: ReactNode;
 }): ReactNode {
   const t = useT();
@@ -101,6 +102,7 @@ export function MockPanel({
   stack = false,
   width = 64,
   sheet = false,
+  side,
   children,
 }: {
   title?: ReactNode;
@@ -110,13 +112,15 @@ export function MockPanel({
   stack?: boolean;
   width?: number;
   sheet?: boolean;
+  /** 横の端から出る面（全高で、内側の角だけ丸い）。 */
+  side?: 'start' | 'end';
   children?: ReactNode;
 }): ReactNode {
   const style = { '--s-mock-w': `${String(width)}%` } as CSSProperties;
   // 見本のパネルの中の文字（題・補足・ボタン）も、本物と同じく文節で折る。
   return (
     <Phrase>
-      <div className="s-mock-panel" style={style} data-sheet={sheet ? '' : undefined}>
+      <div className="s-mock-panel" style={style} data-sheet={sheet ? '' : undefined} data-side={side}>
         {sheet ? <span className="s-mock-grip" /> : null}
         {title ? <span className="s-mock-title">{title}</span> : null}
         {Array.from({ length: lines }, (_, i) => (

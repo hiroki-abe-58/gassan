@@ -112,6 +112,13 @@ const labels: GassanLabels = {
   passwordCase: '包含大写和小写字母',
   ruleMet: '已满足',
   ruleUnmet: '尚未满足',
+  selectAll: '全选',
+  selectRows: '选择',
+  selectedCount: (count) => (count === 0 ? '已取消选择' : `已选择 ${String(count)} 项`),
+  clearSelection: '取消选择',
+  sortedBy: (column, direction) => `已按${column}${direction === 'ascending' ? '升序' : '降序'}排序`,
+  rowActions: '操作',
+  emptyTable: '没有可显示的项目',
 };
 
 export default labels;

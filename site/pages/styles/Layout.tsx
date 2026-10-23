@@ -13,10 +13,12 @@ import { SpecTable } from '../../ui/Spec';
 
 const SIZES = ['sm', 'md', 'lg', 'xl'] as const;
 
-const PLACEMENTS: readonly { name: 'center' | 'top' | 'sheet'; align: 'center' | 'top' | 'bottom' }[] = [
+const PLACEMENTS: readonly { name: 'center' | 'top' | 'sheet' | 'start' | 'end'; align: 'center' | 'top' | 'bottom' | 'start' | 'end' }[] = [
   { name: 'center', align: 'center' },
   { name: 'top', align: 'top' },
   { name: 'sheet', align: 'bottom' },
+  { name: 'start', align: 'start' },
+  { name: 'end', align: 'end' },
 ];
 
 export function Layout(): ReactNode {
@@ -30,7 +32,7 @@ export function Layout(): ReactNode {
         eyebrow={nav.sections.styles}
         title={nav.pages.layout}
         lead={t.lead}
-        ids={['C-01', 'C-02', 'C-03', 'C-05', 'M-09']}
+        ids={['C-01', 'C-02', 'C-03', 'C-05', 'C-13', 'M-09']}
       />
 
       <Section id="size" title={t.size.title} intro={t.size.intro}>
@@ -65,9 +67,10 @@ export function Layout(): ReactNode {
                 <MockScreen align={p.align}>
                   <MockPanel
                     title={t.placement.mockTitle}
-                    lines={2}
-                    width={p.name === 'sheet' ? 100 : 58}
+                    lines={p.name === 'start' || p.name === 'end' ? 5 : 2}
+                    width={p.name === 'sheet' ? 100 : p.name === 'start' || p.name === 'end' ? 46 : 58}
                     sheet={p.name === 'sheet'}
+                    side={p.name === 'start' || p.name === 'end' ? p.name : undefined}
                   />
                 </MockScreen>
               </div>

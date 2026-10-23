@@ -212,4 +212,9 @@ export default {
     tags: { new: 'ฟีเจอร์ใหม่', improved: 'ปรับปรุง', fixed: 'แก้ไข', security: 'ความปลอดภัย', breaking: 'การเปลี่ยนแปลงสำคัญ' },
     subscribe: 'ติดตามผ่าน RSS',
   },
+  app: {
+    nav: 'การนำทางในแอป',
+    menu: 'เมนู',
+    account: (name) => `${name} · บัญชี`,
+  },
 } satisfies typeof ja;

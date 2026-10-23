@@ -71,7 +71,7 @@ export { ModalChart } from './chart';
 
 /* ------------------------------------------------------------------- ui parts */
 
-// ページの上で使う部品（U-01〜U-24）。モーダルの部品ではないので Modal 名前空間には入れない。
+// ページの上で使う部品（U-01〜U-26）。モーダルの部品ではないので Modal 名前空間には入れない。
 export { Button, ButtonLink, IconButton, CopyButton } from './button';
 export { Badge, Avatar, AvatarGroup, Kbd, Divider, Card, Stat, EmptyState, DescriptionList, Timeline } from './display';
 export { Progress, Spinner, Skeleton, Banner } from './feedback';
@@ -79,6 +79,8 @@ export { Tabs } from './tabs';
 export { Accordion } from './disclosure';
 export { Tooltip, Popover, Menu } from './overlay';
 export { Breadcrumbs, Pagination, Steps } from './navigation';
+export { PageHeader } from './page-header';
+export { DataTable } from './data-table';
 
 /* ------------------------------------------------------------------ templates */
 
@@ -89,6 +91,7 @@ export { SignInPage, SignUpPage, ForgotPasswordPage, ResetPasswordPage, TwoFacto
 export { ErrorPage, MaintenancePage } from './templates/status';
 export { SiteLayout } from './templates/site-layout';
 export { DocumentPage, FaqPage, PricingPage, ContactPage, ChangelogPage } from './templates/public';
+export { AppShell } from './templates/app-shell';
 export { japaneseTemplateLabels, englishTemplateLabels } from './templates/labels';
 
 /*
@@ -217,11 +220,14 @@ export type {
 } from './display';
 export type { ProgressProps, SpinnerProps, SkeletonProps, BannerProps } from './feedback';
 export type { TabItem, TabsProps } from './tabs';
+export type { PageHeaderProps } from './page-header';
+export type { DataTableColumn, DataTableProps, DataTableSort, DataTableSortValue } from './data-table';
 export type { AccordionItem, AccordionProps } from './disclosure';
 export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps } from './overlay';
 export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, StepsProps } from './navigation';
 export type { Site, SiteLinkProps, SiteLinks, SiteNavLink, SiteFooterColumn, SiteProviderProps } from './templates/site';
 export type { SiteLayoutProps } from './templates/site-layout';
+export type { AppShellProps, AppNavSection, AppNavItem, AppAccount } from './templates/app-shell';
 export type {
   DocumentSection,
   DocumentPageProps,

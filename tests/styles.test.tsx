@@ -81,6 +81,23 @@ describe('styles / exit fallback (L-07)', () => {
     );
   });
 
+  it('横の面（start / end）は出てきた端へ抜け、右から左の言語では出てくる向きを裏返す', () => {
+    const side = String.raw`\.g-dialog:is\(\[data-placement="start"\], \[data-placement="end"\]\)`;
+    // 入る前・開いた後・退出の 3 つが同じ変数（出てくる端）を使う。値がずれると close() の瞬間に跳ねる
+    expect(rules).toMatch(new RegExp(String.raw`${side} \.g-panel\s*\{[^}]*translate:\s*var\(--g-side-from\) 0;`));
+    expect(rules).toMatch(new RegExp(String.raw`${side}\[open\]\[data-exiting\] \.g-panel\s*\{[^}]*translate:\s*var\(--g-side-from\) 0;`));
+    expect(rules).toMatch(/\.g-dialog\[data-placement="start"\]:dir\(rtl\)\s*\{\s*--g-side-from:\s*100%;/);
+    expect(rules).toMatch(/\.g-dialog\[data-placement="end"\]:dir\(rtl\)\s*\{\s*--g-side-from:\s*-100%;/);
+    // 画面の上下の端まで伸びるので、安全領域を空ける
+    expect(rules).toMatch(new RegExp(String.raw`${side} \.g-header\s*\{[^}]*env\(safe-area-inset-top\)`));
+    expect(rules).toMatch(new RegExp(String.raw`${side} \.g-footer\s*\{[^}]*env\(safe-area-inset-bottom\)`));
+  });
+
+  it('横の面は placement の値をそのまま DOM に出す（auto は横に解決しない）', () => {
+    renderModal({ label: 'ナビゲーション', placement: 'start', children: <Modal.Body>本文</Modal.Body> });
+    expect(document.querySelector('.g-dialog')).toHaveAttribute('data-placement', 'start');
+  });
+
   it('退出中は discrete transition を止め、二重待ちを起こさない', () => {
     expect(rules).toMatch(/\.g-dialog\[data-exiting\]\s*\{\s*transition:\s*none;/);
   });

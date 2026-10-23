@@ -253,6 +253,12 @@ const EXTRA_INTERFACES = new Set([
   'FaqItem',
   'DocumentSection',
   'ChangelogEntry',
+  // データの表（U-26）とアプリの枠（P-12）。
+  'DataTableColumn',
+  'DataTableSort',
+  'AppNavSection',
+  'AppNavItem',
+  'AppAccount',
 ]);
 
 /** Props 型 → 既定値を読む関数名。名前から機械的に決まらないものだけ書く。 */

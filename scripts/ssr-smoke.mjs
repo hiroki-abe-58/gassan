@@ -13,7 +13,9 @@ import { renderToString } from 'react-dom/server';
 
 import {
   Accordion,
+  AppShell,
   Breadcrumbs,
+  DataTable,
   ChangelogPage,
   ContactPage,
   DocumentPage,
@@ -24,6 +26,7 @@ import {
   Menu,
   Modal,
   ModalHost,
+  PageHeader,
   Pagination,
   PasswordStrength,
   Phrase,
@@ -432,6 +435,43 @@ for (const [label, passed] of [
   ['ContactPage renders the form with autofill attributes on the server', /autocomplete="email"/i.test(contactHtml)],
   ['ChangelogPage renders the entries with their dates on the server', changelogHtml.includes('1.2.0') && /datetime="2026-10-01"/i.test(changelogHtml)],
   ['SiteLayout renders the skip link and a collapsed menu button on the server', pricingHtml.includes('g-skip') && pricingHtml.includes('aria-expanded="false"')],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// ページの見出しの帯・データの表（U-25 / U-26）とアプリの枠（P-12）。
+// 表はサーバーでも並べ替えた順で描く（並べ替えはクライアントの状態ではなく、初めの描画から決まる）。
+const invoices = [
+  { id: 'INV-2', amount: 18000 },
+  { id: 'INV-1', amount: 15000 },
+];
+const tableHtml = renderToString(
+  h(
+    Fragment,
+    null,
+    h(PageHeader, { title: '請求', breadcrumbs: [{ label: '設定', href: '/settings' }, { label: '請求' }], actions: button('プランを変える') }),
+    h(DataTable, {
+      label: '請求書',
+      rows: invoices,
+      getRowId: (row) => row.id,
+      columns: [
+        { key: 'id', header: '番号', cell: (row) => row.id },
+        { key: 'amount', header: '金額', cell: (row) => String(row.amount), sortValue: (row) => row.amount, align: 'end' },
+      ],
+      defaultSort: { key: 'amount', direction: 'ascending' },
+      selectable: true,
+    }),
+  ),
+);
+const appHtml = renderToString(
+  site(h(AppShell, { nav: [{ title: '設定', items: [{ label: 'メンバー', href: '/app/members' }] }], current: '/app/members', account: { name: '佐藤 葵', menu: [] } }, h('p', null, '本文'))),
+);
+for (const [label, passed] of [
+  ['PageHeader renders the breadcrumbs, the h1 and the actions on the server', /<nav[^>]*aria-label="パンくずリスト"/.test(tableHtml) && tableHtml.includes('<h1')],
+  ['DataTable renders the sorted order and aria-sort on the server', /aria-sort="ascending"/.test(tableHtml) && tableHtml.indexOf('INV-1') < tableHtml.indexOf('INV-2')],
+  ['DataTable names the row checkboxes by the row headers on the server', /aria-label="すべて選択"/.test(tableHtml) && /aria-labelledby="[^"]+-row-0"/.test(tableHtml)],
+  ['AppShell renders the navigation with the current page and a closed drawer on the server', appHtml.includes('aria-current="page"') && /class="g-app-menu"[^>]*aria-expanded="false"|aria-expanded="false"[^>]*class="g-app-menu"/.test(appHtml)],
 ]) {
   if (passed) ok(label);
   else fail(label);

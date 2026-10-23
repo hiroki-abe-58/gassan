@@ -91,4 +91,18 @@ export default {
     },
     a11yCaption: '공개 페이지 템플릿이 충족하는 명세',
   },
+  app: {
+    lead: '로그인한 뒤의 화면을 감싸는 바깥 틀. 왼쪽의 내비게이션 바·상단 바(검색·알림·계정)·본문. 컨테이너가 좁을 때는 상단 바의 “메뉴”에서 옆 패널로 내비게이션을 연다. 내용은 페이지 헤더·수치 요약·데이터 표로 구성한다.',
+    setup: {
+      title: '사용법',
+      intro: '내비게이션은 묶음별로 넘기고, 현재 페이지의 이동할 곳을 current에 넘긴다. 제품의 이름과 로고, 링크를 그리는 컴포넌트(Next.js의 Link 등)는 SiteProvider에서 가져온다.',
+      code: "import { AppShell, PageHeader, DataTable } from '@genelab/gassan';\n\n<AppShell\n  current={pathname}\n  nav={[\n    { items: [{ label: '홈', href: '/app', icon: <HomeIcon /> }] },\n    { title: '워크스페이스', items: [{ label: '멤버', href: '/app/members' }] },\n  ]}\n  actions={<IconButton label=\"검색\"><SearchIcon /></IconButton>}\n  account={{ name: '김민준', menu: [{ value: 'sign-out', label: '로그아웃', onSelect: signOut }] }}\n>\n  <PageHeader title=\"멤버\" actions={<Button variant=\"primary\">초대하기</Button>} />\n  <DataTable label=\"멤버\" rows={members} columns={columns} getRowId={(m) => m.id} selectable />\n</AppShell>",
+    },
+    shell: {
+      title: '앱 셸',
+      intro: '컨테이너가 넓을 때는 왼쪽에 내비게이션 바를 두고, 현재 페이지를 바탕색과 굵은 글씨로 나타낸다. “스마트폰”으로 바꾸면 내비게이션이 접히고, “메뉴”에서 옆 패널로 연다(Esc나 바깥을 누르면 닫히고, 내비게이션의 링크를 눌러도 닫힌다). 멤버 화면에서는 행의 “…”에서 상세 정보를 옆 패널로 열 수 있다.',
+      variants: { dashboard: '홈(대시보드)', members: '멤버(데이터 표)' },
+    },
+    a11yCaption: '앱 셸이 충족하는 명세',
+  },
 } satisfies typeof ja;

@@ -1011,6 +1011,32 @@
   inline-size: min(100%, 320px);
 }
 
+/* 見出しと表のページの見本（メンバーの一覧） */
+.s-member-table {
+  display: grid;
+  gap: 12px;
+  min-inline-size: 0;
+}
+.s-member-table > .g-page-header {
+  margin-block-end: 4px;
+}
+.s-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.s-table-toolbar > .g-search {
+  inline-size: min(100%, 20rem);
+}
+.s-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.s-person > span[aria-hidden] {
+  display: grid;
+}
+
 /* ツールチップとメニューのページの見本 */
 .s-popover-form {
   display: grid;
@@ -1433,6 +1459,21 @@
 .s-mock-screen[data-align="bottom"] .s-mock-stage {
   align-items: end;
   padding: 0;
+}
+.s-mock-screen:is([data-align="start"], [data-align="end"]) .s-mock-stage {
+  place-items: stretch start;
+  padding: 0;
+}
+.s-mock-screen[data-align="end"] .s-mock-stage {
+  justify-items: end;
+}
+.s-mock-panel[data-side] {
+  align-content: start;
+  max-block-size: none;
+  border-radius: 0 14px 14px 0;
+}
+.s-mock-panel[data-side="end"] {
+  border-radius: 14px 0 0 14px;
 }
 .s-mock-panel {
   --s-mock-w: 64%;

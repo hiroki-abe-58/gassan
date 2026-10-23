@@ -20,6 +20,7 @@ import kindFlow from './kindFlow';
 import kindForm from './kindForm';
 import kindView from './kindView';
 import lineBreakModal from './lineBreakModal';
+import memberTable from './memberTable';
 import playground from './playground';
 import projectSettings from './projectSettings';
 import providerEnglish from './providerEnglish';
@@ -55,6 +56,7 @@ export default {
   kindForm,
   kindView,
   lineBreakModal,
+  memberTable,
   playground,
   projectSettings,
   providerEnglish,
