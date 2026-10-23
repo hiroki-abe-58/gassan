@@ -724,8 +724,10 @@
     position: relative;
     min-block-size: var(--g-tap);
     padding-inline: 18px;
-    display: inline-grid;
-    place-items: center;
+    /* grid にしない。grid の項目に min-inline-size: 0 を付けると、ボタンの最小幅からラベルが抜ける（§10-34） */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid transparent;
     border-radius: var(--g-radius-control);
     font: inherit;
@@ -781,11 +783,11 @@
     cursor: not-allowed;
   }
 
-  /* ラベルは grid の項目で、中央寄せ（place-items: center）なので幅は fit-content になり、
-   * 最長の文節より縮まない。ボタンが器いっぱい（縦積みのフッタ・狭い器）まで縮められると、
-   * 文節がボタンの外へはみ出していた。min 0 で列が縮めるようにし、max 100% でラベルを列に収める。
-   * ボタン自身の最小幅（最長の文節）は変わらないので、横並びのフッタで押し潰されることはなく、
-   * 器より狭く押し込まれたときだけ .g-phrase の break-word で文字単位に折れる（W-02）。 */
+  /* ラベルは flex の項目で、項目の最小幅は既定で最長の文節になる。ボタンが器いっぱい（縦積みのフッタ・狭い器）
+   * まで縮められると、文節がボタンの外へはみ出していた。min 0 で縮めるようにし、max 100% でラベルをボタンに収める。
+   * flex の項目の min 0 は、ボタン自身の最小幅（表の操作の列のように、器が最小幅で決まるときの寄与）には効かない。
+   * なので横並びや表の中で押し潰されることはなく、器より狭く押し込まれたときだけ .g-phrase の break-word で
+   * 文字単位に折れる（W-02。§10-29・§10-34）。 */
   .g-btn-label {
     min-inline-size: 0;
     max-inline-size: 100%;
@@ -822,6 +824,26 @@
    * 前を .g-wrap で折れるようにする。長いコードもはみ出さず、要素と付属語の境目だけが留まる。 */
   .g-nobr { white-space: nowrap; }
   .g-wrap { white-space: normal; }
+  /* 1 行で出す部品（white-space: nowrap）の中では <wbr> を消す。Chrome は nowrap の中でも <wbr> で折る
+   * （実測 155。ゼロ幅スペースなら折らない）。消しても文字列と名前は変わらない（§10-35）。
+   * nowrap を足したら、ここにも足す（phrase.test.tsx が突き合わせる）。 */
+  :where(
+    .g-end-marker,
+    .g-table-wrap :is(th, td),
+    .g-input-adorn,
+    .g-select-value,
+    .g-cal-title,
+    .g-day-note,
+    .g-range-preset,
+    .g-file-name,
+    .g-time-option,
+    .g-badge,
+    .g-kbd,
+    .g-tab,
+    .g-menu-shortcut,
+    .g-tag-label,
+    .g-data-table :is(th, td):not([data-wrap], .g-data-table-empty)
+  ) wbr { display: none; }
 
   /* --- 3.9 focus ---------------------------------------------------------
    * 既定のリング。:where() で詳細度を 0 にして、部品が自分で決めた値を必ず勝たせる。
@@ -2417,7 +2439,7 @@
   .g-btn[data-size="sm"]::before { content: ""; position: absolute; inset: calc((36px - var(--g-tap)) / 2) 0; }
   .g-btn[data-size="lg"] { min-block-size: 52px; font-size: 1rem; }
   .g-btn[data-size="lg"]:not([data-variant="tertiary"]) { padding-inline: 24px; }
-  .g-btn[data-block] { display: grid; inline-size: 100%; }
+  .g-btn[data-block] { display: flex; inline-size: 100%; }
   a.g-btn { text-decoration: none; }
   .g-iconbtn { position: relative; }
   .g-iconbtn[data-variant="tonal"] { background: var(--g-hover); }
@@ -3139,11 +3161,18 @@
     min-inline-size: 0;
   }
   .g-data-table[data-density="compact"] { --g-dt-pad-block: 5px; --g-dt-pad-inline: 12px; }
+  /* 横に送れるときは、送れる側の端に影を出す（列が隠れていることが見て分かる）。影は器に、覆いは中身に付け
+   * （background-attachment: local）、端まで送ると覆いが影を隠す。見出しと行の地は半透明にして影を隠さない。 */
   .g-data-table-scroll {
     overflow-x: auto;
     border: 1px solid var(--g-border);
     border-radius: var(--g-radius);
-    background: var(--g-surface);
+    background:
+      linear-gradient(to right, var(--g-surface) 40%, transparent) left center / 32px 100% no-repeat local,
+      linear-gradient(to left, var(--g-surface) 40%, transparent) right center / 32px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--g-fg) 18%, transparent), transparent) left center / 12px 100% no-repeat,
+      radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--g-fg) 18%, transparent), transparent) right center / 12px 100% no-repeat,
+      var(--g-surface);
   }
   .g-data-table-scroll:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
   .g-data-table table {
@@ -3161,19 +3190,21 @@
     vertical-align: middle;
   }
   .g-data-table tbody tr:last-child > :is(th, td) { border-block-end: 0; }
+  /* セルは 1 行で出し（「INV-｜2026-｜010」「支払い｜済み」のように折らない）、器より広ければ表を横に送る（B-13）。
+   * 説明のような長い文の列は wrap で折り返す。行が無いときの文も折り返す。 */
+  .g-data-table :is(th, td):not([data-wrap], .g-data-table-empty) { white-space: nowrap; }
   .g-data-table thead th {
-    background: color-mix(in srgb, var(--g-fg) 3%, var(--g-surface));
+    background: color-mix(in srgb, var(--g-fg) 3%, transparent);
     color: var(--g-fg-muted);
     font-size: 0.8125rem;
     font-weight: 600;
-    white-space: nowrap;
   }
   .g-data-table tbody th { font-weight: 600; }
   .g-data-table :is(th, td)[data-align="end"] { text-align: end; }
   .g-data-table :is(th, td)[data-align="center"] { text-align: center; }
   .g-data-table tbody tr { transition: background-color var(--g-dur-fast) linear; }
   .g-data-table tbody tr:not([data-loading]):hover { background: var(--g-hover); }
-  .g-data-table tbody tr[data-selected] { background: color-mix(in srgb, var(--g-accent) 8%, var(--g-surface)); }
+  .g-data-table tbody tr[data-selected] { background: color-mix(in srgb, var(--g-accent) 8%, transparent); }
   .g-data-table-sort {
     display: inline-flex;
     align-items: center;
@@ -3195,9 +3226,10 @@
   .g-data-table-sort-icon { flex: none; inline-size: 14px; block-size: 14px; opacity: 0.5; }
   .g-data-table-sort[data-active] .g-data-table-sort-icon { opacity: 1; }
   /* 選ぶ列と操作の列は中身の幅だけ取る */
-  .g-data-table :is(th, td):is(.g-data-table-select, .g-data-table-actions) { inline-size: 1%; white-space: nowrap; }
+  .g-data-table :is(th, td):is(.g-data-table-select, .g-data-table-actions) { inline-size: 1%; }
   .g-data-table :is(th, td).g-data-table-select { padding-inline-end: 0; }
   .g-data-table :is(th, td).g-data-table-actions { text-align: end; }
+  .g-data-table-row-actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
   /* 当たりは 44px。行の高さを変えないよう、セルの余白のぶんだけ外へ広げる */
   .g-data-table-check {
     display: grid;

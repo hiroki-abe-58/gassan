@@ -1,4 +1,4 @@
-import { createContext, useContext, type ComponentType, type MouseEventHandler, type ReactNode } from 'react';
+import { createContext, useContext, useSyncExternalStore, type ComponentType, type MouseEventHandler, type ReactNode } from 'react';
 
 import { ButtonBody } from '../internal/button-body';
 import { useLabels } from '../labels';
@@ -64,6 +64,11 @@ export interface SiteProviderProps {
   nav?: readonly SiteNavLink[];
   /** 公開ページのフッタのリンクの列。 */
   footer?: readonly SiteFooterColumn[];
+  /**
+   * 日時を見せる時間帯（'Asia/Tokyo'。利用者のプロフィールの時間帯など）。既定は見ている人の時間帯。
+   * 見ている人の時間帯はサーバーでは分からないので、渡さなければ、サーバーで描いてから hydration を終えるまでは UTC で描く。
+   */
+  timeZone?: string;
   children: ReactNode;
 }
 
@@ -93,6 +98,23 @@ export function useSite(): Site {
   const { locale } = useLabels();
   const labels = config.labels ?? (locale.toLowerCase().startsWith('ja') ? japaneseTemplateLabels : englishTemplateLabels);
   return { ...config, links: config.links ?? {}, labels };
+}
+
+const subscribeNothing = (): (() => void) => () => undefined;
+
+/**
+ * 日時を見せる時間帯。SiteProvider の timeZone か、無ければ見ている人の時間帯（undefined）。
+ * サーバーと hydration の間は UTC にする。サーバー（多くは UTC）とブラウザで時間帯が違っても文字が食い違わず、
+ * hydration を終えたら見ている人の時間帯で描き直す。ブラウザだけで描くときは初めから見ている人の時間帯。
+ */
+export function useTimeZone(): string | undefined {
+  const { timeZone } = useContext(SiteContext);
+  const hydrated = useSyncExternalStore(
+    subscribeNothing,
+    () => true,
+    () => false,
+  );
+  return timeZone ?? (hydrated ? undefined : 'UTC');
 }
 
 /**

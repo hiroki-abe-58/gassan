@@ -8,7 +8,7 @@ import { usePhrase } from '../phrase';
 import { useCooldown } from './form';
 import type { ErrorCopyKey, ErrorStatus } from './labels';
 import { StatusLayout } from './layouts';
-import { SiteButtonLink, useSite } from './site';
+import { SiteButtonLink, useSite, useTimeZone } from './site';
 
 const KNOWN: readonly string[] = ['400', '401', '403', '404', '408', '410', '429', '500', '502', '503', '504'];
 
@@ -159,7 +159,10 @@ export interface MaintenancePageProps extends DataAttributes {
   start?: Date | string;
   /** 終わりの予定。 */
   end?: Date | string;
-  /** 予定を表す時間帯（'Asia/Tokyo'）。既定は見ている人の時間帯。時間帯の名前も添える。 */
+  /**
+   * 予定を表す時間帯（'Asia/Tokyo'）。時間帯の名前も添える。既定は SiteProvider の timeZone、それも無ければ見ている人の
+   * 時間帯（サーバーで描いてから hydration を終えるまでは UTC）。
+   */
   timeZone?: string;
   /** 経過の知らせ（新しい順）。 */
   updates?: readonly MaintenanceUpdate[];
@@ -206,7 +209,7 @@ function scheduleParts(
 export function MaintenancePage({
   start,
   end,
-  timeZone,
+  timeZone: zone,
   updates,
   title,
   description,
@@ -216,6 +219,8 @@ export function MaintenancePage({
   ...rest
 }: MaintenancePageProps): ReactNode {
   const { labels, links } = useSite();
+  const siteZone = useTimeZone();
+  const timeZone = zone ?? siteZone;
   const phrase = usePhrase();
   const updatesId = `${useId()}-updates`;
   const { common, maintenance } = labels;

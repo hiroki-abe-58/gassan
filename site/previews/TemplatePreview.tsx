@@ -1,9 +1,6 @@
 import { type ReactNode } from 'react';
 
 import {
-  AppShell,
-  Badge,
-  Button,
   ChangelogPage,
   ContactPage,
   DescriptionList,
@@ -11,11 +8,8 @@ import {
   ErrorPage,
   FaqPage,
   ForgotPasswordPage,
-  IconButton,
   MaintenancePage,
-  PageHeader,
   PricingPage,
-  Progress,
   ResetPasswordPage,
   SignInPage,
   SignOutPage,
@@ -28,18 +22,9 @@ import {
   type ErrorStatus,
 } from '@genelab/gassan';
 
-import DashboardSample from '../demos/DashboardSample';
-import MemberTable from '../demos/MemberTable';
-import { fmt, useT } from '../i18n';
-import { to } from '../router';
-
-/** 見本の待ち時間（送信しているように見せる）。 */
-const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
-
-const preview = (name: string): string => to(`/preview/${name}`);
-const go = (name: string): void => {
-  window.location.hash = preview(name).slice(1);
-};
+import { useT } from '../i18n';
+import { AtlasApp, InviteSample, OnboardingSample } from './AppPreviews';
+import { go, preview, wait } from './shared';
 
 /** 見本の製品のロゴ。名前は文字で添える（ロゴの読み上げ名が製品の名前になる）。 */
 function AtlasLogo({ name }: { name: string }): ReactNode {
@@ -81,26 +66,13 @@ export const PREVIEWS = [
   'changelog',
   'app-dashboard',
   'app-members',
+  'app-billing',
+  'app-settings',
+  'onboarding',
+  'invite',
+  'invite-signed-out',
+  'invite-expired',
 ] as const;
-
-/** アプリの枠の見本の案内の印（飾り）。 */
-const ICON_PATHS = {
-  home: 'M3.5 9.5 10 4l6.5 5.5M5.5 8v8h9V8',
-  members: 'M7.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM2.5 16c0-2.5 2.2-4 5-4s5 1.5 5 4M13 4.2a2.5 2.5 0 0 1 0 4.6M14.5 12c1.8.4 3 1.6 3 4',
-  billing: 'M3 6.5A1.5 1.5 0 0 1 4.5 5h11A1.5 1.5 0 0 1 17 6.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 13.5v-7ZM3 8.5h14M6 12h3',
-  changelog: 'M6 4.5h8M6 8.5h8M6 12.5h5M3.5 4.5h.01M3.5 8.5h.01M3.5 12.5h.01',
-  help: 'M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM8 8a2 2 0 1 1 2.8 1.8c-.5.2-.8.7-.8 1.2v.5M10 14h.01',
-  search: 'M8.75 14.5a5.75 5.75 0 1 0 0-11.5 5.75 5.75 0 0 0 0 11.5ZM17 17l-4.1-4.1',
-  bell: 'M5 13.5V9a5 5 0 0 1 10 0v4.5l1.5 1.5h-13L5 13.5ZM8.5 17h3',
-} as const;
-
-function NavIcon({ d }: { d: string }): ReactNode {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d={d} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 const ERRORS: Record<string, ErrorStatus> = {
   'error-404': 404,
@@ -340,67 +312,18 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
           />
         );
       case 'app-dashboard':
-      case 'app-members': {
-        const app = s.app;
-        return (
-          <AppShell
-            current={preview(name)}
-            nav={[
-              {
-                items: [
-                  { label: app.home, href: preview('app-dashboard'), icon: <NavIcon d={ICON_PATHS.home} /> },
-                  { label: app.members, href: preview('app-members'), icon: <NavIcon d={ICON_PATHS.members} />, badge: <Badge>6</Badge> },
-                ],
-              },
-              {
-                title: app.workspace,
-                items: [
-                  { label: app.billing, href: preview('pricing'), icon: <NavIcon d={ICON_PATHS.billing} /> },
-                  { label: app.changelog, href: preview('changelog'), icon: <NavIcon d={ICON_PATHS.changelog} /> },
-                  { label: app.help, href: preview('faq'), icon: <NavIcon d={ICON_PATHS.help} /> },
-                ],
-              },
-            ]}
-            actions={
-              <>
-                <IconButton label={app.search} onClick={() => toast(app.searchHint)}>
-                  <NavIcon d={ICON_PATHS.search} />
-                </IconButton>
-                <IconButton label={app.notifications} onClick={() => toast(app.noNotifications)}>
-                  <NavIcon d={ICON_PATHS.bell} />
-                </IconButton>
-              </>
-            }
-            account={{
-              name: app.user,
-              menu: [
-                { value: 'profile', label: app.profile, onSelect: () => toast(app.profile) },
-                { value: 'settings', label: app.settings, onSelect: () => toast(app.settings) },
-                { type: 'separator' },
-                { value: 'sign-out', label: app.signOut, href: preview('sign-out-confirm') },
-              ],
-            }}
-            sidebarFooter={<Progress label={app.seats} value={6} max={10} valueText={(value, max) => fmt(app.seatsValue, String(value), String(max))} />}
-          >
-            {name === 'app-dashboard' ? (
-              <>
-                <PageHeader
-                  title={app.home}
-                  description={app.dashboardDescription}
-                  actions={
-                    <Button variant="primary" onClick={() => toast.success(app.created)}>
-                      {app.newProject}
-                    </Button>
-                  }
-                />
-                <DashboardSample />
-              </>
-            ) : (
-              <MemberTable headingLevel={1} />
-            )}
-          </AppShell>
-        );
-      }
+      case 'app-members':
+      case 'app-billing':
+      case 'app-settings':
+        return <AtlasApp page={name} />;
+      case 'onboarding':
+        return <OnboardingSample />;
+      case 'invite':
+        return <InviteSample variant="pending" />;
+      case 'invite-signed-out':
+        return <InviteSample variant="signed-out" />;
+      case 'invite-expired':
+        return <InviteSample variant="expired" />;
       case 'changelog':
         return (
           <ChangelogPage

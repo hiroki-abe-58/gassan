@@ -100,9 +100,39 @@ export default {
     },
     shell: {
       title: '應用程式外框',
-      intro: '容器較寬時，在左側放置導覽列，並以底色與粗體標示目前的頁面。切換到「手機」後，導覽會收合，可以從「選單」以側邊面板開啟（按 Esc 或點擊外側即可關閉，點擊導覽中的連結也會關閉）。在成員畫面中，可以從每一列的「…」以側邊面板開啟詳細資料。',
+      intro: '容器較寬時，在左側放置導覽列，並以底色與粗體標示目前的頁面。切換到「手機」後，導覽會收合，可以從「選單」以側邊面板開啟（按 Esc 或點擊外側即可關閉，點擊導覽中的連結也會關閉）。從導覽可以前往成員、方案與帳單、設定的範例。',
       variants: { dashboard: '首頁（儀表板）', members: '成員（資料表格）' },
     },
     a11yCaption: '應用程式外框滿足的規格',
+  },
+  appPages: {
+    lead: '登入之後、每個 SaaS 都有的畫面：帳號設定、成員與邀請、方案與帳單、初始設定、接受邀請的頁面。放在應用程式外框中，只要傳入資料與處理函式，送出流程、確認用的模態視窗，連結果的朗讀也都處理好了。',
+    setup: {
+      title: '用法',
+      intro: '內容放在應用程式外框（AppShell）中。傳入的只有資料與處理函式（儲存、邀請、取消訂閱等）。處理失敗時回傳 { error }，這段訊息就會插入朗讀。沒有傳入的區塊與操作不會顯示。',
+      code: "import { AppShell, MembersPage, SettingsPage } from '@genelab/gassan';\n\n<AppShell current=\"/settings\" nav={nav} account={account}>\n  <SettingsPage\n    profile={{ name: user.name, email: user.email, onSubmit: saveProfile }}\n    password={{ onSubmit: changePassword }}\n    sessions={{ items: sessions, onRevoke: revokeSession, onRevokeOthers: revokeOtherSessions }}\n    deleteAccount={{ confirmText: user.email, onDelete: deleteAccount }}\n  />\n</AppShell>\n\n<MembersPage\n  members={members}\n  roles={[{ value: 'admin', label: '管理員' }, { value: 'editor', label: '編輯者' }]}\n  currentUserId={user.id}\n  onInvite={({ emails, role }) => invite(emails, role)}\n  onRemove={(ids) => removeMembers(ids)}\n/>",
+    },
+    settings: {
+      title: '帳號設定',
+      intro: '個人資料、密碼、兩步驟驗證、已登入的裝置、刪除帳號，分成帶有標題的區塊依序排列。容器較寬時，區塊的標題與說明放在左側一欄。將裝置登出的按鈕帶有裝置的名稱，目前正在使用的裝置則沒有這個按鈕。刪除要在確認用的模態視窗中進行，輸入指定的文字（如電子郵件地址）之前無法按下。',
+    },
+    members: {
+      title: '成員',
+      intro: '已使用的席次、依姓名與電子郵件地址篩選（不區分平假名與片假名、全形與半形）、成員表格、邀請中的清單。邀請在模態視窗中進行，把電子郵件地址當作標籤一次輸入。自己的那一列無法選取、無法移除，也無法變更角色。移除時會先經過確認用的模態視窗。',
+    },
+    billing: {
+      title: '方案與帳單',
+      intro: '目前的方案與下次續約日、付款方式（信用卡只顯示末四碼）、用量、發票表格。用量達到 80% 時顯示警告色，達到上限時顯示錯誤色，也會以數字標示。付款失敗時，會以頁面頂端的通知橫幅告知。在範例中取消訂閱後，會改為顯示可使用的最後一天。',
+    },
+    onboarding: {
+      title: '初始設定',
+      intro: '註冊後緊接著的步驟。在卡片上方放置進度，步驟切換時把焦點移到標題。無法進到下一步的原因會顯示在內容上方並朗讀。可以略過的步驟會顯示「稍後再設定」。在範例中，沒有輸入工作區名稱就無法進到下一步。',
+    },
+    invite: {
+      title: '接受邀請',
+      intro: '標示是誰、邀請你加入哪個工作區、擔任什麼角色，並放上接受 / 拒絕。尚未登入時引導前往登入與建立帳號；邀請過期時只引導接下來該做的事。拒絕後，切換到已拒絕的畫面，並把焦點移到標題。',
+      variants: { pending: '邀請', signedOut: '未登入', expired: '已過期' },
+    },
+    a11yCaption: '應用程式內頁面範本滿足的規格',
   },
 } satisfies typeof ja;

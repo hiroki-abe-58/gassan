@@ -10,9 +10,19 @@ import { Icon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { usePhrase } from '../phrase';
 import { ModalSelect, normalizeForMatch } from '../select';
-import { ConsentField, EMAIL_INPUT, ErrorSummary, FormError, looksLikeEmail, useTemplateForm, type FormErrors, type SubmitResult } from './form';
+import {
+  ConsentField,
+  EMAIL_INPUT,
+  ErrorSummary,
+  FormError,
+  formatDate,
+  looksLikeEmail,
+  useTemplateForm,
+  type FormErrors,
+  type SubmitResult,
+} from './form';
 import { WithSiteLayout } from './site-layout';
-import { SiteButtonLink, SiteLink, useSite } from './site';
+import { SiteButtonLink, SiteLink, useSite, useTimeZone } from './site';
 
 /** 公開ページの共通の props。 */
 interface PublicPage extends DataAttributes {
@@ -21,14 +31,6 @@ interface PublicPage extends DataAttributes {
   /** SiteLayout（ヘッダ・フッタ）で包むか。既定 true。false は自分の外枠の中に置くとき（中身だけを描く）。 */
   layout?: boolean;
   className?: string;
-}
-
-/** 日付だけの文字列（'2026-04-01'）は UTC の 0 時として読み、UTC で書く（時差で前の日にならないように）。 */
-function formatDate(value: Date | string, locale: string): { text: string; iso: string } {
-  const dateOnly = typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
-  const date = value instanceof Date ? value : new Date(value);
-  const text = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: dateOnly ? 'UTC' : undefined }).format(date);
-  return { text, iso: dateOnly ? (value as string) : date.toISOString() };
 }
 
 /**
@@ -91,6 +93,7 @@ export function DocumentPage({
   ...rest
 }: DocumentPageProps): ReactNode {
   const { labels } = useSite();
+  const timeZone = useTimeZone();
   const phrase = usePhrase();
   const tocId = `${useId()}-toc`;
   const showToc = toc ?? sections.length >= 3;
@@ -107,8 +110,8 @@ export function DocumentPage({
     );
   };
   const meta = [
-    effective ? { label: labels.document.effective, ...formatDate(effective, labels.locale) } : null,
-    updated ? { label: labels.document.updated, ...formatDate(updated, labels.locale) } : null,
+    effective ? { label: labels.document.effective, ...formatDate(effective, labels.locale, timeZone) } : null,
+    updated ? { label: labels.document.updated, ...formatDate(updated, labels.locale, timeZone) } : null,
   ].filter((item): item is { label: string; text: string; iso: string } => item !== null);
 
   return (
@@ -663,6 +666,7 @@ const TAG_ORDER: readonly ChangelogTag[] = ['new', 'improved', 'fixed', 'securit
  */
 export function ChangelogPage({ entries, feedHref, title, description, layout = true, className, ...rest }: ChangelogPageProps): ReactNode {
   const { labels, links } = useSite();
+  const timeZone = useTimeZone();
   const phrase = usePhrase();
   const base = useId();
   const { changelog } = labels;
@@ -694,7 +698,7 @@ export function ChangelogPage({ entries, feedHref, title, description, layout = 
         </header>
         <ol className="g-changes">
           {shown.map((entry) => {
-            const { text, iso } = formatDate(entry.date, labels.locale);
+            const { text, iso } = formatDate(entry.date, labels.locale, timeZone);
             // 既定の id は全体の中の位置で作る（絞り込んでも同じ更新は同じ id のまま）
             const id = entry.id ?? `${base}-${entry.version ?? iso}-${String(entries.indexOf(entry))}`;
             return (

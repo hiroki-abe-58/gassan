@@ -56,6 +56,7 @@ export default {
     templatesStatus: '錯誤與維護',
     templatesPublic: '價格、常見問題與條款',
     templatesApp: '應用程式外框',
+    templatesAppPages: '設定、成員與帳單',
     provider: 'GassanProvider',
     spec: '行為規格',
     verification: '驗證',

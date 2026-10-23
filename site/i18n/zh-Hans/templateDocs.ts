@@ -100,9 +100,39 @@ export default {
     },
     shell: {
       title: '应用外框',
-      intro: '容器较宽时，在左侧放置导航栏，并用底色和粗体标示当前页面。切换到“手机”后，导航会收起，可以从“菜单”以侧边面板打开（按 Esc 或点击外部即可关闭，点击导航中的链接也会关闭）。在成员界面中，可以从行末的“…”以侧边面板打开详情。',
+      intro: '容器较宽时，在左侧放置导航栏，并用底色和粗体标示当前页面。切换到“手机”后，导航会收起，可以从“菜单”以侧边面板打开（按 Esc 或点击外部即可关闭，点击导航中的链接也会关闭）。从导航可以前往成员、套餐与账单、设置的示例。',
       variants: { dashboard: '首页（仪表盘）', members: '成员（数据表格）' },
     },
     a11yCaption: '应用外框满足的规范',
+  },
+  appPages: {
+    lead: '登录之后、每个 SaaS 都有的界面：账号设置、成员与邀请、套餐与账单、初始设置、接受邀请的页面。放在应用外框中，只要传入数据和处理函数，提交流程、确认模态框，连结果的播报也都处理好了。',
+    setup: {
+      title: '用法',
+      intro: '内容放在应用外框（AppShell）中。传入的只有数据和处理函数（保存、邀请、取消订阅等）。处理失败时返回 { error }，就会打断当前的播报，读出这段文字。没有传入的区块和操作不会显示。',
+      code: "import { AppShell, MembersPage, SettingsPage } from '@genelab/gassan';\n\n<AppShell current=\"/settings\" nav={nav} account={account}>\n  <SettingsPage\n    profile={{ name: user.name, email: user.email, onSubmit: saveProfile }}\n    password={{ onSubmit: changePassword }}\n    sessions={{ items: sessions, onRevoke: revokeSession, onRevokeOthers: revokeOtherSessions }}\n    deleteAccount={{ confirmText: user.email, onDelete: deleteAccount }}\n  />\n</AppShell>\n\n<MembersPage\n  members={members}\n  roles={[{ value: 'admin', label: '管理员' }, { value: 'editor', label: '编辑者' }]}\n  currentUserId={user.id}\n  onInvite={({ emails, role }) => invite(emails, role)}\n  onRemove={(ids) => removeMembers(ids)}\n/>",
+    },
+    settings: {
+      title: '账号设置',
+      intro: '个人资料、密码、两步验证、已登录的设备、删除账号，分成带标题的区块依次排列。容器较宽时，区块的标题和说明放在左侧一列。让设备退出登录的按钮带有设备名称，当前正在使用的设备上不放这个按钮。删除要在确认模态框中进行，输入指定的文字（如邮箱地址）之前无法按下。',
+    },
+    members: {
+      title: '成员',
+      intro: '已用席位、按姓名和邮箱地址筛选（不区分平假名与片假名、全角与半角）、成员表格、邀请中的列表。邀请在模态框中进行，把邮箱地址作为标签一次性输入。自己所在的行不能选择、不能移除，也不能更改角色。移除时会先经过确认模态框。',
+    },
+    billing: {
+      title: '套餐与账单',
+      intro: '当前套餐和下次续订日期、支付方式（卡号只显示末 4 位）、用量、发票表格。用量达到 80% 时显示为警告色，达到上限时显示为错误色，同时也用数字标示。付款失败时，会用页面顶部的通知横幅告知。在示例中取消订阅后，会改为显示可以使用的最后一天。',
+    },
+    onboarding: {
+      title: '初始设置',
+      intro: '注册之后紧接着的步骤。在卡片上方放置进度，步骤切换时把焦点移到标题。无法进入下一步的原因会显示在内容上方并播报出来。可以跳过的步骤会显示“稍后设置”。在示例中，不输入工作区名称就无法进入下一步。',
+    },
+    invite: {
+      title: '接受邀请',
+      intro: '标明是谁、邀请你加入哪个工作区、担任什么角色，并放上接受 / 拒绝。未登录时引导去登录和创建账号；邀请过期时只引导接下来该做的事。拒绝后，切换到已拒绝的画面，并把焦点移到标题。',
+      variants: { pending: '邀请', signedOut: '未登录', expired: '已过期' },
+    },
+    a11yCaption: '应用内页面模板满足的规范',
   },
 } satisfies typeof ja;

@@ -100,9 +100,39 @@ export default {
     },
     shell: {
       title: '앱 셸',
-      intro: '컨테이너가 넓을 때는 왼쪽에 내비게이션 바를 두고, 현재 페이지를 바탕색과 굵은 글씨로 나타낸다. “스마트폰”으로 바꾸면 내비게이션이 접히고, “메뉴”에서 옆 패널로 연다(Esc나 바깥을 누르면 닫히고, 내비게이션의 링크를 눌러도 닫힌다). 멤버 화면에서는 행의 “…”에서 상세 정보를 옆 패널로 열 수 있다.',
+      intro: '컨테이너가 넓을 때는 왼쪽에 내비게이션 바를 두고, 현재 페이지를 바탕색과 굵은 글씨로 나타낸다. “스마트폰”으로 바꾸면 내비게이션이 접히고, “메뉴”에서 옆 패널로 연다(Esc나 바깥을 누르면 닫히고, 내비게이션의 링크를 눌러도 닫힌다). 내비게이션에서 멤버·요금제와 결제·설정 견본으로 이동할 수 있다.',
       variants: { dashboard: '홈(대시보드)', members: '멤버(데이터 표)' },
     },
     a11yCaption: '앱 셸이 충족하는 명세',
+  },
+  appPages: {
+    lead: '로그인한 뒤, 어느 SaaS에나 있는 화면. 계정 설정·멤버와 초대·요금제와 결제·초기 설정·초대 수락 페이지. 앱 셸 안에 두고 데이터와 처리 함수만 넘기면, 제출 흐름·확인 모달·결과 읽어 주기까지 갖춰진다.',
+    setup: {
+      title: '사용법',
+      intro: '내용은 앱 셸(AppShell) 안에 둔다. 넘기는 것은 데이터와 처리 함수(저장·초대·해지 등)뿐이다. 처리에 실패했을 때 { error }를 돌려주면, 그 문장이 끼어들어 읽힌다. 넘기지 않은 구역이나 작업은 보여 주지 않는다.',
+      code: "import { AppShell, MembersPage, SettingsPage } from '@genelab/gassan';\n\n<AppShell current=\"/settings\" nav={nav} account={account}>\n  <SettingsPage\n    profile={{ name: user.name, email: user.email, onSubmit: saveProfile }}\n    password={{ onSubmit: changePassword }}\n    sessions={{ items: sessions, onRevoke: revokeSession, onRevokeOthers: revokeOtherSessions }}\n    deleteAccount={{ confirmText: user.email, onDelete: deleteAccount }}\n  />\n</AppShell>\n\n<MembersPage\n  members={members}\n  roles={[{ value: 'admin', label: '관리자' }, { value: 'editor', label: '편집자' }]}\n  currentUserId={user.id}\n  onInvite={({ emails, role }) => invite(emails, role)}\n  onRemove={(ids) => removeMembers(ids)}\n/>",
+    },
+    settings: {
+      title: '계정 설정',
+      intro: '프로필·비밀번호·2단계 인증·로그인한 기기·계정 삭제를 제목이 있는 구역으로 나누어 늘어놓는다. 컨테이너가 넓을 때는 구역의 제목과 설명을 왼쪽 열에 둔다. 기기를 로그아웃시키는 버튼에는 기기 이름이 붙고, 지금 쓰고 있는 기기에는 그 버튼을 두지 않는다. 삭제는 확인 모달에서 하며, 정해 둔 문자(이메일 주소 등)를 입력할 때까지 누를 수 없다.',
+    },
+    members: {
+      title: '멤버',
+      intro: '사용 중인 좌석·이름과 이메일 주소로 좁히기(히라가나와 가타카나, 전각과 반각을 구별하지 않는다)·멤버 표·초대 중 목록. 초대는 모달에서 하며, 이메일 주소를 태그로 한꺼번에 넣는다. 자신의 행은 선택할 수 없고, 제외할 수 없으며, 역할도 바꿀 수 없다. 제외할 때는 확인 모달을 거친다.',
+    },
+    billing: {
+      title: '요금제와 결제',
+      intro: '현재 요금제와 다음 갱신일·결제 수단(카드는 끝 4자리만)·사용량·청구서 표. 사용량은 80%에서 주의 색, 상한에서 오류 색이 되며, 숫자로도 보여 준다. 결제에 실패했다면 페이지 위쪽의 알림 배너로 알린다. 견본에서 해지하면, 쓸 수 있는 마지막 날을 보여 주는 표시로 바뀐다.',
+    },
+    onboarding: {
+      title: '초기 설정',
+      intro: '가입한 직후의 단계. 카드 위에 진행 상황을 두고, 단계가 바뀌면 제목으로 포커스를 옮긴다. 다음으로 넘어갈 수 없는 이유는 내용 위에 보여 주고 읽어 준다. 건너뛸 수 있는 단계에는 “나중에 하기”를 보여 준다. 견본에서는 워크스페이스 이름을 입력하지 않으면 다음으로 넘어갈 수 없다.',
+    },
+    invite: {
+      title: '초대 수락',
+      intro: '누가·어느 워크스페이스에·어떤 역할로 초대했는지 보여 주고, 수락 / 거절을 둔다. 로그인하지 않았다면 로그인과 계정 만들기로, 기간이 지났다면 다음에 할 일만 안내한다. 거절하면 그 화면으로 바꾸고 제목으로 포커스를 옮긴다.',
+      variants: { pending: '초대', signedOut: '로그인하지 않음', expired: '기간 만료' },
+    },
+    a11yCaption: '앱 안의 페이지 템플릿이 충족하는 명세',
   },
 } satisfies typeof ja;

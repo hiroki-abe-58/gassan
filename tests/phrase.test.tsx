@@ -12,7 +12,7 @@ import { render, screen } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import { GassanProvider, Modal, Phrase, englishLabels, splitPhrases } from '../src';
+import { GassanProvider, Modal, Phrase, Progress, englishLabels, splitPhrases } from '../src';
 import { glueSegments, scriptOf } from '../src/internal/phrase';
 import { renderModal } from './utils';
 
@@ -43,6 +43,12 @@ describe('W-01 文節に分ける（splitPhrases）', () => {
         expect(phrase).not.toMatch(/^[をはがにでともへのや]/);
       }
     }
+  });
+
+  it('時刻と比の「:」の前後では折らない（「最後の利用 9:｜30」にしない）', () => {
+    expect(splitPhrases('最後の利用 2026/10/23 9:30')).toEqual(['最後の', '利用 2026/10/23 9:30']);
+    expect(splitPhrases('画面の比率は16:9です')).toEqual(['画面の', '比率は', '16:9です']);
+    expect(splitPhrases('上次使用 2026/10/23 9:30')).toEqual(['上次', '使用 2026/10/23 9:30']);
   });
 
   it('句読点と閉じ括弧を行頭に置かない（禁則）', () => {
@@ -430,6 +436,13 @@ describe('W-05 効かせる場所', () => {
     expect(container.querySelector('code .g-phrase')).toBeNull();
   });
 
+  it('進み具合の名前にも効き、名前は元のまま（「今月の API の呼び出｜し」にしない）', () => {
+    // 折り返しの監査（check:breaks）で、請求のページの使っている量の名前が 320px で語の途中で折れていた
+    render(<Progress label="今月の API の呼び出し" value={38} />);
+    expect(document.querySelector('.g-progress-label .g-phrase wbr')).not.toBeNull();
+    expect(screen.getByRole('progressbar')).toHaveAccessibleName('今月の API の呼び出し');
+  });
+
   it('グラフの名前と傾向の要約にも効く', () => {
     const { container } = renderModal({
       children: (
@@ -571,11 +584,70 @@ describe('W-02 器より長い文節の扱い（CSS）', () => {
     expect(rule()).toMatch(/line-break:\s*strict;/);
   });
 
-  it('ボタンのラベルは、ボタンより長い文節があってもボタンの外へはみ出さない（中央寄せの grid 項目の最小幅を外す）', () => {
-    // 実測: .g-btn は inline-grid + place-items: center なので、ラベルの幅は fit-content になり最長の文節より縮まない。
-    // 縦積みのフッタや狭い器でボタンが押し込まれると、文節がボタンの外へはみ出していた（§10-29）
+  it('ボタンのラベルは、ボタンより長い文節があってもボタンの外へはみ出さない（中央寄せの項目の最小幅を外す）', () => {
+    // 実測: 中央寄せの項目の最小幅は最長の文節なので、縦積みのフッタや狭い器でボタンが押し込まれると、
+    // 文節がボタンの外へはみ出していた（§10-29）
     const label = /\.g-btn-label\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
     expect(label).toMatch(/min-inline-size:\s*0;/);
     expect(label).toMatch(/max-inline-size:\s*100%;/);
+  });
+
+  it('ボタンは flex で組む（grid だと、項目の min-inline-size: 0 でボタンの最小幅からラベルが抜け、表の操作の列で潰れる）', () => {
+    // 実測（Chrome 155）: grid のボタンの最小幅は左右の余白だけ（30px）になり、幅 1% の列や狭い横並びで 1 文字ずつ折れた。
+    // flex なら項目の min 0 は最小幅の寄与に効かず、最長の文節（58px）が残る（§10-34）
+    const button = /\.g-btn\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    expect(button).toMatch(/display:\s*inline-flex;/);
+    expect(button).not.toMatch(/grid/);
+    expect(/\.g-btn\[data-block\]\s*\{([^}]*)\}/.exec(css)?.[1]).toMatch(/display:\s*flex;/);
+  });
+});
+
+describe('W-05 1 行で出す部品の中の <wbr>（CSS）', () => {
+  /** 宣言の塊から、セレクタ（, で並んだもの）を括弧の中の , で切らずに分ける。 */
+  const splitSelectors = (list: string): string[] => {
+    const out: string[] = [];
+    let depth = 0;
+    let current = '';
+    for (const char of list) {
+      if (char === '(') depth += 1;
+      if (char === ')') depth -= 1;
+      if (char === ',' && depth === 0) {
+        out.push(current.trim().replace(/\s+/g, ' '));
+        current = '';
+      } else current += char;
+    }
+    out.push(current.trim().replace(/\s+/g, ' '));
+    return out.filter(Boolean);
+  };
+  /** CSS の規則（@ の塊の中も）を [セレクタ, 宣言] で並べる。 */
+  const rulesOf = (source: string): [string, string][] =>
+    [...source.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{};]+)\{([^{}]*)\}/g)].map((match) => [(match[1] ?? '').trim(), match[2] ?? '']);
+
+  it('white-space: nowrap を宣言した部品は、中の <wbr> を消す（Chrome は nowrap の中でも <wbr> で折る）', () => {
+    for (const file of ['src/styles.css', 'src/templates.css']) {
+      const rules = rulesOf(readFileSync(resolve(process.cwd(), file), 'utf8'));
+      const hidden = new Set(
+        rules
+          .filter(([, body]) => /display:\s*none/.test(body))
+          .flatMap(([selector]) => splitSelectors(selector))
+          .filter((selector) => / wbr$/.test(selector))
+          .flatMap((selector) => {
+            const target = selector.replace(/ wbr$/, '');
+            const where = /^:where\(([\s\S]*)\)$/.exec(target);
+            return where ? splitSelectors(where[1] ?? '') : [target];
+          }),
+      );
+      const nowrap = rules
+        .filter(([, body]) => /white-space:\s*nowrap/.test(body))
+        // 見た目から隠す器（読み上げだけに残す）と、文節の束（中に <wbr> を置かない）は折れても見えない
+        .filter(([, body]) => !/clip-path:\s*inset\(50%\)/.test(body))
+        .flatMap(([selector]) => splitSelectors(selector))
+        .filter((selector) => selector !== '.g-nobr');
+      expect(nowrap.length, file).toBeGreaterThan(0);
+      expect(
+        nowrap.filter((selector) => !hidden.has(selector)),
+        file,
+      ).toEqual([]);
+    }
   });
 });

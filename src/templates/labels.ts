@@ -212,6 +212,146 @@ export interface TemplateLabels {
     menu: string;
     account: (name: string) => string;
   };
+  /** アカウントの設定（SettingsPage）。P-13。 */
+  settings: {
+    title: string;
+    description: string;
+    save: string;
+    saved: string;
+    profile: { title: string; description: string };
+    password: { title: string; description: string; current: string; submit: string; changed: string };
+    twoFactor: {
+      title: string;
+      description: string;
+      on: string;
+      off: string;
+      enable: string;
+      disable: string;
+      disableTitle: string;
+      disableDescription: string;
+      disabled: string;
+    };
+    sessions: {
+      title: string;
+      description: string;
+      current: string;
+      lastActive: (time: string) => string;
+      revoke: string;
+      /** 行のボタンの名前（見えている「ログアウトさせる」を含める）。 */
+      revokeFor: (device: string) => string;
+      revokeOthers: string;
+      revoked: string;
+    };
+    deleteAccount: {
+      title: string;
+      description: string;
+      open: string;
+      confirmTitle: string;
+      confirmDescription: string;
+      typeToConfirm: (text: string) => string;
+      /** 入力が合うまで「削除する」を押せない理由（ゲートの理由。G-07）。 */
+      mismatch: (text: string) => string;
+      confirm: string;
+    };
+  };
+  /** メンバー（MembersPage）。P-14。 */
+  members: {
+    title: string;
+    description: string;
+    invite: string;
+    inviteDescription: string;
+    emails: string;
+    emailsHelp: string;
+    emailsRequired: string;
+    role: string;
+    message: string;
+    send: string;
+    sent: (count: number) => string;
+    search: string;
+    name: string;
+    status: string;
+    lastActive: string;
+    statuses: { active: string; invited: string; suspended: string };
+    you: string;
+    roleFor: (name: string) => string;
+    actionsFor: (name: string) => string;
+    remove: string;
+    removeTitle: (name: string) => string;
+    removeManyTitle: (count: number) => string;
+    removeDescription: string;
+    removed: (count: number) => string;
+    roleChanged: (name: string, role: string) => string;
+    seats: string;
+    seatsValue: (used: number, total: number) => string;
+    invitations: string;
+    invitedAt: string;
+    resend: string;
+    resendFor: (email: string) => string;
+    resent: (email: string) => string;
+    revoke: string;
+    revokeFor: (email: string) => string;
+    revoked: (email: string) => string;
+    noMatch: (query: string) => string;
+  };
+  /** 料金と請求（BillingPage）。P-15。 */
+  billing: {
+    title: string;
+    description: string;
+    plan: string;
+    statuses: { active: string; trialing: string; past_due: string; canceled: string };
+    /** 値段と期間（「月額 ￥1,500」）。記号の「/ 月」ではなく言葉で読ませる。 */
+    price: (amount: string, interval: 'month' | 'year') => string;
+    renews: (date: string) => string;
+    trialEnds: (date: string) => string;
+    endsOn: (date: string) => string;
+    changePlan: string;
+    cancel: string;
+    cancelTitle: string;
+    cancelDescription: (date: string) => string;
+    cancelConfirm: string;
+    keep: string;
+    canceled: string;
+    pastDue: string;
+    usage: string;
+    payment: string;
+    /** カードの読み上げ（「Visa、末尾 4242」）。見た目は「Visa •••• 4242」。 */
+    card: (brand: string, last4: string) => string;
+    expires: (month: string, year: string) => string;
+    updatePayment: string;
+    addPayment: string;
+    noPayment: string;
+    billingEmail: string;
+    invoices: string;
+    invoiceNumber: string;
+    invoiceDate: string;
+    amount: string;
+    invoiceStatus: string;
+    invoiceStatuses: { paid: string; open: string; void: string; uncollectible: string };
+    download: string;
+    downloadFor: (number: string) => string;
+    noInvoices: string;
+  };
+  /** はじめの設定（OnboardingPage）。P-16。progress は手順の一覧の名前。 */
+  onboarding: { progress: string; back: string; next: string; skip: string; finish: string };
+  /** 招待を受ける（InviteAcceptPage）。P-17。 */
+  invite: {
+    title: (workspace: string) => string;
+    description: (inviter: string, workspace: string) => string;
+    role: (role: string) => string;
+    accept: string;
+    decline: string;
+    signIn: string;
+    signUp: string;
+    signedOutHint: string;
+    wrongAccount: (email: string) => string;
+    switchAccount: string;
+    expiredTitle: string;
+    expiredDescription: string;
+    invalidTitle: string;
+    invalidDescription: string;
+    declinedTitle: string;
+    declinedDescription: string;
+  };
 }
 
 /** 「A と B に同意します」のような、リンクを挟む文を組み立てる。 */
@@ -429,6 +569,143 @@ export const japaneseTemplateLabels: TemplateLabels = {
     menu: 'メニュー',
     account: (name) => `${name}のアカウント`,
   },
+  settings: {
+    title: '設定',
+    description: 'プロフィール・パスワード・ログインの守り・ログインしている端末を管理します。',
+    save: '保存する',
+    saved: '保存しました',
+    profile: { title: 'プロフィール', description: '名前とメールアドレスは、ワークスペースのメンバーに表示されます。' },
+    password: {
+      title: 'パスワード',
+      description: 'ほかのサービスと同じパスワードは使わないでください。',
+      current: '今のパスワード',
+      submit: 'パスワードを変える',
+      changed: 'パスワードを変えました',
+    },
+    twoFactor: {
+      title: '2 段階認証',
+      description: 'ログインのときに、パスワードに加えて確認コードを求めます。',
+      on: '有効',
+      off: '無効',
+      enable: '有効にする',
+      disable: '無効にする',
+      disableTitle: '2 段階認証を無効にしますか',
+      disableDescription: '無効にすると、パスワードだけでログインできるようになります。',
+      disabled: '2 段階認証を無効にしました',
+    },
+    sessions: {
+      title: 'ログインしている端末',
+      description: '心当たりのない端末があれば、ログアウトさせてください。',
+      current: 'この端末',
+      lastActive: (time) => `最後の利用 ${time}`,
+      revoke: 'ログアウトさせる',
+      revokeFor: (device) => `${device} をログアウトさせる`,
+      revokeOthers: 'ほかの端末をすべてログアウトさせる',
+      revoked: 'ログアウトさせました',
+    },
+    deleteAccount: {
+      title: 'アカウントの削除',
+      description: 'アカウントと、作ったデータをすべて削除します。取り消せません。',
+      open: 'アカウントを削除する',
+      confirmTitle: 'アカウントを削除しますか',
+      confirmDescription: 'プロフィール・設定・作ったデータがすべて消え、もとに戻せません。',
+      typeToConfirm: (text) => `確認のため「${text}」と入力してください`,
+      mismatch: (text) => `「${text}」と入力すると削除できます`,
+      confirm: '削除する',
+    },
+  },
+  members: {
+    title: 'メンバー',
+    description: 'ワークスペースに参加している人と、招待中の人。',
+    invite: 'メンバーを招待',
+    inviteDescription: 'メールアドレスを入れると、招待のメールを送ります。',
+    emails: 'メールアドレス',
+    emailsHelp: 'Enter かカンマで区切ると、何人でもまとめて招待できます。',
+    emailsRequired: '招待する人のメールアドレスを入れてください',
+    role: '役割',
+    message: 'メッセージ',
+    send: '招待を送る',
+    sent: (count) => `${String(count)} 人に招待を送りました`,
+    search: '名前かメールアドレスで探す',
+    name: '名前',
+    status: '状態',
+    lastActive: '最終ログイン',
+    statuses: { active: '有効', invited: '招待中', suspended: '停止中' },
+    you: 'あなた',
+    roleFor: (name) => `${name} の役割`,
+    actionsFor: (name) => `${name} の操作`,
+    remove: 'ワークスペースから外す',
+    removeTitle: (name) => `${name} を外しますか`,
+    removeManyTitle: (count) => `${String(count)} 人を外しますか`,
+    removeDescription: '外した人は、このワークスペースのデータを見られなくなります。もう一度招待すれば戻せます。',
+    removed: (count) => `${String(count)} 人を外しました`,
+    roleChanged: (name, role) => `${name} の役割を「${role}」にしました`,
+    seats: '使っている席',
+    seatsValue: (used, total) => `${String(used)} / ${String(total)} 席`,
+    invitations: '招待中',
+    invitedAt: '招待した日',
+    resend: '送り直す',
+    resendFor: (email) => `${email} に招待を送り直す`,
+    resent: (email) => `${email} に招待を送り直しました`,
+    revoke: '取り消す',
+    revokeFor: (email) => `${email} への招待を取り消す`,
+    revoked: (email) => `${email} への招待を取り消しました`,
+    noMatch: (query) => `「${query}」に当てはまるメンバーはいません`,
+  },
+  billing: {
+    title: '料金と請求',
+    description: 'プラン・使っている量・支払い方法・請求書。',
+    plan: '今のプラン',
+    statuses: { active: '有効', trialing: '試用中', past_due: '支払いの失敗', canceled: '解約済み' },
+    price: (amount, interval) => `${interval === 'month' ? '月額' : '年額'} ${amount}`,
+    renews: (date) => `${date} に自動で更新します`,
+    trialEnds: (date) => `${date} に試用期間が終わります`,
+    endsOn: (date) => `${date} に終わります`,
+    changePlan: 'プランを変える',
+    cancel: '解約する',
+    cancelTitle: '解約しますか',
+    cancelDescription: (date) => `${date} までは今のプランのまま使えます。その後は、有料の機能が使えなくなります。`,
+    cancelConfirm: '解約する',
+    keep: '解約しない',
+    canceled: '解約しました。期間の終わりまで、今のプランのまま使えます。',
+    pastDue: '支払いに失敗しました。支払い方法を確かめてください。',
+    usage: '使っている量',
+    payment: '支払い方法',
+    card: (brand, last4) => `${brand}、末尾 ${last4}`,
+    expires: (month, year) => `有効期限 ${month}/${year}`,
+    updatePayment: '支払い方法を変える',
+    addPayment: '支払い方法を登録する',
+    noPayment: '支払い方法が登録されていません。',
+    billingEmail: '請求書の送り先',
+    invoices: '請求書',
+    invoiceNumber: '番号',
+    invoiceDate: '日付',
+    amount: '金額',
+    invoiceStatus: '状態',
+    invoiceStatuses: { paid: '支払い済み', open: '未払い', void: '無効', uncollectible: '回収できない' },
+    download: 'PDF',
+    downloadFor: (number) => `${number} の PDF を保存`,
+    noInvoices: 'まだ請求書はありません',
+  },
+  onboarding: { progress: 'はじめの設定', back: '戻る', next: '次へ', skip: 'あとで設定する', finish: '始める' },
+  invite: {
+    title: (workspace) => `${workspace} への招待`,
+    description: (inviter, workspace) => `${inviter} さんが、あなたを ${workspace} に招待しています。`,
+    role: (role) => `役割: ${role}`,
+    accept: '招待を受ける',
+    decline: '断る',
+    signIn: 'ログインして参加する',
+    signUp: 'アカウントを作って参加する',
+    signedOutHint: '参加するには、ログインするかアカウントを作ってください。',
+    wrongAccount: (email) => `この招待は ${email} 宛てです。宛先のアカウントでログインし直してください。`,
+    switchAccount: '別のアカウントでログインする',
+    expiredTitle: '招待の期限が切れています',
+    expiredDescription: '招待した人に、もう一度送ってもらってください。',
+    invalidTitle: 'この招待は使えません',
+    invalidDescription: 'リンクが正しいか確かめてください。すでに参加しているなら、ログインしてください。',
+    declinedTitle: '招待を断りました',
+    declinedDescription: 'あとで参加したくなったら、招待した人に、もう一度送ってもらってください。',
+  },
 };
 
 export const englishTemplateLabels: TemplateLabels = {
@@ -642,5 +919,142 @@ export const englishTemplateLabels: TemplateLabels = {
     nav: 'App navigation',
     menu: 'Menu',
     account: (name) => `${name}, account`,
+  },
+  settings: {
+    title: 'Settings',
+    description: 'Manage your profile, password, sign-in security and signed-in devices.',
+    save: 'Save',
+    saved: 'Saved',
+    profile: { title: 'Profile', description: 'Your name and email address are visible to members of your workspace.' },
+    password: {
+      title: 'Password',
+      description: 'Do not reuse a password from another service.',
+      current: 'Current password',
+      submit: 'Change password',
+      changed: 'Password changed',
+    },
+    twoFactor: {
+      title: 'Two-factor authentication',
+      description: 'Ask for a verification code in addition to your password when you sign in.',
+      on: 'On',
+      off: 'Off',
+      enable: 'Turn on',
+      disable: 'Turn off',
+      disableTitle: 'Turn off two-factor authentication?',
+      disableDescription: 'Anyone with your password will be able to sign in.',
+      disabled: 'Two-factor authentication is off',
+    },
+    sessions: {
+      title: 'Signed-in devices',
+      description: 'If you do not recognize a device, sign it out.',
+      current: 'This device',
+      lastActive: (time) => `Last active ${time}`,
+      revoke: 'Sign out',
+      revokeFor: (device) => `Sign out ${device}`,
+      revokeOthers: 'Sign out all other devices',
+      revoked: 'Signed out',
+    },
+    deleteAccount: {
+      title: 'Delete account',
+      description: 'Delete your account and everything you created. This cannot be undone.',
+      open: 'Delete account',
+      confirmTitle: 'Delete your account?',
+      confirmDescription: 'Your profile, settings and everything you created will be gone for good.',
+      typeToConfirm: (text) => `To confirm, type “${text}”`,
+      mismatch: (text) => `Type “${text}” to delete`,
+      confirm: 'Delete',
+    },
+  },
+  members: {
+    title: 'Members',
+    description: 'People in this workspace and people you have invited.',
+    invite: 'Invite members',
+    inviteDescription: 'We will email an invitation to each address.',
+    emails: 'Email addresses',
+    emailsHelp: 'Separate addresses with Enter or a comma to invite several people at once.',
+    emailsRequired: 'Enter the email addresses of the people to invite',
+    role: 'Role',
+    message: 'Message',
+    send: 'Send invitations',
+    sent: (count) => (count === 1 ? 'Invitation sent' : `Invitations sent to ${String(count)} people`),
+    search: 'Search by name or email',
+    name: 'Name',
+    status: 'Status',
+    lastActive: 'Last sign-in',
+    statuses: { active: 'Active', invited: 'Invited', suspended: 'Suspended' },
+    you: 'You',
+    roleFor: (name) => `Role of ${name}`,
+    actionsFor: (name) => `Actions for ${name}`,
+    remove: 'Remove from workspace',
+    removeTitle: (name) => `Remove ${name}?`,
+    removeManyTitle: (count) => `Remove ${String(count)} people?`,
+    removeDescription: 'They will lose access to this workspace. You can invite them again later.',
+    removed: (count) => (count === 1 ? 'Removed 1 person' : `Removed ${String(count)} people`),
+    roleChanged: (name, role) => `${name} is now ${role}`,
+    seats: 'Seats used',
+    seatsValue: (used, total) => `${String(used)} of ${String(total)} seats`,
+    invitations: 'Pending invitations',
+    invitedAt: 'Invited',
+    resend: 'Resend',
+    resendFor: (email) => `Resend the invitation to ${email}`,
+    resent: (email) => `Invitation resent to ${email}`,
+    revoke: 'Revoke',
+    revokeFor: (email) => `Revoke the invitation to ${email}`,
+    revoked: (email) => `Invitation to ${email} revoked`,
+    noMatch: (query) => `No members match “${query}”`,
+  },
+  billing: {
+    title: 'Plan and billing',
+    description: 'Your plan, usage, payment method and invoices.',
+    plan: 'Current plan',
+    statuses: { active: 'Active', trialing: 'Trial', past_due: 'Payment failed', canceled: 'Canceled' },
+    price: (amount, interval) => `${amount} per ${interval}`,
+    renews: (date) => `Renews on ${date}`,
+    trialEnds: (date) => `Trial ends on ${date}`,
+    endsOn: (date) => `Ends on ${date}`,
+    changePlan: 'Change plan',
+    cancel: 'Cancel plan',
+    cancelTitle: 'Cancel your plan?',
+    cancelDescription: (date) => `You can keep using your current plan until ${date}. After that, paid features will no longer be available.`,
+    cancelConfirm: 'Cancel plan',
+    keep: 'Keep plan',
+    canceled: 'Plan canceled. You can use it until the end of the billing period.',
+    pastDue: 'Your last payment failed. Please check your payment method.',
+    usage: 'Usage',
+    payment: 'Payment method',
+    card: (brand, last4) => `${brand} ending in ${last4}`,
+    expires: (month, year) => `Expires ${month}/${year}`,
+    updatePayment: 'Update payment method',
+    addPayment: 'Add payment method',
+    noPayment: 'No payment method on file.',
+    billingEmail: 'Billing email',
+    invoices: 'Invoices',
+    invoiceNumber: 'Number',
+    invoiceDate: 'Date',
+    amount: 'Amount',
+    invoiceStatus: 'Status',
+    invoiceStatuses: { paid: 'Paid', open: 'Open', void: 'Void', uncollectible: 'Uncollectible' },
+    download: 'PDF',
+    downloadFor: (number) => `Download ${number} as PDF`,
+    noInvoices: 'No invoices yet',
+  },
+  onboarding: { progress: 'Getting started', back: 'Back', next: 'Next', skip: 'Skip for now', finish: 'Get started' },
+  invite: {
+    title: (workspace) => `Join ${workspace}`,
+    description: (inviter, workspace) => `${inviter} has invited you to join ${workspace}.`,
+    role: (role) => `Role: ${role}`,
+    accept: 'Accept invitation',
+    decline: 'Decline',
+    signIn: 'Sign in to join',
+    signUp: 'Create an account to join',
+    signedOutHint: 'Sign in or create an account to join.',
+    wrongAccount: (email) => `This invitation was sent to ${email}. Sign in with that account to accept it.`,
+    switchAccount: 'Sign in with another account',
+    expiredTitle: 'This invitation has expired',
+    expiredDescription: 'Ask the person who invited you to send a new one.',
+    invalidTitle: 'This invitation is not valid',
+    invalidDescription: 'Check that the link is correct. If you have already joined, sign in.',
+    declinedTitle: 'Invitation declined',
+    declinedDescription: 'If you change your mind, ask the person who invited you to send a new invitation.',
   },
 };

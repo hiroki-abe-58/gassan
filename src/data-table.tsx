@@ -34,6 +34,8 @@ export interface DataTableColumn<T> {
   rowHeader?: boolean;
   /** 列の幅（'12rem'・'20%'）。 */
   width?: string;
+  /** セルの中で折り返す。既定はセルを 1 行で出し、器より広ければ表を横に送る。説明のような長い文の列だけ true にする。 */
+  wrap?: boolean;
 }
 
 export interface DataTableSort {
@@ -53,13 +55,15 @@ export interface DataTableProps<T> extends DataAttributes {
   onSortChange?: (sort: DataTableSort) => void;
   /** 行を選べるようにする（先頭にチェックボックスの列を置く）。 */
   selectable?: boolean;
+  /** その行を選べるか（自分の行など、操作の対象にできない行は false）。選べない行にはチェックボックスを置かない。 */
+  canSelect?: (row: T) => boolean;
   /** 選んでいる行の id。 */
   selected?: readonly string[];
   defaultSelected?: readonly string[];
   onSelectedChange?: (ids: string[]) => void;
   /** 選んだ行への操作。「N 件を選択中」の横に出す。 */
   bulkActions?: (ids: string[]) => ReactNode;
-  /** 行の端の操作（Menu など）。 */
+  /** 行の端の操作（Menu・ボタンなど）。いくつ並べても 1 行に収め、端にそろえる。 */
   rowActions?: (row: T) => ReactNode;
   /** 行が無いときに出すもの（EmptyState など）。既定は labels.emptyTable。 */
   empty?: ReactNode;
@@ -126,6 +130,7 @@ export function DataTable<T>({
   defaultSort = null,
   onSortChange,
   selectable = false,
+  canSelect,
   selected: selectedProp,
   defaultSelected = [],
   onSelectedChange,
@@ -194,7 +199,9 @@ export function DataTable<T>({
       .map((entry) => entry.row);
   }, [rows, columns, sort, collator]);
 
-  const shownIds = shown.map(getRowId);
+  // 見えていて、選べる行だけを「すべて選択」の対象にする
+  const isSelectable = (row: T): boolean => canSelect?.(row) !== false;
+  const shownIds = shown.filter(isSelectable).map(getRowId);
   const selectedSet = new Set(selected);
   const selectedHere = shownIds.filter((id) => selectedSet.has(id)).length;
   const allSelected = shownIds.length > 0 && selectedHere === shownIds.length;
@@ -282,22 +289,27 @@ export function DataTable<T>({
         <tr key={id} data-selected={isSelected ? '' : undefined}>
           {selectable ? (
             <td className="g-data-table-select">
-              <SelectBox checked={isSelected} onChange={(checked) => toggleRow(id, checked)} labelledBy={headerId} />
+              {isSelectable(row) ? <SelectBox checked={isSelected} onChange={(checked) => toggleRow(id, checked)} labelledBy={headerId} /> : null}
             </td>
           ) : null}
           {columns.map((column, columnIndex) => {
             const align = column.align === 'start' ? undefined : column.align;
+            const wrap = column.wrap ? '' : undefined;
             return columnIndex === rowHeaderIndex ? (
-              <th key={column.key} id={headerId} scope="row" data-align={align}>
+              <th key={column.key} id={headerId} scope="row" data-align={align} data-wrap={wrap}>
                 {phrase(column.cell(row))}
               </th>
             ) : (
-              <td key={column.key} data-align={align}>
+              <td key={column.key} data-align={align} data-wrap={wrap}>
                 {phrase(column.cell(row))}
               </td>
             );
           })}
-          {rowActions ? <td className="g-data-table-actions">{rowActions(row)}</td> : null}
+          {rowActions ? (
+            <td className="g-data-table-actions">
+              <div className="g-data-table-row-actions">{rowActions(row)}</div>
+            </td>
+          ) : null}
         </tr>
       );
     });

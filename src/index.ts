@@ -92,6 +92,11 @@ export { ErrorPage, MaintenancePage } from './templates/status';
 export { SiteLayout } from './templates/site-layout';
 export { DocumentPage, FaqPage, PricingPage, ContactPage, ChangelogPage } from './templates/public';
 export { AppShell } from './templates/app-shell';
+export { SettingsPage, SettingsSection } from './templates/settings';
+export { MembersPage } from './templates/members';
+export { BillingPage } from './templates/billing';
+export { OnboardingPage } from './templates/onboarding';
+export { InviteAcceptPage } from './templates/invite';
 export { japaneseTemplateLabels, englishTemplateLabels } from './templates/labels';
 
 /*
@@ -228,6 +233,20 @@ export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, Steps
 export type { Site, SiteLinkProps, SiteLinks, SiteNavLink, SiteFooterColumn, SiteProviderProps } from './templates/site';
 export type { SiteLayoutProps } from './templates/site-layout';
 export type { AppShellProps, AppNavSection, AppNavItem, AppAccount } from './templates/app-shell';
+export type {
+  SettingsPageProps,
+  SettingsSectionProps,
+  SettingsProfile,
+  SettingsPassword,
+  SettingsTwoFactor,
+  SettingsSession,
+  SettingsSessions,
+  SettingsDeleteAccount,
+} from './templates/settings';
+export type { MembersPageProps, WorkspaceMember, MemberRole, MemberInvitation, MemberInviteValues } from './templates/members';
+export type { BillingPageProps, BillingPlan, BillingStatus, BillingUsage, BillingPaymentMethod, BillingInvoice } from './templates/billing';
+export type { OnboardingPageProps, OnboardingStep } from './templates/onboarding';
+export type { InviteAcceptPageProps } from './templates/invite';
 export type {
   DocumentSection,
   DocumentPageProps,
