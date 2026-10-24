@@ -18,17 +18,17 @@
 
 **문서 사이트: <https://hiroki-abe-58.github.io/gassan/#/ko>**
 — 설계 원칙(모달이 존재하는 이유, 4층 모델, 5가지 유형, 접근성), 스타일(스크림, 색과 대비, 테마, 크기, 줄바꿈, 모션),
-모든 컴포넌트와 폼 요소의 라이브 데모와 API, 페이지 템플릿, 그리고 224개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
+모든 컴포넌트와 폼 요소의 라이브 데모와 API, 페이지 템플릿, 그리고 236개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
 사이트는 한국어, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [ไทย](https://hiroki-abe-58.github.io/gassan/#/th)로 읽을 수 있다(상단 바의 지구본 버튼으로 전환한다).
 라이트 / 다크 테마와 기본 색상(primary color)을 고를 수 있고, 어떤 색을 고르든 글자와 채움 색이 WCAG 대비율을 충족하도록 도출된다.
 사이트의 모든 표, 개수, API 설명은 빌드 시 사양서와 타입 정의에서 생성되며, 손으로 쓴 숫자는 하나도 없다.
 
-전체 설계는 [`modal.skill.md`](./modal.skill.md)(224개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
+전체 설계는 [`modal.skill.md`](./modal.skill.md)(236개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
 AI 어시스턴트와 함께 코딩할 때는 이 파일을 컨텍스트에 넣는다.
 
 | 문서 | 내용 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 224개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 236개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 원래 요구 사항을 분해해 한 줄씩 정리한 표: 구현됨 / 조합으로 달성 / 로드맵에 있음 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan의 폼 요소를 모달 안에 넣는 최소 예제와, gassan에 없는 컴포넌트를 다른 라이브러리에서 가져와 감쌀 때의 주의점 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 네이티브 `<dialog>` vs Base UI vs React Aria vs Radix(2026-09-29 기준, 1차 자료만 사용) |
@@ -257,7 +257,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | 목록이나 달력을 top layer에 띄우는 컴포넌트 |
 | `Modal.FileDrop` | 파일을 놓는 드롭 영역(드롭에도 `accept`를 적용한다) |
 | `Modal.Table` `Modal.Alert` | 가로로 스크롤되는 표, 제출 결과 요약 |
-| `Modal.Chart` | 차트를 담는 컨테이너. 이름(`label`)과 추세의 텍스트 대체(`summary`)를 연결하고, 원본 데이터를 `<details>`로 보여 준다. 직접 그리지는 않는다 |
+| `Modal.Chart` | 가져온 그림(외부 라이브러리, 직접 만든 SVG나 canvas)을 담는 컨테이너. 이름(`label`)과 추세의 텍스트 대체(`summary`)를 연결하고, 원본 데이터를 `<details>`로 보여 준다 |
 | `Modal.Handle` | 시트의 손잡이. 디텐트가 있으면 `role="slider"` 컨트롤, 없으면 장식용으로 잡는 영역 |
 | `ModalHost` `useModals` | 명령형 API(`await confirm()`) |
 | `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | 일본 공휴일과 기간 선택을 갖춘 달력, 테마로 그리는 시간 선택 |
@@ -267,6 +267,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 컨테이너, 숫자, 진행 상황, 알림 |
 | `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | 이동을 위한 컴포넌트와, 트리거 옆에 나타나는 컴포넌트 |
 | `PageHeader` `DataTable` `CommandPalette` | 페이지 헤더, 데이터 표(정렬, 행 선택, 일괄 작업), 명령 팔레트(⌘K) |
+| `LineChart` `BarChart` `DonutChart` `Sparkline` `BarList` `Gauge` | 의존성 없이 SVG와 HTML로 그리는 그래프. 키보드로 점을 따라가며 값을 읽어 주고, 원본 데이터를 표로 펼칠 수 있으며, 색은 테마를 따른다 |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | 로그인과 계정 페이지(`templates.css`) |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | 오류, 점검, 공개 페이지 |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | 앱 셸과 그 안의 페이지 |
@@ -297,6 +298,27 @@ gassan에 없는 컴포넌트(여러 개를 고르는 콤보박스 등)는 다�
 >
   <MyBarChart />  {/* SVG / canvas / 어떤 라이브러리든 된다. 기본적으로 aria-hidden */}
 </Modal.Chart>
+```
+
+```tsx
+import { LineChart } from '@genelab/gassan';
+
+<LineChart
+  label="월별 매출"
+  description="매출은 3월이 가장 많다."
+  data={[
+    { month: '1월', revenue: 1180, cost: 820 },
+    { month: '2월', revenue: 1240, cost: 850 },
+    { month: '3월', revenue: 1520, cost: 900 },
+  ]}
+  x="month"
+  series={[
+    { key: 'revenue', label: '매출' },
+    { key: 'cost', label: '비용' },
+  ]}
+  area
+  table
+/>
 ```
 
 ---

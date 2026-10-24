@@ -127,6 +127,17 @@ const labels: GassanLabels = {
   commandResults: (count) => (count === 0 ? 'ไม่พบรายการที่ตรงกัน' : `${String(count)} รายการ`),
   commandMove: 'เลื่อน',
   commandSelect: 'เลือก',
+  chart: 'กราฟ',
+  legend: 'คำอธิบายสัญลักษณ์',
+  chartCategory: 'รายการ',
+  chartValue: 'ค่า',
+  chartShare: 'สัดส่วน',
+  chartTable: (name) => `ข้อมูลดิบของ${name}`,
+  total: 'รวม',
+  noValue: 'ไม่มี',
+  noData: 'ไม่มีข้อมูล',
+  chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join(', ')}`,
+  sparkline: ({ min, max, last }) => `ต่ำสุด ${min}, สูงสุด ${max}, ล่าสุด ${last}`,
 };
 
 export default labels;

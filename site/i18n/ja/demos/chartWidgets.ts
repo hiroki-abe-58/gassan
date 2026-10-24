@@ -1,0 +1,21 @@
+export default {
+  sales: '売上',
+  thisMonth: '今月の売上',
+  vsLastMonth: '先月から',
+  daily: '直近 30 日の売上',
+  storage: 'ストレージ',
+  storageUsed: 'ストレージの使用量',
+  gb: '{0} GB / {1} GB',
+  plans: 'プランごとのワークスペース',
+  free: 'Free',
+  pro: 'Pro',
+  business: 'Business',
+  enterprise: 'Enterprise',
+  workspaces: 'ワークスペース',
+  pages: 'よく見られたページ',
+  comments: {
+    dailyData: '直近 30 日の売上（円）',
+    sparkline: '小さな推移は軸も操作も持たない。名前に最小・最大・最新を添えた 1 枚の絵として読ませる',
+    gauge: '上限が近いので注意の色にする。値は aria-valuetext でも読ませる',
+  },
+};

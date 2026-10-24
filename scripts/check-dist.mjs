@@ -48,11 +48,14 @@ import { gzipSync } from 'node:zlib';
  * 招待を受ける）の 5 ページと、その日本語と英語の文言を足したため（JS 約 11 KB）。これも名前つき import でだけ使う。
  * 同日、JS を 93 → 96 KB に引き上げた。コマンドパレット（U-27。絞り込み・並べ方・開くキー・読み上げ）と文言を足したため
  * （JS 約 2.3 KB・CSS 約 0.4 KB）。使わないアプリの JS には載らない。
+ * 2026-10-24、JS を 96 → 106 KB、CSS を 18 → 21 KB に引き上げた。グラフ（Q-01〜Q-12。折れ線と面・棒・ドーナツ・
+ * 小さな推移・順位の棒・メーターと、目盛り・線の形の計算）を足したため（JS 約 9.3 KB・CSS 約 2.3 KB）。グラフは名前つき import
+ * でだけ使うので、使わないアプリの JS には載らない（minify した束で、Modal だけを使うアプリにグラフのコードが無いことを確かめた）。
  */
 const BUDGETS = {
-  'dist/index.js': 96 * 1024,
-  'dist/index.cjs': 96 * 1024,
-  'dist/styles.css': 18 * 1024,
+  'dist/index.js': 106 * 1024,
+  'dist/index.cjs': 106 * 1024,
+  'dist/styles.css': 21 * 1024,
   'dist/templates.css': 5 * 1024,
 };
 
@@ -165,6 +168,13 @@ const REQUIRED_EXPORTS = [
   'PageHeader',
   'DataTable',
   'CommandPalette',
+  // グラフ。Q-01〜Q-12。
+  'LineChart',
+  'BarChart',
+  'DonutChart',
+  'Sparkline',
+  'BarList',
+  'Gauge',
   // フォーム部品の中立の名前（ModalInput などと同じもの）。
   'Field',
   'Fieldset',

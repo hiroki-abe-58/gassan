@@ -78,11 +78,11 @@ describe('site/i18n / デモのコード', () => {
 
 /**
  * 関数の文言を見本の引数で呼ぶ。数を受ける関数・文字列の配列を受ける関数（並べて読ませる文）・
- * 文字列を受ける関数（テンプレートの「〜を入力してください」）がある。
+ * 文字列を受ける関数（テンプレートの「〜を入力してください」）・項目と名前と値の組の並びを受ける関数（グラフの点の読み上げ）がある。
  * リンクを挟む文（ReactNode を返す関数）は、描いた文字で調べる（String() では中身が見えない）。
  */
 function call(fn: (...args: unknown[]) => unknown): string {
-  for (const args of [[1, 2, 3], [['a', 'b']], ['a', 'b', 'c']]) {
+  for (const args of [[1, 2, 3], [['a', 'b']], ['a', 'b', 'c'], ['a', [['b', 'c']]]]) {
     try {
       const value = fn(...args);
       return typeof value === 'string' ? value : renderToStaticMarkup(createElement(Fragment, null, value as ReactNode)).replace(/<[^>]+>/g, '');

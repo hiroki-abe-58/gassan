@@ -22,6 +22,7 @@ import imperative from './imperative';
 import toast from './toast';
 import uiBadges from './uiBadges';
 import uiButtons from './uiButtons';
+import uiCharts from './uiCharts';
 import uiCommand from './uiCommand';
 import uiData from './uiData';
 import uiFeedback from './uiFeedback';
@@ -99,6 +100,7 @@ export default {
   uiOverlays,
   uiCommand,
   uiData,
+  uiCharts,
   templates,
   templateDocs,
   templateSamples,

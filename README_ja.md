@@ -18,17 +18,17 @@
 
 **ドキュメントサイト: <https://hiroki-abe-58.github.io/gassan/>**
 — 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・テーマ・寸法・折り返し・モーション）、
-全コンポーネントとフォーム部品の動くデモと API、ページのテンプレート、224項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
+全コンポーネントとフォーム部品の動くデモと API、ページのテンプレート、236項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
 サイトは日本語・[English](https://hiroki-abe-58.github.io/gassan/#/en)・[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)・[繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant)・[한국어](https://hiroki-abe-58.github.io/gassan/#/ko)・[ไทย](https://hiroki-abe-58.github.io/gassan/#/th) で読める（トップバーの地球の印で切り替える）。
 ライト・ダークの表示とプライマリカラーも切り替えられる。どの色を選んでも、文字と塗りが WCAG のコントラスト比を満たすように色を導いている。
 表・件数・API の説明はすべて仕様書と型定義からビルド時に生成していて、手で書いた数値は無い。
 
-設計の全文は [`modal.skill.md`](./modal.skill.md)（224項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
+設計の全文は [`modal.skill.md`](./modal.skill.md)（236項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
 AI コーディング時はそのファイルをコンテキストに入れる。
 
 | 文書 | 内容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の224項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の236項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 元の要件を分解し、「実装済み / 合成で対応 / ロードマップ」を1行ずつ示した監査表 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan の入力部品をモーダルに載せる最小例と、gassan に無い部品をほかのライブラリから包むときの注意 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | native `<dialog>` / Base UI / React Aria / Radix の比較（2026-09-29 時点、一次資料のみ） |
@@ -256,7 +256,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | 一覧・カレンダーを top layer に出す部品 |
 | `Modal.FileDrop` | ファイルの受け皿（ドロップにも `accept` を当てる） |
 | `Modal.Table` `Modal.Alert` | 横スクロールする表・送信結果のまとめ |
-| `Modal.Chart` | グラフの器。名前（`label`）と傾向のテキスト代替（`summary`）を配線し、元データを `<details>` で開閉する。描画はしない |
+| `Modal.Chart` | 持ち込んだ図（外部のライブラリ・自前の SVG や canvas）の器。名前（`label`）と傾向のテキスト代替（`summary`）を配線し、元データを `<details>` で開閉する |
 | `Modal.Handle` | シートのつまみ。段があれば `role="slider"` の操作子、無ければ掴みどころの飾り |
 | `ModalHost` `useModals` | 命令的 API（`await confirm()`） |
 | `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | 日本の祝日と期間の選択を持つカレンダーと、テーマで描く時刻の選択 |
@@ -266,6 +266,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 器・数・進み具合・知らせ |
 | `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | 行き来の部品と、起点の脇に出る部品 |
 | `PageHeader` `DataTable` `CommandPalette` | ページの見出しの帯・データの表（並べ替え・行の選択・まとめての操作）・コマンドパレット（⌘K） |
+| `LineChart` `BarChart` `DonutChart` `Sparkline` `BarList` `Gauge` | 依存なしで SVG と HTML で描くグラフ。点をキーでたどって値を読み上げ、元データを表で開け、色はテーマに従う |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | ログインとアカウントのページ（`templates.css`） |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | エラー・メンテナンス・公開ページ |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | アプリの枠と、その中のページ |
@@ -296,6 +297,27 @@ gassan に無い部品（複数選択のコンボボックスなど）は、ほ�
 >
   <MyBarChart />  {/* SVG / canvas / 任意のライブラリ。既定で aria-hidden */}
 </Modal.Chart>
+```
+
+```tsx
+import { LineChart } from '@genelab/gassan';
+
+<LineChart
+  label="月ごとの売上"
+  description="売上は 3 月が最大。"
+  data={[
+    { month: '1月', revenue: 1180, cost: 820 },
+    { month: '2月', revenue: 1240, cost: 850 },
+    { month: '3月', revenue: 1520, cost: 900 },
+  ]}
+  x="month"
+  series={[
+    { key: 'revenue', label: '売上' },
+    { key: 'cost', label: '費用' },
+  ]}
+  area
+  table
+/>
 ```
 
 ---

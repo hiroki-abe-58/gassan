@@ -950,6 +950,30 @@
   display: grid;
   gap: 16px;
 }
+/* グラフのページ: カードに置く小さなグラフ（4 枚）。狭い画面では 1 列 */
+.s-chart-widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 12px;
+  inline-size: 100%;
+  align-items: start;
+}
+.s-chart-widgets .g-sparkline {
+  margin-block-start: 12px;
+}
+.s-chart-palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: 8px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.s-chart-palette li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .s-skeleton-card {
   display: flex;
   align-items: center;

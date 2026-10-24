@@ -120,6 +120,17 @@ const labels: GassanLabels = {
   commandResults: (count) => (count === 0 ? '沒有符合的結果' : `${String(count)} 個結果`),
   commandMove: '移動',
   commandSelect: '選擇',
+  chart: '圖表',
+  legend: '圖例',
+  chartCategory: '項目',
+  chartValue: '值',
+  chartShare: '占比',
+  chartTable: (name) => `${name}的原始資料`,
+  total: '合計',
+  noValue: '無',
+  noData: '沒有資料',
+  chartPoint: (x, entries) => `${x}：${entries.map(([name, value]) => `${name} ${value}`).join('，')}`,
+  sparkline: ({ min, max, last }) => `最小 ${min}，最大 ${max}，最新 ${last}`,
 };
 
 export default labels;
