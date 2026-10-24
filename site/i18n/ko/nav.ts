@@ -55,6 +55,7 @@ export default {
     uiCommand: '명령 팔레트',
     uiCharts: '그래프',
     uiCarousel: '캐러셀',
+    uiChat: '채팅',
     templatesAuth: '로그인과 가입',
     templatesStatus: '오류와 점검',
     templatesPublic: '요금·FAQ·약관',

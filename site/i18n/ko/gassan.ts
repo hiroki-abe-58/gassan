@@ -140,6 +140,22 @@ const labels: GassanLabels = {
   slidePicker: '슬라이드 선택',
   startRotation: '슬라이드 자동 재생 시작',
   stopRotation: '슬라이드 자동 재생 정지',
+  message: '메시지',
+  send: '보내기',
+  stop: '멈추기',
+  sending: '보내는 중',
+  sendFailed: '보내지 못했습니다',
+  retry: '다시 보내기',
+  read: '읽음',
+  edited: '수정됨',
+  yesterday: '어제',
+  newMessages: (n) => `새 메시지 ${n}개`,
+  unread: '여기부터 새 메시지',
+  loadOlder: '이전 메시지 불러오기',
+  typing: (names) =>
+    names.length === 1 ? `${names[0] ?? ''} 님이 입력 중` : names.length === 2 ? `${names[0] ?? ''} 님과 ${names[1] ?? ''} 님이 입력 중` : `${names.length}명이 입력 중`,
+  sendHint: (mode) => (mode === 'enter' ? 'Enter로 보내기, Shift+Enter로 줄바꿈' : 'Ctrl+Enter(Mac은 ⌘+Enter)로 보내기, Enter로 줄바꿈'),
+  suggestions: '질문 예시',
 };
 
 export default labels;

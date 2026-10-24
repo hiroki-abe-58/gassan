@@ -54,6 +54,7 @@ export default {
     uiCommand: 'コマンドパレット',
     uiCharts: 'グラフ',
     uiCarousel: 'カルーセル',
+    uiChat: 'チャット',
     templatesAuth: 'ログインと登録',
     templatesStatus: 'エラーとメンテナンス',
     templatesPublic: '料金・FAQ・規約',

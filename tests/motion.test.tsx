@@ -15,7 +15,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { GassanProvider, MOTION_PRESETS, Modal } from '../src';
 import { resetModalStack } from '../src/internal/stack';
-import { renderModal } from './utils';
+import { mockMediaQueries, renderModal } from './utils';
 
 const css = readFileSync('src/styles.css', 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 
@@ -117,19 +117,7 @@ describe('動きを減らす設定 / V-02', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     try {
       vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
-      vi.spyOn(window, 'matchMedia').mockImplementation(
-        (query: string) =>
-          ({
-            matches: query === '(prefers-reduced-motion: reduce)',
-            media: query,
-            onchange: null,
-            addListener: () => {},
-            removeListener: () => {},
-            addEventListener: () => {},
-            removeEventListener: () => {},
-            dispatchEvent: () => false,
-          }) as unknown as MediaQueryList,
-      );
+      mockMediaQueries('(prefers-reduced-motion: reduce)');
       const { dialog, setOpen } = renderModal({ 'data-g-motion': 'expressive' });
       act(() => setOpen(false));
       act(() => {

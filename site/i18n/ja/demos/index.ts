@@ -11,6 +11,8 @@ import chartReport from './chartReport';
 import chartRevenue from './chartRevenue';
 import chartSignups from './chartSignups';
 import chartWidgets from './chartWidgets';
+import chatAssistant from './chatAssistant';
+import chatTeam from './chatTeam';
 import dashboardSample from './dashboardSample';
 import choiceForm from './choiceForm';
 import commandMenu from './commandMenu';
@@ -54,6 +56,8 @@ export default {
   chartRevenue,
   chartSignups,
   chartWidgets,
+  chatAssistant,
+  chatTeam,
   choiceForm,
   commandMenu,
   dashboardSample,

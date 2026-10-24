@@ -86,6 +86,27 @@ export function mockScrollMetrics(
 }
 
 /* -------------------------------------------------------------------------- */
+/* media queries                                                              */
+/* -------------------------------------------------------------------------- */
+
+/** matchMedia を、渡した問い合わせ（'(pointer: coarse)' など）だけが当たるように差し替える。 */
+export function mockMediaQueries(...matching: readonly string[]): void {
+  vi.spyOn(window, 'matchMedia').mockImplementation(
+    (query: string) =>
+      ({
+        matches: matching.includes(query),
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      }) as unknown as MediaQueryList,
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* render                                                                     */
 /* -------------------------------------------------------------------------- */
 

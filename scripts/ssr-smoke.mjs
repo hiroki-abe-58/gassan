@@ -21,6 +21,8 @@ import {
   BarChart,
   BarList,
   Carousel,
+  ChatComposer,
+  ChatThread,
   DonutChart,
   Gauge,
   LineChart,
@@ -540,6 +542,34 @@ if (
   ok('Carousel renders the named region, the slides and a stopped rotation control on the server');
 } else {
   fail('Carousel renders the named region, the slides and a stopped rotation control on the server');
+}
+
+// 会話（E-01〜E-08）。見ている人の時間帯はサーバーでは分からないので、時刻は UTC で描く（hydration の後に描き直す）。
+// タッチが主の端末かどうかも分からないので、キーの案内は描いておく（その端末では CSS で隠し、描いた後に外す）。
+const chatHtml = renderToString(
+  h(
+    Fragment,
+    null,
+    h(ChatThread, {
+      label: '佐藤さんとの会話',
+      currentUserId: 'me',
+      messages: [{ id: 'm1', author: { id: 'aoi', name: '佐藤 葵' }, content: 'こんにちは', sentAt: '2026-10-24T03:05:00Z' }],
+      typing: [{ id: 'aoi', name: '佐藤 葵' }],
+    }),
+    h(ChatComposer, { onSend: noop }),
+  ),
+);
+const chatText = chatHtml.replace(/<[^>]+>/g, '');
+if (
+  /role="log"[^>]*aria-label="佐藤さんとの会話"/.test(chatHtml) &&
+  /<time[^>]*class="g-chat-time"[^>]*>3:05<\/time>/.test(chatHtml) &&
+  chatText.includes('佐藤 葵さんが入力中') &&
+  /<textarea[^>]*aria-describedby="[^"]+"/.test(chatHtml) &&
+  chatText.includes('Enter で送信、Shift+Enter で改行')
+) {
+  ok('ChatThread and ChatComposer render the log, the time in UTC, the typing indicator and the key hint on the server');
+} else {
+  fail('ChatThread and ChatComposer render the log, the time in UTC, the typing indicator and the key hint on the server');
 }
 
 // アプリの中のページ（P-13〜P-17）。見ている人の時間帯はサーバーでは分からないので、SiteProvider の timeZone が無ければ

@@ -144,6 +144,22 @@ const labels: GassanLabels = {
   slidePicker: 'เลือกสไลด์',
   startRotation: 'เริ่มเล่นสไลด์อัตโนมัติ',
   stopRotation: 'หยุดเล่นสไลด์อัตโนมัติ',
+  message: 'ข้อความ',
+  send: 'ส่ง',
+  stop: 'หยุด',
+  sending: 'กำลังส่ง',
+  sendFailed: 'ส่งไม่สำเร็จ',
+  retry: 'ส่งอีกครั้ง',
+  read: 'อ่านแล้ว',
+  edited: 'แก้ไขแล้ว',
+  yesterday: 'เมื่อวาน',
+  newMessages: (n) => `ข้อความใหม่ ${n} ข้อความ`,
+  unread: 'ข้อความใหม่',
+  loadOlder: 'โหลดข้อความก่อนหน้า',
+  typing: (names) =>
+    names.length === 1 ? `${names[0] ?? ''} กำลังพิมพ์` : names.length === 2 ? `${names[0] ?? ''} และ ${names[1] ?? ''} กำลังพิมพ์` : `${names.length} คนกำลังพิมพ์`,
+  sendHint: (mode) => (mode === 'enter' ? 'กด Enter เพื่อส่ง, Shift+Enter เพื่อขึ้นบรรทัดใหม่' : 'กด Ctrl+Enter (Mac ใช้ ⌘+Enter) เพื่อส่ง, Enter เพื่อขึ้นบรรทัดใหม่'),
+  suggestions: 'ตัวอย่างคำถาม',
 };
 
 export default labels;

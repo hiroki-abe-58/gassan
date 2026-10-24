@@ -55,6 +55,7 @@ export default {
     uiCommand: 'Command palette',
     uiCharts: 'Charts',
     uiCarousel: 'Carousel',
+    uiChat: 'Chat',
     templatesAuth: 'Sign-in and sign-up',
     templatesStatus: 'Errors and maintenance',
     templatesPublic: 'Pricing, FAQ and legal',

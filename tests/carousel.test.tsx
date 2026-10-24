@@ -8,6 +8,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Carousel } from '../src';
+import { mockMediaQueries } from './utils';
 
 const ITEMS = [
   { id: 'a', content: <p>新しいダッシュボード</p> },
@@ -19,22 +20,6 @@ const region = (): HTMLElement => screen.getByRole('region', { name: 'お知ら�
 const dots = (): HTMLElement[] => within(within(region()).getByRole('group', { name: 'スライドを選ぶ' })).getAllByRole('button');
 const currentDot = (): number => dots().findIndex((dot) => dot.getAttribute('aria-current') === 'true');
 const status = (): HTMLElement | null => region().querySelector('p.g-sr-only');
-
-function reduceMotion(reduce: boolean): void {
-  vi.spyOn(window, 'matchMedia').mockImplementation(
-    (query: string) =>
-      ({
-        matches: reduce && query === '(prefers-reduced-motion: reduce)',
-        media: query,
-        onchange: null,
-        addListener: () => {},
-        removeListener: () => {},
-        addEventListener: () => {},
-        removeEventListener: () => {},
-        dispatchEvent: () => false,
-      }) as unknown as MediaQueryList,
-  );
-}
 
 afterEach(() => {
   vi.useRealTimers();
@@ -129,7 +114,6 @@ describe('カルーセル / U-28', () => {
 
 describe('カルーセルの自動再生 / U-29', () => {
   it('U-29 自動で送るときは止めるボタンを先頭に置き、時間が来ると次へ送り、最後から最初へ回る。送っている間は位置を読み上げない', () => {
-    reduceMotion(false);
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
     render(<Carousel label="お知らせ" items={ITEMS} autoplay={1000} />);
     const buttons = within(region()).getAllByRole('button');
@@ -146,7 +130,6 @@ describe('カルーセルの自動再生 / U-29', () => {
   });
 
   it('U-29 ポインタが乗っている間とフォーカスが中にある間は止まり、離れると止めた所から数える。止めるボタンで止めると、離れても送らない', () => {
-    reduceMotion(false);
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
     render(<Carousel label="お知らせ" items={ITEMS} autoplay={1000} />);
 
@@ -175,7 +158,7 @@ describe('カルーセルの自動再生 / U-29', () => {
   });
 
   it('U-29 動きを減らす設定では、自動再生を止めた状態で始める（始めるボタンで動かせる）', () => {
-    reduceMotion(true);
+    mockMediaQueries('(prefers-reduced-motion: reduce)');
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
     render(<Carousel label="お知らせ" items={ITEMS} autoplay />);
     const start = within(region()).getByRole('button', { name: 'スライドの自動再生を始める' });

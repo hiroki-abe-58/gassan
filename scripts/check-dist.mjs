@@ -53,11 +53,13 @@ import { gzipSync } from 'node:zlib';
  * でだけ使うので、使わないアプリの JS には載らない（minify した束で、Modal だけを使うアプリにグラフのコードが無いことを確かめた）。
  * 同日、JS を 106 → 110 KB に引き上げた。カルーセル（U-28 / U-29。前へ・次へ・点・自動再生と、モーダルのギャラリーと共有にした
  * scroll-snap の位置の読み取り）を足したため（JS 約 2.3 KB・CSS 約 0.6 KB）。使わないアプリの JS には載らない。
+ * 同日、JS を 110 → 114 KB、CSS を 21 → 22 KB に引き上げた。会話（E-01〜E-08。メッセージの列・入力欄・入力中の印・
+ * 質問の例と、日本語と英語の文言）を足したため（JS 約 3.5 KB・CSS 約 1.3 KB）。使わないアプリの JS には載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 110 * 1024,
-  'dist/index.cjs': 110 * 1024,
-  'dist/styles.css': 21 * 1024,
+  'dist/index.js': 114 * 1024,
+  'dist/index.cjs': 114 * 1024,
+  'dist/styles.css': 22 * 1024,
   'dist/templates.css': 5 * 1024,
 };
 
@@ -179,6 +181,11 @@ const REQUIRED_EXPORTS = [
   'Gauge',
   // カルーセル。U-28 / U-29。
   'Carousel',
+  // 会話。E-01〜E-08。
+  'ChatThread',
+  'ChatComposer',
+  'TypingIndicator',
+  'ChatSuggestions',
   // フォーム部品の中立の名前（ModalInput などと同じもの）。
   'Field',
   'Fieldset',

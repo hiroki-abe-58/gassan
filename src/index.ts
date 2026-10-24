@@ -84,6 +84,7 @@ export { DataTable } from './data-table';
 export { CommandPalette } from './command-palette';
 export { LineChart, BarChart, DonutChart, Sparkline, BarList, Gauge } from './charts';
 export { Carousel } from './carousel';
+export { ChatThread, ChatComposer, TypingIndicator, ChatSuggestions } from './chat';
 
 /* ------------------------------------------------------------------ templates */
 
@@ -248,6 +249,15 @@ export type {
   SparklineProps,
 } from './charts';
 export type { CarouselItem, CarouselProps } from './carousel';
+export type {
+  ChatAuthor,
+  ChatComposerProps,
+  ChatMessage,
+  ChatSuggestion,
+  ChatSuggestionsProps,
+  ChatThreadProps,
+  TypingIndicatorProps,
+} from './chat';
 export type { AccordionItem, AccordionProps } from './disclosure';
 export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps } from './overlay';
 export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, StepsProps } from './navigation';
