@@ -1,5 +1,5 @@
 export default {
-  lead: 'DatePicker と DateRangePicker はポップアップのカレンダーで、Calendar と RangeCalendar はページの上に置くカレンダー。どれも日本の祝日と土日を色と名前で示し、見出しから月と年を飛べる。TimePicker は時と分の列から時刻を選ぶ。月名・曜日・時刻の書き方は GassanProvider の locale から Intl で出すので、言語を変えると一緒に変わる。',
+  lead: 'DatePicker と DateRangePicker はポップアップのカレンダーで、Calendar と RangeCalendar はページの上に置くカレンダー。どれも日本の祝日と土日を色と名前で示し、見出しから月と年を飛べる。TimePicker は時と分の列から時刻を、ColorPicker は彩度と明るさの面と色相の帯から色を選ぶ。月名・曜日・時刻の書き方は GassanProvider の locale から Intl で出すので、言語を変えると一緒に変わる。',
   gallery: {
     title: '見本',
     intro: '選んだ日と時刻はアクセント色で塗り、今日には細い輪を付ける。日曜と祝日は赤、土曜は青。',
@@ -10,6 +10,7 @@ export default {
       timePicker: '時刻',
       time12: '12 時間制',
       businessHours: '10:00〜18:00、15 分刻み',
+      colorPicker: '色',
       date: '日付（ネイティブ）',
       time: '時刻（ネイティブ）',
       color: '色（ネイティブ）',
@@ -66,6 +67,27 @@ export default {
       { key: 'Esc', action: '決めずに閉じ、ボタンへ戻る（モーダルは閉じない）' },
     ],
   },
+  color: {
+    title: '色',
+    intro: 'ColorPicker は、彩度と明るさの面・色相の帯・16 進数の欄で色を選ぶ。ポップアップはテーマの色で描き、色は動かすたびに変わる。よく使う色を渡すと、押すだけで選べる見本を並べる。',
+    exampleTitle: 'ブランドの色',
+    exampleDescription: '見本を押すか、面と帯を動かすと、下のボタンの色が一緒に変わる。ボタンの文字は、白と黒のうち地の色とのコントラストが高いほうにしている。',
+    body: [
+      '面は 2 次元のスライダーで、←→ で彩度、↑↓ で明るさを動かし、「彩度 80%、明るさ 60%」と読み上げる。色相の帯はネイティブの range、よく使う色はネイティブのラジオなので、キーの動きはいつもの部品と同じ。いまの色はボタンの説明として読む。',
+      '値はネイティブの `type="color"` と同じ小文字の `#rrggbb`。見本の色と 16 進数の欄に打った値は、そのまま入る（面の位置を通して丸め、1 ずれることはない）。16 進数の欄は 6 桁を打ち終えたとき、3 桁は Enter を押したときに色を変える。',
+    ],
+    codeCaption: '色の選択',
+    code: "<Modal.ColorPicker\n  aria-label=\"ブランドの色\"\n  value={color}\n  onValueChange={setColor}\n  swatches={[\n    { value: '#3346d3', label: '青' },\n    { value: '#1a7f5a', label: '緑' },\n  ]}\n/>",
+    keysCaption: '色の選択のキー操作',
+    keys: [
+      { key: '← / →', action: '彩度を下げる・上げる（面）' },
+      { key: '↑ / ↓', action: '明るさを上げる・下げる（面）' },
+      { key: 'Shift + 矢印', action: '10 ずつ動かす（面）' },
+      { key: 'PageUp / PageDown', action: '明るさを 10 ずつ（面）' },
+      { key: 'Home / End', action: '彩度を 0% / 100% に（面）' },
+      { key: 'Esc', action: '閉じてボタンへ戻る（モーダルは閉じない）' },
+    ],
+  },
   modal: {
     title: 'モーダルの中で',
     intro: 'カレンダーと時刻の列は popover で top layer に出る。Esc はポップアップだけを閉じ、ボタンへフォーカスを戻す。',
@@ -88,10 +110,11 @@ export default {
     note: '見出し（「2026年10月」）を押すと月の一覧、もう一度押すと年の一覧になる。一覧の中も矢印で動き、Enter で 1 段降りる。「今日」を押すと今日へ戻る。',
   },
   native: {
-    title: 'ネイティブの日付・時刻の入力との使い分け',
+    title: 'ネイティブの日付・時刻・色の入力との使い分け',
     body: [
       'スマホでは、OS の日付のホイールのほうが速いことが多い。曜日や祝日を見ながら選ばせたい、選べない日を見せたい、期間を選ばせたい、見た目をほかの部品とそろえたい、というときは DatePicker を使う。そうでなければ `type="date"` を Modal.Input に入れる。枠と明暗（`--g-color-scheme`）は同じになる（I-15）。',
       '時刻も同じ。ネイティブの `type="time"` は、ポップアップの見た目がテーマに従わず、刻みや範囲の外も打てる。刻みと範囲を目で見せたい、テーマの色で選ばせたいときは TimePicker を使う。',
+      '色も同じ。ネイティブの `type="color"` は、ポップアップが OS とブラウザの見た目のままで、よく使う色を並べられない。テーマの中で選ばせたい、決まった色から選ばせたいときは ColorPicker を使う。',
     ],
   },
   apiCaption: {
@@ -100,6 +123,7 @@ export default {
     calendar: 'Modal.Calendar',
     rangeCalendar: 'Modal.RangeCalendar',
     timePicker: 'Modal.TimePicker',
+    colorPicker: 'Modal.ColorPicker',
   },
-  a11yCaption: '日付と時刻が満たす仕様',
+  a11yCaption: '日付・時刻・色が満たす仕様',
 };

@@ -1,7 +1,7 @@
 import type ja from '../ja/datePicker';
 
 export default {
-  lead: 'DatePicker와 DateRangePicker는 팝업 달력이고, Calendar와 RangeCalendar는 페이지 위에 두는 달력이다. 모두 일본의 공휴일과 주말을 색과 이름으로 보여 주고, 제목에서 월과 연도로 건너뛸 수 있다. TimePicker는 시와 분의 열에서 시간을 고른다. 월 이름·요일·시간 표기는 GassanProvider의 locale로 Intl에서 만들므로, 언어를 바꾸면 함께 바뀐다.',
+  lead: 'DatePicker와 DateRangePicker는 팝업 달력이고, Calendar와 RangeCalendar는 페이지 위에 두는 달력이다. 모두 일본의 공휴일과 주말을 색과 이름으로 보여 주고, 제목에서 월과 연도로 건너뛸 수 있다. TimePicker는 시와 분의 열에서 시간을, ColorPicker는 채도·밝기 영역과 색상 띠에서 색을 고른다. 월 이름·요일·시간 표기는 GassanProvider의 locale로 Intl에서 만들므로, 언어를 바꾸면 함께 바뀐다.',
   gallery: {
     title: '견본',
     intro: '선택한 날과 시간은 강조색으로 채우고, 오늘에는 가는 링을 두른다. 일요일과 공휴일은 빨강, 토요일은 파랑.',
@@ -12,6 +12,7 @@ export default {
       timePicker: '시간',
       time12: '12시간제',
       businessHours: '10:00~18:00, 15분 간격',
+      colorPicker: '색',
       date: '날짜(네이티브)',
       time: '시간(네이티브)',
       color: '색(네이티브)',
@@ -68,6 +69,27 @@ export default {
       { key: 'Esc', action: '확정하지 않고 닫은 뒤 버튼으로 돌아간다(모달은 닫지 않는다)' },
     ],
   },
+  color: {
+    title: '색',
+    intro: 'ColorPicker는 채도·밝기 영역, 색상 띠, 16진수 입력란으로 색을 고른다. 팝업은 테마의 색으로 그리고, 색은 움직일 때마다 바뀐다. 자주 쓰는 색을 넘기면, 누르기만 하면 고를 수 있는 견본을 늘어놓는다.',
+    exampleTitle: '브랜드 색',
+    exampleDescription: '견본을 누르거나 영역과 띠를 움직이면, 아래 버튼의 색이 함께 바뀐다. 버튼의 글자는 흰색과 검은색 중 바탕색과의 대비가 더 높은 쪽으로 했다.',
+    body: [
+      '영역은 2차원 슬라이더로, ←→로 채도를, ↑↓로 밝기를 움직이고, “채도 80%, 밝기 60%”라고 읽어 준다. 색상 띠는 네이티브 range, 자주 쓰는 색은 네이티브 라디오이므로, 키 동작은 평소의 컴포넌트와 같다. 현재 색은 버튼의 설명으로 읽힌다.',
+      '값은 네이티브 `type="color"`와 같은 소문자 `#rrggbb`이다. 견본의 색과 16진수 입력란에 입력한 값은 그대로 들어간다(영역의 위치를 거쳐 반올림되어 1만큼 어긋나는 일은 없다). 16진수 입력란은 6자리를 다 입력했을 때, 3자리는 Enter를 눌렀을 때 색을 바꾼다.',
+    ],
+    codeCaption: '색 선택',
+    code: "<Modal.ColorPicker\n  aria-label=\"브랜드 색\"\n  value={color}\n  onValueChange={setColor}\n  swatches={[\n    { value: '#3346d3', label: '파란색' },\n    { value: '#1a7f5a', label: '초록색' },\n  ]}\n/>",
+    keysCaption: '색 선택의 키 조작',
+    keys: [
+      { key: '← / →', action: '채도를 낮춘다·높인다(영역)' },
+      { key: '↑ / ↓', action: '밝기를 높인다·낮춘다(영역)' },
+      { key: 'Shift + 화살표 키', action: '10씩 움직인다(영역)' },
+      { key: 'PageUp / PageDown', action: '밝기를 10씩 높인다·낮춘다(영역)' },
+      { key: 'Home / End', action: '채도를 0% / 100%로(영역)' },
+      { key: 'Esc', action: '닫은 뒤 버튼으로 돌아간다(모달은 닫지 않는다)' },
+    ],
+  },
   modal: {
     title: '모달 안에서',
     intro: '달력과 시간의 열은 popover로 top layer에 나타난다. Esc는 팝업만 닫고, 버튼으로 포커스를 되돌린다.',
@@ -90,10 +112,11 @@ export default {
     note: '제목(“2026년 10월”)을 누르면 월 목록, 한 번 더 누르면 연도 목록이 된다. 목록 안에서도 화살표 키로 움직이고, Enter로 한 단계 내려간다. “오늘”을 누르면 오늘로 돌아간다.',
   },
   native: {
-    title: '네이티브 날짜·시간 입력과 구분해 쓰기',
+    title: '네이티브 날짜·시간·색 입력과 구분해 쓰기',
     body: [
       '스마트폰에서는 OS의 날짜 휠이 더 빠른 경우가 많다. 요일이나 공휴일을 보면서 고르게 하고 싶을 때, 고를 수 없는 날을 보여 주고 싶을 때, 기간을 고르게 하고 싶을 때, 겉모습을 다른 컴포넌트와 맞추고 싶을 때는 DatePicker를 쓴다. 그렇지 않으면 `type="date"`를 Modal.Input에 넣는다. 테두리와 명암(`--g-color-scheme`)은 똑같아진다(I-15).',
       '시간도 마찬가지다. 네이티브 `type="time"`은 팝업의 겉모습이 테마를 따르지 않고, 간격에 맞지 않거나 범위 밖인 시간도 입력할 수 있다. 간격과 범위를 눈으로 보여 주고 싶을 때, 테마의 색으로 고르게 하고 싶을 때는 TimePicker를 쓴다.',
+      '색도 마찬가지다. 네이티브 `type="color"`는 팝업이 OS와 브라우저의 겉모습 그대로이고, 자주 쓰는 색을 늘어놓을 수 없다. 테마 안에서 고르게 하고 싶을 때, 정해진 색 중에서 고르게 하고 싶을 때는 ColorPicker를 쓴다.',
     ],
   },
   apiCaption: {
@@ -102,6 +125,7 @@ export default {
     calendar: 'Modal.Calendar',
     rangeCalendar: 'Modal.RangeCalendar',
     timePicker: 'Modal.TimePicker',
+    colorPicker: 'Modal.ColorPicker',
   },
-  a11yCaption: '날짜와 시간이 충족하는 명세',
+  a11yCaption: '날짜·시간·색이 충족하는 명세',
 } satisfies typeof ja;

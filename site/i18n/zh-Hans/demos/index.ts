@@ -13,7 +13,9 @@ import chatTeam from './chatTeam';
 import checklistStart from './checklistStart';
 import dashboardSample from './dashboardSample';
 import choiceForm from './choiceForm';
+import colorBrand from './colorBrand';
 import commandMenu from './commandMenu';
+import contextFiles from './contextFiles';
 import dateForm from './dateForm';
 import fieldForm from './fieldForm';
 import fileForm from './fileForm';
@@ -60,7 +62,9 @@ export default {
   chatTeam,
   checklistStart,
   choiceForm,
+  colorBrand,
   commandMenu,
+  contextFiles,
   dashboardSample,
   dateForm,
   fieldForm,

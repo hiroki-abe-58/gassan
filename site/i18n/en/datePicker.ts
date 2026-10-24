@@ -1,7 +1,7 @@
 import type ja from '../ja/datePicker';
 
 export default {
-  lead: 'DatePicker and DateRangePicker are popup calendars; Calendar and RangeCalendar are calendars placed on the page. All of them show Japanese public holidays and weekends with colors and names, and let you jump to a month or year from the heading. TimePicker lets you pick a time from hour and minute columns. Month names, weekdays, and time formatting come from Intl using the locale of GassanProvider, so they change along with the language.',
+  lead: 'DatePicker and DateRangePicker are popup calendars; Calendar and RangeCalendar are calendars placed on the page. All of them show Japanese public holidays and weekends with colors and names, and let you jump to a month or year from the heading. TimePicker lets you pick a time from hour and minute columns, and ColorPicker lets you pick a color from a saturation and brightness area and a hue strip. Month names, weekdays, and time formatting come from Intl using the locale of GassanProvider, so they change along with the language.',
   gallery: {
     title: 'Examples',
     intro: 'The selected day and time are filled with the accent color, and today gets a thin ring. Sundays and holidays are red; Saturdays are blue.',
@@ -12,6 +12,7 @@ export default {
       timePicker: 'Time',
       time12: '12-hour clock',
       businessHours: '10:00–18:00, every 15 minutes',
+      colorPicker: 'Color',
       date: 'Date (native)',
       time: 'Time (native)',
       color: 'Color (native)',
@@ -68,6 +69,27 @@ export default {
       { key: 'Esc', action: 'Closes without selecting and returns to the button (the modal stays open)' },
     ],
   },
+  color: {
+    title: 'Color',
+    intro: 'ColorPicker lets you choose a color with a saturation and brightness area, a hue strip and a hex code field. The popup is drawn in the theme’s colors, and the color updates live as you move the controls. Pass the colors you use often, and it lines them up as swatches that can be picked with a single press.',
+    exampleTitle: 'Brand color',
+    exampleDescription: 'Press a swatch, or move the area or the strip, and the color of the button below changes with it. The button’s text is white or black, whichever has the higher contrast with the background color.',
+    body: [
+      'The area is a 2D slider: ←→ move the saturation and ↑↓ the brightness, and it is announced as “Saturation 80%, brightness 60%”. The hue strip is a native range and the swatches are native radios, so their keys work the same as always. The current color is read as the button’s description.',
+      'The value is a lowercase `#rrggbb`, the same as the native `type="color"`. A swatch’s color and a value typed into the hex code field go in exactly as they are (they are not rounded through a position on the area, so they never end up off by one). The hex code field changes the color as soon as all 6 digits are typed; with 3 digits, it changes when you press Enter.',
+    ],
+    codeCaption: 'Choosing a color',
+    code: "<Modal.ColorPicker\n  aria-label=\"Brand color\"\n  value={color}\n  onValueChange={setColor}\n  swatches={[\n    { value: '#3346d3', label: 'Blue' },\n    { value: '#1a7f5a', label: 'Green' },\n  ]}\n/>",
+    keysCaption: 'Color picker keyboard interaction',
+    keys: [
+      { key: '← / →', action: 'Lowers / raises the saturation (in the area)' },
+      { key: '↑ / ↓', action: 'Raises / lowers the brightness (in the area)' },
+      { key: 'Shift + arrow keys', action: 'Moves in steps of 10 (in the area)' },
+      { key: 'PageUp / PageDown', action: 'Raises / lowers the brightness by 10 (in the area)' },
+      { key: 'Home / End', action: 'Sets the saturation to 0% / 100% (in the area)' },
+      { key: 'Esc', action: 'Closes and returns to the button (the modal stays open)' },
+    ],
+  },
   modal: {
     title: 'Inside a modal',
     intro: 'The calendar and the time columns open in the top layer via popover. Esc closes only the popup and returns focus to the button.',
@@ -90,10 +112,11 @@ export default {
     note: 'Pressing the heading (“October 2026”) shows a list of months; pressing it again shows a list of years. The arrow keys move within the lists too, and Enter goes down one level. Pressing “Today” goes back to today.',
   },
   native: {
-    title: 'DatePicker and TimePicker, or the native date and time inputs',
+    title: 'DatePicker, TimePicker and ColorPicker, or the native date, time and color inputs',
     body: [
       'On phones, the OS date wheel is often faster. Use DatePicker when you want users to see the weekdays and holidays as they choose, to show days that cannot be chosen, to let users pick a range, or to match the look of the other components. Otherwise, put `type="date"` in Modal.Input. The frame and the light/dark scheme (`--g-color-scheme`) come out the same (I-15).',
       'The same goes for times. The native `type="time"` has a popup that does not follow the theme, and it lets users type times off the step or outside the range. Use TimePicker when you want the step and range to be visible, or want users to choose in the theme’s colors.',
+      'The same goes for colors. The native `type="color"` has a popup that keeps the look of the OS and browser, and it cannot line up the colors you use often. Use ColorPicker when you want users to choose within the theme, or to choose from a fixed set of colors.',
     ],
   },
   apiCaption: {
@@ -102,6 +125,7 @@ export default {
     calendar: 'Modal.Calendar',
     rangeCalendar: 'Modal.RangeCalendar',
     timePicker: 'Modal.TimePicker',
+    colorPicker: 'Modal.ColorPicker',
   },
-  a11yCaption: 'Specification items date and time inputs satisfy',
+  a11yCaption: 'Specification items date, time and color inputs satisfy',
 } satisfies typeof ja;

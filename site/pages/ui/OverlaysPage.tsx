@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { Button, Checkbox, CopyButton, IconButton, Menu, Popover, Tooltip } from '@genelab/gassan';
 
 import type { PageProps } from '../../routes';
+import ContextFiles from '../../demos/ContextFiles';
+import contextFilesSource from '../../demos/ContextFiles.tsx?raw';
 import FilterToolbar from '../../demos/FilterToolbar';
 import filterToolbarSource from '../../demos/FilterToolbar.tsx?raw';
 import { useT } from '../../i18n';
@@ -16,7 +18,7 @@ import { Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { Specimens } from '../../ui/Specimens';
 
-const IDS = ['U-19', 'U-20', 'U-21'];
+const IDS = ['U-19', 'U-20', 'U-21', 'U-34'];
 
 export function UiOverlaysPage({ rest }: PageProps): ReactNode {
   const { nav, uiOverlays: t } = useT();
@@ -163,6 +165,17 @@ export function UiOverlaysPage({ rest }: PageProps): ReactNode {
             />
           </Section>
 
+          <Section id="contextmenu" title={t.contextMenu.title} intro={t.contextMenu.intro}>
+            <Example
+              title={t.contextMenu.exampleTitle}
+              description={t.contextMenu.exampleDescription}
+              code={contextFilesSource}
+              demo="contextFiles"
+            >
+              <ContextFiles />
+            </Example>
+          </Section>
+
           <Section id="usage" title={t.codeCaption}>
             <CodeBlock lang="tsx" code={t.code} />
           </Section>
@@ -173,6 +186,7 @@ export function UiOverlaysPage({ rest }: PageProps): ReactNode {
           <ApiTable name="TooltipProps" title="Tooltip" />
           <ApiTable name="PopoverProps" title="Popover" />
           <ApiTable name="MenuProps" title="Menu" />
+          <ApiTable name="ContextMenuProps" title="ContextMenu" />
           <ApiTable name="MenuItem" />
           <ApiTable name="MenuGroup" />
           <ApiTable name="MenuSeparator" />

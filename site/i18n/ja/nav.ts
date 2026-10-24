@@ -37,7 +37,7 @@ export default {
     choice: '選択肢',
     select: 'セレクトとコンボボックス',
     slider: 'スライダー',
-    datePicker: '日付と時刻',
+    datePicker: '日付・時刻・色',
     fileDrop: 'ファイル',
     media: 'Media と Gallery',
     chart: 'Modal.Chart',

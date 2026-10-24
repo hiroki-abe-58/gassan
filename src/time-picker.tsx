@@ -131,6 +131,7 @@ export function ModalTimePicker({
   /** 打った数字（800ms 以内に同じ列で続けて打つと桁がつながる）。 */
   const typed = useRef({ text: '', at: 0, column: 'hour' as Column });
   const base = useId();
+  const valueId = `${base}-value`;
 
   const cycle = hourCycle ?? hourCycleOf(locale);
   const minuteStep = Math.min(60, Math.max(1, Math.round(step)));
@@ -323,13 +324,14 @@ export function ModalTimePicker({
         aria-expanded={open}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
-        aria-describedby={ariaDescribedBy}
+        aria-describedby={[valueId, ariaDescribedBy].filter(Boolean).join(' ')}
         aria-invalid={ariaInvalid}
         aria-required={ariaRequired}
         disabled={disabled}
         onClick={() => (open ? close(false) : show())}
       >
-        <span className="g-select-value" data-placeholder={current === null ? '' : undefined}>
+        {/* ラベルで名前を付けるとボタンの中の文字は名前にならないので、値は説明として読ませる */}
+        <span id={valueId} className="g-select-value" data-placeholder={current === null ? '' : undefined}>
           {current === null ? (placeholder ?? labels.choose) : format.format(asDate(current))}
         </span>
         <Icon name="clock" className="g-select-icon" />

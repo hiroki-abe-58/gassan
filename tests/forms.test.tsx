@@ -44,6 +44,21 @@ describe('配線 / I-01', () => {
     expect(select).toHaveAttribute('aria-required', 'true');
   });
 
+  it('ボタンで開く部品（日付・期間・時刻）は、いまの値をボタンの説明として読む（ラベルで名前を付けると、ボタンの中の文字は名前にならないため）', () => {
+    render(
+      <>
+        <Modal.Field label="期限" help="締め切りの日">
+          {(control) => <Modal.DatePicker {...control} defaultValue="2026-10-24" />}
+        </Modal.Field>
+        <Modal.Field label="対象の期間">{(control) => <Modal.DateRangePicker {...control} />}</Modal.Field>
+        <Modal.Field label="開始時刻">{(control) => <Modal.TimePicker {...control} defaultValue="09:05" />}</Modal.Field>
+      </>,
+    );
+    expect(screen.getByRole('button', { name: /期限/ })).toHaveAccessibleDescription('2026年10月24日(土) 締め切りの日');
+    expect(screen.getByRole('button', { name: /対象の期間/ })).toHaveAccessibleDescription('期間を選ぶ');
+    expect(screen.getByRole('button', { name: /開始時刻/ })).toHaveAccessibleDescription('09:05');
+  });
+
   it('value を渡さなければ部品が自分で値を持つ（非制御）', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();

@@ -3589,6 +3589,97 @@
   .g-checklist-item[data-done] .g-checklist-item-title { color: var(--g-fg-muted); font-weight: 500; }
   .g-checklist-item-description { margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.5; }
   .g-checklist-action { flex: none; margin-inline-start: auto; }
+
+  /* --- 9.30 color picker（I-23） ---------------------------------------------------------
+   * 面は横が彩度・縦が明るさ（色相の純色に白と黒を重ねる）、帯は色相 0〜359 度。どちらも文書の向きによらず左から右。
+   * 摘みは選んでいる色で塗り、白い縁と影で地から浮かせる。見本の色は中身なので、強制カラーでも塗ったままにする。 */
+  .g-color-chip,
+  .g-color-preview { flex: none; box-sizing: border-box; border: 1px solid color-mix(in srgb, var(--g-fg) 22%, transparent); }
+  .g-color-chip { inline-size: 20px; block-size: 20px; border-radius: 50%; }
+  .g-color-value { font: 0.875rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  /* 列は窓の幅で止める（16 進数の欄の固有の幅が最小幅に入ると、窓より広がって右が切れる） */
+  .g-popup.g-color { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; inline-size: min(15rem, calc(100vw - 16px)); padding: 12px; }
+  .g-color-area {
+    position: relative;
+    block-size: 9rem;
+    border-radius: calc(var(--g-radius-control) - 2px);
+    background:
+      linear-gradient(to top, #000, transparent),
+      linear-gradient(to right, #fff, hsl(var(--g-color-hue, 0) 100% 50%));
+    touch-action: none;
+    cursor: crosshair;
+  }
+  /* 摘みの形は面と帯で同じ。帯の摘みはブラウザごとの疑似要素に書く（::-webkit- を他と同じ規則に並べると、Firefox は規則ごと捨てる） */
+  .g-color-thumb {
+    position: absolute;
+    box-sizing: border-box;
+    inline-size: 18px;
+    block-size: 18px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.3), 0 1px 4px rgb(0 0 0 / 0.35);
+    translate: -50% -50%;
+  }
+  .g-color-thumb:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-color-hue {
+    display: block;
+    inline-size: 100%;
+    block-size: 14px;
+    margin: 0;
+    border-radius: 999px;
+    background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+    appearance: none;
+    cursor: pointer;
+  }
+  .g-color-hue:focus-visible { outline: none; }
+  .g-color-hue::-webkit-slider-thumb {
+    appearance: none;
+    box-sizing: border-box;
+    inline-size: 18px;
+    block-size: 18px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: hsl(var(--g-color-hue, 0) 100% 50%);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.3), 0 1px 4px rgb(0 0 0 / 0.35);
+  }
+  .g-color-hue::-moz-range-thumb {
+    box-sizing: border-box;
+    inline-size: 18px;
+    block-size: 18px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: hsl(var(--g-color-hue, 0) 100% 50%);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.3), 0 1px 4px rgb(0 0 0 / 0.35);
+  }
+  .g-color-hue:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-color-hue:focus-visible::-moz-range-thumb { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-color-fields { display: flex; align-items: center; gap: 8px; }
+  .g-color-preview { inline-size: 36px; block-size: 36px; border-radius: var(--g-radius-control); }
+  .g-color-hex {
+    flex: 1;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    min-block-size: 36px;
+    padding-inline: 10px;
+    border: 1px solid var(--g-border-strong);
+    border-radius: var(--g-radius-control);
+    background: var(--g-surface);
+    color: var(--g-fg);
+    font: 0.875rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .g-color-hex:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 1px; }
+  .g-color-swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+  .g-color-swatch { position: relative; display: grid; cursor: pointer; }
+  .g-color-swatch > input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .g-color-swatch > span {
+    box-sizing: border-box;
+    inline-size: 24px;
+    block-size: 24px;
+    border: 1px solid color-mix(in srgb, var(--g-fg) 22%, transparent);
+    border-radius: 50%;
+  }
+  .g-color-swatch > input:checked + span { box-shadow: 0 0 0 2px var(--g-surface), 0 0 0 4px var(--g-fg); }
+  .g-color-swatch > input:focus-visible + span { outline: 2px solid var(--g-focus); outline-offset: 5px; }
 }
 
 /* ===========================================================================
@@ -4349,5 +4440,7 @@
     .g-codeblock { border: 1px solid CanvasText; }
     /* 9.28 / 9.29。未読の数と、終えた手順の丸は地の色が消えるので、選んだ色で残す */
     :is(.g-notify-badge, .g-checklist-item[data-done] .g-checklist-mark) { forced-color-adjust: none; border-color: Highlight; background: Highlight; color: HighlightText; }
+    /* 9.30。色の選択の面・帯・見本は色そのものが中身なので、塗ったまま残す */
+    :is(.g-color-area, .g-color-hue, .g-color-thumb, .g-color-chip, .g-color-preview, .g-color-swatch > span) { forced-color-adjust: none; }
   }
 }

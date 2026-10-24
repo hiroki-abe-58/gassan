@@ -1,7 +1,7 @@
 import type ja from '../ja/uiOverlays';
 
 export default {
-  lead: '툴팁·팝오버·메뉴. 트리거 옆에 나타나며, 모달과 마찬가지로 Esc와 포커스에 관한 약속을 지킨다. 모두 top layer에 나타나므로, 모달 안에서도 본문에 잘리지 않는다.',
+  lead: '툴팁·팝오버·메뉴·오른쪽 클릭 메뉴. 트리거 옆(오른쪽 클릭 메뉴는 누른 위치)에 나타나며, 모달과 마찬가지로 Esc와 포커스에 관한 약속을 지킨다. 모두 top layer에 나타나므로, 모달 안에서도 본문에 잘리지 않는다.',
   example: {
     title: '조합한 견본',
     intro: '목록 위의 툴바. 아이콘만 있는 버튼에는 툴팁으로 보충 설명을 붙이고, 필터는 팝오버로, 그 밖의 작업은 메뉴로 보여 준다.',
@@ -16,6 +16,7 @@ export default {
       { part: 'Tooltip', holds: '짧은 보충 설명만(누를 수 있는 것은 넣지 않는다)', when: '아이콘만 있는 버튼의 설명·줄인 말의 전체 표기' },
       { part: 'Popover', holds: '누를 수 있는 것을 담는 작은 창', when: '필터·표시 설정·공유 링크' },
       { part: 'Menu', holds: '작업 목록', when: '행의 작업·그 밖의 작업' },
+      { part: 'ContextMenu', holds: '작업 목록', when: '목록 항목의 오른쪽 클릭(같은 작업을 “…” 메뉴에도 둔다)' },
       { part: 'Modal', holds: '대답을 기다리는 창', when: '확인·입력·보기(5가지 유형)' },
     ],
   },
@@ -30,6 +31,12 @@ export default {
   menu: {
     title: '메뉴',
     intro: '↑↓와 첫 글자로 이동하고, Enter로 고르면 닫히며 버튼으로 돌아간다. 사용할 수 없는 항목에도 포커스가 멈추므로, 무엇이 있는지 알 수 있다. 삭제처럼 되돌릴 수 없는 작업은 danger 색으로 한다.',
+  },
+  contextMenu: {
+    title: '오른쪽 클릭 메뉴',
+    intro: '항목 위에서 오른쪽 클릭하면, 누른 위치에 메뉴가 열린다. 안에 포커스가 있으면 Shift+F10이나 ContextMenu 키로도 열 수 있다. 항목 사이를 움직이는 방식은 메뉴와 같고, 닫으면 열기 전의 자리로 포커스가 돌아간다. 오른쪽 클릭은 키와 터치로는 찾기 어려우므로, 같은 작업을 눈에 보이는 “…” 메뉴에도 둔다.',
+    exampleTitle: '파일 목록',
+    exampleDescription: '행 위에서 오른쪽 클릭하거나, 행의 “…” 버튼을 누른다. 어느 쪽에서든 같은 작업을 고를 수 있고, 고른 작업을 아래에 표시한다.',
   },
   labels: {
     icon: '아이콘만 있는 버튼',
@@ -66,7 +73,7 @@ export default {
     oldest: '오래된순',
     density: '촘촘하게 보기',
   },
-  code: "import { Tooltip, Popover, Menu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"워크스페이스 설정 열기\">\n  <IconButton label=\"설정\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">필터</Button>} title=\"표시 필터\">\n  <Checkbox>읽지 않은 것만</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"작업\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: '편집', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: '삭제', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>",
+  code: "import { Tooltip, Popover, Menu, ContextMenu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"워크스페이스 설정 열기\">\n  <IconButton label=\"설정\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">필터</Button>} title=\"표시 필터\">\n  <Checkbox>읽지 않은 것만</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"작업\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: '편집', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: '삭제', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>\n\n<ContextMenu\n  label=\"견적서.pdf의 작업\"\n  items={[\n    { value: 'open', label: '열기' },\n    { value: 'delete', label: '삭제', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n>\n  <li>견적서.pdf</li>\n</ContextMenu>",
   codeCaption: '사용법',
   a11yCaption: '트리거 옆에 나타나는 컴포넌트가 충족하는 명세',
 } satisfies typeof ja;

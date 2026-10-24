@@ -14,6 +14,8 @@ export interface PlaceOptions {
   align?: 'start' | 'center' | 'end';
   /** 起点の幅を最小の幅にする。既定 true（一覧・カレンダー）。ツールチップとポップオーバーは false。 */
   matchWidth?: boolean;
+  /** 画面のこの点に置く（右クリックのメニュー）。渡すと起点の要素の代わりに、幅 0 の点を起点にする。 */
+  point?: { x: number; y: number } | null;
 }
 
 /**
@@ -23,12 +25,14 @@ export interface PlaceOptions {
  * 画面座標をそのまま position: fixed の座標として使える。
  * 拡大の原点は起点の中央に合わせる（V-04。起点から広がって見える）。
  */
-export function placePopup(anchor: HTMLElement, popup: HTMLElement, { side = 'below', align = 'start', matchWidth = true }: PlaceOptions = {}): void {
-  const rect = anchor.getBoundingClientRect();
+export function placePopup(anchor: HTMLElement, popup: HTMLElement, { side = 'below', align = 'start', matchWidth = true, point }: PlaceOptions = {}): void {
+  const rect = point ? { left: point.x, right: point.x, top: point.y, bottom: point.y, width: 0 } : anchor.getBoundingClientRect();
+  // 点に置くときは隙間を空けない（右クリックのメニューは、角を押した点に合わせる）
+  const gap = point ? 0 : GAP;
   const viewportBlock = window.innerHeight;
   const viewportInline = document.documentElement.clientWidth;
-  const below = viewportBlock - rect.bottom - GAP - MARGIN;
-  const above = rect.top - GAP - MARGIN;
+  const below = viewportBlock - rect.bottom - gap - MARGIN;
+  const above = rect.top - gap - MARGIN;
   if (matchWidth) popup.style.minInlineSize = `${String(rect.width)}px`;
   // 上限（CSS の --g-popup-room）を外した高さで「先に試す側に入るか」を決め、入る高さを戻す。
   popup.style.removeProperty('--g-popup-room');
@@ -41,7 +45,7 @@ export function placePopup(anchor: HTMLElement, popup: HTMLElement, { side = 'be
   const toRight = (align === 'end') !== (getComputedStyle(anchor).direction === 'rtl');
   const start = align === 'center' ? rect.left + rect.width / 2 - width / 2 : toRight ? rect.right - width : rect.left;
   const left = Math.min(Math.max(MARGIN, start), Math.max(MARGIN, viewportInline - MARGIN - width));
-  popup.style.top = `${String(downward ? rect.bottom + GAP : rect.top - GAP - height)}px`;
+  popup.style.top = `${String(downward ? rect.bottom + gap : rect.top - gap - height)}px`;
   popup.style.left = `${String(left)}px`;
   popup.style.transformOrigin = `${String(rect.left + rect.width / 2 - left)}px ${downward ? '0' : '100%'}`;
   popup.dataset.side = downward ? 'below' : 'above';
@@ -91,10 +95,10 @@ export interface PopupProps extends Omit<HTMLAttributes<HTMLDivElement>, 'popove
  *
  * popover API の無い環境（jsdom・古いブラウザ）では、起点の直下に absolute で置く。
  */
-export function Popup({ open, anchorRef, onDismiss, children, className, side, align, matchWidth, ...attributes }: PopupProps): ReactNode {
+export function Popup({ open, anchorRef, onDismiss, children, className, side, align, matchWidth, point, ...attributes }: PopupProps): ReactNode {
   // 置き方の指定は、effect の中から最新の値を読む（依存に入れて置き直しの登録をやり直さない）。
   const placement = useRef<PlaceOptions>({});
-  placement.current = { side, align, matchWidth };
+  placement.current = { side, align, matchWidth, point };
   const ref = useRef<HTMLDivElement>(null);
   const inTopLayer = useRef(false);
   const dismiss = useEvent(onDismiss);
@@ -126,7 +130,8 @@ export function Popup({ open, anchorRef, onDismiss, children, className, side, a
     };
     const handlePointerDown = (event: PointerEvent): void => {
       const target = event.target as Node | null;
-      if (target && (popup.contains(target) || anchor.contains(target))) return;
+      // 点に置いたときは、起点（右クリックした範囲）の中を押しても閉じる
+      if (target && (popup.contains(target) || (!placement.current.point && anchor.contains(target)))) return;
       dismiss();
     };
     document.addEventListener('pointerdown', handlePointerDown, true);

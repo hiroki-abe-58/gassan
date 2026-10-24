@@ -38,7 +38,7 @@ export default {
     choice: 'ตัวเลือก',
     select: 'Select และ Combobox',
     slider: 'แถบเลื่อน',
-    datePicker: 'วันที่และเวลา',
+    datePicker: 'วันที่ เวลา และสี',
     fileDrop: 'ไฟล์',
     media: 'Media และ Gallery',
     chart: 'Modal.Chart',

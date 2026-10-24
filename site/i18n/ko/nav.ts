@@ -38,7 +38,7 @@ export default {
     choice: '선택지',
     select: '셀렉트와 콤보박스',
     slider: '슬라이더',
-    datePicker: '날짜와 시간',
+    datePicker: '날짜·시간·색',
     fileDrop: '파일',
     media: 'Media와 Gallery',
     chart: 'Modal.Chart',
