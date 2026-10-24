@@ -28,6 +28,12 @@ export default {
     title: 'Steps',
     intro: 'Shows how far through a process you are, with marks, lines and words. Steps sit side by side only when the container is wide; when it is narrow, they stack.',
   },
+  tree: {
+    title: 'Tree view',
+    intro: 'Folders or pages, nested inside one another. Only one item is a Tab stop; ↑↓ move between items, → opens and ← closes. Type the first character of a name, and focus moves to the item that starts with it. Depth is shown by indentation, and the selected item is marked with a background color and bold text.',
+    exampleTitle: 'Files',
+    exampleDescription: 'Press an item to select it; if it’s a folder, it also opens or closes. You can open, close and select with the keyboard alone, too.',
+  },
   labels: {
     line: 'Underline (line)',
     pill: 'Filled (pill)',

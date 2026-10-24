@@ -1,0 +1,15 @@
+export default {
+  title: 'はじめにやること',
+  description: '4 つの手順で、チームで使い始められます。',
+  account: 'アカウントを作る',
+  project: '最初のプロジェクトを作る',
+  projectDescription: 'タスクと資料を、プロジェクトごとにまとめます。',
+  create: '作る',
+  invite: 'メンバーを招待する',
+  inviteDescription: '一緒に使う人を、メールアドレスで招待します。',
+  inviteAction: '招待する',
+  notify: '通知を設定する',
+  setUp: '設定する',
+  dismissed: 'チェックリストを閉じました。',
+  reset: 'もう一度出す',
+};

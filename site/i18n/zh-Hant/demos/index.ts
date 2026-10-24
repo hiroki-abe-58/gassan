@@ -10,6 +10,7 @@ import chartSignups from './chartSignups';
 import chartWidgets from './chartWidgets';
 import chatAssistant from './chatAssistant';
 import chatTeam from './chatTeam';
+import checklistStart from './checklistStart';
 import dashboardSample from './dashboardSample';
 import choiceForm from './choiceForm';
 import commandMenu from './commandMenu';
@@ -27,6 +28,7 @@ import kindForm from './kindForm';
 import kindView from './kindView';
 import lineBreakModal from './lineBreakModal';
 import memberTable from './memberTable';
+import notifyBell from './notifyBell';
 import playground from './playground';
 import projectSettings from './projectSettings';
 import providerEnglish from './providerEnglish';
@@ -42,6 +44,7 @@ import toastInModal from './toastInModal';
 import toastPromise from './toastPromise';
 import toastTones from './toastTones';
 import toastUndo from './toastUndo';
+import treeFiles from './treeFiles';
 
 export default {
   bodyScroll,
@@ -55,6 +58,7 @@ export default {
   chartWidgets,
   chatAssistant,
   chatTeam,
+  checklistStart,
   choiceForm,
   commandMenu,
   dashboardSample,
@@ -72,6 +76,7 @@ export default {
   kindView,
   lineBreakModal,
   memberTable,
+  notifyBell,
   playground,
   projectSettings,
   providerEnglish,
@@ -87,4 +92,5 @@ export default {
   toastPromise,
   toastTones,
   toastUndo,
+  treeFiles,
 } satisfies typeof ja;

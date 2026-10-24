@@ -87,14 +87,6 @@ export default {
     },
   },
 
-  code: {
-    copy: 'Copy',
-    copied: 'Copied',
-    copiedStatus: 'Code copied',
-    label: 'Code',
-    labelOf: (caption: string): string => `Code for ${caption}`,
-  },
-
   example: {
     show: 'Show code',
     hide: 'Hide code',

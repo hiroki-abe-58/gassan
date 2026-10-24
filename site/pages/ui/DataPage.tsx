@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { Badge, Button, DataTable, PageHeader, type DataTableColumn } from '@genelab/gassan';
 
 import type { PageProps } from '../../routes';
+import CodeSnippet from '../../demos/CodeSnippet';
+import codeSnippetSource from '../../demos/CodeSnippet.tsx?raw';
 import MemberTable from '../../demos/MemberTable';
 import memberTableSource from '../../demos/MemberTable.tsx?raw';
 import { useT } from '../../i18n';
@@ -14,7 +16,7 @@ import { Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { Specimens } from '../../ui/Specimens';
 
-const IDS = ['U-25', 'U-26', 'C-13'];
+const IDS = ['U-25', 'U-26', 'U-30', 'C-13'];
 
 interface Invoice {
   id: string;
@@ -125,6 +127,12 @@ export function UiDataPage({ rest }: PageProps): ReactNode {
             />
           </Section>
 
+          <Section id="codeblock" title={t.codeblock.title} intro={t.codeblock.intro}>
+            <Example title={t.codeblock.exampleTitle} description={t.codeblock.exampleDescription} code={codeSnippetSource}>
+              <CodeSnippet />
+            </Example>
+          </Section>
+
           <Section id="usage" title={t.codeCaption}>
             <CodeBlock lang="tsx" code={t.code} />
           </Section>
@@ -136,6 +144,7 @@ export function UiDataPage({ rest }: PageProps): ReactNode {
           <ApiTable name="DataTableProps" title="DataTable" />
           <ApiTable name="DataTableColumn" />
           <ApiTable name="DataTableSort" />
+          <ApiTable name="CodeBlockProps" title="CodeBlock" />
         </>
       )}
       a11y={() => <SpecTable ids={[...IDS, 'B-13', 'D-13']} caption={t.a11yCaption} />}

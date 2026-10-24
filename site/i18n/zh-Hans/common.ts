@@ -85,14 +85,6 @@ export default {
     },
   },
 
-  code: {
-    copy: '复制',
-    copied: '已复制',
-    copiedStatus: '代码已复制',
-    label: '代码',
-    labelOf: (caption: string): string => `${caption} 的代码`,
-  },
-
   example: {
     show: '查看代码',
     hide: '收起代码',

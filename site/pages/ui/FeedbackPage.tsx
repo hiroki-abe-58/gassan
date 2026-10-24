@@ -3,15 +3,20 @@ import type { ReactNode } from 'react';
 import { Banner, Button, Progress, Skeleton, Spinner } from '@genelab/gassan';
 
 import type { PageProps } from '../../routes';
+import ChecklistStart from '../../demos/ChecklistStart';
+import checklistStartSource from '../../demos/ChecklistStart.tsx?raw';
+import NotifyBell from '../../demos/NotifyBell';
+import notifyBellSource from '../../demos/NotifyBell.tsx?raw';
 import { useT } from '../../i18n';
 import { ApiTable } from '../../ui/ApiTable';
 import { CodeBlock } from '../../ui/Code';
 import { ComponentPage } from '../../ui/ComponentPage';
+import { Example } from '../../ui/Example';
 import { Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { Specimens } from '../../ui/Specimens';
 
-const IDS = ['U-06', 'U-07', 'U-08', 'U-16'];
+const IDS = ['U-06', 'U-07', 'U-08', 'U-16', 'U-32', 'U-33'];
 
 export function UiFeedbackPage({ rest }: PageProps): ReactNode {
   const { nav, uiFeedback: t } = useT();
@@ -93,6 +98,18 @@ export function UiFeedbackPage({ rest }: PageProps): ReactNode {
             </div>
           </Section>
 
+          <Section id="notifications" title={t.notifications.title} intro={t.notifications.intro}>
+            <Example title={t.notifications.exampleTitle} description={t.notifications.exampleDescription} code={notifyBellSource} demo="notifyBell">
+              <NotifyBell />
+            </Example>
+          </Section>
+
+          <Section id="checklist" title={t.checklist.title} intro={t.checklist.intro}>
+            <Example title={t.checklist.exampleTitle} description={t.checklist.exampleDescription} code={checklistStartSource} demo="checklistStart">
+              <ChecklistStart />
+            </Example>
+          </Section>
+
           <Section id="usage" title={t.codeCaption}>
             <CodeBlock lang="tsx" code={t.code} />
           </Section>
@@ -104,6 +121,10 @@ export function UiFeedbackPage({ rest }: PageProps): ReactNode {
           <ApiTable name="SpinnerProps" title="Spinner" />
           <ApiTable name="SkeletonProps" title="Skeleton" />
           <ApiTable name="BannerProps" title="Banner" />
+          <ApiTable name="NotificationCenterProps" title="NotificationCenter" />
+          <ApiTable name="NotificationEntry" />
+          <ApiTable name="ChecklistProps" title="Checklist" />
+          <ApiTable name="ChecklistItem" />
         </>
       )}
       a11y={() => <SpecTable ids={[...IDS, 'V-02']} caption={t.a11yCaption} />}

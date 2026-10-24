@@ -85,14 +85,6 @@ export default {
     },
   },
 
-  code: {
-    copy: '複製',
-    copied: '已複製',
-    copiedStatus: '已複製程式碼',
-    label: '程式碼',
-    labelOf: (caption: string): string => `${caption} 的程式碼`,
-  },
-
   example: {
     show: '查看程式碼',
     hide: '收合程式碼',

@@ -15,6 +15,7 @@ import { Icon } from './internal/icons';
 import { firstEnabled, navigate } from './internal/listbox';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { Popup } from './internal/popup';
+import { useTypeahead } from './internal/typeahead';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
 
@@ -148,7 +149,7 @@ export function ModalSelect({
   const [active, setActive] = useState(-1);
   const anchorRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const typed = useRef({ text: '', at: 0 });
+  const typeahead = useTypeahead();
   const listId = `${useId()}-listbox`;
   useWarnDuplicates('Modal.Select', options);
 
@@ -168,30 +169,23 @@ export function ModalSelect({
   };
 
   /** 打った文字で始まる選択肢を探す。同じ文字の連打は「次の候補」。 */
-  const typeahead = (key: string, from: number): number => {
-    const now = Date.now();
-    const text = now - typed.current.at > 500 ? key : typed.current.text + key;
-    typed.current = { text, at: now };
-    const repeated = [...text].every((char) => char === text[0]);
-    const query = (repeated ? key : text).toLocaleLowerCase();
-    const offset = repeated ? from + 1 : Math.max(from, 0);
-    for (let i = 0; i < options.length; i += 1) {
-      const index = (offset + i) % options.length;
-      const option = options[index];
-      if (option && !option.disabled && option.label.toLocaleLowerCase().startsWith(query)) return index;
-    }
-    return -1;
-  };
+  const findTyped = (key: string, from: number): number =>
+    typeahead.find(
+      key,
+      from,
+      options.map((option) => option.label),
+      (index) => Boolean(options[index]?.disabled),
+    );
 
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>): void => {
     const { key } = event;
     const printable = key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey;
-    const typing = Date.now() - typed.current.at <= 500;
+    const typing = typeahead.typing();
     if (!open) {
       if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(key)) show(start);
       else if (key === 'Home' || key === 'End') show(firstEnabled(options, key === 'End'));
       else if (printable) {
-        const found = typeahead(key, selectedIndex);
+        const found = findTyped(key, selectedIndex);
         show(found >= 0 ? found : start);
       } else return;
       event.preventDefault();
@@ -204,7 +198,7 @@ export function ModalSelect({
     if (key === 'Escape') setOpen(false);
     else if (key === 'Enter' || (key === ' ' && !typing) || (key === 'ArrowUp' && event.altKey)) pick(active);
     else if (printable) {
-      const found = typeahead(key, active);
+      const found = findTyped(key, active);
       if (found >= 0) setActive(found);
     } else {
       const moved = navigate(key, options, active);

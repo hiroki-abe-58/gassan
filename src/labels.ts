@@ -122,6 +122,19 @@ export interface GassanLabels {
   copy: string;
   copied: string;
   copyFailed: string;
+  /** コードの塊の名前（見出しが無いとき・あるとき）と、写すボタンの名前。U-30。 */
+  code: string;
+  codeOf: (title: string) => string;
+  copyCode: string;
+  /** 通知の一覧を開くボタンの名前（未読があるとき）・すべて既読にするボタン・空のとき・未読の印の読み上げ。U-32。 */
+  notificationsUnread: (count: number) => string;
+  markAllRead: string;
+  noNotifications: string;
+  unreadMark: string;
+  /** はじめのチェックリストの進み具合と、手順の状態の読み上げ。U-33。 */
+  checklistProgress: (done: number, total: number) => string;
+  checklistDone: string;
+  checklistTodo: string;
   /** AvatarGroup の「+3」の読み上げ名。U-05。 */
   moreCount: (count: number) => string;
   /** パンくずリストとページ送りの nav の名前。U-22 / U-23。 */
@@ -283,6 +296,16 @@ export const japaneseLabels: GassanLabels = {
   copy: 'コピー',
   copied: 'コピーしました',
   copyFailed: 'コピーできませんでした',
+  code: 'コード',
+  codeOf: (title) => `${title} のコード`,
+  copyCode: 'コードをコピー',
+  notificationsUnread: (count) => `通知 未読 ${count}件`,
+  markAllRead: 'すべて既読にする',
+  noNotifications: '新しい通知はありません',
+  unreadMark: '未読',
+  checklistProgress: (done, total) => `${done} / ${total} 完了`,
+  checklistDone: '完了',
+  checklistTodo: '未完了',
   moreCount: (count) => `ほか${String(count)}人`,
   breadcrumbs: 'パンくずリスト',
   pagination: 'ページ送り',
@@ -419,6 +442,16 @@ export const englishLabels: GassanLabels = {
   copy: 'Copy',
   copied: 'Copied',
   copyFailed: 'Could not copy',
+  code: 'Code',
+  codeOf: (title) => `Code for ${title}`,
+  copyCode: 'Copy code',
+  notificationsUnread: (count) => `Notifications, ${count} unread`,
+  markAllRead: 'Mark all as read',
+  noNotifications: 'No new notifications',
+  unreadMark: 'Unread',
+  checklistProgress: (done, total) => `${done} of ${total} done`,
+  checklistDone: 'Done',
+  checklistTodo: 'Not done',
   moreCount: (count) => `${String(count)} more`,
   breadcrumbs: 'Breadcrumb',
   pagination: 'Pagination',

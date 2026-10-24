@@ -85,14 +85,6 @@ export default {
     },
   },
 
-  code: {
-    copy: 'คัดลอก',
-    copied: 'คัดลอกแล้ว',
-    copiedStatus: 'คัดลอกโค้ดแล้ว',
-    label: 'โค้ด',
-    labelOf: (caption: string): string => `โค้ดของ ${caption}`,
-  },
-
   example: {
     show: 'ดูโค้ด',
     hide: 'ซ่อนโค้ด',

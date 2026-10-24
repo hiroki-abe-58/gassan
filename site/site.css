@@ -769,51 +769,16 @@
 /* ---------------------------------------------------------------------------
  * code
  * -------------------------------------------------------------------------*/
+/* gassan の CodeBlock（U-30）を、明るいテーマでも暗い地で出す。器の中だけ gassan のトークンを差し替える */
 .s-code {
+  --g-surface: var(--s-code-bg);
+  --g-fg: var(--s-code-ink);
+  --g-fg-muted: #9aa1b2;
+  --g-hover: rgb(255 255 255 / 0.1);
+  --g-focus: #a9b6ff;
   margin-block: 16px 20px;
   border-radius: var(--s-radius-lg);
-  background: var(--s-code-bg);
-  color: var(--s-code-ink);
-  overflow: hidden;
-}
-.s-code-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 8px 0 18px;
-}
-.s-code-lang {
-  color: #9aa1b2;
-  font-family: var(--s-mono);
-  font-size: 0.75rem;
-}
-.s-code-copy {
-  padding: 4px 12px;
-  border: 0;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.08);
-  color: #d5d9e3;
-  font-size: 0.75rem;
-  cursor: pointer;
-  /* 「コピーしました」を 2 行に割らない。短いので幅は足りる */
-  flex: none;
-  white-space: nowrap;
-}
-.s-code-copy:hover {
-  background: rgb(255 255 255 / 0.16);
-}
-.s-code pre {
-  margin: 0;
-  padding: 12px 18px 18px;
-  overflow-x: auto;
-  font-size: 0.8125rem;
-  line-height: 1.7;
-  tab-size: 2;
-}
-.s-code pre:focus-visible {
-  outline: 2px solid #a9b6ff;
-  outline-offset: -4px;
+  color-scheme: dark;
 }
 .s-tok-comment {
   color: #8a91a1;
@@ -1064,6 +1029,32 @@
   padding-inline: 12px;
   color: var(--s-ink-3);
   font-size: 0.75rem;
+}
+/* ツリー・コード・通知のデモ（U-30〜U-32） */
+.s-tree-demo {
+  display: grid;
+  gap: 12px;
+  inline-size: min(100%, 22rem);
+}
+.s-code-demo {
+  display: grid;
+  gap: 12px;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+.s-notify-demo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  inline-size: 100%;
+  padding: 6px 8px 6px 16px;
+  border: 1px solid var(--s-line);
+  border-radius: var(--g-radius);
+  background: var(--s-surface);
+}
+.s-notify-demo-brand {
+  flex: 1;
+  font-weight: 700;
 }
 .s-skeleton-card {
   display: flex;

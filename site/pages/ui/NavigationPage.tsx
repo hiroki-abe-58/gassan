@@ -5,6 +5,8 @@ import { Accordion, Badge, Breadcrumbs, Pagination, Steps, Tabs } from '@genelab
 import type { PageProps } from '../../routes';
 import ProjectSettings from '../../demos/ProjectSettings';
 import projectSettingsSource from '../../demos/ProjectSettings.tsx?raw';
+import TreeFiles from '../../demos/TreeFiles';
+import treeFilesSource from '../../demos/TreeFiles.tsx?raw';
 import { useT } from '../../i18n';
 import { ApiTable } from '../../ui/ApiTable';
 import { CodeBlock } from '../../ui/Code';
@@ -14,7 +16,7 @@ import { Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { Specimens } from '../../ui/Specimens';
 
-const IDS = ['U-17', 'U-18', 'U-22', 'U-23', 'U-24'];
+const IDS = ['U-17', 'U-18', 'U-22', 'U-23', 'U-24', 'U-31'];
 
 export function UiNavigationPage({ rest }: PageProps): ReactNode {
   const { nav, uiNavigation: t } = useT();
@@ -148,6 +150,12 @@ export function UiNavigationPage({ rest }: PageProps): ReactNode {
             />
           </Section>
 
+          <Section id="tree" title={t.tree.title} intro={t.tree.intro}>
+            <Example title={t.tree.exampleTitle} description={t.tree.exampleDescription} code={treeFilesSource} demo="treeFiles">
+              <TreeFiles />
+            </Example>
+          </Section>
+
           <Section id="usage" title={t.codeCaption}>
             <CodeBlock lang="tsx" code={t.code} />
           </Section>
@@ -164,6 +172,8 @@ export function UiNavigationPage({ rest }: PageProps): ReactNode {
           <ApiTable name="PaginationProps" title="Pagination" />
           <ApiTable name="StepsProps" title="Steps" />
           <ApiTable name="StepItem" />
+          <ApiTable name="TreeViewProps" title="TreeView" />
+          <ApiTable name="TreeNode" />
         </>
       )}
       a11y={() => <SpecTable ids={[...IDS, 'V-05']} caption={t.a11yCaption} />}
