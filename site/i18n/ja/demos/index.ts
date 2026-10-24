@@ -4,7 +4,11 @@
  */
 import bodyScroll from './bodyScroll';
 import bookingCalendar from './bookingCalendar';
+import chartFeatures from './chartFeatures';
 import chartReport from './chartReport';
+import chartRevenue from './chartRevenue';
+import chartSignups from './chartSignups';
+import chartWidgets from './chartWidgets';
 import dashboardSample from './dashboardSample';
 import choiceForm from './choiceForm';
 import commandMenu from './commandMenu';
@@ -41,7 +45,11 @@ import toastUndo from './toastUndo';
 export default {
   bodyScroll,
   bookingCalendar,
+  chartFeatures,
   chartReport,
+  chartRevenue,
+  chartSignups,
+  chartWidgets,
   choiceForm,
   commandMenu,
   dashboardSample,

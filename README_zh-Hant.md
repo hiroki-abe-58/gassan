@@ -18,17 +18,17 @@
 
 **文件網站：<https://hiroki-abe-58.github.io/gassan/#/zh-Hant>**
 — 以類似 Material Design 3 指南的形式，整理了設計理念（modal 存在的理由、四層模型、五種類型、無障礙）、樣式（遮罩層、色彩與對比、主題、尺寸、換行、動態效果）、
-每個元件與表單元件可實際操作的示範與 API、頁面範本，以及 224 項行為的規格。
+每個元件與表單元件可實際操作的示範與 API、頁面範本，以及 236 項行為的規格。
 網站提供 [English](https://hiroki-abe-58.github.io/gassan/#/en)、[日本語](https://hiroki-abe-58.github.io/gassan/)、[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)、繁體中文、[한국어](https://hiroki-abe-58.github.io/gassan/#/ko) 與 [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) 版本（用頂端列的地球圖示按鈕切換）。
 網站可切換淺色 / 深色主題與主色；無論選哪個顏色，文字與填色都會經過推算，以符合 WCAG 的對比度要求。
 網站上所有的表格、數量與 API 說明，都是在建置時從規格書與型別定義自動產生，沒有任何手寫的數字。
 
-完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（224 項行為表、決策矩陣、品質評分準則）。
+完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（236 項行為表、決策矩陣、品質評分準則）。
 用 AI 助理寫程式時，請把這個檔案放進上下文（context）。
 
 | 文件 | 內容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 224 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 236 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 將原始需求逐項拆解，每項一列，標示已實作 / 透過組合達成 / 列入路線圖 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | 在 modal 中放入 gassan 表單元件的最小範例，以及從其他函式庫包裝 gassan 沒有的元件時的注意事項 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 原生 `<dialog>`、Base UI、React Aria、Radix 的比較（截至 2026-09-29，僅引用第一手資料） |
@@ -257,7 +257,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | 將清單與月曆顯示在 top layer 的元件 |
 | `Modal.FileDrop` | 檔案的放置區（拖放時也套用 `accept`） |
 | `Modal.Table` `Modal.Alert` | 可橫向捲動的表格、送出結果的摘要 |
-| `Modal.Chart` | 圖表的容器。關聯名稱（`label`）與趨勢的替代文字（`summary`），並以 `<details>` 呈現原始資料。本身不負責繪圖 |
+| `Modal.Chart` | 用於你帶來的圖表（任何函式庫，或自己寫的 SVG、canvas）的容器。關聯名稱（`label`）與趨勢的替代文字（`summary`），並以 `<details>` 呈現原始資料 |
 | `Modal.Handle` | 底部面板（sheet）的拖曳把手。有停駐點（detent）時是 `role="slider"` 的控制項；沒有時只是裝飾性的抓取區域 |
 | `ModalHost` `useModals` | 命令式 API（`await confirm()`） |
 | `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | 具備日本國定假日與期間選擇的月曆，以及依主題繪製的時間選擇 |
@@ -267,6 +267,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 容器、數值、進度與通知 |
 | `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | 導覽類元件，以及顯示在觸發元素旁的元件 |
 | `PageHeader` `DataTable` `CommandPalette` | 頁面標題列、資料表格（排序、選取列、批次操作）、命令面板（⌘K） |
+| `LineChart` `BarChart` `DonutChart` `Sparkline` `BarList` `Gauge` | 不依賴其他函式庫、以 SVG 與 HTML 繪製的圖表。可以用鍵盤逐一瀏覽資料點並朗讀數值，原始資料可展開為表格，顏色跟隨主題 |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | 登入與帳號相關的頁面（`templates.css`） |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | 錯誤、維護與公開頁面 |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | 應用程式外框及其中的頁面 |
@@ -297,6 +298,27 @@ gassan 沒有的元件（例如可多選的組合框），請用同樣的方式�
 >
   <MyBarChart />  {/* SVG / canvas / 任何函式庫皆可。預設為 aria-hidden */}
 </Modal.Chart>
+```
+
+```tsx
+import { LineChart } from '@genelab/gassan';
+
+<LineChart
+  label="每月營收"
+  description="營收在 3 月最高。"
+  data={[
+    { month: '1月', revenue: 1180, cost: 820 },
+    { month: '2月', revenue: 1240, cost: 850 },
+    { month: '3月', revenue: 1520, cost: 900 },
+  ]}
+  x="month"
+  series={[
+    { key: 'revenue', label: '營收' },
+    { key: 'cost', label: '費用' },
+  ]}
+  area
+  table
+/>
 ```
 
 ---

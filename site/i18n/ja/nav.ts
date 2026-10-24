@@ -52,6 +52,7 @@ export default {
     uiOverlays: 'ツールチップとメニュー',
     uiData: '見出しと表',
     uiCommand: 'コマンドパレット',
+    uiCharts: 'グラフ',
     templatesAuth: 'ログインと登録',
     templatesStatus: 'エラーとメンテナンス',
     templatesPublic: '料金・FAQ・規約',

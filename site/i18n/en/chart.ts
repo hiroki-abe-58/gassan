@@ -1,7 +1,7 @@
 import type ja from '../ja/chart';
 
 export default {
-  lead: 'A container for charts. It draws nothing. It wires a name, a summary of the trend and a disclosure of the raw data to the chart you bring, because a bare canvas carries zero information for a screen reader.',
+  lead: 'A container for charts you bring (any library, or your own SVG or canvas). It wires a name, a summary of the trend and a disclosure of the raw data to the chart, because a bare canvas carries zero information for a screen reader. To draw a chart with gassan, use the “Charts” UI parts (LineChart and others).',
   report: {
     title: 'Name, summary and raw data',
     intro: 'label and summary are required. The chart itself is aria-hidden by default, so the summary and raw data are the only path.',
@@ -9,9 +9,9 @@ export default {
     exampleDescription: 'Open “Show data” to read the same numbers in a table.',
   },
   why: {
-    title: 'Why it does not draw',
+    title: 'When to use it instead of the chart parts',
     body: [
-      'There are many charting libraries, and the best one depends on the use. If gassan bundled one, choosing it would let down every user of the others. So the chart can be SVG, canvas or any library. gassan takes on only the three things almost every chart lacks: a “name”, a “text alternative for the trend” and “access to the raw data”.',
+      'The charts gassan draws (the “Charts” UI parts) carry their own name, summary, raw-data table and keyboard exploration that is read aloud. This container is for every other chart. gassan does not draw some kinds, such as maps, network diagrams and 3D, and sometimes you want the charting library you already know. The chart can be SVG, canvas or any library. This container takes on only the three things almost every chart lacks: a “name”, a “text alternative for the trend” and “access to the raw data”.',
       'If the chart is accessible on its own, for example navigable with a keyboard, `visualAccessible` removes the `aria-hidden`.',
     ],
     mockTitle: 'Monthly sales (USD thousands)',

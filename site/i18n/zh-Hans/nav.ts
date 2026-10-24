@@ -53,6 +53,7 @@ export default {
     uiOverlays: '工具提示与菜单',
     uiData: '标题栏与表格',
     uiCommand: '命令面板',
+    uiCharts: '图表',
     templatesAuth: '登录与注册',
     templatesStatus: '错误与维护',
     templatesPublic: '价格、常见问题与条款',

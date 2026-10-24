@@ -123,6 +123,17 @@ const labels: GassanLabels = {
   commandResults: (count) => (count === 0 ? '일치하는 항목이 없습니다' : `결과 ${String(count)}개`),
   commandMove: '이동',
   commandSelect: '선택',
+  chart: '그래프',
+  legend: '범례',
+  chartCategory: '항목',
+  chartValue: '값',
+  chartShare: '비율',
+  chartTable: (name) => `${name}의 원본 데이터`,
+  total: '합계',
+  noValue: '없음',
+  noData: '데이터가 없습니다',
+  chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join(', ')}`,
+  sparkline: ({ min, max, last }) => `최소 ${min}, 최대 ${max}, 최신 ${last}`,
 };
 
 export default labels;

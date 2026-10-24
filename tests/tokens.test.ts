@@ -588,6 +588,9 @@ describe('sheet detents and handle', () => {
       '--g-toast-duration',
       '--g-toast-elapsed',
       '--g-toast-steps',
+      // グラフ（Q-02〜Q-05）。系列の色と、描く領域の高さ。どちらも要素ごとに書く。
+      '--g-viz-color',
+      '--g-viz-height',
     ]);
     const missing = [...sheets.matchAll(/var\((--g-[\w-]+)(\s*,)?/g)]
       .filter((m) => !m[2] && !defined.has(m[1] ?? '') && !setByScript.has(m[1] ?? ''))

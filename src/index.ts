@@ -82,6 +82,7 @@ export { Breadcrumbs, Pagination, Steps } from './navigation';
 export { PageHeader } from './page-header';
 export { DataTable } from './data-table';
 export { CommandPalette } from './command-palette';
+export { LineChart, BarChart, DonutChart, Sparkline, BarList, Gauge } from './charts';
 
 /* ------------------------------------------------------------------ templates */
 
@@ -229,6 +230,22 @@ export type { TabItem, TabsProps } from './tabs';
 export type { PageHeaderProps } from './page-header';
 export type { DataTableColumn, DataTableProps, DataTableSort, DataTableSortValue } from './data-table';
 export type { CommandItem, CommandPaletteProps } from './command-palette';
+export type {
+  BarChartProps,
+  BarListItem,
+  BarListProps,
+  CartesianChartProps,
+  ChartBaseProps,
+  ChartFormat,
+  ChartRow,
+  ChartSeries,
+  ChartValue,
+  DonutChartProps,
+  DonutDatum,
+  GaugeProps,
+  LineChartProps,
+  SparklineProps,
+} from './charts';
 export type { AccordionItem, AccordionProps } from './disclosure';
 export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps } from './overlay';
 export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, StepsProps } from './navigation';

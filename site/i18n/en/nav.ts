@@ -53,6 +53,7 @@ export default {
     uiOverlays: 'Tooltips and menus',
     uiData: 'Page headers and tables',
     uiCommand: 'Command palette',
+    uiCharts: 'Charts',
     templatesAuth: 'Sign-in and sign-up',
     templatesStatus: 'Errors and maintenance',
     templatesPublic: 'Pricing, FAQ and legal',

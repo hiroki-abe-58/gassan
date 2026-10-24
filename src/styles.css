@@ -72,6 +72,17 @@
     --g-sunday: #c4321f;
     --g-saturday: #1f5fbf;
 
+    /* グラフの系列の色（Q-09）。1 はアクセントに従い、2〜8 は色相を離した固定の色。どれも面と 3:1 以上
+     * （非テキストの基準。tokens.test.ts が計算する）。色だけで系列を伝えないよう、凡例と読み上げに名前を添える。 */
+    --g-chart-1: var(--g-accent);
+    --g-chart-2: #d9480f;
+    --g-chart-3: #0b8a76;
+    --g-chart-4: #c2255c;
+    --g-chart-5: #7048e8;
+    --g-chart-6: #2b8a3e;
+    --g-chart-7: #5f6b7d;
+    --g-chart-8: #a56a00;
+
     /* --- scheme -----------------------------------------------------------
      * ネイティブ部品（日付の印・一覧のスクロールバー）の明暗を、面の色に合わせる。I-15。 */
     --g-color-scheme: light;
@@ -143,6 +154,13 @@
       --g-info: #86b2ff;
       --g-sunday: #ff8f84;
       --g-saturday: #8ab6ff;
+      --g-chart-2: #ff922b;
+      --g-chart-3: #38d9a9;
+      --g-chart-4: #f783ac;
+      --g-chart-5: #b197fc;
+      --g-chart-6: #69db7c;
+      --g-chart-7: #a6b1c2;
+      --g-chart-8: #ffd43b;
       --g-color-scheme: dark;
       --g-shadow:
         0 1px 2px rgb(0 0 0 / 0.4),
@@ -848,7 +866,11 @@
     .g-tag-label,
     .g-data-table :is(th, td):not([data-wrap], .g-data-table-empty),
     .g-command-label,
-    .g-command-description
+    .g-command-description,
+    .g-viz-y,
+    .g-viz-x,
+    .g-viz-hlabels > span,
+    .g-viz-tooltip-value
   ) wbr { display: none; }
 
   /* --- 3.9 focus ---------------------------------------------------------
@@ -2427,12 +2449,12 @@
  * ======================================================================== */
 
 @layer gassan.core {
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="neutral"] { --g-tone: var(--g-fg-muted); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="accent"] { --g-tone: var(--g-accent); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="success"] { --g-tone: var(--g-success); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="info"] { --g-tone: var(--g-info); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="warning"] { --g-tone: var(--g-warning); }
-  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength)[data-tone="error"] { --g-tone: var(--g-danger); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength, .g-sparkline, .g-gauge)[data-tone="neutral"] { --g-tone: var(--g-fg-muted); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength, .g-sparkline, .g-gauge)[data-tone="accent"] { --g-tone: var(--g-accent); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength, .g-sparkline, .g-gauge)[data-tone="success"] { --g-tone: var(--g-success); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength, .g-sparkline, .g-gauge)[data-tone="info"] { --g-tone: var(--g-info); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength, .g-sparkline, .g-gauge)[data-tone="warning"] { --g-tone: var(--g-warning); }
+  :is(.g-badge, .g-banner, .g-progress, .g-timeline-item, .g-strength, .g-sparkline, .g-gauge)[data-tone="error"] { --g-tone: var(--g-danger); }
 
   /* --- 9.1 buttons（U-01〜U-03） ---------------------------------------------
    * 見た目と押した手応えは Modal.Button（.g-btn）と同じ。印と文字は別の器に置く（文節の span の間に隙間を入れない）。
@@ -3317,6 +3339,370 @@
   .g-command-hint { display: inline-flex; align-items: center; gap: 4px; }
 }
 
+/* ===========================================================================
+ * 10. charts（Q-01〜Q-12）
+ * ---------------------------------------------------------------------------
+ * 線と面だけを SVG（viewBox="0 0 100 100" を縦横に伸ばし、線の太さは vector-effect で保つ）で描き、
+ * 目盛りの文字・点・棒・当たりの領域・ツールチップは HTML を % の位置に置く。形は大きさを測らずに決まる。
+ * 時間の軸は左から右へ読むので、右から左の文書でも描く向きは変えない（凡例と説明は文書の向きに従う）。
+ * 重なりは z-index を使わず DOM の順で決める（線 → 点 → 当たりの領域 → ツールチップ）。
+ * 系列の色は --g-viz-color で受け取る（既定は --g-chart-1〜8）。
+ * ======================================================================== */
+
+@layer gassan.core {
+  /* 器の幅いっぱいに描く（中身の幅に縮めると、描く領域が 1fr の最小の 0 まで潰れる） */
+  .g-viz {
+    display: grid;
+    gap: 12px;
+    inline-size: 100%;
+    min-inline-size: 0;
+    color: var(--g-fg);
+    font-size: 0.875rem;
+  }
+  .g-viz-description { margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.6; }
+
+  /* --- 10.1 legend（Q-11） ---------------------------------------------------
+   * 系列が 2 つ以上なら、押して出し入れするボタン。隠した系列は印を中抜きにして文字を沈める（状態は aria-pressed でも伝わる）。 */
+  .g-viz-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+  }
+  .g-viz-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-block-size: 28px;
+    margin-inline: -6px;
+    padding: 2px 6px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: var(--g-fg);
+    font: inherit;
+    text-align: start;
+  }
+  button.g-viz-legend-item { cursor: pointer; }
+  button.g-viz-legend-item:hover { background: var(--g-hover); }
+  button.g-viz-legend-item:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 0; }
+  .g-viz-legend-item[aria-pressed="false"] { color: var(--g-fg-muted); }
+  .g-viz-legend-item[aria-pressed="false"] .g-viz-swatch { background: transparent; box-shadow: inset 0 0 0 1.5px var(--g-viz-color); }
+  .g-viz-swatch {
+    flex: none;
+    inline-size: 10px;
+    block-size: 10px;
+    border-radius: 3px;
+    background: var(--g-viz-color);
+  }
+  .g-viz-swatch[data-shape="line"] { inline-size: 14px; block-size: 3px; border-radius: 2px; }
+
+  /* --- 10.2 frame / axes（Q-10） ---------------------------------------------
+   * 縦の目盛りの文字の列は、文字の高さの半分ずつ上下にはみ出させ、均等に並べた文字の真ん中を線にそろえる（目盛りは等間隔）。 */
+  :is(.g-viz-frame, .g-viz-hframe) {
+    direction: ltr;
+    display: grid;
+    column-gap: 10px;
+    row-gap: 8px;
+  }
+  .g-viz-frame { grid-template-columns: auto minmax(0, 1fr); }
+  .g-viz-y {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-block: -8px;
+    color: var(--g-fg-muted);
+    font-size: 0.75rem;
+    line-height: 16px;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    white-space: nowrap;
+  }
+  .g-viz-plot {
+    position: relative;
+    grid-column: 2;
+    block-size: var(--g-viz-height, 240px);
+    /* 横に指を滑らせて点をたどる。縦のスクロールはブラウザに任せる */
+    touch-action: pan-y;
+  }
+  .g-viz-x {
+    position: relative;
+    grid-column: 2;
+    block-size: 16px;
+    color: var(--g-fg-muted);
+    font-size: 0.75rem;
+    line-height: 16px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .g-viz-x > span { position: absolute; inset-block-start: 0; translate: -50% 0; }
+  .g-viz-x > span[data-edge="start"] { translate: 0 0; }
+  .g-viz-x > span[data-edge="end"] { translate: -100% 0; }
+  .g-viz-grid { position: absolute; inset: 0; pointer-events: none; }
+  .g-viz-grid > span { position: absolute; inset-inline: 0; border-block-start: 1px solid var(--g-border); }
+  .g-viz-grid[data-axis="x"] > span { inset-inline: auto; inset-block: 0; border-block-start: 0; border-inline-start: 1px solid var(--g-border); }
+  .g-viz-grid > span[data-zero] { border-color: var(--g-border-strong); }
+  .g-viz-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    color: var(--g-fg-muted);
+  }
+
+  /* --- 10.3 lines / areas（Q-03） --------------------------------------------
+   * 線は左から右へ描き込み、点は線が届く頃に出る（Q-12）。切り抜きは終わったら外す（端の線の太さを切らない）。 */
+  .g-viz-svg {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    pointer-events: none;
+    animation: g-viz-reveal calc(var(--g-dur-slow) * 3) var(--g-ease-move) backwards;
+  }
+  .g-viz-line {
+    fill: none;
+    stroke: var(--g-viz-color);
+    stroke-width: 2.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .g-viz-area { stroke: none; }
+  .g-viz-dot {
+    position: absolute;
+    inline-size: 8px;
+    block-size: 8px;
+    margin: -4px 0 0 -4px;
+    border-radius: 50%;
+    background: var(--g-viz-color);
+    box-shadow: 0 0 0 2px var(--g-viz-bg, var(--g-surface));
+    pointer-events: none;
+    animation: g-viz-fade var(--g-dur-slow) var(--g-ease-in) backwards;
+    animation-delay: calc(var(--g-viz-x, 0) * var(--g-dur-slow) * 3 / 100);
+  }
+  .g-viz-dot[data-active] { inline-size: 12px; block-size: 12px; margin: -6px 0 0 -6px; animation: none; }
+  .g-viz-guide {
+    position: absolute;
+    inset-block: 0;
+    border-inline-start: 1px dashed var(--g-border-strong);
+    pointer-events: none;
+  }
+
+  /* --- 10.4 bars（Q-04） -----------------------------------------------------
+   * 項目ごとの帯の中に、系列ごとの溝を並べる（積み上げは溝 1 つ）。溝ごと 0 の線から伸ばすので、積み上げの片も揃って伸びる。
+   * 値の側の端だけを丸め、0 の線の側は角のまま。 */
+  .g-viz-band {
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  /* 溝の束は帯の 72%。帯は描く領域に対して % で置くので、帯に対する割合は中の器で取る */
+  .g-viz-group { display: flex; justify-content: center; gap: 3px; inline-size: 72%; block-size: 100%; }
+  .g-viz-band[data-active]::before {
+    content: '';
+    position: absolute;
+    inset: 0 6%;
+    border-radius: 6px;
+    background: var(--g-hover);
+  }
+  .g-viz-slot {
+    position: relative;
+    flex: 1 1 0;
+    min-inline-size: 2px;
+    max-inline-size: 48px;
+    transform-origin: 50% var(--g-viz-zero, 100%);
+    animation: g-viz-grow calc(var(--g-dur-slow) * 2) var(--g-ease-move) backwards;
+    animation-delay: calc(var(--g-viz-x, 0) * var(--g-dur-slow) / 100);
+  }
+  .g-viz-bar { position: absolute; inset-inline: 0; background: var(--g-viz-color); }
+  .g-viz-bar[data-end="top"] { border-radius: 4px 4px 0 0; }
+  .g-viz-bar[data-end="bottom"] { border-radius: 0 0 4px 4px; }
+
+  /* 横の棒。名前の列（長ければ … で切る。全文は点の名前とツールチップにある）・描く領域・下の目盛り */
+  .g-viz-hframe { grid-template-columns: fit-content(40%) minmax(0, 1fr); }
+  .g-viz-hlabels {
+    display: grid;
+    grid-template-rows: repeat(var(--g-viz-rows, 1), minmax(0, 1fr));
+    block-size: var(--g-viz-height);
+    color: var(--g-fg-muted);
+    font-size: 0.8125rem;
+  }
+  .g-viz-hlabels > span { align-self: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: end; }
+  .g-viz-hlabels > span[data-active] { color: var(--g-fg); }
+  .g-bar-chart[data-layout="horizontal"] .g-viz-band { inset-inline: 0; flex-direction: column; }
+  .g-bar-chart[data-layout="horizontal"] .g-viz-group { flex-direction: column; inline-size: 100%; block-size: 72%; }
+  .g-bar-chart[data-layout="horizontal"] .g-viz-band[data-active]::before { inset: 2px 0; }
+  .g-bar-chart[data-layout="horizontal"] .g-viz-slot {
+    min-inline-size: 0;
+    max-inline-size: none;
+    min-block-size: 2px;
+    max-block-size: 20px;
+    transform-origin: var(--g-viz-zero, 0%) 50%;
+    animation-name: g-viz-grow-x;
+  }
+  .g-bar-chart[data-layout="horizontal"] .g-viz-bar { inset-inline: auto; inset-block: 0; }
+  .g-viz-bar[data-end="end"] { border-radius: 0 4px 4px 0; }
+  .g-viz-bar[data-end="start"] { border-radius: 4px 0 0 4px; }
+
+  /* --- 10.5 hits / tooltip（Q-02） -------------------------------------------
+   * 当たりの領域は項目ごとの帯で、1 つだけが Tab で止まる。ツールチップは同じ値を点の名前で読ませるので飾り。 */
+  .g-viz-hits { position: absolute; inset: 0; }
+  .g-viz-hit { position: absolute; inset-block: 0; border-radius: 6px; }
+  .g-bar-chart[data-layout="horizontal"] .g-viz-hit { inset-block: auto; inset-inline: 0; }
+  .g-viz-hit:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+  .g-viz-tooltip {
+    position: absolute;
+    inset-block-start: 4px;
+    display: grid;
+    gap: 6px;
+    min-inline-size: 8rem;
+    max-inline-size: min(16rem, 70%);
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--g-surface);
+    box-shadow: 0 0 0 1px var(--g-border), 0 8px 24px -8px rgb(0 0 0 / 0.25);
+    font-size: 0.8125rem;
+    pointer-events: none;
+  }
+  .g-viz-tooltip-title { font-weight: 650; overflow-wrap: anywhere; }
+  .g-viz-tooltip ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+  .g-viz-tooltip li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 6px; }
+  .g-viz-tooltip-label { color: var(--g-fg-muted); overflow-wrap: anywhere; }
+  .g-viz-tooltip-value { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* --- 10.6 donut（Q-05） ----------------------------------------------------
+   * 区切りは円周の割合（pathLength="100"）。真上から時計回りに置き、区切りの間を少し空ける。 */
+  .g-donut-body { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
+  .g-donut-figure { position: relative; flex: none; inline-size: var(--g-donut-size, 180px); max-inline-size: 100%; aspect-ratio: 1; }
+  .g-donut-figure > svg { display: block; inline-size: 100%; block-size: 100%; overflow: visible; rotate: -90deg; }
+  .g-donut-track { fill: none; stroke: color-mix(in srgb, var(--g-fg) 8%, transparent); }
+  .g-donut-segment {
+    fill: none;
+    stroke: var(--g-viz-color);
+    transition: opacity var(--g-dur-fast) linear;
+    animation: g-viz-sweep calc(var(--g-dur-slow) * 3) var(--g-ease-move) backwards;
+  }
+  .g-donut[data-active] .g-donut-segment:not([data-active]) { opacity: 0.3; }
+  .g-donut-center {
+    position: absolute;
+    inset: 22%;
+    display: grid;
+    place-content: center;
+    gap: 2px;
+    text-align: center;
+    pointer-events: none;
+  }
+  .g-donut-value { font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; overflow-wrap: anywhere; }
+  .g-donut-caption { color: var(--g-fg-muted); font-size: 0.75rem; line-height: 1.4; }
+  .g-donut-legend { flex: 1 1 14rem; display: grid; gap: 2px; min-inline-size: 0; }
+  .g-donut-legend > li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 8px;
+    border-radius: 6px;
+  }
+  .g-donut-legend > li[data-active] { background: var(--g-hover); }
+  .g-donut-amount { font-variant-numeric: tabular-nums; }
+  .g-donut-share { min-inline-size: 3.5em; color: var(--g-fg-muted); font-variant-numeric: tabular-nums; text-align: end; }
+
+  /* --- 10.7 sparkline（Q-06） ------------------------------------------------ */
+  .g-sparkline {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    block-size: var(--g-spark-height, 32px);
+    color: var(--g-tone, var(--g-accent));
+  }
+  .g-sparkline > svg { display: block; inline-size: 100%; block-size: 100%; overflow: visible; }
+  .g-sparkline-line { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .g-sparkline-area { fill: currentColor; fill-opacity: 0.14; stroke: none; }
+  .g-sparkline-bar { fill: currentColor; }
+  .g-sparkline-dot { position: absolute; inline-size: 6px; block-size: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: currentColor; }
+
+  /* --- 10.8 bar list（Q-07） -------------------------------------------------
+   * 名前と値の一覧に、いちばん大きな値に対する割合の棒を地として敷く。文字は棒の上に重ねる（DOM の順）。 */
+  .g-bar-list { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 0.875rem; }
+  .g-bar-list-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-block-size: 34px;
+    padding: 6px 10px;
+    box-sizing: border-box;
+  }
+  .g-bar-list-bar {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: calc(var(--g-bar, 0) * 100%);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--g-viz-color, var(--g-accent)) 16%, transparent);
+    transform-origin: left center;
+    animation: g-viz-grow-x calc(var(--g-dur-slow) * 2) var(--g-ease-move) backwards;
+    animation-delay: calc(var(--g-viz-x, 0) * var(--g-dur-slow) / 100);
+  }
+  .g-bar-list-bar:dir(rtl) { transform-origin: right center; }
+  .g-bar-list-label { position: relative; min-inline-size: 0; overflow-wrap: anywhere; }
+  .g-bar-list-label a {
+    color: inherit;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    text-underline-offset: 3px;
+  }
+  .g-bar-list-label a:hover { text-decoration-color: currentColor; }
+  .g-bar-list-label a:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; border-radius: 2px; }
+  .g-bar-list-value { position: relative; flex: none; color: var(--g-fg-muted); font-variant-numeric: tabular-nums; }
+
+  /* --- 10.9 gauge（Q-08） ------------------------------------------------------ */
+  .g-gauge {
+    display: inline-grid;
+    justify-items: center;
+    gap: 4px;
+    inline-size: var(--g-gauge-size, 200px);
+    max-inline-size: 100%;
+    color: var(--g-fg);
+  }
+  .g-gauge-dial { position: relative; inline-size: 100%; }
+  .g-gauge-dial > svg { display: block; inline-size: 100%; block-size: auto; overflow: visible; }
+  :is(.g-gauge-track, .g-gauge-fill) { fill: none; stroke-width: 10; stroke-linecap: round; }
+  .g-gauge-track { stroke: color-mix(in srgb, var(--g-fg) 10%, transparent); }
+  .g-gauge-fill { stroke: var(--g-tone, var(--g-accent)); animation: g-viz-sweep calc(var(--g-dur-slow) * 3) var(--g-ease-move) backwards; }
+  /* 値は弧の内側（下端）に置く。弧の内側の幅は直径の 7 割ほどなので、字は幅の 8% にして「17.2 GB / 20 GB」が収まるようにする */
+  .g-gauge-value {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    font-size: clamp(0.875rem, calc(var(--g-gauge-size, 200px) * 0.08), 1.75rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .g-gauge-label { color: var(--g-fg-muted); font-size: 0.8125rem; text-align: center; }
+
+  /* --- 10.10 motion（Q-12） ----------------------------------------------------
+   * 時間は動きの段のトークンから取るので、段が none なら一瞬で終わる。動きを減らす設定では止める（末尾の theme）。 */
+  @keyframes g-viz-reveal {
+    from { clip-path: inset(-8px 100% -8px -8px); }
+    to { clip-path: inset(-8px -8px -8px -8px); }
+  }
+  @keyframes g-viz-fade { from { opacity: 0; } }
+  @keyframes g-viz-grow { from { scale: 1 0; } }
+  @keyframes g-viz-grow-x { from { scale: 0 1; } }
+  @keyframes g-viz-sweep { from { stroke-dasharray: 0 100; } }
+}
+
 @layer gassan.theme {
   @media (prefers-reduced-motion: reduce) {
     .g-popup,
@@ -3407,5 +3793,17 @@
     /* 9.23。選んだ行の地の色は消えるので、選択の色で塗る（チェックボックスの状態でも分かる） */
     .g-data-table tbody tr[data-selected] > :is(th, td) { forced-color-adjust: none; background: SelectedItem; color: SelectedItemText; }
     .g-data-table-bulk { border: 1px solid CanvasText; }
+  }
+}
+
+@layer gassan.theme {
+  @media (prefers-reduced-motion: reduce) {
+    /* 10。グラフの描き込みは飾りなので止める（値ははじめから全部見える） */
+    :is(.g-viz-svg, .g-viz-dot, .g-viz-slot, .g-donut-segment, .g-gauge-fill, .g-bar-list-bar) { animation: none; }
+  }
+  @media (forced-colors: active) {
+    /* 10。系列の色を残す。Canvas と CanvasText に塗り替えると、棒と面が消えて系列が見分けられない */
+    :is(.g-viz-plot, .g-donut-figure, .g-sparkline, .g-gauge-dial, .g-bar-list-bar, .g-viz-swatch) { forced-color-adjust: none; }
+    .g-viz-hit:focus-visible { outline-color: Highlight; }
   }
 }

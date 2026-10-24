@@ -164,6 +164,24 @@ export interface GassanLabels {
   /** 下端のキーの案内（↑↓ と Enter の意味）。Esc は close を使う。U-27。 */
   commandMove: string;
   commandSelect: string;
+  /** グラフの役割の説明（aria-roledescription）と、凡例の名前。Q-01 / Q-11。 */
+  chart: string;
+  legend: string;
+  /** 元データの表の見出し（項目の列・値・割合）。Q-01。 */
+  chartCategory: string;
+  chartValue: string;
+  chartShare: string;
+  /** 元データの表の器の名前（グラフの名前と同じにすると、入れ子の group が同じ名前になる）。Q-01。 */
+  chartTable: (name: string) => string;
+  /** ドーナツの真ん中の既定（合計）。Q-05。 */
+  total: string;
+  /** 値の欠けた点と、データの無いグラフ。Q-02。 */
+  noValue: string;
+  noData: string;
+  /** 点の読み上げ（「3月: 売上 120万、費用 80万」）。entries は系列の名前と書式を当てた値の組。Q-02。 */
+  chartPoint: (x: string, entries: readonly (readonly [string, string])[]) => string;
+  /** 小さな推移の読み上げ（最小・最大・最新）。Q-06。 */
+  sparkline: (summary: { min: string; max: string; last: string }) => string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -260,6 +278,17 @@ export const japaneseLabels: GassanLabels = {
   commandResults: (count) => (count === 0 ? '一致する候補がありません' : `${String(count)} 件の候補`),
   commandMove: '移動',
   commandSelect: '選ぶ',
+  chart: 'グラフ',
+  legend: '凡例',
+  chartCategory: '項目',
+  chartValue: '値',
+  chartShare: '割合',
+  chartTable: (name) => `${name}の元データ`,
+  total: '合計',
+  noValue: 'なし',
+  noData: 'データがありません',
+  chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join('、')}`,
+  sparkline: ({ min, max, last }) => `最小 ${min}、最大 ${max}、最新 ${last}`,
 };
 
 export const englishLabels: GassanLabels = {
@@ -363,6 +392,17 @@ export const englishLabels: GassanLabels = {
   commandResults: (count) => (count === 0 ? 'No matches' : count === 1 ? '1 result' : `${String(count)} results`),
   commandMove: 'Move',
   commandSelect: 'Select',
+  chart: 'chart',
+  legend: 'Legend',
+  chartCategory: 'Item',
+  chartValue: 'Value',
+  chartShare: 'Share',
+  chartTable: (name) => `Data for ${name}`,
+  total: 'Total',
+  noValue: 'none',
+  noData: 'No data',
+  chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join(', ')}`,
+  sparkline: ({ min, max, last }) => `min ${min}, max ${max}, latest ${last}`,
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

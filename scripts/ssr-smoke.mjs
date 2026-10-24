@@ -18,6 +18,12 @@ import {
   Breadcrumbs,
   CommandPalette,
   DataTable,
+  BarChart,
+  BarList,
+  DonutChart,
+  Gauge,
+  LineChart,
+  Sparkline,
   ChangelogPage,
   ContactPage,
   DocumentPage,
@@ -481,6 +487,32 @@ for (const [label, passed] of [
   ['DataTable names the row checkboxes by the row headers on the server', /aria-label="すべて選択"/.test(tableHtml) && /aria-labelledby="[^"]+-row-0"/.test(tableHtml)],
   ['AppShell renders the navigation with the current page and a closed drawer on the server', appHtml.includes('aria-current="page"') && /class="g-app-menu"[^>]*aria-expanded="false"|aria-expanded="false"[^>]*class="g-app-menu"/.test(appHtml)],
   ['CommandPalette renders a closed dialog with its combobox on the server', /<dialog[^>]*class="[^"]*g-command/.test(paletteHtml) && !/<dialog[^>]*\sopen/.test(paletteHtml) && /role="combobox"/.test(paletteHtml)],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// グラフ（Q-01〜Q-12）。形は大きさを測らずに決まるので、サーバーで描いた時点で線・棒・弧が最後の形で出ている。
+// 器の幅は測れないので 600px とみなして目盛りの文字を間引く（ブラウザで測り直す）。
+const ROWS = [
+  { month: '1月', revenue: 120, cost: 80 },
+  { month: '2月', revenue: 150, cost: 90 },
+];
+const SERIES = [
+  { key: 'revenue', label: '売上' },
+  { key: 'cost', label: '費用' },
+];
+const lineHtml = renderToString(h(LineChart, { label: '月ごとの売上', description: '2月が最大', data: ROWS, x: 'month', series: SERIES, area: true, table: true }));
+const barHtml = renderToString(h(BarChart, { label: '内訳', data: ROWS, x: 'month', series: SERIES, stacked: true, layout: 'horizontal' }));
+const donutHtml = renderToString(h(DonutChart, { label: 'プラン', data: [{ label: 'Pro', value: 3 }, { label: 'Free', value: 1 }] }));
+const widgetsHtml = renderToString(
+  h(Fragment, null, h(Sparkline, { label: '売上', data: [1, 3, 2] }), h(BarList, { label: 'ページ', data: [{ label: '/a', value: 2 }] }), h(Gauge, { label: '使用量', value: 72 })),
+);
+for (const [label, passed] of [
+  ['LineChart renders the named group, the lines, the points and the raw-data table on the server', /role="group"[^>]*aria-roledescription="グラフ"|aria-roledescription="グラフ"[^>]*role="group"/.test(lineHtml) && /class="g-viz-line" d="M/.test(lineHtml) && /aria-label="1月: 売上 120、費用 80"/.test(lineHtml) && lineHtml.includes('<table')],
+  ['BarChart renders the stacked bars at their final size on the server', /class="g-viz-bar" style="[^"]*width:/.test(barHtml) && barHtml.includes('g-viz-hlabels')],
+  ['DonutChart renders the segments, the total and the legend with shares on the server', /class="g-donut-segment"/.test(donutHtml) && donutHtml.includes('75%') && donutHtml.includes('合計')],
+  ['Sparkline, BarList and Gauge render their names and values on the server', /role="img" aria-label="売上: 最小 1、最大 3、最新 2"/.test(widgetsHtml) && /aria-label="ページ"/.test(widgetsHtml) && /role="meter"[^>]*aria-valuenow="72"/.test(widgetsHtml)],
 ]) {
   if (passed) ok(label);
   else fail(label);
