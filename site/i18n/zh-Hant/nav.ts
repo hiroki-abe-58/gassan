@@ -62,6 +62,7 @@ export default {
     templatesApp: '應用程式外框',
     templatesAppPages: '設定、成員與帳單',
     templatesConversations: '聊天與 AI 助理',
+    templatesMail: '郵件',
     provider: 'GassanProvider',
     spec: '行為規格',
     verification: '驗證',

@@ -152,4 +152,17 @@ export default {
     },
     a11yCaption: '会话页面模板满足的规范',
   },
+  mail: {
+    lead: '邮件的界面。文件夹、邮件列表和阅读窗格会按容器的宽度，以三栏、两栏或切换的方式显示。可以选中多行，一起归档、删除、标为已读；写邮件、回复和转发都在模态框中进行。',
+    setup: {
+      title: '用法',
+      intro: '文件夹和打开的邮件由应用自行管理。打开邮件时会调用 onOpen（标为已读也由应用负责）。批量操作和发送只需传入处理函数，处理失败时返回 { error }，就会打断当前的播报，读出这段文字。没有传入的操作不会显示。',
+      code: "import { MailboxPage } from '@genelab/gassan';\n\n<MailboxPage\n  folders={folders}\n  currentFolder={folderId}\n  onFolderChange={setFolderId}\n  messages={messagesIn(folderId)}\n  current={messageId}\n  onOpen={openMessage}\n  onArchive={(ids) => archive(ids)}\n  onDelete={(ids) => moveToTrash(ids)}\n  onMarkRead={(ids, read) => markRead(ids, read)}\n  onStar={(id, starred) => star(id, starred)}\n  onSend={(values) => send(values)}\n/>",
+    },
+    preview: {
+      title: '邮件',
+      intro: '容器较宽时，文件夹、列表和阅读窗格并排显示。选中行后，上方会出现“已选择 n 封”和批量操作，并播报归档或删除的结果。打开邮件后会标为已读；点击“回复”会打开已填好收件人和主题的写邮件画面。切换到“手机”后，文件夹会变成列表上方的下拉选择框，列表和阅读窗格切换显示。',
+    },
+    a11yCaption: '邮件模板满足的规范',
+  },
 } satisfies typeof ja;

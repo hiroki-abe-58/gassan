@@ -62,6 +62,7 @@ export default {
     templatesApp: 'โครงแอป',
     templatesAppPages: 'การตั้งค่า สมาชิก และการเรียกเก็บเงิน',
     templatesConversations: 'แชตและผู้ช่วย AI',
+    templatesMail: 'อีเมล',
     provider: 'GassanProvider',
     spec: 'สเปกพฤติกรรม',
     verification: 'การตรวจสอบ',

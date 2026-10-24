@@ -57,12 +57,15 @@ import { gzipSync } from 'node:zlib';
  * 質問の例と、日本語と英語の文言）を足したため（JS 約 3.5 KB・CSS 約 1.3 KB）。使わないアプリの JS には載らない。
  * 同日、JS を 114 → 118 KB、templates.css を 5 → 6 KB に引き上げた。会話のページ（P-18 / P-19。チャット・AI アシスタントと、
  * 一覧と中身の切り替え・日本語と英語の文言）を足したため（JS 約 3.6 KB・templates.css 約 0.75 KB）。名前つき import でだけ使う。
+ * 同日、JS を 118 → 120 KB、templates.css を 6 → 7 KB に引き上げた。メール（P-20。フォルダ・一覧・読む面・まとめての操作・
+ * 作成と返信のモーダル・日本語と英語の文言）を足したため（JS 約 4.6 KB・templates.css 約 0.7 KB）。メールだけが使う印は
+ * 共有の ICONS に入れずにページの中に置いた（Modal だけを使う束は 17 B 減った）。
  */
 const BUDGETS = {
-  'dist/index.js': 118 * 1024,
-  'dist/index.cjs': 118 * 1024,
+  'dist/index.js': 120 * 1024,
+  'dist/index.cjs': 120 * 1024,
   'dist/styles.css': 22 * 1024,
-  'dist/templates.css': 6 * 1024,
+  'dist/templates.css': 7 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -253,6 +256,8 @@ const REQUIRED_EXPORTS = [
   // 会話のページ。P-18 / P-19。
   'ChatPage',
   'AssistantPage',
+  // メール。P-20。
+  'MailboxPage',
 ];
 
 let failed = false;

@@ -382,6 +382,49 @@ export interface TemplateLabels {
     placeholder: string;
     note: string;
   };
+  /** メール（MailboxPage）。P-20。一覧の「昨日」は GassanLabels の yesterday。 */
+  mail: {
+    title: string;
+    folders: string;
+    compose: string;
+    search: string;
+    noMatch: (query: string) => string;
+    empty: string;
+    none: string;
+    back: string;
+    unread: string;
+    unreadCount: (count: number) => string;
+    attachment: string;
+    selectAll: string;
+    select: (subject: string) => string;
+    selected: (count: number) => string;
+    archive: string;
+    delete: string;
+    markRead: string;
+    markUnread: string;
+    star: string;
+    starFor: (subject: string) => string;
+    reply: string;
+    forward: string;
+    archived: (count: number) => string;
+    deleted: (count: number) => string;
+    markedRead: (count: number) => string;
+    markedUnread: (count: number) => string;
+    to: string;
+    cc: string;
+    attachments: string;
+    download: (name: string) => string;
+    newMessage: string;
+    subject: string;
+    body: string;
+    toHelp: string;
+    toRequired: string;
+    send: string;
+    sent: string;
+    /** 返信の件名の頭（件名がすでにこれで始まっていれば重ねない）。 */
+    replyPrefix: string;
+    forwardPrefix: string;
+  };
 }
 
 /** 「A と B に同意します」のような、リンクを挟む文を組み立てる。 */
@@ -762,6 +805,47 @@ export const japaneseTemplateLabels: TemplateLabels = {
     placeholder: 'アシスタントに質問する',
     note: 'AI の回答は間違うことがあります。大事なことは確かめてください。',
   },
+  mail: {
+    title: 'メール',
+    folders: 'フォルダ',
+    compose: '作成',
+    search: 'メールを探す',
+    noMatch: (query) => `「${query}」に当てはまるメールはありません`,
+    empty: 'このフォルダにメールはありません',
+    none: 'メールを選んでください',
+    back: 'メールの一覧へ戻る',
+    unread: '未読',
+    unreadCount: (count) => `未読 ${count}件`,
+    attachment: '添付あり',
+    selectAll: 'すべて選ぶ',
+    select: (subject) => `「${subject}」を選ぶ`,
+    selected: (count) => `${count}件を選択中`,
+    archive: 'アーカイブ',
+    delete: '削除',
+    markRead: '既読にする',
+    markUnread: '未読にする',
+    star: 'スター',
+    starFor: (subject) => `「${subject}」にスター`,
+    reply: '返信',
+    forward: '転送',
+    archived: (count) => `${count}件をアーカイブしました`,
+    deleted: (count) => `${count}件を削除しました`,
+    markedRead: (count) => `${count}件を既読にしました`,
+    markedUnread: (count) => `${count}件を未読にしました`,
+    to: '宛先',
+    cc: 'CC',
+    attachments: '添付ファイル',
+    download: (name) => `${name} をダウンロード`,
+    newMessage: '新しいメール',
+    subject: '件名',
+    body: '本文',
+    toHelp: 'Enter かカンマで区切ると、何人でもまとめて入れられます。',
+    toRequired: '宛先を入れてください。',
+    send: '送信',
+    sent: 'メールを送りました',
+    replyPrefix: 'Re: ',
+    forwardPrefix: 'Fwd: ',
+  },
 };
 
 export const englishTemplateLabels: TemplateLabels = {
@@ -1138,5 +1222,46 @@ export const englishTemplateLabels: TemplateLabels = {
     conversation: 'Conversation with the assistant',
     placeholder: 'Ask the assistant',
     note: 'AI answers can be wrong. Check anything important.',
+  },
+  mail: {
+    title: 'Mail',
+    folders: 'Folders',
+    compose: 'Compose',
+    search: 'Search mail',
+    noMatch: (query) => `No mail matches “${query}”`,
+    empty: 'No mail in this folder',
+    none: 'Select a message',
+    back: 'Back to the message list',
+    unread: 'Unread',
+    unreadCount: (count) => `${count} unread`,
+    attachment: 'Has attachments',
+    selectAll: 'Select all',
+    select: (subject) => `Select “${subject}”`,
+    selected: (count) => `${count} selected`,
+    archive: 'Archive',
+    delete: 'Delete',
+    markRead: 'Mark as read',
+    markUnread: 'Mark as unread',
+    star: 'Star',
+    starFor: (subject) => `Star “${subject}”`,
+    reply: 'Reply',
+    forward: 'Forward',
+    archived: (count) => (count === 1 ? 'Archived 1 message' : `Archived ${count} messages`),
+    deleted: (count) => (count === 1 ? 'Deleted 1 message' : `Deleted ${count} messages`),
+    markedRead: (count) => (count === 1 ? 'Marked 1 message as read' : `Marked ${count} messages as read`),
+    markedUnread: (count) => (count === 1 ? 'Marked 1 message as unread' : `Marked ${count} messages as unread`),
+    to: 'To',
+    cc: 'Cc',
+    attachments: 'Attachments',
+    download: (name) => `Download ${name}`,
+    newMessage: 'New message',
+    subject: 'Subject',
+    body: 'Message',
+    toHelp: 'Separate addresses with Enter or a comma to add several at once.',
+    toRequired: 'Enter at least one recipient.',
+    send: 'Send',
+    sent: 'Message sent',
+    replyPrefix: 'Re: ',
+    forwardPrefix: 'Fwd: ',
   },
 };

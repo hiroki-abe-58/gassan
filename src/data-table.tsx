@@ -6,6 +6,7 @@ import { useControllable } from './internal/controllable';
 import { warnDuplicateKeys } from './internal/dom';
 import { Icon } from './internal/icons';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { SelectBox } from './internal/select-box';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
 
@@ -74,42 +75,6 @@ export interface DataTableProps<T> extends DataAttributes {
   /** 行の詰まり具合。既定 'comfortable'。 */
   density?: 'comfortable' | 'compact';
   className?: string;
-}
-
-/** 表の中の、選ぶためのチェックボックス。セルいっぱいを当たりにする。 */
-function SelectBox({
-  checked,
-  indeterminate = false,
-  onChange,
-  label,
-  labelledBy,
-}: {
-  checked: boolean;
-  indeterminate?: boolean;
-  onChange: (checked: boolean) => void;
-  label?: string;
-  labelledBy?: string;
-}): ReactNode {
-  const ref = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    if (ref.current) ref.current.indeterminate = indeterminate;
-  }, [indeterminate]);
-  return (
-    <label className="g-data-table-check">
-      <span className="g-choice-mark">
-        <input
-          ref={ref}
-          type="checkbox"
-          className="g-check"
-          checked={checked}
-          aria-label={label}
-          aria-labelledby={labelledBy}
-          onChange={(event) => onChange(event.target.checked)}
-        />
-        <Icon name={indeterminate ? 'minus' : 'check'} className="g-check-icon" />
-      </span>
-    </label>
-  );
 }
 
 /**
@@ -289,7 +254,9 @@ export function DataTable<T>({
         <tr key={id} data-selected={isSelected ? '' : undefined}>
           {selectable ? (
             <td className="g-data-table-select">
-              {isSelectable(row) ? <SelectBox checked={isSelected} onChange={(checked) => toggleRow(id, checked)} labelledBy={headerId} /> : null}
+              {isSelectable(row) ? (
+                <SelectBox className="g-data-table-check" checked={isSelected} onChange={(checked) => toggleRow(id, checked)} labelledBy={headerId} />
+              ) : null}
             </td>
           ) : null}
           {columns.map((column, columnIndex) => {
@@ -343,6 +310,7 @@ export function DataTable<T>({
                 <th scope="col" className="g-data-table-select">
                   <span className="g-sr-only">{labels.selectRows}</span>
                   <SelectBox
+                    className="g-data-table-check"
                     checked={allSelected}
                     indeterminate={someSelected}
                     onChange={toggleAll}

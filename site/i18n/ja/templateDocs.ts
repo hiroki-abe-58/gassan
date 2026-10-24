@@ -150,4 +150,17 @@ export default {
     },
     a11yCaption: '会話のページのテンプレートが満たす仕様',
   },
+  mail: {
+    lead: 'メールの画面。フォルダ・メールの一覧・読む面を、器の幅に合わせて 3 列・2 列・切り替えで出す。行を選んでまとめてアーカイブ・削除・既読にでき、作成・返信・転送はモーダルで書く。',
+    setup: {
+      title: '使い方',
+      intro: 'フォルダと開いているメールは利用側が持つ。メールを開くと onOpen が呼ばれる（既読にするのも利用側）。まとめての操作と送信は処理を渡すだけで、失敗なら { error } を返すと、その文を割り込ませて読み上げる。渡さなかった操作は出さない。',
+      code: "import { MailboxPage } from '@genelab/gassan';\n\n<MailboxPage\n  folders={folders}\n  currentFolder={folderId}\n  onFolderChange={setFolderId}\n  messages={messagesIn(folderId)}\n  current={messageId}\n  onOpen={openMessage}\n  onArchive={(ids) => archive(ids)}\n  onDelete={(ids) => moveToTrash(ids)}\n  onMarkRead={(ids, read) => markRead(ids, read)}\n  onStar={(id, starred) => star(id, starred)}\n  onSend={(values) => send(values)}\n/>",
+    },
+    preview: {
+      title: 'メール',
+      intro: '広い器ではフォルダ・一覧・読む面を並べる。行を選ぶと上に「n件を選択中」とまとめての操作が出て、アーカイブや削除の結果を読み上げる。メールを開くと既読になり、返信は宛先と件名を入れた書く画面を開く。「スマートフォン」に切り替えると、フォルダは一覧の上のセレクトになり、一覧と読む面を切り替える。',
+    },
+    a11yCaption: 'メールのテンプレートが満たす仕様',
+  },
 };
