@@ -6,7 +6,7 @@
  */
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import * as gassan from '../src';
@@ -20,6 +20,7 @@ import {
   Button,
   ButtonLink,
   Card,
+  ContextMenu,
   CopyButton,
   DescriptionList,
   Divider,
@@ -54,6 +55,20 @@ afterEach(() => {
 /** クリップボードを差し替える（jsdom には無い）。 */
 function mockClipboard(writeText: (text: string) => Promise<void>): void {
   Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+}
+
+/** 右クリックのメニューは開いている間だけ窓を描くので、描いた直後に右クリックして開く。 */
+function OpenedContextMenu(): ReactNode {
+  const target = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // render の act の中なので、act で包む fireEvent ではなく素のイベントを送る
+    target.current?.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+  }, []);
+  return (
+    <ContextMenu label="c" items={[{ value: 'a', label: 'A' }]} data-testid="probe">
+      <div ref={target}>t</div>
+    </ContextMenu>
+  );
 }
 
 describe('ボタン / U-01〜U-03', () => {
@@ -434,6 +449,7 @@ describe('受け渡しと中立の名前', () => {
         </Popover>
       ),
       Menu: () => <Menu trigger={<button type="button">m</button>} items={[{ value: 'a', label: 'A' }]} defaultOpen data-testid="probe" />,
+      ContextMenu: () => <OpenedContextMenu />,
       Breadcrumbs: () => <Breadcrumbs items={[{ label: 'a' }]} data-testid="probe" />,
       Pagination: () => <Pagination count={3} data-testid="probe" />,
       Steps: () => <Steps items={[{ label: 'a' }]} current={0} data-testid="probe" />,

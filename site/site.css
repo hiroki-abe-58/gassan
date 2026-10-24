@@ -1056,6 +1056,64 @@
   flex: 1;
   font-weight: 700;
 }
+/* 右クリックのメニューと色の選択のデモ（U-34 / I-23） */
+.s-context-demo {
+  display: grid;
+  gap: 12px;
+  inline-size: min(100%, 26rem);
+}
+.s-context-files {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--s-line);
+  border-radius: var(--g-radius);
+  background: var(--s-surface);
+  list-style: none;
+}
+.s-context-file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 48px;
+  padding-inline: 14px 6px;
+}
+.s-context-file + .s-context-file {
+  border-block-start: 1px solid var(--s-line);
+}
+.s-context-file > svg {
+  flex: none;
+  inline-size: 18px;
+  block-size: 18px;
+  color: var(--s-ink-3);
+}
+.s-context-name {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+.s-color-demo {
+  display: grid;
+  gap: 16px;
+  inline-size: min(100%, 22rem);
+}
+.s-color-sample {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.s-color-sample > figcaption {
+  color: var(--s-ink-3);
+  font-size: 0.8125rem;
+}
+.s-color-sample-button {
+  justify-self: start;
+  padding: 10px 18px;
+  border-radius: var(--g-radius-control);
+  background: var(--s-brand, var(--g-accent));
+  color: var(--s-brand-ink, #fff);
+  font-weight: 600;
+}
 .s-skeleton-card {
   display: flex;
   align-items: center;
@@ -3111,7 +3169,7 @@
   color: var(--s-ink-2);
   font-size: 0.875rem;
 }
-.s-custom-color > .g-input {
+.s-custom-color > .g-select {
   inline-size: 11rem;
 }
 .s-theme-summary {

@@ -34,6 +34,7 @@ interface TriggerProps {
   'aria-expanded'?: boolean;
   'aria-controls'?: string;
   onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
+  onContextMenu?: (event: ReactMouseEvent<HTMLElement>) => void;
   onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
   onPointerEnter?: (event: ReactPointerEvent<HTMLElement>) => void;
   onPointerLeave?: (event: ReactPointerEvent<HTMLElement>) => void;
@@ -371,35 +372,40 @@ export interface MenuProps extends DataAttributes {
 
 const isItem = (entry: MenuEntry): entry is MenuItem => !('type' in entry);
 
+/** 開いた直後にフォーカスを移す先。キーで開けば最初（↑なら最後）の項目、ポインタならメニューそのもの。 */
+type Landing = 'first' | 'last' | 'menu';
+
+interface MenuPopupProps {
+  open: boolean;
+  id: string;
+  items: readonly MenuEntry[];
+  /** 位置の基準（メニューの起点か、右クリックした範囲）。 */
+  anchorRef: RefObject<HTMLElement | null>;
+  /** 画面のこの点に置く（右クリック）。 */
+  point?: { x: number; y: number } | null;
+  side?: 'below' | 'above';
+  align?: 'start' | 'end';
+  /** 開いた直後にフォーカスを移す先。開くたびに 1 度だけ読んで空にする。 */
+  landing: RefObject<Landing | null>;
+  /** ここへフォーカスが移っても閉じない（メニューの起点）。 */
+  trigger?: RefObject<HTMLElement | null>;
+  /** 閉じる。refocus なら開く前の場所へフォーカスを戻す。 */
+  onClose: (refocus: boolean) => void;
+  onSelect?: (value: string) => void;
+  /** 名前（aria-labelledby か aria-label）と、利用者の data-*。 */
+  attributes: Record<string, unknown>;
+  className?: string;
+}
+
 /**
- * 操作のメニュー。U-21。WAI-ARIA APG の menu button。
+ * メニューの窓（role="menu"）。Menu（U-21）と ContextMenu（U-34）が共有する。
  *
- * 起点は aria-haspopup="menu" と aria-expanded を持つ。キー（Enter・Space・↓）で開くと最初の項目へ、
- * ↑ で開くと最後の項目へフォーカスを移す。ポインタで開いたときはメニューそのものへ移し、項目を先回りして光らせない。
- * 項目の間は ↑↓（端で回る）・Home / End・頭文字で移り、Enter / Space で選ぶと閉じて起点へ戻る
- * （選んだ処理がモーダルを開いても、閉じたときに起点へ戻れる）。Esc は選ばずに閉じて起点へ戻す
+ * 項目の間は ↑↓（端で回る）・Home / End・頭文字で移り、Enter / Space で選ぶと閉じて開く前の場所へ戻る
+ * （選んだ処理がモーダルを開いても、閉じたときにそこへ戻れる）。Esc は選ばずに閉じて戻す
  * （モーダルの cancel まで届かせない）。Tab で外へ出ると閉じる。ポインタを乗せた項目へフォーカスが移る。
  */
-export function Menu({
-  trigger,
-  items,
-  onSelect,
-  open,
-  defaultOpen = false,
-  onOpenChange,
-  side = 'below',
-  align = 'start',
-  className,
-  ...rest
-}: MenuProps): ReactNode {
+function MenuPopup({ open, id, items, anchorRef, point, side, align, landing, trigger, onClose, onSelect, attributes, className }: MenuPopupProps): ReactNode {
   const phrase = usePhrase();
-  const base = useId();
-  const { props, anchorRef, render, remember } = useTrigger(trigger);
-  const triggerId = props.id ?? `${base}-trigger`;
-  const menuId = `${base}-menu`;
-  const [isOpen, setOpen] = useControllable<boolean>(open, defaultOpen, onOpenChange);
-  /** 開いた直後にフォーカスを移す先。 */
-  const landing = useRef<'first' | 'last' | 'menu' | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const flat = items.flatMap((entry) => (isItem(entry) ? [entry] : entry.type === 'group' ? [...entry.items] : []));
   itemRefs.current.length = flat.length;
@@ -409,20 +415,11 @@ export function Menu({
     if (count > 0) itemRefs.current[((index % count) + count) % count]?.focus();
   };
 
-  const show = (at: 'first' | 'last' | 'menu'): void => {
-    landing.current = at;
-    setOpen(true);
-  };
-  const close = (refocus: boolean): void => {
-    setOpen(false);
-    if (refocus) anchorRef.current?.focus();
-  };
-
   useLayoutEffect(() => {
     const at = landing.current;
-    if (!isOpen || !at) return;
+    if (!open || !at) return;
     landing.current = null;
-    if (at === 'menu') document.getElementById(menuId)?.focus();
+    if (at === 'menu') document.getElementById(id)?.focus();
     else focusItem(at === 'first' ? 0 : flat.length - 1);
   });
 
@@ -432,7 +429,7 @@ export function Menu({
   };
   const activate = (item: MenuItem): void => {
     if (item.disabled) return;
-    close(true);
+    onClose(true);
     select(item);
   };
 
@@ -443,9 +440,9 @@ export function Menu({
     else if (key === 'ArrowUp') focusItem(index < 0 ? flat.length - 1 : index - 1);
     else if (key === 'Home') focusItem(0);
     else if (key === 'End') focusItem(flat.length - 1);
-    else if (key === 'Escape') close(true);
+    else if (key === 'Escape') onClose(true);
     else if (key === 'Tab') {
-      close(false);
+      onClose(false);
       return;
     } else if (key === 'Enter' || key === ' ') {
       const item = flat[index];
@@ -467,27 +464,6 @@ export function Menu({
     } else return;
     event.preventDefault();
   };
-
-  const anchor = render({
-    id: triggerId,
-    'aria-haspopup': 'menu',
-    'aria-expanded': isOpen,
-    'aria-controls': isOpen ? menuId : undefined,
-    onClick: (event) => {
-      remember(event.currentTarget);
-      props.onClick?.(event);
-      if (isOpen) close(false);
-      // キーで押した click は detail が 0。
-      else show(event.detail === 0 ? 'first' : 'menu');
-    },
-    onKeyDown: (event) => {
-      remember(event.currentTarget);
-      props.onKeyDown?.(event);
-      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
-      event.preventDefault();
-      show(event.key === 'ArrowDown' ? 'first' : 'last');
-    },
-  });
 
   let position = -1;
   const renderItem = (item: MenuItem): ReactNode => {
@@ -523,7 +499,7 @@ export function Menu({
         {...shared}
         href={item.href}
         onClick={() => {
-          close(false);
+          onClose(false);
           select(item);
         }}
       >
@@ -537,39 +513,209 @@ export function Menu({
   };
 
   return (
+    <Popup
+      open={open}
+      anchorRef={anchorRef}
+      point={point}
+      onDismiss={() => onClose(false)}
+      className={className ? `g-menu ${className}` : 'g-menu'}
+      side={side}
+      align={align}
+      matchWidth={false}
+      {...attributes}
+      role="menu"
+      id={id}
+      tabIndex={-1}
+      onKeyDown={handleKey}
+      onBlur={(event) => {
+        if (focusLeft(event, trigger?.current ?? null)) onClose(false);
+      }}
+    >
+      {items.map((entry, index) => {
+        if (isItem(entry)) return renderItem(entry);
+        if (entry.type === 'separator') return <div key={entry.key ?? `separator-${String(index)}`} role="separator" className="g-menu-separator" />;
+        return (
+          <div key={`group-${entry.label}`} role="group" aria-label={entry.label} className="g-menu-group">
+            <div className="g-menu-group-label" aria-hidden="true">
+              {phrase(entry.label)}
+            </div>
+            {entry.items.map(renderItem)}
+          </div>
+        );
+      })}
+    </Popup>
+  );
+}
+
+/**
+ * 操作のメニュー。U-21。WAI-ARIA APG の menu button。
+ *
+ * 起点は aria-haspopup="menu" と aria-expanded を持つ。キー（Enter・Space・↓）で開くと最初の項目へ、
+ * ↑ で開くと最後の項目へフォーカスを移す。ポインタで開いたときはメニューそのものへ移し、項目を先回りして光らせない。
+ * 選ぶか Esc で閉じると起点へ戻る（項目の間の動き方は MenuPopup）。
+ */
+export function Menu({
+  trigger,
+  items,
+  onSelect,
+  open,
+  defaultOpen = false,
+  onOpenChange,
+  side = 'below',
+  align = 'start',
+  className,
+  ...rest
+}: MenuProps): ReactNode {
+  const base = useId();
+  const { props, anchorRef, render, remember } = useTrigger(trigger);
+  const triggerId = props.id ?? `${base}-trigger`;
+  const menuId = `${base}-menu`;
+  const [isOpen, setOpen] = useControllable<boolean>(open, defaultOpen, onOpenChange);
+  const landing = useRef<Landing | null>(null);
+
+  const show = (at: Landing): void => {
+    landing.current = at;
+    setOpen(true);
+  };
+  const close = (refocus: boolean): void => {
+    setOpen(false);
+    if (refocus) anchorRef.current?.focus();
+  };
+
+  const anchor = render({
+    id: triggerId,
+    'aria-haspopup': 'menu',
+    'aria-expanded': isOpen,
+    'aria-controls': isOpen ? menuId : undefined,
+    onClick: (event) => {
+      remember(event.currentTarget);
+      props.onClick?.(event);
+      if (isOpen) close(false);
+      // キーで押した click は detail が 0。
+      else show(event.detail === 0 ? 'first' : 'menu');
+    },
+    onKeyDown: (event) => {
+      remember(event.currentTarget);
+      props.onKeyDown?.(event);
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+      event.preventDefault();
+      show(event.key === 'ArrowDown' ? 'first' : 'last');
+    },
+  });
+
+  return (
     <>
       {anchor}
-      <Popup
+      <MenuPopup
         open={isOpen}
+        id={menuId}
+        items={items}
         anchorRef={anchorRef}
-        onDismiss={() => close(false)}
-        className={className ? `g-menu ${className}` : 'g-menu'}
         side={side}
         align={align}
-        matchWidth={false}
-        {...domPassthrough(rest, 'Menu')}
-        role="menu"
+        landing={landing}
+        trigger={anchorRef}
+        onClose={close}
+        onSelect={onSelect}
+        attributes={{ ...domPassthrough(rest, 'Menu'), 'aria-labelledby': triggerId }}
+        className={className}
+      />
+    </>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* ContextMenu                                                                */
+/* -------------------------------------------------------------------------- */
+
+export interface ContextMenuProps extends DataAttributes {
+  /** 右クリックで開く範囲（要素 1 つ）。props を DOM へ渡す要素にする。キーで開くときは、この中にフォーカスがあること。 */
+  children: ReactElement;
+  /** メニューの名前（読み上げ。「ファイルの操作」など）。 */
+  label: string;
+  items: readonly MenuEntry[];
+  /** どれかを選んだとき（項目の onSelect の後に呼ぶ）。 */
+  onSelect?: (value: string) => void;
+  onOpenChange?: (open: boolean) => void;
+  className?: string;
+}
+
+/** 文字を打つ欄の右クリックは、ブラウザのメニュー（貼り付けなど）に任せる。 */
+const isEditable = (target: EventTarget): boolean =>
+  target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select') !== null);
+
+/**
+ * 右クリックのメニュー。U-34。
+ *
+ * 包んだ要素の上の右クリック（タッチの端末では、ブラウザが contextmenu を出す長押し）で、押した位置に U-21 と同じ
+ * role="menu" を開き、メニューそのものへフォーカスを移す。中にフォーカスがあるときの Shift+F10 か ContextMenu キーでは、
+ * フォーカスのある要素の下に開いて最初の項目へ移す。選ぶか Esc で閉じると、開く前にフォーカスのあった場所へ戻す。
+ * 文字を打つ欄の上ではブラウザのメニューを出したままにする。利用者の onContextMenu が preventDefault したら開かない
+ * （入れ子にしたときは内側のメニューだけが開く）。
+ * 右クリックはキーとタッチでは見つけにくいので、同じ操作を目に見える場所（「…」のメニューなど）にも置く。
+ */
+export function ContextMenu({ children, label, items, onSelect, onOpenChange, className, ...rest }: ContextMenuProps): ReactNode {
+  const menuId = `${useId()}-menu`;
+  const { props, anchorRef, render, remember } = useTrigger(children);
+  const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
+  const landing = useRef<Landing | null>(null);
+  /** 開く前にフォーカスのあった要素。閉じたらそこへ戻す。 */
+  const returnTo = useRef<HTMLElement | null>(null);
+  /** キーで開いた時刻。キーを離したときに contextmenu を出す OS があり、それで開き直さないため。 */
+  const keyOpenedAt = useRef(0);
+
+  const show = (at: Landing, next: { x: number; y: number }): void => {
+    // 開いたまま別の所で右クリックしたときは、最初に開く前の場所を覚えたままにする
+    if (point === null) {
+      const active = document.activeElement;
+      returnTo.current = active instanceof HTMLElement ? active : null;
+      onOpenChange?.(true);
+    }
+    landing.current = at;
+    setPoint(next);
+  };
+  const close = (refocus: boolean): void => {
+    setPoint(null);
+    onOpenChange?.(false);
+    if (refocus) returnTo.current?.focus();
+  };
+
+  const target = render({
+    onContextMenu: (event) => {
+      remember(event.currentTarget);
+      props.onContextMenu?.(event);
+      if (event.defaultPrevented || isEditable(event.target)) return;
+      event.preventDefault();
+      if (Date.now() - keyOpenedAt.current < 500) return;
+      show('menu', { x: event.clientX, y: event.clientY });
+    },
+    onKeyDown: (event) => {
+      remember(event.currentTarget);
+      props.onKeyDown?.(event);
+      if (event.defaultPrevented || (event.key !== 'ContextMenu' && !(event.key === 'F10' && event.shiftKey))) return;
+      event.preventDefault();
+      keyOpenedAt.current = Date.now();
+      const focused = event.target instanceof HTMLElement ? event.target : event.currentTarget;
+      const rect = focused.getBoundingClientRect();
+      show('first', { x: getComputedStyle(focused).direction === 'rtl' ? rect.right : rect.left, y: rect.bottom });
+    },
+  });
+
+  return (
+    <>
+      {target}
+      <MenuPopup
+        open={point !== null}
         id={menuId}
-        tabIndex={-1}
-        aria-labelledby={triggerId}
-        onKeyDown={handleKey}
-        onBlur={(event) => {
-          if (focusLeft(event, anchorRef.current)) close(false);
-        }}
-      >
-        {items.map((entry, index) => {
-          if (isItem(entry)) return renderItem(entry);
-          if (entry.type === 'separator') return <div key={entry.key ?? `separator-${String(index)}`} role="separator" className="g-menu-separator" />;
-          return (
-            <div key={`group-${entry.label}`} role="group" aria-label={entry.label} className="g-menu-group">
-              <div className="g-menu-group-label" aria-hidden="true">
-                {phrase(entry.label)}
-              </div>
-              {entry.items.map(renderItem)}
-            </div>
-          );
-        })}
-      </Popup>
+        items={items}
+        anchorRef={anchorRef}
+        point={point}
+        landing={landing}
+        onClose={close}
+        onSelect={onSelect}
+        attributes={{ ...domPassthrough(rest, 'ContextMenu'), 'aria-label': label }}
+        className={className}
+      />
     </>
   );
 }

@@ -185,6 +185,7 @@ const CASES: Array<{ name: string; render: () => void }> = [
   { name: 'Modal.Calendar', render: () => inRoot(<Modal.Calendar aria-label="c" data-testid={TID} />) },
   { name: 'Modal.RangeCalendar', render: () => inRoot(<Modal.RangeCalendar aria-label="c" data-testid={TID} />) },
   { name: 'Modal.TimePicker', render: () => inRoot(<Modal.TimePicker aria-label="t" data-testid={TID} />) },
+  { name: 'Modal.ColorPicker', render: () => inRoot(<Modal.ColorPicker aria-label="c" data-testid={TID} />) },
   { name: 'Modal.TagInput', render: () => inRoot(<Modal.TagInput aria-label="t" data-testid={TID} />) },
   { name: 'Modal.PasswordStrength', render: () => inRoot(<Modal.PasswordStrength value="" data-testid={TID} />) },
   { name: 'Modal.FileDrop', render: () => inRoot(<Modal.FileDrop aria-label="f" data-testid={TID} />) },
@@ -265,6 +266,7 @@ describe('data-* の受け渡し（D-11）', () => {
   it('Modal.Calendar は data-* をホスト要素へ渡す', () => sweep('Modal.Calendar'));
   it('Modal.RangeCalendar は data-* をホスト要素へ渡す', () => sweep('Modal.RangeCalendar'));
   it('Modal.TimePicker は data-* をホスト要素へ渡す', () => sweep('Modal.TimePicker'));
+  it('Modal.ColorPicker は data-* をホスト要素へ渡す', () => sweep('Modal.ColorPicker'));
   it('Modal.TagInput は data-* をホスト要素へ渡す', () => sweep('Modal.TagInput'));
   it('Modal.PasswordStrength は data-* をホスト要素へ渡す', () => sweep('Modal.PasswordStrength'));
   it('Modal.FileDrop は data-* をホスト要素へ渡す', () => sweep('Modal.FileDrop'));

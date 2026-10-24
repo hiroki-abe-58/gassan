@@ -62,10 +62,12 @@ import { gzipSync } from 'node:zlib';
  * 共有の ICONS に入れずにページの中に置いた（Modal だけを使う束は 17 B 減った）。
  * 同日、JS を 120 → 124 KB、CSS を 22 → 23 KB に引き上げた。コードの塊・ツリー・通知の一覧・はじめのチェックリスト
  * （U-30〜U-33）と、その日本語と英語の文言を足したため（JS 約 3.5 KB・CSS 約 1 KB）。使わないアプリの JS には載らない。
+ * 同日、JS を 124 → 127 KB に引き上げた。右クリックのメニュー（U-34）と色の選択（I-23）を足したため（JS 約 3 KB・CSS 約 0.5 KB）。
+ * 色の選択は入力部品なので Modal 名前空間にも入る（Modal.ColorPicker。時刻の選択と同じ扱い）。
  */
 const BUDGETS = {
-  'dist/index.js': 124 * 1024,
-  'dist/index.cjs': 124 * 1024,
+  'dist/index.js': 127 * 1024,
+  'dist/index.cjs': 127 * 1024,
   'dist/styles.css': 23 * 1024,
   'dist/templates.css': 7 * 1024,
 };
@@ -140,6 +142,8 @@ const REQUIRED_EXPORTS = [
   'japaneseHolidayResolver',
   // 時刻の選択。I-20。
   'ModalTimePicker',
+  // 色の選択。I-23。
+  'ModalColorPicker',
   // タグの入力・パスワードの強さ。I-21 / I-22。
   'ModalTagInput',
   'ModalPasswordStrength',
@@ -172,6 +176,7 @@ const REQUIRED_EXPORTS = [
   'Tooltip',
   'Popover',
   'Menu',
+  'ContextMenu',
   'Breadcrumbs',
   'Pagination',
   'Steps',
@@ -220,6 +225,7 @@ const REQUIRED_EXPORTS = [
   'Calendar',
   'RangeCalendar',
   'TimePicker',
+  'ColorPicker',
   'TagInput',
   'PasswordStrength',
   'FileDrop',

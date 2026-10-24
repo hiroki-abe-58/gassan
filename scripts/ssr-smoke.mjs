@@ -27,6 +27,8 @@ import {
   ChatThread,
   Checklist,
   CodeBlock,
+  ColorPicker,
+  ContextMenu,
   DonutChart,
   Gauge,
   LineChart,
@@ -619,6 +621,28 @@ if (
   ok('CodeBlock, TreeView, NotificationCenter and Checklist render the names, one tab stop, the closed bell with the unread count and the progress on the server');
 } else {
   fail('CodeBlock, TreeView, NotificationCenter and Checklist render the names, one tab stop, the closed bell with the unread count and the progress on the server');
+}
+
+// 右クリックのメニューと色の選択（U-34 / I-23）。右クリックのメニューはサーバーでは包んだ要素だけを描く。
+// 色の選択は値を小文字の #rrggbb にそろえ、値の要素をボタンの説明に入れる（ラベルで名前を付けても値を読むため）。
+const pickerHtml = renderToString(
+  h(
+    Fragment,
+    null,
+    h(ContextMenu, { label: 'ファイルの操作', items: [{ value: 'open', label: '開く' }] }, h('div', null, '見積書.pdf')),
+    h(ColorPicker, { 'aria-label': '色', defaultValue: '#3346D3' }),
+  ),
+);
+const pickerValueId = /<span id="([^"]+)" class="g-select-value g-color-value">#3346d3<\/span>/.exec(pickerHtml)?.[1];
+if (
+  pickerHtml.startsWith('<div>見積書.pdf</div>') &&
+  !pickerHtml.includes('role="menu"') &&
+  pickerValueId !== undefined &&
+  pickerHtml.includes(`aria-describedby="${pickerValueId}"`)
+) {
+  ok('ContextMenu renders only its target, and ColorPicker renders the normalized value as the description on the server');
+} else {
+  fail('ContextMenu renders only its target, and ColorPicker renders the normalized value as the description on the server');
 }
 
 // アプリの中のページ（P-13〜P-17）。見ている人の時間帯はサーバーでは分からないので、SiteProvider の timeZone が無ければ

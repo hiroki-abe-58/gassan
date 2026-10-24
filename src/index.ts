@@ -25,6 +25,7 @@ import { ModalCombobox, ModalSelect } from './select';
 import { ModalRangeSlider, ModalSlider } from './slider';
 import { ModalTagInput } from './tag-input';
 import { ModalTimePicker } from './time-picker';
+import { ModalColorPicker } from './color-picker';
 import { ModalButton, ModalFooter } from './footer';
 import { ModalConsent, ModalGate, ModalGateStatus } from './gate';
 import {
@@ -63,6 +64,7 @@ export { ModalSelect, ModalCombobox } from './select';
 export { ModalDatePicker } from './date-picker';
 export { ModalCalendar, ModalRangeCalendar, ModalDateRangePicker, commonDateRanges } from './calendar';
 export { ModalTimePicker } from './time-picker';
+export { ModalColorPicker } from './color-picker';
 export { ModalTagInput } from './tag-input';
 export { ModalPasswordStrength } from './password-strength';
 export { toast, ToastHost, resetToasts } from './toast';
@@ -81,7 +83,7 @@ export { Badge, Avatar, AvatarGroup, Kbd, Divider, Card, Stat, EmptyState, Descr
 export { Progress, Spinner, Skeleton, Banner } from './feedback';
 export { Tabs } from './tabs';
 export { Accordion } from './disclosure';
-export { Tooltip, Popover, Menu } from './overlay';
+export { Tooltip, Popover, Menu, ContextMenu } from './overlay';
 export { Breadcrumbs, Pagination, Steps } from './navigation';
 export { PageHeader } from './page-header';
 export { DataTable } from './data-table';
@@ -128,6 +130,7 @@ export { ModalSelect as Select, ModalCombobox as Combobox } from './select';
 export { ModalDatePicker as DatePicker } from './date-picker';
 export { ModalCalendar as Calendar, ModalRangeCalendar as RangeCalendar, ModalDateRangePicker as DateRangePicker } from './calendar';
 export { ModalTimePicker as TimePicker } from './time-picker';
+export { ModalColorPicker as ColorPicker } from './color-picker';
 export { ModalTagInput as TagInput } from './tag-input';
 export { ModalPasswordStrength as PasswordStrength } from './password-strength';
 export { ModalFileDrop as FileDrop } from './file-drop';
@@ -206,6 +209,7 @@ export type { SelectOption, ModalSelectProps, ModalComboboxProps } from './selec
 export type { ModalDatePickerProps, CalendarOptions } from './date-picker';
 export type { ModalCalendarProps, ModalRangeCalendarProps, ModalDateRangePickerProps, DateRangePreset } from './calendar';
 export type { ModalTimePickerProps } from './time-picker';
+export type { ModalColorPickerProps, ColorSwatch } from './color-picker';
 export type { ModalTagInputProps } from './tag-input';
 export type { ModalPasswordStrengthProps, PasswordRule, PasswordScore } from './password-strength';
 export type {
@@ -269,7 +273,7 @@ export type {
   TypingIndicatorProps,
 } from './chat';
 export type { AccordionItem, AccordionProps } from './disclosure';
-export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps } from './overlay';
+export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps, ContextMenuProps } from './overlay';
 export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, StepsProps } from './navigation';
 export type { Site, SiteLinkProps, SiteLinks, SiteNavLink, SiteFooterColumn, SiteProviderProps } from './templates/site';
 export type { SiteLayoutProps } from './templates/site-layout';
@@ -388,6 +392,7 @@ export const Modal = {
   Calendar: ModalCalendar,
   RangeCalendar: ModalRangeCalendar,
   TimePicker: ModalTimePicker,
+  ColorPicker: ModalColorPicker,
   TagInput: ModalTagInput,
   PasswordStrength: ModalPasswordStrength,
   FileDrop: ModalFileDrop,

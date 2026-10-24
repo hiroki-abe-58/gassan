@@ -85,7 +85,9 @@ export function ModalDatePicker({
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const titleId = `${useId()}-title`;
+  const base = useId();
+  const titleId = `${base}-title`;
+  const valueId = `${base}-value`;
   const { locale } = labels;
 
   const close = (refocus: boolean): void => {
@@ -108,13 +110,14 @@ export function ModalDatePicker({
         aria-expanded={open}
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
-        aria-describedby={ariaDescribedBy}
+        aria-describedby={[valueId, ariaDescribedBy].filter(Boolean).join(' ')}
         aria-invalid={ariaInvalid}
         aria-required={ariaRequired}
         disabled={disabled}
         onClick={() => (open ? close(false) : setOpen(true))}
       >
-        <span className="g-select-value" data-placeholder={selected ? undefined : ''}>
+        {/* ラベルで名前を付けるとボタンの中の文字は名前にならないので、値は説明として読ませる */}
+        <span id={valueId} className="g-select-value" data-placeholder={selected ? undefined : ''}>
           {selected
             ? dateFormatter(locale, { year: 'numeric', month: 'short', day: 'numeric', weekday: 'short' }).format(parseISO(selected))
             : (placeholder ?? labels.choose)}

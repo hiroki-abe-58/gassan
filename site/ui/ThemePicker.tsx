@@ -71,15 +71,15 @@ export function ThemeControls(): ReactNode {
             </label>
           ))}
         </div>
-        <label className="s-custom-color">
-          <span>{t.pickCustom}</span>
-          <Modal.Input
-            type="color"
+        {/* ネイティブの色の入力はポップアップがテーマに従わないので、gassan の ColorPicker（I-23）で選ぶ */}
+        <div className="s-custom-color">
+          <span id={`${name}-custom`}>{t.pickCustom}</span>
+          <Modal.ColorPicker
+            aria-labelledby={`${name}-custom`}
             value={state.custom}
-            onChange={(event) => setTheme({ preset: CUSTOM_PRESET_ID, custom: event.target.value })}
-            end={<code>{state.custom}</code>}
+            onValueChange={(custom) => setTheme({ preset: CUSTOM_PRESET_ID, custom })}
           />
-        </label>
+        </div>
       </fieldset>
 
       <p className="s-theme-summary" data-pass={allPass ? '' : undefined} role="status">

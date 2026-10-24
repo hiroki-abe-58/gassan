@@ -1,7 +1,7 @@
 import type ja from '../ja/uiOverlays';
 
 export default {
-  lead: '工具提示、弹出框、菜单。它们显示在触发元素旁边，并与模态框一样遵守 Esc 和焦点的约定。它们都显示在 top layer 中，所以即使在模态框里也不会被正文裁切。',
+  lead: '工具提示、弹出框、菜单、右键菜单。它们显示在触发元素旁边（右键菜单显示在点击的位置），并与模态框一样遵守 Esc 和焦点的约定。它们都显示在 top layer 中，所以即使在模态框里也不会被正文裁切。',
   example: {
     title: '组合示例',
     intro: '列表上方的工具栏。只有图标的按钮用工具提示补充说明，筛选放在弹出框中，其他操作放进菜单。',
@@ -16,6 +16,7 @@ export default {
       { part: 'Tooltip', holds: '只有简短的说明文字（不放可按的东西）', when: '只有图标的按钮的说明、缩写的全称' },
       { part: 'Popover', holds: '可以包含可按元素的小窗口', when: '筛选、显示设置、共享链接' },
       { part: 'Menu', holds: '操作列表', when: '行的操作、其他操作' },
+      { part: 'ContextMenu', holds: '操作列表', when: '右键点击列表中的项目（同样的操作也放进“…”菜单）' },
       { part: 'Modal', holds: '等待回答的窗口', when: '确认、输入、浏览（5 种类型）' },
     ],
   },
@@ -30,6 +31,12 @@ export default {
   menu: {
     title: '菜单',
     intro: '用 ↑↓ 和首字母移动，按 Enter 选中后关闭并回到按钮。不可用的项目焦点也会停留，所以能知道有哪些项目。删除这类无法撤销的操作使用 danger 的颜色。',
+  },
+  contextMenu: {
+    title: '右键菜单',
+    intro: '在项目上点击右键，菜单就会在点击的位置打开。焦点在项目内部时，也可以用 Shift+F10 或 ContextMenu 键打开。在各项之间移动的方式与菜单相同，关闭后焦点回到打开前的位置。右键点击在用键盘和触屏操作时很难被发现，所以同样的操作也要放进看得见的“…”菜单。',
+    exampleTitle: '文件列表',
+    exampleDescription: '在行上点击右键，或按下行中的“…”。两种方式都能选择相同的操作，选择的操作会显示在下方。',
   },
   labels: {
     icon: '只有图标的按钮',
@@ -66,7 +73,7 @@ export default {
     oldest: '从旧到新',
     density: '紧凑显示',
   },
-  code: "import { Tooltip, Popover, Menu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"打开工作区设置\">\n  <IconButton label=\"设置\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">筛选</Button>} title=\"筛选显示内容\">\n  <Checkbox>仅未读</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"操作\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: '编辑', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: '删除', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>",
+  code: "import { Tooltip, Popover, Menu, ContextMenu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"打开工作区设置\">\n  <IconButton label=\"设置\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">筛选</Button>} title=\"筛选显示内容\">\n  <Checkbox>仅未读</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"操作\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: '编辑', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: '删除', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>\n\n<ContextMenu\n  label=\"报价单.pdf 的操作\"\n  items={[\n    { value: 'open', label: '打开' },\n    { value: 'delete', label: '删除', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n>\n  <li>报价单.pdf</li>\n</ContextMenu>",
   codeCaption: '用法',
   a11yCaption: '显示在触发元素旁的部件满足的规范',
 } satisfies typeof ja;

@@ -510,6 +510,8 @@ describe('tokens / focus ring (K-07)', () => {
       '.g-composer-input': '.g-composer-field:focus-within',
       // ツリーの項目は子の枝まで包むので、リングは行に描く（U-31）。
       '.g-tree-item': '.g-tree-item:focus-visible > .g-tree-row',
+      // 色相の帯はスライダーと同じく、リングを摘みに描く（I-23）。
+      '.g-color-hue:focus-visible': '.g-color-hue:focus-visible::-webkit-slider-thumb',
     };
     const naked = [...css.matchAll(/([^\n{}]*)\{[^{}]*outline:\s*none[^{}]*\}/g)].map((m) =>
       (m[1] ?? '').trim(),

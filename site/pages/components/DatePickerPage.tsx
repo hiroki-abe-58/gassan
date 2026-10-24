@@ -5,6 +5,8 @@ import { Modal, commonDateRanges, japaneseHolidays, useLabels } from '@genelab/g
 import type { PageProps } from '../../routes';
 import BookingCalendar from '../../demos/BookingCalendar';
 import bookingCalendarSource from '../../demos/BookingCalendar.tsx?raw';
+import ColorBrand from '../../demos/ColorBrand';
+import colorBrandSource from '../../demos/ColorBrand.tsx?raw';
 import DateForm from '../../demos/DateForm';
 import dateFormSource from '../../demos/DateForm.tsx?raw';
 import RangeReport from '../../demos/RangeReport';
@@ -60,7 +62,7 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
       rest={rest}
       title={nav.pages.datePicker}
       lead={t.lead}
-      ids={['I-13', 'I-16', 'I-17', 'I-18', 'I-19', 'I-20', 'I-15']}
+      ids={['I-13', 'I-16', 'I-17', 'I-18', 'I-19', 'I-20', 'I-23', 'I-15']}
       overview={() => (
         <>
           <Section id="gallery" title={t.gallery.title} intro={t.gallery.intro}>
@@ -85,6 +87,7 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
                   label: items.businessHours,
                   render: (id) => <Modal.TimePicker aria-labelledby={id} step={15} min="10:00" max="18:00" />,
                 },
+                { label: items.colorPicker, render: (id) => <Modal.ColorPicker aria-labelledby={id} defaultValue="#3346d3" /> },
                 { label: items.date, render: (id) => <Modal.Input aria-labelledby={id} type="date" defaultValue={localISO()} /> },
                 { label: items.time, render: (id) => <Modal.Input aria-labelledby={id} type="time" defaultValue="19:00" /> },
                 { label: items.color, render: (id) => <Modal.Input aria-labelledby={id} type="color" defaultValue="#3346d3" /> },
@@ -132,6 +135,21 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
             />
           </Section>
 
+          <Section id="color" title={t.color.title} intro={t.color.intro}>
+            <Example title={t.color.exampleTitle} description={t.color.exampleDescription} code={colorBrandSource} demo="colorBrand">
+              <ColorBrand />
+            </Example>
+            <Prose>
+              <Paras items={t.color.body} />
+            </Prose>
+            <CodeBlock lang="tsx" caption={t.color.codeCaption} code={t.color.code} />
+            <DataTable
+              caption={t.color.keysCaption}
+              head={[t.keys.head.key, t.keys.head.action]}
+              rows={t.color.keys.map((row) => [<kbd key="key">{row.key}</kbd>, row.action])}
+            />
+          </Section>
+
           <Section id="modal" title={t.modal.title} intro={t.modal.intro}>
             <Example title={t.modal.exampleTitle} description={t.modal.exampleDescription} code={dateFormSource} demo="dateForm">
               <DateForm />
@@ -163,13 +181,15 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
           <ApiTable name="ModalCalendarProps" title={t.apiCaption.calendar} />
           <ApiTable name="ModalRangeCalendarProps" title={t.apiCaption.rangeCalendar} />
           <ApiTable name="ModalTimePickerProps" title={t.apiCaption.timePicker} />
+          <ApiTable name="ModalColorPickerProps" title={t.apiCaption.colorPicker} />
           <ApiTable name="CalendarOptions" />
           <ApiTable name="DateRange" />
           <ApiTable name="DateRangePreset" />
+          <ApiTable name="ColorSwatch" />
         </>
       )}
       a11y={() => (
-        <SpecTable ids={['I-01', 'I-02', 'I-13', 'I-15', 'I-16', 'I-17', 'I-18', 'I-19', 'I-20', 'V-04']} caption={t.a11yCaption} />
+        <SpecTable ids={['I-01', 'I-02', 'I-13', 'I-15', 'I-16', 'I-17', 'I-18', 'I-19', 'I-20', 'I-23', 'V-04']} caption={t.a11yCaption} />
       )}
     />
   );

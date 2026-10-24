@@ -1,7 +1,7 @@
 import type ja from '../ja/uiOverlays';
 
 export default {
-  lead: 'Tooltip, popover และเมนู แสดงขึ้นข้างองค์ประกอบต้นทาง และทำตามข้อตกลงเรื่อง Esc และโฟกัสแบบเดียวกับโมดอล ทุกตัวแสดงใน top layer จึงไม่ถูกเนื้อหาตัดแม้จะอยู่ในโมดอล',
+  lead: 'Tooltip, popover, เมนู และเมนูคลิกขวา แสดงขึ้นข้างองค์ประกอบต้นทาง (เมนูคลิกขวาแสดงที่ตำแหน่งที่คลิก) และทำตามข้อตกลงเรื่อง Esc และโฟกัสแบบเดียวกับโมดอล ทุกตัวแสดงใน top layer จึงไม่ถูกเนื้อหาตัดแม้จะอยู่ในโมดอล',
   example: {
     title: 'ตัวอย่างที่ประกอบเข้าด้วยกัน',
     intro: 'แถบเครื่องมือเหนือรายการ ปุ่มที่มีแต่ไอคอนใช้ tooltip อธิบายเพิ่ม การกรองใช้ popover และการกระทำอื่น ๆ อยู่ในเมนู',
@@ -16,6 +16,7 @@ export default {
       { part: 'Tooltip', holds: 'ข้อความอธิบายสั้น ๆ เท่านั้น (ไม่ใส่สิ่งที่กดได้)', when: 'อธิบายปุ่มที่มีแต่ไอคอน แสดงคำเต็มของคำย่อ' },
       { part: 'Popover', holds: 'หน้าต่างเล็ก ๆ ที่มีสิ่งที่กดได้', when: 'การกรอง การตั้งค่าการแสดงผล ลิงก์สำหรับแชร์' },
       { part: 'Menu', holds: 'รายการการกระทำ', when: 'การกระทำของแถว การกระทำอื่น ๆ' },
+      { part: 'ContextMenu', holds: 'รายการการกระทำ', when: 'คลิกขวาที่แต่ละรายการ (ใส่การกระทำเดียวกันไว้ในเมนู “…” ด้วย)' },
       { part: 'Modal', holds: 'หน้าต่างที่รอคำตอบ', when: 'ยืนยัน กรอกข้อมูล ดู (5 ประเภท)' },
     ],
   },
@@ -30,6 +31,12 @@ export default {
   menu: {
     title: 'เมนู',
     intro: 'เลื่อนด้วย ↑↓ หรือพิมพ์ตัวอักษรแรก กด Enter เพื่อเลือก แล้วเมนูจะปิดและโฟกัสกลับไปที่ปุ่ม โฟกัสหยุดที่รายการที่ใช้ไม่ได้ด้วย จึงรู้ว่ามีอะไรบ้าง การกระทำที่ย้อนกลับไม่ได้อย่างการลบใช้สีของ danger',
+  },
+  contextMenu: {
+    title: 'เมนูคลิกขวา',
+    intro: 'คลิกขวาบนรายการ แล้วเมนูจะเปิดขึ้นที่ตำแหน่งที่คลิก ถ้าโฟกัสอยู่ข้างในรายการ ก็เปิดด้วย Shift+F10 หรือปุ่ม ContextMenu ได้เช่นกัน วิธีเลื่อนไปมาระหว่างรายการเหมือนกับเมนู และเมื่อปิด โฟกัสจะกลับไปที่เดิมก่อนเปิด การคลิกขวาหาเจอยากเมื่อใช้คีย์บอร์ดหรือจอสัมผัส จึงใส่การกระทำเดียวกันไว้ในเมนู “…” ที่มองเห็นได้ด้วย',
+    exampleTitle: 'รายการไฟล์',
+    exampleDescription: 'คลิกขวาบนแถว หรือกด “…” ของแถว ทั้งสองทางเลือกการกระทำเดียวกันได้ และจะแสดงการกระทำที่เลือกไว้ด้านล่าง',
   },
   labels: {
     icon: 'ปุ่มที่มีแต่ไอคอน',
@@ -66,7 +73,7 @@ export default {
     oldest: 'เก่าสุดก่อน',
     density: 'แสดงแบบกะทัดรัด',
   },
-  code: "import { Tooltip, Popover, Menu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"เปิดการตั้งค่าเวิร์กสเปซ\">\n  <IconButton label=\"การตั้งค่า\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">กรอง</Button>} title=\"กรองการแสดงผล\">\n  <Checkbox>เฉพาะที่ยังไม่ได้อ่าน</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"การกระทำ\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: 'แก้ไข', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: 'ลบ', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>",
+  code: "import { Tooltip, Popover, Menu, ContextMenu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"เปิดการตั้งค่าเวิร์กสเปซ\">\n  <IconButton label=\"การตั้งค่า\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">กรอง</Button>} title=\"กรองการแสดงผล\">\n  <Checkbox>เฉพาะที่ยังไม่ได้อ่าน</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"การกระทำ\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: 'แก้ไข', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: 'ลบ', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>\n\n<ContextMenu\n  label=\"การกระทำสำหรับ ใบเสนอราคา.pdf\"\n  items={[\n    { value: 'open', label: 'เปิด' },\n    { value: 'delete', label: 'ลบ', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n>\n  <li>ใบเสนอราคา.pdf</li>\n</ContextMenu>",
   codeCaption: 'วิธีใช้',
   a11yCaption: 'สเปกที่ส่วนประกอบซึ่งแสดงข้างองค์ประกอบต้นทางทำตาม',
 } satisfies typeof ja;

@@ -1,7 +1,7 @@
 import type ja from '../ja/uiOverlays';
 
 export default {
-  lead: 'Tooltips, popovers and menus. They appear beside their trigger and follow the same Esc and focus conventions as the modal. All of them open in the top layer, so even inside a modal the body never clips them.',
+  lead: 'Tooltips, popovers, menus and context menus. They appear beside their trigger (a context menu appears where you right-clicked) and follow the same Esc and focus conventions as the modal. All of them open in the top layer, so even inside a modal the body never clips them.',
   example: {
     title: 'Putting them together',
     intro: 'A toolbar above a list. Icon-only buttons get a hint in a tooltip, filtering opens in a popover, and the remaining actions live in a menu.',
@@ -16,6 +16,7 @@ export default {
       { part: 'Tooltip', holds: 'Short hint text only (nothing pressable)', when: 'Hints for icon-only buttons, the full form of an abbreviation' },
       { part: 'Popover', holds: 'A small window that can hold pressable controls', when: 'Filters, display settings, share links' },
       { part: 'Menu', holds: 'A list of actions', when: 'Row actions, more actions' },
+      { part: 'ContextMenu', holds: 'A list of actions', when: 'Right-clicking an item in a list (put the same actions in a “…” menu too)' },
       { part: 'Modal', holds: 'A window that waits for an answer', when: 'Confirmation, input and viewing (the 5 kinds)' },
     ],
   },
@@ -30,6 +31,12 @@ export default {
   menu: {
     title: 'Menu',
     intro: 'Move with ↑↓ or by typing a first letter; Enter selects, closes the menu and returns focus to the button. Focus also stops on unavailable items, so you can still tell what is there. Irreversible actions such as deleting use the danger color.',
+  },
+  contextMenu: {
+    title: 'Context menu',
+    intro: 'Right-click an item, and a menu opens where you clicked. While focus is inside the item, Shift+F10 or the ContextMenu key opens it too. Moving between items works the same as in a menu, and when it closes, focus returns to where it was before the menu opened. Right-clicking is hard to discover with keys and touch, so put the same actions in a visible “…” menu too.',
+    exampleTitle: 'File list',
+    exampleDescription: 'Right-click a row, or press the row’s “…”. Either way you can choose the same actions, and the action you chose is shown below.',
   },
   labels: {
     icon: 'Icon-only button',
@@ -66,7 +73,7 @@ export default {
     oldest: 'Oldest first',
     density: 'Compact',
   },
-  code: "import { Tooltip, Popover, Menu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"Open workspace settings\">\n  <IconButton label=\"Settings\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">Filter</Button>} title=\"Filter view\">\n  <Checkbox>Unread only</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"Actions\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: 'Edit', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: 'Delete', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>",
+  code: "import { Tooltip, Popover, Menu, ContextMenu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"Open workspace settings\">\n  <IconButton label=\"Settings\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">Filter</Button>} title=\"Filter view\">\n  <Checkbox>Unread only</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"Actions\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: 'Edit', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: 'Delete', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>\n\n<ContextMenu\n  label=\"Actions for quote.pdf\"\n  items={[\n    { value: 'open', label: 'Open' },\n    { value: 'delete', label: 'Delete', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n>\n  <li>quote.pdf</li>\n</ContextMenu>",
   codeCaption: 'Usage',
   a11yCaption: 'Specification items components shown beside their trigger satisfy',
 } satisfies typeof ja;

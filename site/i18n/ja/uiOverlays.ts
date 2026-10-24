@@ -1,5 +1,5 @@
 export default {
-  lead: 'ツールチップ・ポップオーバー・メニュー。起点の脇に出て、モーダルと同じく Esc とフォーカスの約束を守る。どれも top layer に出るので、モーダルの中でも本文に切り取られない。',
+  lead: 'ツールチップ・ポップオーバー・メニュー・右クリックのメニュー。起点の脇（右クリックのメニューは押した位置）に出て、モーダルと同じく Esc とフォーカスの約束を守る。どれも top layer に出るので、モーダルの中でも本文に切り取られない。',
   example: {
     title: '組み合わせ',
     intro: '一覧の上のツールバー。印だけのボタンにはツールチップで補足を、絞り込みはポップオーバーで、その他の操作はメニューで出す。',
@@ -14,6 +14,7 @@ export default {
       { part: 'Tooltip', holds: '短い補足の文だけ（押せる物は入れない）', when: '印だけのボタンの補足・省いた語の全文' },
       { part: 'Popover', holds: '押せる物を含む小さな窓', when: '絞り込み・表示の設定・共有のリンク' },
       { part: 'Menu', holds: '操作の一覧', when: '行の操作・その他の操作' },
+      { part: 'ContextMenu', holds: '操作の一覧', when: '一覧の項目の右クリック（同じ操作を「…」のメニューにも置く）' },
       { part: 'Modal', holds: '答えを待つ窓', when: '確認・入力・閲覧（5 つの類型）' },
     ],
   },
@@ -28,6 +29,12 @@ export default {
   menu: {
     title: 'メニュー',
     intro: '↑↓ と頭文字で移り、Enter で選ぶと閉じてボタンへ戻る。使えない項目にもフォーカスは止まるので、何があるかは分かる。削除のような取り消せない操作は danger の色にする。',
+  },
+  contextMenu: {
+    title: '右クリックのメニュー',
+    intro: '項目の上で右クリックすると、押した位置にメニューが開く。中にフォーカスがあれば Shift+F10 か ContextMenu キーでも開ける。項目の間の動き方はメニューと同じで、閉じると開く前の場所へフォーカスが戻る。右クリックはキーとタッチでは見つけにくいので、同じ操作を目に見える「…」のメニューにも置く。',
+    exampleTitle: 'ファイルの一覧',
+    exampleDescription: '行の上で右クリックするか、行の「…」を押す。どちらからも同じ操作を選べ、選んだ操作を下に出す。',
   },
   labels: {
     icon: '印だけのボタン',
@@ -64,7 +71,7 @@ export default {
     oldest: '古い順',
     density: '詰めて表示',
   },
-  code: "import { Tooltip, Popover, Menu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"ワークスペースの設定を開く\">\n  <IconButton label=\"設定\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">絞り込み</Button>} title=\"表示の絞り込み\">\n  <Checkbox>未読だけ</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"操作\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: '編集', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: '削除', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>",
+  code: "import { Tooltip, Popover, Menu, ContextMenu, IconButton, Button } from '@genelab/gassan';\n\n<Tooltip content=\"ワークスペースの設定を開く\">\n  <IconButton label=\"設定\"><GearIcon /></IconButton>\n</Tooltip>\n\n<Popover trigger={<Button size=\"sm\">絞り込み</Button>} title=\"表示の絞り込み\">\n  <Checkbox>未読だけ</Checkbox>\n</Popover>\n\n<Menu\n  trigger={<IconButton label=\"操作\"><MoreIcon /></IconButton>}\n  align=\"end\"\n  items={[\n    { value: 'edit', label: '編集', shortcut: '⌘E' },\n    { type: 'separator' },\n    { value: 'delete', label: '削除', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n/>\n\n<ContextMenu\n  label=\"見積書.pdf の操作\"\n  items={[\n    { value: 'open', label: '開く' },\n    { value: 'delete', label: '削除', tone: 'danger' },\n  ]}\n  onSelect={(value) => run(value)}\n>\n  <li>見積書.pdf</li>\n</ContextMenu>",
   codeCaption: '使い方',
   a11yCaption: '起点の脇に出る部品が満たす仕様',
 };

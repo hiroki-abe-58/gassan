@@ -1,7 +1,7 @@
 import type ja from '../ja/datePicker';
 
 export default {
-  lead: 'DatePicker 和 DateRangePicker 是弹出式日历，Calendar 和 RangeCalendar 是放在页面上的日历。它们都用颜色和名称标出日本的节假日和周末，并且可以从标题跳到其他月份和年份。TimePicker 从时和分的列中选择时间。月份名称、星期和时间的写法由 GassanProvider 的 locale 通过 Intl 生成，所以切换语言时会一起变。',
+  lead: 'DatePicker 和 DateRangePicker 是弹出式日历，Calendar 和 RangeCalendar 是放在页面上的日历。它们都用颜色和名称标出日本的节假日和周末，并且可以从标题跳到其他月份和年份。TimePicker 从时和分的列中选择时间，ColorPicker 从饱和度和亮度的面板与色相条中选择颜色。月份名称、星期和时间的写法由 GassanProvider 的 locale 通过 Intl 生成，所以切换语言时会一起变。',
   gallery: {
     title: '示例',
     intro: '选中的日期和时间用强调色填充，今天加上一个细圆环。周日和节假日为红色，周六为蓝色。',
@@ -12,6 +12,7 @@ export default {
       timePicker: '时间',
       time12: '12 小时制',
       businessHours: '10:00〜18:00，间隔 15 分钟',
+      colorPicker: '颜色',
       date: '日期（原生）',
       time: '时间（原生）',
       color: '颜色（原生）',
@@ -68,6 +69,27 @@ export default {
       { key: 'Esc', action: '不确定直接关闭，回到按钮（模态框不关闭）' },
     ],
   },
+  color: {
+    title: '颜色',
+    intro: 'ColorPicker 用饱和度和亮度的面板、色相条和十六进制输入框来选择颜色。弹出层用主题的颜色绘制，每次移动，颜色都会随之改变。传入常用颜色后，会排出一按就能选中的色块。',
+    exampleTitle: '品牌色',
+    exampleDescription: '按下色块，或移动面板和色相条，下方按钮的颜色就会一起改变。按钮的文字在白色和黑色中，选用与底色对比度更高的那一种。',
+    body: [
+      '面板是二维滑块，用 ←→ 调整饱和度、用 ↑↓ 调整亮度，并播报为“饱和度 80%，亮度 60%”。色相条是原生的 range，常用颜色是原生的单选按钮，所以按键的操作与平常的部件相同。当前颜色会作为按钮的说明读出。',
+      '值与原生的 `type="color"` 一样，是小写的 `#rrggbb`。色块的颜色和在十六进制输入框中输入的值会原样写入（不会经过面板上的位置取整，所以不会差 1）。十六进制输入框在输完 6 位时改变颜色，3 位则在按下 Enter 时改变。',
+    ],
+    codeCaption: '选择颜色',
+    code: "<Modal.ColorPicker\n  aria-label=\"品牌色\"\n  value={color}\n  onValueChange={setColor}\n  swatches={[\n    { value: '#3346d3', label: '蓝色' },\n    { value: '#1a7f5a', label: '绿色' },\n  ]}\n/>",
+    keysCaption: '颜色选择的键盘操作',
+    keys: [
+      { key: '← / →', action: '降低、提高饱和度（面板）' },
+      { key: '↑ / ↓', action: '提高、降低亮度（面板）' },
+      { key: 'Shift + 方向键', action: '每次移动 10（面板）' },
+      { key: 'PageUp / PageDown', action: '亮度每次增减 10（面板）' },
+      { key: 'Home / End', action: '饱和度设为 0% / 100%（面板）' },
+      { key: 'Esc', action: '关闭并回到按钮（模态框不关闭）' },
+    ],
+  },
   modal: {
     title: '在模态框中',
     intro: '日历和时间的列通过 popover 显示在 top layer。Esc 只关闭弹出层，并把焦点送回按钮。',
@@ -90,10 +112,11 @@ export default {
     note: '按下标题（“2026年10月”）会显示月份列表，再按一次显示年份列表。在列表中也可以用方向键移动，按 Enter 进入下一级。按下“今天”回到今天。',
   },
   native: {
-    title: '与原生日期、时间输入的区分使用',
+    title: '与原生日期、时间、颜色输入的区分使用',
     body: [
       '在手机上，系统的日期滚轮往往更快。想让用户边看星期和节假日边选、想显示不可选的日期、想让用户选择日期范围、想让外观与其他部件一致时，就用 DatePicker。否则就把 `type="date"` 放进 Modal.Input。边框和明暗（`--g-color-scheme`）都会保持一致（I-15）。',
       '时间也一样。原生的 `type="time"` 的弹出层外观不跟随主题，还能输入不符合间隔或超出范围的时间。想让间隔和范围一目了然、想让用户用主题的颜色来选择时，就用 TimePicker。',
+      '颜色也一样。原生的 `type="color"` 的弹出层保持系统和浏览器原本的外观，也不能排出常用颜色。想让用户在主题的样式中选择、想让用户从固定的颜色中选择时，就用 ColorPicker。',
     ],
   },
   apiCaption: {
@@ -102,6 +125,7 @@ export default {
     calendar: 'Modal.Calendar',
     rangeCalendar: 'Modal.RangeCalendar',
     timePicker: 'Modal.TimePicker',
+    colorPicker: 'Modal.ColorPicker',
   },
-  a11yCaption: '日期与时间满足的规范',
+  a11yCaption: '日期、时间与颜色满足的规范',
 } satisfies typeof ja;

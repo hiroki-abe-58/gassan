@@ -38,7 +38,7 @@ export default {
     choice: '選項',
     select: '下拉選單與組合框',
     slider: '滑桿',
-    datePicker: '日期與時間',
+    datePicker: '日期、時間與顏色',
     fileDrop: '檔案',
     media: 'Media 與 Gallery',
     chart: 'Modal.Chart',

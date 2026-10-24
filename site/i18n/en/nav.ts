@@ -38,7 +38,7 @@ export default {
     choice: 'Choices',
     select: 'Select and Combobox',
     slider: 'Slider',
-    datePicker: 'Date and time',
+    datePicker: 'Date, time and color',
     fileDrop: 'Files',
     media: 'Media and Gallery',
     chart: 'Modal.Chart',

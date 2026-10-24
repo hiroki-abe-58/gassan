@@ -18,17 +18,17 @@ Line breaking for Japanese, Chinese and Korean and accessibility are written dow
 
 **Documentation site: <https://hiroki-abe-58.github.io/gassan/#/en>**
 — design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, line breaking, motion),
-live demos and the API of every component and form control, the page templates, and the specification of 253 behaviors, laid out like the Material Design 3 guidelines.
+live demos and the API of every component and form control, the page templates, and the specification of 255 behaviors, laid out like the Material Design 3 guidelines.
 The site is available in English, [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) and [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) (switch with the globe button in the top bar).
 It has a light / dark theme and a choice of primary colors; whichever color you pick, its text and fills are derived to meet the WCAG contrast ratios.
 Every table, count and API description on the site is generated at build time from the specification and the type definitions; no number is written by hand.
 
-The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 253 behaviors, a decision matrix and a quality rubric).
+The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 255 behaviors, a decision matrix and a quality rubric).
 Put that file in the context when coding with an AI assistant.
 
 | Document | Contents |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 253 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 255 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | The original requirements broken down, one row each: implemented / achieved by composition / on the roadmap |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | Minimal examples of putting gassan's form controls inside a modal, and notes on wrapping components from other libraries for what gassan does not provide |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | Native `<dialog>` vs Base UI vs React Aria vs Radix (as of 2026-09-29, primary sources only) |
@@ -260,12 +260,12 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Chart` | A container for charts you bring (any library, or your own SVG or canvas). Wires up the name (`label`) and a text alternative for the trend (`summary`), and exposes the raw data in a `<details>` |
 | `Modal.Handle` | The grip of a sheet. With detents it is a `role="slider"` control; without them, a decorative grab area |
 | `ModalHost` `useModals` | Imperative API (`await confirm()`) |
-| `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | Calendars with Japanese public holidays and ranges, and a time picker drawn in the theme |
+| `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` `Modal.ColorPicker` | Calendars with Japanese public holidays and ranges, and a time picker and a color picker drawn in the theme |
 | `Modal.TagInput` `Modal.PasswordStrength` | Tags (aware of pasting and IME) and the strength of a new password |
 | `toast` `ToastHost` | Toasts with a meter for the time left |
 | `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | Buttons and marks for the page, outside modals |
 | `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | Containers, numbers, progress and notices |
-| `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | Navigation, and the parts that open beside a trigger |
+| `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `ContextMenu` `Breadcrumbs` `Pagination` `Steps` | Navigation, and the parts that open beside a trigger or where you right-click |
 | `PageHeader` `DataTable` `CommandPalette` | A page header, a data table (sorting, row selection, bulk actions) and a command palette (⌘K) |
 | `LineChart` `BarChart` `DonutChart` `Sparkline` `BarList` `Gauge` | Charts drawn in SVG and HTML without dependencies. Points can be explored with the keyboard and are read aloud, the raw data opens as a table, and the colors follow the theme |
 | `Carousel` | A carousel you can swipe or move with Previous / Next and a slide picker. Auto-rotation puts a stop button first and pauses on hover and focus |

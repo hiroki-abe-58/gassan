@@ -114,6 +114,15 @@ export interface GassanLabels {
   now: string;
   /** 時刻の選択の窓の名前。I-20。 */
   chooseTime: string;
+  /** 色の選択の窓の名前・彩度と明るさの面（2 次元のスライダー）・色相・16 進数の欄・よく使う色の並びの名前。I-23。 */
+  chooseColor: string;
+  saturationBrightness: string;
+  twoDimensionalSlider: string;
+  saturationBrightnessValue: (saturation: number, brightness: number) => string;
+  hue: string;
+  hueValue: (degrees: number) => string;
+  hexColor: string;
+  swatches: string;
   /** トーストの領域の名前（region のランドマーク）。N-05。 */
   notifications: string;
   /** トーストの × ボタン。N-04。 */
@@ -291,6 +300,14 @@ export const japaneseLabels: GassanLabels = {
   dayPeriod: '午前・午後',
   now: '現在時刻',
   chooseTime: '時刻を選ぶ',
+  chooseColor: '色を選ぶ',
+  saturationBrightness: '彩度と明るさ',
+  twoDimensionalSlider: '2 次元のスライダー',
+  saturationBrightnessValue: (saturation, brightness) => `彩度 ${String(saturation)}%、明るさ ${String(brightness)}%`,
+  hue: '色相',
+  hueValue: (degrees) => `${String(degrees)} 度`,
+  hexColor: '16 進数のカラーコード',
+  swatches: 'よく使う色',
   notifications: '通知',
   closeNotification: '通知を閉じる',
   copy: 'コピー',
@@ -437,6 +454,14 @@ export const englishLabels: GassanLabels = {
   dayPeriod: 'AM/PM',
   now: 'Now',
   chooseTime: 'Choose a time',
+  chooseColor: 'Choose a color',
+  saturationBrightness: 'Saturation and brightness',
+  twoDimensionalSlider: '2D slider',
+  saturationBrightnessValue: (saturation, brightness) => `Saturation ${String(saturation)}%, brightness ${String(brightness)}%`,
+  hue: 'Hue',
+  hueValue: (degrees) => `${String(degrees)} degrees`,
+  hexColor: 'Hex color code',
+  swatches: 'Swatches',
   notifications: 'Notifications',
   closeNotification: 'Dismiss notification',
   copy: 'Copy',
