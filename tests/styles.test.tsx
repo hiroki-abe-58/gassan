@@ -10,7 +10,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { Modal } from '../src';
-import { renderModal } from './utils';
+import { renderModal, rulesOf, splitSelectors } from './utils';
 import { within } from '@testing-library/react';
 
 const css = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8');
@@ -104,5 +104,41 @@ describe('styles / exit fallback (L-07)', () => {
 
   it('z-index の保険は使わない（top layer の外側の話なので効かない）', () => {
     expect(rules).not.toMatch(/z-index/);
+  });
+});
+
+describe('styles / text inputs (I-03)', () => {
+  it('枠の中の input は幅を % で持ち、固有の幅（size の 20 文字ぶん）を最小幅に入れない', () => {
+    // 実測（Chrome 155、幅 320px、ラテン文字を Verdana）: auto のままだと FAQ の検索欄の最小幅が 286px になり、
+    // 文書が 334px に広がった。% なら最小幅は 90px で、好みの幅（304px）は変わらない（§10-37）
+    const bare = /(^|\n)\s*\.g-bare\s*\{([^}]*)\}/.exec(rules)?.[2] ?? '';
+    expect(bare).toMatch(/(^|[;\s])inline-size:\s*100%;/);
+    expect(bare).toMatch(/(^|[;\s])min-inline-size:\s*0;/);
+  });
+});
+
+describe('styles / scroll containers (B-13)', () => {
+  it('横に送る器は position を持つ（中の読み上げ専用の文字が器の外を基準に置かれ、文書を横に広げない）', () => {
+    // 実測（Chrome 155、幅 320px）: 表の器に position が無く、操作の列の読み上げ専用の見出しがアプリの枠を基準に
+    // 置かれて、文書が 731px まで広がった（§10-36）。ダイアログの中の器は、ダイアログが基準になって切り抜くので除く
+    // （本文に position を付けると、本文の中身がヘッダとフッタの影より後に塗られて影が隠れる）
+    const insideDialog = new Set(['.g-body', '.g-command-body']);
+    for (const file of ['src/styles.css', 'src/templates.css']) {
+      const all = rulesOf(readFileSync(resolve(process.cwd(), file), 'utf8'));
+      const positioned = new Set(
+        all
+          .filter(([, body]) => /(^|[;\s])position:\s*(relative|absolute|fixed|sticky)/.test(body))
+          .flatMap(([selector]) => splitSelectors(selector)),
+      );
+      const scrollers = all
+        .filter(([, body]) => /overflow(-x|-y)?:\s*(auto|scroll)/.test(body))
+        .flatMap(([selector]) => splitSelectors(selector))
+        .filter((selector) => !insideDialog.has(selector));
+      expect(scrollers.length, file).toBeGreaterThan(0);
+      expect(
+        scrollers.filter((selector) => !positioned.has(selector)),
+        file,
+      ).toEqual([]);
+    }
   });
 });

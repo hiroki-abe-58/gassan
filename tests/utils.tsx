@@ -174,3 +174,32 @@ export function pressEscape(dialog: HTMLDialogElement, { cancelable = true } = {
   if (!cancelable) dialog.close();
   return event;
 }
+
+/* -------------------------------------------------------------------------- */
+/* CSS の規則                                                                  */
+/* -------------------------------------------------------------------------- */
+
+/** 宣言の塊から、セレクタ（, で並んだもの）を括弧の中の , で切らずに分ける。 */
+export function splitSelectors(list: string): string[] {
+  const out: string[] = [];
+  let depth = 0;
+  let current = '';
+  for (const char of list) {
+    if (char === '(') depth += 1;
+    if (char === ')') depth -= 1;
+    if (char === ',' && depth === 0) {
+      out.push(current.trim().replace(/\s+/g, ' '));
+      current = '';
+    } else current += char;
+  }
+  out.push(current.trim().replace(/\s+/g, ' '));
+  return out.filter(Boolean);
+}
+
+/** CSS の規則（@ の塊の中も）を [セレクタ, 宣言] で並べる。 */
+export function rulesOf(source: string): [string, string][] {
+  return [...source.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{};]+)\{([^{}]*)\}/g)].map((match) => [
+    (match[1] ?? '').trim(),
+    match[2] ?? '',
+  ]);
+}

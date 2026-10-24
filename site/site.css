@@ -2316,8 +2316,10 @@
   font-weight: 800;
 }
 
+/* 列は minmax(0, 1fr)。文節が行より長いときに行を広げず、.g-phrase の break-word で折らせる（W-02） */
 .s-rules {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin: 0;
   padding: 0;
@@ -2352,6 +2354,16 @@
 .s-rules p {
   margin: 0;
   color: var(--s-ink-2);
+}
+@media (max-width: 520px) {
+  /* 番号を見出しの上に置き、本文の幅を空ける（320px で 264px。いちばん長い文節「「プロフィールを｜編集」のように」は 255px） */
+  .s-rules li {
+    padding: 52px 12px 14px;
+  }
+  .s-rules li::before {
+    inset-inline-start: 12px;
+    inset-block-start: 12px;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -3255,8 +3267,10 @@
   display: grid;
   gap: 14px;
 }
+/* 列は minmax(0, 1fr)。auto の列だと、器の幅（em で決めた幅）が列を押し広げ、max-inline-size: 100% が効かない */
 .s-sample {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4px;
   min-inline-size: 0;
 }

@@ -14,7 +14,7 @@ import { describe, expect, it } from 'vitest';
 
 import { GassanProvider, Modal, Phrase, Progress, englishLabels, splitPhrases } from '../src';
 import { glueSegments, scriptOf } from '../src/internal/phrase';
-import { renderModal } from './utils';
+import { renderModal, rulesOf, splitSelectors } from './utils';
 
 const noop = (): void => {};
 
@@ -603,26 +603,6 @@ describe('W-02 器より長い文節の扱い（CSS）', () => {
 });
 
 describe('W-05 1 行で出す部品の中の <wbr>（CSS）', () => {
-  /** 宣言の塊から、セレクタ（, で並んだもの）を括弧の中の , で切らずに分ける。 */
-  const splitSelectors = (list: string): string[] => {
-    const out: string[] = [];
-    let depth = 0;
-    let current = '';
-    for (const char of list) {
-      if (char === '(') depth += 1;
-      if (char === ')') depth -= 1;
-      if (char === ',' && depth === 0) {
-        out.push(current.trim().replace(/\s+/g, ' '));
-        current = '';
-      } else current += char;
-    }
-    out.push(current.trim().replace(/\s+/g, ' '));
-    return out.filter(Boolean);
-  };
-  /** CSS の規則（@ の塊の中も）を [セレクタ, 宣言] で並べる。 */
-  const rulesOf = (source: string): [string, string][] =>
-    [...source.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{};]+)\{([^{}]*)\}/g)].map((match) => [(match[1] ?? '').trim(), match[2] ?? '']);
-
   it('white-space: nowrap を宣言した部品は、中の <wbr> を消す（Chrome は nowrap の中でも <wbr> で折る）', () => {
     for (const file of ['src/styles.css', 'src/templates.css']) {
       const rules = rulesOf(readFileSync(resolve(process.cwd(), file), 'utf8'));
