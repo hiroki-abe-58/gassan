@@ -300,6 +300,11 @@ describe('AI アシスタントのページ / P-19', () => {
     const wide = blocks('min-width: 640px');
     expect(wide).toMatch(/\.g-split-list\s*\{[^}]*inline-size:\s*20rem/);
     expect(wide).toMatch(/\.g-split-back\s*\{\s*display:\s*none;/);
+    // @container は詳細度を足さないので、部品の規則より後に書く（前に書くと後の display に負け、広い器でも戻るが出る）
+    const shown = sheet.search(/\.g-split-back\s*\{\s*display:\s*inline-grid/);
+    const hidden = sheet.search(/@container \(min-width: 640px\)\s*\{[^@]*\.g-split-back\s*\{\s*display:\s*none/);
+    expect(shown).toBeGreaterThan(-1);
+    expect(hidden).toBeGreaterThan(shown);
   });
 
   it('P-18 / P-19 会話のページは data-* を外側の要素へ渡す', () => {
