@@ -8,6 +8,7 @@ export default {
     components: 'คอมโพเนนต์',
     ui: 'ส่วนประกอบ UI',
     forms: 'ส่วนประกอบฟอร์ม',
+    templates: 'เทมเพลต',
     reference: 'สเปกและการตรวจสอบ',
   },
   pages: {
@@ -50,6 +51,9 @@ export default {
     uiLayout: 'การ์ดและสรุปตัวเลข',
     uiNavigation: 'แท็บและการแบ่งหน้า',
     uiOverlays: 'Tooltip และเมนู',
+    templatesAuth: 'เข้าสู่ระบบและสมัครสมาชิก',
+    templatesStatus: 'ข้อผิดพลาดและการปิดปรับปรุง',
+    templatesPublic: 'ราคา คำถามที่พบบ่อย และข้อกำหนด',
     provider: 'GassanProvider',
     spec: 'สเปกพฤติกรรม',
     verification: 'การตรวจสอบ',

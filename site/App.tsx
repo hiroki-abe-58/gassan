@@ -4,6 +4,7 @@ import { GassanProvider, Modal, ModalHost, Phrase, ToastHost } from '@genelab/ga
 
 import { data } from './data';
 import { DEFAULT_LANG, loadLang, useI18n } from './i18n';
+import { TemplatePreview } from './previews/TemplatePreview';
 import { PAGES, SECTIONS, neighbours, resolve } from './routes';
 import { to, useRoute } from './router';
 import { LangPicker } from './ui/LangPicker';
@@ -70,6 +71,8 @@ export function App(): ReactNode {
   const title = t.nav.pages[page.key];
   /** トーストの出す場所。トーストのページの「出す場所」で変わる。 */
   const toastPosition = useToastPosition();
+  /** テンプレートの見本（#/preview/<name>）なら、その名前。 */
+  const previewName = route.segments[0] === 'preview' ? (route.segments[1] ?? '') : null;
 
   // URL の言語が変わったら、その言語の文言を読む。読み終えるまでは前の言語で描く。
   useEffect(() => {
@@ -77,8 +80,12 @@ export function App(): ReactNode {
   }, [route.lang]);
 
   useEffect(() => {
+    if (previewName !== null) {
+      document.title = `${previewName} — gassan`;
+      return;
+    }
     document.title = page.path === '/' ? t.common.siteTitle : `${title} — gassan`;
-  }, [page, title, t]);
+  }, [page, title, t, previewName]);
 
   // ページが変わったら先頭へ戻り、見出しへフォーカスを移す。
   // SPA の遷移は読み上げられないので、移さないと支援技術の利用者は迷子になる。
@@ -89,11 +96,23 @@ export function App(): ReactNode {
       return;
     }
     window.scrollTo({ top: 0 });
-    document.getElementById('page-title')?.focus({ preventScroll: true });
-  }, [page.path]);
+    // 見本の中の行き来は、テンプレートが自分でフォーカスを扱う（h1 はテンプレートの中にある）。
+    if (previewName === null) document.getElementById('page-title')?.focus({ preventScroll: true });
+  }, [page.path, previewName]);
 
   const { prev, next } = neighbours(page);
   const Page = page.Component;
+
+  // テンプレートの見本（#/preview/<name>）。ドキュメントのページの iframe の中で、サイトの枠を持たずに描く。
+  if (previewName !== null) {
+    return (
+      <GassanProvider labels={t.gassan}>
+        <TemplatePreview name={previewName} />
+        <ModalHost />
+        <ToastHost position={toastPosition} />
+      </GassanProvider>
+    );
+  }
 
   return (
     // gassan が出す文字列（閉じる・読み上げ・ゲートの理由）も、サイトの言語にそろえる

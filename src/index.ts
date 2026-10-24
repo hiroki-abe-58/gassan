@@ -80,6 +80,17 @@ export { Accordion } from './disclosure';
 export { Tooltip, Popover, Menu } from './overlay';
 export { Breadcrumbs, Pagination, Steps } from './navigation';
 
+/* ------------------------------------------------------------------ templates */
+
+// SaaS のページのテンプレート（P-01〜）。見た目は templates.css（styles.css の後に読み込む）。
+export { SiteProvider, SiteLink, useSite } from './templates/site';
+export { AuthLayout, StatusLayout } from './templates/layouts';
+export { SignInPage, SignUpPage, ForgotPasswordPage, ResetPasswordPage, TwoFactorPage, VerifyEmailPage, SignOutPage } from './templates/auth';
+export { ErrorPage, MaintenancePage } from './templates/status';
+export { SiteLayout } from './templates/site-layout';
+export { DocumentPage, FaqPage, PricingPage, ContactPage, ChangelogPage } from './templates/public';
+export { japaneseTemplateLabels, englishTemplateLabels } from './templates/labels';
+
 /*
  * フォーム部品の中立の名前。ページの上でもモーダルの中でも同じ部品なので、Modal を付けずに書ける。
  * Modal.Input / ModalInput は残す（同じものを指す）。
@@ -209,6 +220,38 @@ export type { TabItem, TabsProps } from './tabs';
 export type { AccordionItem, AccordionProps } from './disclosure';
 export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps } from './overlay';
 export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, StepsProps } from './navigation';
+export type { Site, SiteLinkProps, SiteLinks, SiteNavLink, SiteFooterColumn, SiteProviderProps } from './templates/site';
+export type { SiteLayoutProps } from './templates/site-layout';
+export type {
+  DocumentSection,
+  DocumentPageProps,
+  FaqItem,
+  FaqPageProps,
+  PricingPlan,
+  PricingComparisonRow,
+  PricingPageProps,
+  ContactValues,
+  ContactPageProps,
+  ChangelogTag,
+  ChangelogEntry,
+  ChangelogPageProps,
+} from './templates/public';
+export type { AuthLayoutProps, StatusLayoutProps } from './templates/layouts';
+export type {
+  AuthProvider,
+  SignInPageProps,
+  SignInValues,
+  SignUpPageProps,
+  SignUpValues,
+  ForgotPasswordPageProps,
+  ResetPasswordPageProps,
+  TwoFactorPageProps,
+  VerifyEmailPageProps,
+  SignOutPageProps,
+} from './templates/auth';
+export type { ErrorPageProps, MaintenancePageProps, MaintenanceUpdate } from './templates/status';
+export type { ErrorStatus, TemplateLabels } from './templates/labels';
+export type { SubmitResult } from './templates/form';
 export type { ModalFileDropProps } from './file-drop';
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';

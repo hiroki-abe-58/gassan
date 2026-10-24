@@ -1,0 +1,438 @@
+/* ============================================================================
+ * gassan templates.css — SaaS のページのテンプレート（P-01〜）
+ * ----------------------------------------------------------------------------
+ * styles.css の後に読み込む。色・角丸・動きはすべて styles.css のトークンを使い、ここでは値を持たない。
+ *
+ *   import '@genelab/gassan/styles.css';
+ *   import '@genelab/gassan/templates.css';
+ *
+ * 並べ方は画面の幅ではなく、ページの器（.g-page）の幅で決める（container query）。
+ * 管理画面の中・ドキュメントの見本の枠・iframe の中でも、置いた所の幅で形が決まる。
+ * 強調は文字の大きさ・余白・控えめな地の色・1px の線で行い、左の太い線や囲みは使わない（§5 の 21）。
+ * ==========================================================================*/
+
+/* 読み込む順が逆でも、層の順は styles.css と同じにする（先に出た名前から順が決まるため）。 */
+@layer gassan.reset, gassan.tokens, gassan.core, gassan.theme;
+
+@layer gassan.core {
+  /* --- T1 page ---------------------------------------------------------------
+   * ページの地は、面（--g-surface）に文字の色を 3% 混ぜる。カードは面のまま浮かせる。
+   * --g-page-bg で差し替えられる（ブランドの地の色を敷くとき）。 */
+  .g-page {
+    container-type: inline-size;
+    box-sizing: border-box;
+    min-block-size: 100dvh;
+    background: var(--g-page-bg, color-mix(in srgb, var(--g-fg) 3%, var(--g-surface)));
+    color: var(--g-fg);
+    color-scheme: var(--g-color-scheme);
+  }
+  /* 文の中のリンク。色だけに頼らず下線で示し、下線の色を淡くして文を読みやすくする。 */
+  :where(.g-page) a:not([class]),
+  .g-auth-link {
+    border-radius: 2px;
+    color: var(--g-fg);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in srgb, var(--g-fg) 35%, transparent);
+    text-underline-offset: 3px;
+  }
+  :where(.g-page) a:not([class]):hover,
+  .g-auth-link:hover { text-decoration-color: currentColor; }
+  :where(.g-page) a:not([class]):focus-visible,
+  .g-auth-link:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+
+  .g-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-block-size: var(--g-tap);
+    border-radius: 6px;
+    color: var(--g-fg);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .g-brand:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-brand > :is(img, svg) { display: block; block-size: 28px; inline-size: auto; }
+
+  .g-legal { display: grid; justify-items: center; gap: 4px; color: var(--g-fg-muted); font-size: 0.8125rem; }
+  .g-legal-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 16px; margin: 0; padding: 0; list-style: none; }
+  .g-legal-links a { display: inline-flex; align-items: center; min-block-size: 32px; color: var(--g-fg-muted); }
+  .g-legal-copyright { margin: 0; }
+
+  /* --- T2 auth（P-02 / P-04） --------------------------------------------------
+   * 中央のカードに 1 つの作業。器が狭い（480px 以下）ときはカードの枠と地を外し、画面いっぱいに使う。
+   * aside は器が広い（960px 以上）ときだけ、カードの横に並べる。 */
+  .g-auth-frame { display: grid; min-block-size: 100dvh; }
+  .g-auth-column {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 24px;
+    box-sizing: border-box;
+    padding: 24px 16px;
+  }
+  .g-auth-header,
+  .g-auth-footer { display: flex; justify-content: center; }
+  .g-auth-main { display: grid; align-content: center; justify-items: center; gap: 20px; }
+  .g-auth-card {
+    display: grid;
+    gap: 20px;
+    box-sizing: border-box;
+    inline-size: min(100%, 26rem);
+    padding: 32px;
+    border: 1px solid var(--g-border);
+    border-radius: calc(var(--g-radius) + 2px);
+    background: var(--g-surface);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.12);
+  }
+  .g-auth-title { margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; }
+  .g-auth-description { margin: -10px 0 0; color: var(--g-fg-muted); line-height: 1.65; }
+  .g-auth-form { display: grid; gap: 16px; }
+  .g-auth-form > .g-btn { margin-block-start: 4px; }
+  .g-auth-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 16px; }
+  .g-auth-row > .g-auth-link { display: inline-flex; align-items: center; min-block-size: var(--g-tap); font-size: 0.9375rem; }
+  .g-auth-providers,
+  .g-auth-resend,
+  .g-auth-actions { display: grid; gap: 8px; }
+  .g-auth-hint { min-block-size: 1.5em; color: var(--g-fg-muted); font-size: 0.875rem; text-align: center; }
+  .g-auth-hint > p { margin: 0; }
+  .g-auth-after { margin: 0; color: var(--g-fg-muted); font-size: 0.9375rem; text-align: center; }
+  .g-auth-after-inline { margin: 0; font-size: 0.9375rem; text-align: center; }
+  .g-auth-aside { display: none; }
+  @container (min-width: 960px) {
+    .g-auth-frame[data-layout="split"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .g-auth-frame[data-layout="split"] > .g-auth-aside {
+      display: grid;
+      align-content: center;
+      box-sizing: border-box;
+      padding: 48px;
+      border-inline-start: 1px solid var(--g-border);
+      background: color-mix(in srgb, var(--g-accent) 5%, var(--g-surface));
+    }
+  }
+  @container (max-width: 480px) {
+    .g-auth-card { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+  }
+
+  /* 送信したときの、直す所のまとめ（P-03）。知らせの帯と同じく地の色だけで分け、線で囲まない。 */
+  .g-form-summary {
+    padding: 14px 16px;
+    border-radius: var(--g-radius-control);
+    background: color-mix(in srgb, var(--g-danger) 9%, var(--g-surface));
+  }
+  .g-form-summary:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-form-summary-title { margin: 0 0 6px; color: color-mix(in srgb, var(--g-danger) 85%, var(--g-fg)); font-weight: 700; }
+  .g-form-summary-list { display: grid; gap: 2px; margin: 0; padding-inline-start: 1.25em; }
+  .g-form-summary-list a { color: color-mix(in srgb, var(--g-danger) 85%, var(--g-fg)); text-decoration: underline; text-underline-offset: 3px; }
+  .g-form-summary-list a:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+
+  /* --- T3 status（P-05 / P-06） -----------------------------------------------
+   * 何が起きたか・なぜか・次に何ができるかを、中央に縦に並べる。 */
+  .g-status {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 24px;
+    padding: 24px 16px;
+  }
+  .g-status-header,
+  .g-status-footer { display: flex; justify-content: center; }
+  .g-status-main {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 12px;
+    box-sizing: border-box;
+    inline-size: min(100%, 36rem);
+    margin-inline: auto;
+    padding-block: 32px;
+    text-align: center;
+  }
+  .g-status-visual { margin-block-end: 4px; }
+  /* 状態コードは情報なので、大きな文字の 3:1 ではなく本文と同じ控えめな文字色（4.5:1 以上）で描く。 */
+  .g-status-code {
+    display: block;
+    color: var(--g-fg-muted);
+    font-size: clamp(4.5rem, 16cqi, 7.5rem);
+    font-variant-numeric: tabular-nums;
+    font-weight: 750;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .g-status-icon { inline-size: 72px; block-size: 72px; color: var(--g-fg-muted); }
+  .g-status-icon > path { stroke-width: 1.1; }
+  .g-status-title { margin: 0; font-size: 1.75rem; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; }
+  .g-status-description { max-inline-size: 32em; margin: 0; color: var(--g-fg-muted); line-height: 1.7; }
+  .g-status-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-block-start: 12px; }
+  .g-status-hint { margin: 0; color: var(--g-fg-muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+  .g-status-reference {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 8px;
+    margin: 4px 0 0;
+    padding: 4px 4px 4px 12px;
+    border-radius: var(--g-radius-control);
+    background: var(--g-hover);
+    color: var(--g-fg-muted);
+    font-size: 0.875rem;
+  }
+  .g-status-reference > code { color: var(--g-fg); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .g-status-schedule {
+    display: grid;
+    gap: 2px;
+    margin: 4px 0 0;
+    padding: 12px 20px;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius-control);
+    background: var(--g-surface);
+  }
+  .g-status-schedule > dt { color: var(--g-fg-muted); font-size: 0.8125rem; }
+  .g-status-schedule > dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 600; }
+  /* 予定のまとまり（日付・時刻の範囲・時間帯）の中では折らない。折るならまとまりの間で。 */
+  .g-status-keep { white-space: nowrap; }
+  .g-status-updates { box-sizing: border-box; inline-size: 100%; margin-block-start: 16px; text-align: start; }
+  .g-status-updates-title { margin: 0 0 12px; font-size: 0.9375rem; font-weight: 650; }
+
+  /* --- T4 site（P-01） -------------------------------------------------------------
+   * 公開ページの外枠。ヘッダは付いてこさせない（z-index を使わないので、後ろの要素がヘッダの上に描かれる）。
+   * 器が狭い（760px 以下）ときは、案内と操作を「メニュー」のボタンの下に畳む。 */
+  .g-site { position: relative; display: grid; grid-template-rows: auto 1fr auto; }
+  .g-skip {
+    position: absolute;
+    inset-block-start: 8px;
+    inset-inline-start: 16px;
+    padding: 10px 16px;
+    border-radius: var(--g-radius-control);
+    background: var(--g-accent);
+    color: var(--g-on-accent);
+    font-weight: 600;
+    text-decoration: none;
+    translate: 0 -200%;
+  }
+  .g-skip:focus { translate: 0 0; }
+  .g-skip:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-site-header { border-block-end: 1px solid var(--g-border); background: var(--g-surface); }
+  .g-site-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    box-sizing: border-box;
+    inline-size: min(100%, 72rem);
+    margin-inline: auto;
+    padding: 8px 24px;
+  }
+  .g-site-nav { flex: 1 1 auto; }
+  .g-site-nav-list { display: flex; flex-wrap: wrap; gap: 2px; margin: 0; padding: 0; list-style: none; }
+  .g-site-nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 40px;
+    padding-inline: 12px;
+    border-radius: var(--g-radius-control);
+    color: var(--g-fg-muted);
+    font-size: 0.9375rem;
+    font-weight: 550;
+    text-decoration: none;
+  }
+  .g-site-nav-link:hover { background: var(--g-hover); color: var(--g-fg); }
+  .g-site-nav-link[aria-current="page"] { color: var(--g-fg); font-weight: 650; }
+  .g-site-nav-link:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-site-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .g-site-menu {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    min-block-size: var(--g-tap);
+    margin-inline-start: auto;
+    padding-inline: 12px;
+    border: 1px solid var(--g-border-strong);
+    border-radius: var(--g-radius-control);
+    background: transparent;
+    color: var(--g-fg);
+    font: inherit;
+    font-size: 0.9375rem;
+    cursor: pointer;
+  }
+  .g-site-menu > svg { inline-size: 18px; block-size: 18px; }
+  .g-site-menu:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  @container (max-width: 760px) {
+    .g-site-menu { display: inline-flex; }
+    .g-site-bar:has(> .g-site-menu) > :is(.g-site-nav, .g-site-actions) { display: none; }
+    .g-site-bar[data-open] > :is(.g-site-nav, .g-site-actions) { display: flex; flex-basis: 100%; order: 1; }
+    .g-site-bar[data-open] > .g-site-nav { padding-block: 8px; border-block-start: 1px solid var(--g-border); }
+    .g-site-bar[data-open] .g-site-nav-list { flex: 1; flex-direction: column; }
+    .g-site-bar[data-open] > .g-site-actions { padding-block-end: 12px; }
+  }
+  .g-site-main {
+    box-sizing: border-box;
+    inline-size: min(100%, 72rem);
+    margin-inline: auto;
+    padding: 48px 24px 72px;
+  }
+  .g-site-content { container-type: inline-size; }
+  .g-site-footer {
+    display: grid;
+    gap: 32px;
+    padding: 40px 24px;
+    border-block-start: 1px solid var(--g-border);
+    background: var(--g-surface);
+  }
+  .g-site-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    gap: 24px;
+    box-sizing: border-box;
+    inline-size: min(100%, 72rem);
+    margin-inline: auto;
+  }
+  .g-site-column-title { margin: 0 0 8px; font-size: 0.8125rem; font-weight: 650; }
+  .g-site-column ul { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+  .g-site-column a { display: inline-flex; align-items: center; min-block-size: 32px; color: var(--g-fg-muted); font-size: 0.9375rem; text-decoration: none; }
+  .g-site-column a:hover { color: var(--g-fg); text-decoration: underline; }
+
+  /* 公開ページの見出し。大きな文字と余白で示し、囲まない。 */
+  .g-public-header { display: grid; gap: 12px; margin-block-end: 32px; }
+  .g-public-title { margin: 0; font-size: clamp(1.75rem, 4.5cqi, 2.5rem); font-weight: 750; line-height: 1.25; letter-spacing: -0.02em; }
+  .g-public-description { max-inline-size: 40em; margin: 0; color: var(--g-fg-muted); font-size: 1.0625rem; line-height: 1.7; }
+  .g-public-subtitle { margin: 0 0 16px; font-size: 1.25rem; font-weight: 700; line-height: 1.4; }
+
+  /* --- T5 document（P-07） ------------------------------------------------------
+   * 本文の行の長さを 70 文字ほどに抑える。器が広い（960px 以上）ときは目次を横に置いて付いてこさせる。 */
+  .g-doc { display: grid; gap: 32px; }
+  .g-doc-header { display: grid; gap: 12px; }
+  .g-doc-title { margin: 0; font-size: clamp(1.75rem, 4.5cqi, 2.5rem); font-weight: 750; line-height: 1.25; letter-spacing: -0.02em; }
+  .g-doc-meta { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 0; padding: 0; list-style: none; color: var(--g-fg-muted); font-size: 0.875rem; }
+  .g-doc-meta time { font-variant-numeric: tabular-nums; }
+  .g-doc-intro { max-inline-size: 70ch; line-height: 1.85; }
+  .g-doc-toc { align-self: start; padding: 16px 12px; border: 1px solid var(--g-border); border-radius: var(--g-radius-control); background: var(--g-surface); }
+  .g-doc-toc-title { margin: 0 0 8px; padding-inline: 8px; color: var(--g-fg-muted); font-size: 0.8125rem; font-weight: 650; }
+  .g-doc-toc ol { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+  .g-doc-toc a { display: block; padding: 6px 8px; border-radius: 6px; color: var(--g-fg); font-size: 0.9375rem; line-height: 1.5; text-decoration: none; }
+  .g-doc-toc a:hover { background: var(--g-hover); }
+  .g-doc-body { display: grid; gap: 36px; max-inline-size: 70ch; }
+  .g-doc-section { display: grid; gap: 12px; }
+  .g-doc-heading { margin: 0; font-size: 1.1875rem; font-weight: 700; line-height: 1.45; scroll-margin-block-start: 24px; }
+  .g-doc-number { margin-inline-end: 4px; color: var(--g-fg-muted); font-weight: 650; }
+  :is(.g-doc-content, .g-doc-intro, .g-change-content) { line-height: 1.85; }
+  :is(.g-doc-content, .g-doc-intro, .g-change-content) > * { margin: 0; }
+  :is(.g-doc-content, .g-doc-intro, .g-change-content) > * + * { margin-block-start: 0.8em; }
+  :is(.g-doc-content, .g-change-content) :is(ul, ol) { padding-inline-start: 1.4em; }
+  @container (min-width: 960px) {
+    .g-doc[data-toc] { grid-template-columns: 15rem minmax(0, 1fr); column-gap: 48px; }
+    .g-doc[data-toc] > .g-doc-header { grid-column: 1 / -1; }
+    .g-doc[data-toc] > .g-doc-toc { position: sticky; inset-block-start: 24px; }
+  }
+
+  /* --- T6 faq（P-08） ------------------------------------------------------------ */
+  .g-faq { display: grid; gap: 20px; max-inline-size: 48rem; margin-inline: auto; }
+  .g-faq > .g-public-header { margin-block-end: 8px; }
+  .g-faq-search { max-inline-size: 28rem; margin-block-start: 8px; }
+  .g-faq-count { min-block-size: 1.5em; margin: 0; color: var(--g-fg-muted); font-size: 0.875rem; }
+  .g-faq-group { display: grid; gap: 4px; }
+  .g-faq-group-title { margin: 12px 0 4px; font-size: 1.0625rem; font-weight: 700; }
+  .g-faq-empty { margin: 0; padding: 24px; border-radius: var(--g-radius-control); background: var(--g-hover); color: var(--g-fg-muted); text-align: center; }
+  .g-faq-contact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-block-start: 16px;
+    padding: 20px 24px;
+    border: 1px solid var(--g-border);
+    border-radius: calc(var(--g-radius) + 2px);
+    background: var(--g-surface);
+  }
+  .g-faq-contact-title { margin: 0; font-weight: 650; }
+
+  /* --- T7 pricing（P-09） ------------------------------------------------------
+   * 推すプランは、外側の 2px の輪と言葉の印で示す（横の太い線や色だけで示さない）。 */
+  .g-pricing { display: grid; gap: 48px; }
+  .g-pricing-header { justify-items: center; margin-block-end: 0; text-align: center; }
+  .g-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 16px; }
+  .g-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    border: 1px solid var(--g-border);
+    border-radius: calc(var(--g-radius) + 2px);
+    background: var(--g-surface);
+  }
+  .g-plan[data-recommended] { border-color: transparent; box-shadow: 0 0 0 2px var(--g-accent); }
+  .g-plan-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  .g-plan-name { margin: 0; font-size: 1.125rem; font-weight: 700; }
+  .g-plan-description { margin: 0; color: var(--g-fg-muted); font-size: 0.9375rem; line-height: 1.6; }
+  .g-plan-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; margin: 0; }
+  .g-plan-amount { font-size: 2.25rem; font-variant-numeric: tabular-nums; font-weight: 750; letter-spacing: -0.02em; line-height: 1.1; }
+  .g-plan-period { color: var(--g-fg-muted); }
+  .g-plan-note { min-block-size: 1.5em; margin: -8px 0 0; color: var(--g-fg-muted); font-size: 0.8125rem; }
+  .g-plan-features { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 0.9375rem; line-height: 1.5; }
+  .g-plan-features > li { display: grid; grid-template-columns: 18px minmax(0, 1fr); align-items: start; gap: 8px; }
+  .g-plan-check { inline-size: 18px; block-size: 18px; margin-block-start: 1px; color: var(--g-success); vertical-align: middle; }
+  .g-compare { display: grid; }
+  .g-compare-scroll { overflow-x: auto; border: 1px solid var(--g-border); border-radius: var(--g-radius-control); background: var(--g-surface); }
+  .g-compare-scroll:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-compare-table { inline-size: 100%; min-inline-size: 36rem; border-collapse: collapse; font-size: 0.9375rem; }
+  .g-compare-table :is(th, td) { padding: 12px 16px; border-block-end: 1px solid var(--g-border); text-align: center; }
+  .g-compare-table thead th { color: var(--g-fg-muted); font-size: 0.8125rem; font-weight: 650; }
+  .g-compare-table :is(th[scope="row"], thead th:first-child) { font-weight: 500; text-align: start; }
+  /* 印（svg）は block なので、文字の中央寄せでは寄らない。左右の余白で真ん中に置く。 */
+  .g-compare-table td > .g-plan-check { display: block; margin-inline: auto; }
+  .g-compare-table tbody tr:last-child > * { border-block-end: 0; }
+  .g-pricing-faq { display: grid; gap: 4px; box-sizing: border-box; inline-size: min(100%, 48rem); margin-inline: auto; }
+
+  /* --- T8 contact（P-10） ----------------------------------------------------------- */
+  .g-contact { display: grid; gap: 32px; }
+  .g-contact-intro { align-content: start; margin: 0; }
+  .g-contact-details { margin-block-start: 8px; padding-block-start: 16px; border-block-start: 1px solid var(--g-border); color: var(--g-fg-muted); line-height: 1.7; }
+  .g-contact-form {
+    box-sizing: border-box;
+    padding: 28px;
+    border: 1px solid var(--g-border);
+    border-radius: calc(var(--g-radius) + 2px);
+    background: var(--g-surface);
+  }
+  .g-contact-done { display: grid; justify-items: center; gap: 16px; padding-block: 48px; text-align: center; }
+  @container (min-width: 900px) {
+    .g-contact { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: start; column-gap: 48px; }
+  }
+  @container (max-width: 480px) {
+    .g-contact-form { padding: 0; border: 0; background: transparent; }
+  }
+
+  /* --- T9 changelog（P-11） ----------------------------------------------------------
+   * 更新の間は 1px の線で区切る。器が広い（760px 以上）ときは日付と版を横の列に置く。 */
+  .g-changelog { display: grid; gap: 8px; max-inline-size: 56rem; }
+  .g-changelog-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-block-start: 8px; }
+  .g-changes { display: grid; margin: 0; padding: 0; list-style: none; }
+  .g-change { padding-block: 28px; border-block-start: 1px solid var(--g-border); }
+  .g-change > article { display: grid; gap: 8px; }
+  .g-change-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; color: var(--g-fg-muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+  .g-change-version { padding: 1px 8px; border-radius: 999px; background: var(--g-hover); color: var(--g-fg); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; }
+  .g-change-body { display: grid; gap: 10px; min-inline-size: 0; }
+  .g-change-title { margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.4; }
+  .g-change-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  @container (min-width: 760px) {
+    .g-change > article { grid-template-columns: 11rem minmax(0, 1fr); column-gap: 32px; }
+    .g-change-meta { flex-direction: column; align-items: flex-start; gap: 6px; padding-block-start: 4px; }
+  }
+}
+
+@layer gassan.theme {
+  /* 印刷するときは、外枠と目次を省いて本文だけにする（規約やプライバシーポリシーを紙で残すとき）。 */
+  @media print {
+    :is(.g-site-header, .g-site-footer, .g-doc-toc, .g-skip, .g-site-menu) { display: none; }
+    .g-page { min-block-size: 0; background: none; }
+  }
+}
+
+@layer gassan.theme {
+  @media (forced-colors: active) {
+    /* 地の色が消えるので、地で分けていた面には線を出す。 */
+    :is(.g-form-summary, .g-status-reference) { border: 1px solid CanvasText; }
+  }
+}

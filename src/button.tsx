@@ -10,10 +10,10 @@ import {
   type ReactNode,
 } from 'react';
 
+import { ButtonBody } from './internal/button-body';
 import { Icon } from './internal/icons';
 import { domPassthrough, stripReservedData, type DataAttributes } from './internal/passthrough';
 import { useLabels } from './labels';
-import { usePhrase } from './phrase';
 import type { ButtonVariant } from './types';
 
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -43,24 +43,13 @@ export interface ButtonProps extends ButtonLook, Omit<ButtonHTMLAttributes<HTMLB
   onAction?: () => void | Promise<void>;
 }
 
-/** 中身を描く。文字は文節で折る器に、印はその外に置く（印と文節の間に隙間が入らないように）。 */
-function ButtonBody({ iconStart, iconEnd, children }: Pick<ButtonLook, 'iconStart' | 'iconEnd'> & { children: ReactNode }): ReactNode {
-  const phrase = usePhrase();
-  return (
-    <span className="g-btn-body">
-      {iconStart}
-      <span className="g-btn-label">{phrase(children)}</span>
-      {iconEnd}
-    </span>
-  );
-}
-
 /**
  * ページの上で使うボタン。U-01。
  *
  * 見た目と押した手応えは Modal.Button と同じ（V-06）。モーダルの外でも使え、ゲートや閉じる理由は持たない。
  * 処理中は aria-busy と「処理中」の説明を足し、名前は消さない。押せない理由を伝えたいときは
- * disabled にせず、aria-disabled と説明を自分で添える（G-07 と同じ考え方）。
+ * disabled にせず、aria-disabled と説明（aria-describedby）を添える（G-07 と同じ考え方）。aria-disabled の間は
+ * ゲートと同じ見た目になり、押しても何もしない（フォーカスは止まり、理由が読まれる）。
  * ref は button に届く（Tooltip・Menu の起点にできる）。
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -78,9 +67,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     };
   }, []);
   const busy = loading || pending;
+  const gated = !busy && (rest['aria-disabled'] === true || rest['aria-disabled'] === 'true');
 
   const handleClick = (event: ReactMouseEvent<HTMLButtonElement>): void => {
-    if (busy) {
+    if (busy || gated) {
       event.preventDefault();
       return;
     }
@@ -112,6 +102,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         data-size={size === 'md' ? undefined : size}
         data-block={block ? '' : undefined}
         data-loading={busy ? '' : undefined}
+        data-gated={gated ? '' : undefined}
         aria-busy={busy ? true : undefined}
         aria-disabled={busy ? true : rest['aria-disabled']}
         aria-describedby={describedBy}
@@ -170,11 +161,15 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   className?: string;
 }
 
-/** 印だけのボタン。名前は label で必ず渡す（title 属性の吹き出しには頼らず、要るなら Tooltip を添える）。U-02。 */
+/**
+ * 印だけのボタン。名前は label で必ず渡す（title 属性の吹き出しには頼らず、要るなら Tooltip を添える）。U-02。
+ * aria-disabled の間は押しても何もしない（Button と同じ）。
+ */
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
-  { label, children, variant = 'ghost', size = 'md', className, type = 'button', ...rest },
+  { label, children, variant = 'ghost', size = 'md', className, type = 'button', onClick, ...rest },
   ref,
 ) {
+  const gated = rest['aria-disabled'] === true || rest['aria-disabled'] === 'true';
   return (
     <button
       {...stripReservedData(rest, 'IconButton')}
@@ -184,6 +179,13 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       data-variant={variant === 'ghost' ? undefined : variant}
       data-size={size === 'md' ? undefined : size}
       aria-label={label}
+      onClick={(event) => {
+        if (gated) {
+          event.preventDefault();
+          return;
+        }
+        onClick?.(event);
+      }}
     >
       {children}
     </button>

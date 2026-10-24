@@ -37,11 +37,16 @@ import { gzipSync } from 'node:zlib';
  * 同日、JS を 53 → 60 KB、CSS を 14 → 16 KB に引き上げた。ページの部品の 2 段目（U-17〜U-24）とタグの入力・パスワードの強さ
  * （I-21 / I-22）を足したため（JS 約 7.2 KB・CSS 約 2.4 KB）。タブ・アコーディオン・ツールチップ・ポップオーバー・メニュー・
  * パンくず・ページ送り・ステップは Modal 名前空間に入れていないので、使わないアプリの JS には載らない。
+ * 同日、JS を 60 → 80 KB に引き上げ、templates.css に 4 KB の予算を置いた。ページのテンプレート（P-01〜P-11）の
+ * 14 ページ・外枠・送信の流れ・日本語と英語の文言を足したため（JS 約 19 KB）。テンプレートは名前つき import でだけ使い、
+ * Modal 名前空間からも参照しないので、使わないアプリの JS には載らない（minify した束で、Modal だけを使うアプリに
+ * テンプレートの文言が 1 つも無いことを確かめた）。見た目は templates.css に分けたので、読み込まない限り CSS も増えない。
  */
 const BUDGETS = {
-  'dist/index.js': 60 * 1024,
-  'dist/index.cjs': 60 * 1024,
+  'dist/index.js': 80 * 1024,
+  'dist/index.cjs': 80 * 1024,
   'dist/styles.css': 16 * 1024,
+  'dist/templates.css': 4 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -179,6 +184,29 @@ const REQUIRED_EXPORTS = [
   'Table',
   'Alert',
   'Chart',
+  // ページのテンプレート。P-01〜P-11。
+  'SiteProvider',
+  'SiteLink',
+  'useSite',
+  'AuthLayout',
+  'StatusLayout',
+  'SignInPage',
+  'SignUpPage',
+  'ForgotPasswordPage',
+  'ResetPasswordPage',
+  'TwoFactorPage',
+  'VerifyEmailPage',
+  'SignOutPage',
+  'ErrorPage',
+  'MaintenancePage',
+  'SiteLayout',
+  'DocumentPage',
+  'FaqPage',
+  'PricingPage',
+  'ContactPage',
+  'ChangelogPage',
+  'japaneseTemplateLabels',
+  'englishTemplateLabels',
 ];
 
 let failed = false;
@@ -251,6 +279,15 @@ if (existsSync('dist/styles.css')) {
   else console.log('  ok    styles.css keeps the required at-rules');
 }
 
+// テンプレートの形は器の幅（@container）で決まり、層の順の宣言が先頭にないと読み込む順で崩れる。P-01。
+if (existsSync('dist/templates.css')) {
+  const css = readFileSync('dist/templates.css', 'utf8');
+  const required = ['@layer gassan.reset', '@container', 'forced-colors', '@media print'];
+  const missing = required.filter((token) => !css.includes(token));
+  if (missing.length > 0) fail(`templates.css is missing: ${missing.join(', ')}`);
+  else console.log('  ok    templates.css keeps the required at-rules');
+}
+
 /*
  * 文書が名指ししている実測バイト数が、いま出た値と一致するか。
  *
@@ -263,6 +300,7 @@ if (existsSync('dist/styles.css')) {
     { file: 'VERIFICATION.md', dist: 'dist/index.js', label: '`dist/index.js` (ESM)' },
     { file: 'VERIFICATION.md', dist: 'dist/index.cjs', label: '`dist/index.cjs`' },
     { file: 'VERIFICATION.md', dist: 'dist/styles.css', label: '`dist/styles.css`' },
+    { file: 'VERIFICATION.md', dist: 'dist/templates.css', label: '`dist/templates.css`' },
   ];
   const group = (n) => n.toLocaleString('en-US');
   let checked = 0;

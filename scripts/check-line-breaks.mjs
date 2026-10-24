@@ -55,9 +55,14 @@ const DEBUG_PORT = 9300 + Math.floor(Math.random() * 500);
 const routes = [...readFileSync('site/routes.tsx', 'utf8').matchAll(/path: '([^']+)', key: '(\w+)', section: '(\w+)'/g)]
   .map((m) => ({ path: m[1], section: m[3] }))
   .filter((r) => r.path !== '/404');
-const paths = routes.flatMap(({ path, section }) =>
-  section === 'components' || section === 'forms' ? [path, `${path}/api`, `${path}/a11y`] : [path],
-);
+// ページのテンプレートの見本（#/preview/<name>）。iframe の中で読まれるが、1 枚のページとして直に開いて測る。
+const previews = [
+  ...(readFileSync('site/previews/TemplatePreview.tsx', 'utf8').match(/export const PREVIEWS = \[([\s\S]*?)\] as const/)?.[1] ?? '').matchAll(/'([^']+)'/g),
+].map((m) => `/preview/${m[1]}`);
+const paths = [
+  ...routes.flatMap(({ path, section }) => (section === 'components' || section === 'forms' ? [path, `${path}/api`, `${path}/a11y`] : [path])),
+  ...previews,
+];
 const targets = PAGE_FILTER ? paths.filter((p) => PAGE_FILTER.some((f) => (f === '/' ? p === '/' : p.startsWith(f)))) : paths;
 
 /* -------------------------------------------------------------------------- */
@@ -331,8 +336,9 @@ const open = async (hash) => {
   await send('Page.navigate', { url: `${base}?visit=${String(visit)}#${hash}` });
   for (let i = 0; i < 100; i += 1) {
     await sleep(100);
+    // ドキュメントのページは見出し（#page-title）、テンプレートの見本はページの器（.g-page）が出たら描き終わり。
     const ready = await evaluate(
-      `location.search === '?visit=${String(visit)}' && document.readyState === 'complete' && !!document.getElementById('page-title')`,
+      `location.search === '?visit=${String(visit)}' && document.readyState === 'complete' && !!(document.getElementById('page-title') || document.querySelector('.g-page'))`,
     );
     if (ready) break;
   }

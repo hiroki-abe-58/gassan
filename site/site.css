@@ -1028,6 +1028,82 @@
   inline-size: min(100%, 22rem);
 }
 
+/* テンプレートの見本の枠（iframe）。スマートフォンの幅では、端末の画面に見立てて角を丸める */
+.s-frame {
+  margin: 16px 0 24px;
+  overflow: hidden;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius-lg);
+  background: var(--s-surface-1);
+}
+.s-frame-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  border-block-end: 1px solid var(--s-line);
+  background: var(--g-surface);
+}
+.s-frame-title {
+  flex: 1 1 10rem;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+.s-frame-select {
+  inline-size: 13rem;
+}
+.s-frame-open {
+  color: var(--s-accent);
+  font-size: 0.875rem;
+}
+.s-frame-stage {
+  display: grid;
+  justify-items: center;
+  background: var(--s-surface-2);
+}
+.s-frame-stage > iframe {
+  display: block;
+  inline-size: 100%;
+  border: 0;
+  background: var(--g-surface);
+}
+/* 縮めた iframe は、縮める前の大きさで場所を取るので、左上を基準に縮めて枠の外を隠す */
+.s-frame-stage[data-scaled] {
+  justify-items: start;
+  overflow: hidden;
+}
+.s-frame-stage[data-scaled] > iframe {
+  transform-origin: 0 0;
+}
+.s-frame-stage[data-width="phone"] {
+  padding-block: 16px;
+}
+.s-frame-stage[data-width="phone"] > iframe {
+  inline-size: min(100%, 390px);
+  border: 1px solid var(--s-line);
+  border-radius: 20px;
+}
+
+/* 見本のログインの横に置く、お客様の声 */
+.s-preview-quote {
+  display: grid;
+  gap: 16px;
+  max-inline-size: 28rem;
+  margin: 0;
+}
+.s-preview-quote blockquote {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.7;
+}
+.s-preview-quote figcaption {
+  color: var(--g-fg-muted);
+  font-size: 0.9375rem;
+}
+
 /* トーストの「元に戻す」のデモ。下書きの行 */
 .s-draft-list {
   display: grid;

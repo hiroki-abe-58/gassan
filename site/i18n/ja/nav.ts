@@ -7,6 +7,7 @@ export default {
     components: 'コンポーネント',
     ui: 'UI 部品',
     forms: 'フォーム部品',
+    templates: 'テンプレート',
     reference: '仕様と検証',
   },
   pages: {
@@ -49,6 +50,9 @@ export default {
     uiLayout: 'カードと要約',
     uiNavigation: 'タブとページ送り',
     uiOverlays: 'ツールチップとメニュー',
+    templatesAuth: 'ログインと登録',
+    templatesStatus: 'エラーとメンテナンス',
+    templatesPublic: '料金・FAQ・規約',
     provider: 'GassanProvider',
     spec: '振る舞い仕様',
     verification: '検証',

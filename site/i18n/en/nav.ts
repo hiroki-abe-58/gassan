@@ -8,6 +8,7 @@ export default {
     components: 'Components',
     ui: 'UI parts',
     forms: 'Form controls',
+    templates: 'Templates',
     reference: 'Specification and verification',
   },
   pages: {
@@ -50,6 +51,9 @@ export default {
     uiLayout: 'Cards and stats',
     uiNavigation: 'Tabs and pagination',
     uiOverlays: 'Tooltips and menus',
+    templatesAuth: 'Sign-in and sign-up',
+    templatesStatus: 'Errors and maintenance',
+    templatesPublic: 'Pricing, FAQ and legal',
     provider: 'GassanProvider',
     spec: 'Behavior specification',
     verification: 'Verification',

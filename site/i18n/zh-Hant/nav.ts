@@ -8,6 +8,7 @@ export default {
     components: '元件',
     ui: 'UI 元件',
     forms: '表單元件',
+    templates: '範本',
     reference: '規格與驗證',
   },
   pages: {
@@ -50,6 +51,9 @@ export default {
     uiLayout: '卡片與摘要',
     uiNavigation: '頁籤與分頁',
     uiOverlays: '工具提示與選單',
+    templatesAuth: '登入與註冊',
+    templatesStatus: '錯誤與維護',
+    templatesPublic: '價格、常見問題與條款',
     provider: 'GassanProvider',
     spec: '行為規格',
     verification: '驗證',

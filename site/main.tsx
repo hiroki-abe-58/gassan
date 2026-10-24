@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import './layers.css';
 import '../src/styles.css';
+import '../src/templates.css';
 import './site.css';
 import { App } from './App';
 import { loadLang } from './i18n';

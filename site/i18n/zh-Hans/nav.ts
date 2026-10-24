@@ -8,6 +8,7 @@ export default {
     components: '组件',
     ui: 'UI 部件',
     forms: '表单部件',
+    templates: '模板',
     reference: '规范与验证',
   },
   pages: {
@@ -50,6 +51,9 @@ export default {
     uiLayout: '卡片与摘要',
     uiNavigation: '标签页与分页',
     uiOverlays: '工具提示与菜单',
+    templatesAuth: '登录与注册',
+    templatesStatus: '错误与维护',
+    templatesPublic: '价格、常见问题与条款',
     provider: 'GassanProvider',
     spec: '行为规范',
     verification: '验证',

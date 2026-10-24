@@ -1449,6 +1449,7 @@
     box-sizing: border-box;
     cursor: pointer;
   }
+  .g-choice-text { min-inline-size: 0; }
   .g-choice[data-disabled] { opacity: 0.55; }
   .g-choice[data-disabled] .g-choice-main { cursor: not-allowed; }
   .g-choice-mark {

@@ -114,6 +114,11 @@ export function initTheme(): void {
   darkQuery?.addEventListener('change', () => {
     if (snapshot.state.scheme === 'system') apply(snapshot.state);
   });
+  // ほかの窓（テンプレートの見本の iframe と、それを置いたページ）でテーマが変わったら、こちらも合わせる。
+  // storage イベントは、書いた窓以外の同じオリジンの窓にだけ届く。
+  window.addEventListener('storage', (event) => {
+    if (event.key === STORAGE_KEY) apply(load());
+  });
 }
 
 export function setTheme(patch: Partial<ThemeState>): void {

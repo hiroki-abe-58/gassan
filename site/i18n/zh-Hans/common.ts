@@ -95,6 +95,14 @@ export default {
     hide: '收起代码',
   },
 
+  frame: {
+    variant: '示例',
+    width: '预览宽度',
+    wide: '电脑',
+    phone: '手机',
+    open: '全屏打开',
+  },
+
   keyPoint: { caution: '注意' },
 
   component: {

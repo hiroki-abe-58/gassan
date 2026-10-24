@@ -110,7 +110,8 @@ export function ModalCheckbox({
           />
           <Icon name={indeterminate ? 'minus' : 'check'} className="g-check-icon" />
         </span>
-        {phrase(children)}
+        {/* 文は 1 つの器に入れる。ラベルは flex なので、リンクを挟んだ文がばらばらの項目になり、間が空く */}
+        <span className="g-choice-text">{phrase(children)}</span>
       </label>
       <ChoiceDescription id={descriptionId}>{description}</ChoiceDescription>
     </div>
@@ -206,7 +207,7 @@ export function ModalRadioGroup({
                   onChange={() => setSelected(option.value)}
                 />
               </span>
-              {phrase(option.label)}
+              <span className="g-choice-text">{phrase(option.label)}</span>
             </label>
             <ChoiceDescription id={descriptionId}>{option.description}</ChoiceDescription>
           </div>
