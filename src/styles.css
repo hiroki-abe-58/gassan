@@ -45,9 +45,12 @@
     --g-border: #e3e6ec;
     --g-border-strong: #c7ccd6;
     --g-hover: #00000010;
-    --g-focus: #2563eb;
+    --g-focus: #3346d3;
 
-    --g-accent: #1f2430;
+    /* 既定のアクセントは、ドキュメントサイトの「既定」のプリセット（種 #3346d3）が導く色と同じにする。
+     * サイトで見た色が、入れただけの見た目になる（D-06。tests/theme.test.ts が突き合わせる）。
+     * 墨色（#1f2430 / ダーク #eef0f4）だった頃は、ダークで塗りが白くなり、選んだ色に見えなかった。 */
+    --g-accent: #3346d3;
     --g-on-accent: #ffffff;
     /* ゲート中の primary の背景。aria-disabled はフォーカス可能なので
      * WCAG の「非活性コントロールは除外」規定に頼れない。白文字で 4.5:1 を維持する
@@ -128,9 +131,9 @@
       --g-border: #333844;
       --g-border-strong: #4a5160;
       --g-hover: #ffffff14;
-      --g-focus: #7aa2ff;
-      --g-accent: #eef0f4;
-      --g-on-accent: #16181d;
+      --g-focus: #708fff;
+      --g-accent: #708fff;
+      --g-on-accent: #0b0c10;
       --g-accent-muted: #565d6c;
       --g-on-accent-muted: #eef0f4;
       --g-danger: #e35d54;   /* #e0564d は面との比が 4.45:1 で、ボタンにもエラー文にも足りなかった */
@@ -1137,7 +1140,7 @@
   .g-switch[aria-checked="true"]:active:dir(rtl) .g-switch-thumb { translate: -12px 0; }
   .g-switch[aria-checked="true"] .g-switch-track { background: var(--g-accent); }
   /* 入っている間の摘みは、アクセントの上の文字色で塗る。白で固定すると、明るいアクセント
-   * （ダークの既定 #eef0f4、テーマの黄色）の上で摘みが溶け、入り切りが見分けられなかった。
+   * （墨色だった頃のダークの既定 #eef0f4、テーマの黄色）の上で摘みが溶け、入り切りが見分けられなかった。
    * --g-on-accent は --g-accent と 4.5:1 以上を取る組なので（tokens.test.ts）、摘みは必ず浮く。 */
   .g-switch[aria-checked="true"] .g-switch-thumb { translate: 16px 0; background: var(--g-on-accent); }
   .g-switch[aria-checked="true"]:dir(rtl) .g-switch-thumb { translate: -16px 0; }
@@ -1195,7 +1198,8 @@
     line-height: 1.6;
   }
   .g-alert[data-tone="error"] { background: color-mix(in srgb, var(--g-danger) 9%, transparent); }
-  .g-alert[data-tone="success"] { background: color-mix(in srgb, var(--g-accent) 9%, transparent); }
+  /* 成功の地は成功の色から引く。アクセントは選んだ色なので、混ぜると赤や青のテーマで成功が赤や青に見える。 */
+  .g-alert[data-tone="success"] { background: color-mix(in srgb, var(--g-success) 9%, transparent); }
 
   /* --- 5.10 blocked feedback ----------------------------------------------
    * 「閉じられない」を無言で伝えない。L-10。
@@ -2354,7 +2358,7 @@
   .g-toast-body { display: grid; flex: 1; gap: 2px; min-inline-size: 0; }
   .g-toast-message { font-weight: 600; overflow-wrap: anywhere; }
   .g-toast-description { font-size: 0.875rem; color: var(--g-fg-muted); overflow-wrap: anywhere; }
-  /* 既定の墨色のテーマでも押せるものに見えるよう、薄い地の色を敷く（文字だけだと本文と見分けにくい）。 */
+  /* アクセントを墨色にしたテーマでも押せるものに見えるよう、薄い地の色を敷く（文字だけだと本文と見分けにくい）。 */
   .g-toast-action {
     justify-self: start;
     min-block-size: 32px;

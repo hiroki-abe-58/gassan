@@ -75,6 +75,21 @@ function tightest(checks: readonly ContrastCheck[]): ContrastCheck | undefined {
   return [...checks].sort((a, b) => a.ratio / a.min - b.ratio / b.min)[0];
 }
 
+/** 墨色（以前の既定）に戻すコード。値は styles.css の既定と同じ書き方で、ライトとダークの両方を書く。 */
+const INK_CSS = `:root {
+  --g-accent: #1f2430;
+  --g-on-accent: #ffffff;
+  --g-focus: #2563eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --g-accent: #eef0f4;
+    --g-on-accent: #16181d;
+    --g-focus: #7aa2ff;
+  }
+}`;
+
 /** プリセットの種の色相（OKLCH の度）。 */
 function presetHue(id: PresetId): number {
   const seed = PRESETS.find((p) => p.id === id)?.seed;
@@ -189,7 +204,9 @@ export function Theme(): ReactNode {
         <CodeBlock lang="css" caption="app.css" code={t.own.code(theme.accent.accent, theme.accent.onAccent, tinted)} />
         <Prose>
           <Paras items={t.own.body} />
+          <Paras items={t.own.ink} />
         </Prose>
+        <CodeBlock lang="css" caption="app.css" code={INK_CSS} />
       </Section>
     </>
   );

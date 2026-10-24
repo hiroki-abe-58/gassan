@@ -83,5 +83,8 @@ export default {
     body: [
       'The values above are derived from the theme you have selected. When you choose your own colors, check the ratios of the same pairs as the tables on this page (accent with on-accent, and accent and focus against the surfaces).',
     ],
+    ink: [
+      'The default color is the same blue as the “Default” preset on this page. To use ink instead (a black fill in light mode, a white fill in dark mode), set the values below. Light and dark take different values, so set the dark ones as well.',
+    ],
   },
 } satisfies typeof ja;

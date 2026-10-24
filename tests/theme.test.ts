@@ -43,10 +43,10 @@ const TOKENS: Readonly<Record<Scheme, Record<string, string>>> = { light: readGa
 const gassanTokens = (scheme: Scheme): Record<string, string> => TOKENS[scheme];
 
 /** 基準を割った項目を「どの色・どの表示・どの背景・何の組か: 実測」で返す。空なら合格。背景の 3 段すべてを見る。 */
-function failures(seed: string, themesGassan = true): string[] {
+function failures(seed: string): string[] {
   return SCHEMES.flatMap((scheme) =>
     TINTS.flatMap((tint) =>
-      buildTheme(seed, scheme, gassanTokens(scheme), themesGassan, tint)
+      buildTheme(seed, scheme, gassanTokens(scheme), tint)
         .checks.filter((c) => !c.pass)
         .map(
           (c) =>
@@ -70,7 +70,7 @@ function distance(a: string, b: string): number {
 
 describe('theme / コントラスト', () => {
   it('すべてのプリセットが、背景の 3 段とライト・ダークのすべてで全項目の基準を満たす', () => {
-    expect(PRESETS.flatMap((p) => failures(p.seed, p.themesGassan))).toEqual([]);
+    expect(PRESETS.flatMap((p) => failures(p.seed))).toEqual([]);
   });
 
   it('任意の色（色相 24 方向 × 明度 5 段 × 彩度 4 段）でも、背景の 3 段とライト・ダークのすべてで全項目の基準を満たす', () => {
@@ -86,8 +86,8 @@ describe('theme / コントラスト', () => {
 
   it('ライトでは白い文字を、ダークでは暗い文字をアクセントに載せる', () => {
     for (const p of PRESETS) {
-      const light = buildTheme(p.seed, 'light', gassanTokens('light'), true);
-      const dark = buildTheme(p.seed, 'dark', gassanTokens('dark'), true);
+      const light = buildTheme(p.seed, 'light', gassanTokens('light'));
+      const dark = buildTheme(p.seed, 'dark', gassanTokens('dark'));
       expect(light.accent.onAccent).toBe('#ffffff');
       expect(hexToOklch(dark.accent.onAccent).l).toBeLessThan(0.2);
     }
@@ -99,7 +99,7 @@ describe('theme / 色の見え方', () => {
     const drift = PRESETS.flatMap((p) =>
       SCHEMES.flatMap((scheme) => {
         const seed = hexToOklch(p.seed);
-        const accent = hexToOklch(buildTheme(p.seed, scheme, gassanTokens(scheme), true).accent.accent);
+        const accent = hexToOklch(buildTheme(p.seed, scheme, gassanTokens(scheme)).accent.accent);
         const delta = Math.abs(((accent.h - seed.h + 540) % 360) - 180);
         return delta > 8 ? [`${p.id} ${scheme}: 色相が ${delta.toFixed(1)}° ずれた`] : [];
       }),
@@ -115,7 +115,7 @@ describe('theme / 色の見え方', () => {
       for (const tint of TINTS) {
         const colors = PRESETS.filter((p) => p.id !== 'default').map((p) => ({
           label: p.id,
-          accent: buildTheme(p.seed, scheme, gassanTokens(scheme), true, tint).accent.accent,
+          accent: buildTheme(p.seed, scheme, gassanTokens(scheme), tint).accent.accent,
         }));
         for (let i = 1; i < colors.length; i += 1) {
           const a = colors[i - 1];
@@ -129,12 +129,14 @@ describe('theme / 色の見え方', () => {
     }
   });
 
-  it('既定のプリセットはモーダルの色を変えない（gassan の墨色のまま）', () => {
+  it('既定のプリセットが導く色は gassan の既定の色と同じ（サイトで見た色が、入れただけの見た目になる）', () => {
+    const seed = PRESETS.find((p) => p.id === 'default')?.seed ?? '';
     for (const scheme of SCHEMES) {
       const tokens = gassanTokens(scheme);
-      const theme = buildTheme(PRESETS[0]?.seed ?? '#000000', scheme, tokens, false);
-      expect(theme.vars['--g-accent']).toBe(tokens['--g-accent']);
-      expect(theme.vars['--g-focus']).toBe(tokens['--g-focus']);
+      const { vars } = buildTheme(seed, scheme, tokens);
+      const pick = (from: Record<string, string>): string[] =>
+        ['--g-accent', '--g-on-accent', '--g-focus'].map((name) => `${scheme} ${name}: ${from[name] ?? ''}`);
+      expect(pick(vars)).toEqual(pick(tokens));
     }
   });
 
@@ -153,7 +155,7 @@ describe('theme / 背景の色づけ', () => {
   it('無彩色では、サイトと gassan の面と文字は元の値のまま（色づけを選ぶまで見た目は変わらない）', () => {
     for (const scheme of SCHEMES) {
       const tokens = gassanTokens(scheme);
-      const { vars } = buildTheme(PRESETS[0]?.seed ?? '#000000', scheme, tokens, false, 'neutral');
+      const { vars } = buildTheme(PRESETS[0]?.seed ?? '#000000', scheme, tokens, 'neutral');
       expect(vars).toMatchObject({ ...SITE_NEUTRALS[scheme], ...tokens });
     }
   });
@@ -162,7 +164,7 @@ describe('theme / 背景の色づけ', () => {
     const wrong = CHROMATIC.flatMap((p) =>
       SCHEMES.flatMap((scheme) => {
         const [neutral, soft, strong] = TINTS.map((tint) =>
-          hexToOklch(buildTheme(p.seed, scheme, gassanTokens(scheme), true, tint).vars['--s-bg'] ?? ''),
+          hexToOklch(buildTheme(p.seed, scheme, gassanTokens(scheme), tint).vars['--s-bg'] ?? ''),
         );
         if (!neutral || !soft || !strong) return [`${p.id} ${scheme}: 背景がない`];
         const seedHue = hexToOklch(p.seed).h;
@@ -183,7 +185,7 @@ describe('theme / 背景の色づけ', () => {
     const wrong = PRESETS.flatMap((p) =>
       SCHEMES.flatMap((scheme) =>
         TINTS.flatMap((tint) => {
-          const { vars } = buildTheme(p.seed, scheme, gassanTokens(scheme), true, tint);
+          const { vars } = buildTheme(p.seed, scheme, gassanTokens(scheme), tint);
           const [bg, surface, s1, s2, s3] = SURFACES.map((name) => L(vars[name]));
           const modal = L(vars['--g-surface']);
           const order =
@@ -206,7 +208,7 @@ describe('theme / 背景の色づけ', () => {
     const wrong = CHROMATIC.flatMap((p) =>
       SCHEMES.flatMap((scheme) =>
         TINTS.flatMap((tint) => {
-          const { vars } = buildTheme(p.seed, scheme, gassanTokens(scheme), true, tint);
+          const { vars } = buildTheme(p.seed, scheme, gassanTokens(scheme), tint);
           const soft = vars['--s-accent-soft'] ?? '';
           return SURFACES.slice(0, 4)
             .map((name) => [name, distance(soft, vars[name] ?? '')] as const)

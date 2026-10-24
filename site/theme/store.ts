@@ -83,10 +83,8 @@ export function gassanTokens(scheme: Scheme): Record<string, string> {
 /** 状態からテーマを組み立てる。プリセット一覧の見本にも使う。 */
 export function themeFor(state: ThemeState, scheme: Scheme = resolveScheme(state.scheme)): Theme {
   const preset = PRESETS.find((p) => p.id === state.preset);
-  const custom = state.preset === CUSTOM_PRESET_ID;
-  const seed = custom ? state.custom : (preset?.seed ?? PRESETS[0]?.seed ?? '#3346d3');
-  const themesGassan = custom ? true : (preset?.themesGassan ?? false);
-  return buildTheme(seed, scheme, gassanTokens(scheme), themesGassan, state.tint);
+  const seed = state.preset === CUSTOM_PRESET_ID ? state.custom : (preset?.seed ?? PRESETS[0]?.seed ?? '#3346d3');
+  return buildTheme(seed, scheme, gassanTokens(scheme), state.tint);
 }
 
 interface Snapshot {
