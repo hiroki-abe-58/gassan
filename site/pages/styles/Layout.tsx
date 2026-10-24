@@ -8,7 +8,7 @@ import { useT } from '../../i18n';
 import { CodeBlock } from '../../ui/Code';
 import { Guideline, Guidelines, MockPanel, MockScreen } from '../../ui/Guidelines';
 import { md } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 const SIZES = ['sm', 'md', 'lg', 'xl'] as const;
@@ -121,7 +121,7 @@ export function Layout(): ReactNode {
         <Prose>
           <p>{md(t.touch.body(token('--g-tap').light))}</p>
         </Prose>
-        <Callout>{md(t.touch.callout)}</Callout>
+        <KeyPoint>{md(t.touch.callout)}</KeyPoint>
       </Section>
 
       <Section id="spec" title={t.spec.title}>

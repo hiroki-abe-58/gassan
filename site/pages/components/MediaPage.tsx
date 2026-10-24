@@ -8,7 +8,7 @@ import { ApiTable } from '../../ui/ApiTable';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, Prose, Section } from '../../ui/Page';
+import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 export function MediaPage({ rest }: PageProps): ReactNode {
@@ -37,7 +37,7 @@ export function MediaPage({ rest }: PageProps): ReactNode {
             <Prose>
               <Paras items={t.media.body} />
             </Prose>
-            <Callout>{md(t.media.callout)}</Callout>
+            <KeyPoint>{md(t.media.callout)}</KeyPoint>
           </Section>
 
           <Section id="notify" title={t.notify.title}>

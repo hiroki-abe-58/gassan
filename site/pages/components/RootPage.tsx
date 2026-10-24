@@ -12,7 +12,7 @@ import { ApiTable } from '../../ui/ApiTable';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, Prose, Section } from '../../ui/Page';
+import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 const REASONS: readonly CloseReason[] = [
@@ -86,7 +86,7 @@ export function RootPage({ rest }: PageProps): ReactNode {
             <Prose>
               <Paras items={t.mount.body} />
             </Prose>
-            <Callout>{md(t.mount.callout)}</Callout>
+            <KeyPoint>{md(t.mount.callout)}</KeyPoint>
           </Section>
         </>
       )}

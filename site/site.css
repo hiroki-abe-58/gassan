@@ -444,7 +444,7 @@
 .s-prose > .s-table-wrap {
   margin-block: 16px 20px;
 }
-:is(.s-prose, .s-lead, .s-section-intro, .s-callout, .s-guideline-text, .s-card, td, .s-api-doc) :not(pre) > code {
+:is(.s-prose, .s-lead, .s-section-intro, .s-keypoint, .s-guideline-text, .s-card, td, .s-api-doc) :not(pre) > code {
   padding: 0.1em 0.35em;
   border-radius: 6px;
   background: var(--s-surface-2);
@@ -452,24 +452,32 @@
   overflow-wrap: anywhere;
 }
 
-.s-callout {
-  max-inline-size: 72ch;
-  margin-block: 20px;
-  padding: 16px 20px;
-  border-radius: var(--s-radius);
-  background: var(--s-accent-soft);
-  color: var(--s-on-accent-soft);
-}
-.s-callout[data-tone="warn"] {
-  background: var(--s-caution-soft);
+/* 要点。箱で囲まない（コールアウト・Admonition・左の太い線は使わない）。
+ * 本文より一段大きく太い字と、上の区切り線・前後の余白で切り離す。
+ * 注意は見出し語の色で伝える（--s-caution は面との比を 4.6:1 以上に合わせた文字色）。 */
+.s-keypoint {
+  max-inline-size: 64ch;
+  margin-block: 36px 32px;
+  padding-block-start: 20px;
+  border-block-start: 1px solid var(--s-line-strong);
   color: var(--s-ink);
-  border-inline-start: 4px solid var(--s-caution);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.85;
+  text-wrap: pretty;
 }
-.s-callout > p {
+.s-keypoint > p {
   margin: 0 0 8px;
 }
-.s-callout > p:last-child {
+.s-keypoint > p:last-child {
   margin: 0;
+}
+.s-keypoint > .s-keypoint-label {
+  margin: 0 0 4px;
+  color: var(--s-caution);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
 }
 
 .s-definition {
@@ -1076,9 +1084,10 @@
   overflow: hidden;
   background: var(--s-surface-2);
 }
+/* 図と説明の境目は細い区切り線にとどめる。Do / Don't は見出し語の印と色で伝え、太い線の帯には頼らない。 */
 .s-guideline figcaption {
   padding: 14px 4px 0;
-  border-block-start: 4px solid var(--tone);
+  border-block-start: 1px solid var(--tone);
 }
 .s-guideline-label {
   display: flex;

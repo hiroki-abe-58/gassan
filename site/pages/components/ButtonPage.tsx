@@ -14,7 +14,7 @@ import { ApiTable } from '../../ui/ApiTable';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, Prose, Section } from '../../ui/Page';
+import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
 /* -------------------------------------------------------------------------- */
@@ -221,7 +221,7 @@ export function ButtonPage({ rest }: PageProps): ReactNode {
                 <StateRow key={state} state={state} />
               ))}
             </div>
-            <Callout>{md(t.states.callout)}</Callout>
+            <KeyPoint>{md(t.states.callout)}</KeyPoint>
           </Section>
 
           <Section id="gated" title={t.gated.title} intro={t.gated.intro}>

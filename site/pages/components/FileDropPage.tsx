@@ -10,7 +10,7 @@ import { ApiTable } from '../../ui/ApiTable';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md } from '../../ui/Markdown';
-import { Callout, Section } from '../../ui/Page';
+import { KeyPoint, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { Specimens } from '../../ui/Specimens';
 
@@ -44,7 +44,7 @@ export function FileDropPage({ rest }: PageProps): ReactNode {
           </Section>
 
           <Section id="reject" title={t.reject.title}>
-            <Callout>{md(t.reject.callout)}</Callout>
+            <KeyPoint>{md(t.reject.callout)}</KeyPoint>
           </Section>
         </>
       )}

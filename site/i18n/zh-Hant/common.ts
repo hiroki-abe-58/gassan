@@ -88,6 +88,8 @@ export default {
     hide: '收合程式碼',
   },
 
+  keyPoint: { caution: '注意' },
+
   component: {
     eyebrow: '元件',
     tabs: '本頁內容',

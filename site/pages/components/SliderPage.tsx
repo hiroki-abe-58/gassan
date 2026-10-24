@@ -10,7 +10,7 @@ import { ApiTable } from '../../ui/ApiTable';
 import { ComponentPage } from '../../ui/ComponentPage';
 import { Example } from '../../ui/Example';
 import { md } from '../../ui/Markdown';
-import { Callout, Section } from '../../ui/Page';
+import { KeyPoint, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { Specimens } from '../../ui/Specimens';
 
@@ -60,7 +60,7 @@ export function SliderPage({ rest }: PageProps): ReactNode {
           </Section>
 
           <Section id="theme" title={t.theme.title}>
-            <Callout>{md(t.theme.callout)}</Callout>
+            <KeyPoint>{md(t.theme.callout)}</KeyPoint>
           </Section>
 
           <Section id="modal" title={t.modal.title} intro={t.modal.intro}>

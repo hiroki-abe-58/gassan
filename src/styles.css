@@ -902,11 +902,18 @@
     block-size: 20px;
     border-radius: 50%;
     background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
     translate: 0;
-    transition: translate var(--g-dur-out) var(--g-ease-out);
+    transition:
+      translate var(--g-dur-out) var(--g-ease-out),
+      background-color var(--g-dur-out) linear;
   }
   .g-switch[aria-checked="true"] .g-switch-track { background: var(--g-accent); }
-  .g-switch[aria-checked="true"] .g-switch-thumb { translate: 16px 0; }
+  /* 入っている間の摘みは、アクセントの上の文字色で塗る。白で固定すると、明るいアクセント
+   * （ダークの既定 #eef0f4、テーマの黄色）の上で摘みが溶け、入り切りが見分けられなかった。
+   * --g-on-accent は --g-accent と 4.5:1 以上を取る組なので（tokens.test.ts）、摘みは必ず浮く。 */
+  .g-switch[aria-checked="true"] .g-switch-thumb { translate: 16px 0; background: var(--g-on-accent); }
+  .g-switch[aria-checked="true"]:dir(rtl) .g-switch-thumb { translate: -16px 0; }
 
   /* --- 5.8 table ----------------------------------------------------------- */
   .g-table-wrap {
@@ -949,22 +956,18 @@
   }
   .g-chart-data[open] > summary { margin-block-end: 8px; }
 
-  /* --- 5.9 alert ----------------------------------------------------------- */
+  /* --- 5.9 alert -----------------------------------------------------------
+   * 枠で囲まない（囲み・コールアウト・左の太い線は使わない）。控えめな地の色だけで本文から分け、
+   * 中身は利用者の文に任せる。強制カラーモードでは地の色が消えるので、そこでだけ枠を出す（末尾の forced-colors）。 */
   .g-alert {
-    padding: 10px 12px;
-    border: 1px solid var(--g-border);
+    padding: 12px 14px;
     border-radius: var(--g-radius-control);
     background: var(--g-hover);
     font-size: 0.875rem;
+    line-height: 1.6;
   }
-  .g-alert[data-tone="error"] {
-    border-color: color-mix(in srgb, var(--g-danger) 45%, transparent);
-    background: color-mix(in srgb, var(--g-danger) 10%, transparent);
-  }
-  .g-alert[data-tone="success"] {
-    border-color: color-mix(in srgb, var(--g-accent) 45%, transparent);
-    background: color-mix(in srgb, var(--g-accent) 10%, transparent);
-  }
+  .g-alert[data-tone="error"] { background: color-mix(in srgb, var(--g-danger) 9%, transparent); }
+  .g-alert[data-tone="success"] { background: color-mix(in srgb, var(--g-accent) 9%, transparent); }
 
   /* --- 5.10 blocked feedback ----------------------------------------------
    * 「閉じられない」を無言で伝えない。L-10。
@@ -1665,6 +1668,11 @@
       forced-color-adjust: none;
       background: Highlight;
     }
+    .g-switch[aria-checked="true"] .g-switch-thumb {
+      forced-color-adjust: none;
+      background: HighlightText;
+    }
+    .g-alert { border: 1px solid CanvasText; }
     .g-btn[data-gated] { color: GrayText; border-color: GrayText; }
   }
 }

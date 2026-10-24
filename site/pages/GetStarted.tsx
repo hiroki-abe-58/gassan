@@ -11,7 +11,7 @@ import { CodeBlock } from '../ui/Code';
 import { Example } from '../ui/Example';
 import { Guideline, Guidelines, MockPanel, MockScreen } from '../ui/Guidelines';
 import { MdTable, md, Paras } from '../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../ui/Page';
 
 export function GetStarted(): ReactNode {
   const { nav, start: t } = useT();
@@ -32,7 +32,7 @@ export function GetStarted(): ReactNode {
           lang="tsx"
           caption="app.tsx"
         />
-        <Callout>{md(t.install.nextjs)}</Callout>
+        <KeyPoint>{md(t.install.nextjs)}</KeyPoint>
       </Section>
 
       <Section id="minimal" title={t.minimal.title} intro={t.minimal.intro}>

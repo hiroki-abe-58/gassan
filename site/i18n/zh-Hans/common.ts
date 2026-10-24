@@ -88,6 +88,8 @@ export default {
     hide: '收起代码',
   },
 
+  keyPoint: { caution: '注意' },
+
   component: {
     eyebrow: '组件',
     tabs: '本页内容',

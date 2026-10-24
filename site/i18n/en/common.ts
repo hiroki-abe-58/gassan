@@ -90,6 +90,8 @@ export default {
     hide: 'Hide code',
   },
 
+  keyPoint: { caution: 'Caution' },
+
   component: {
     eyebrow: 'Component',
     tabs: 'On this page',

@@ -6,7 +6,7 @@ import { allItems, data } from '../../data';
 import { SPEC_LANG, useT } from '../../i18n';
 import { to } from '../../router';
 import { inline, md } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section, Stats } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section, Stats } from '../../ui/Page';
 import { STATUS_ORDER, StatusBadge } from '../../ui/Spec';
 
 export function Verification(): ReactNode {
@@ -54,7 +54,7 @@ export function Verification(): ReactNode {
           ))}
         </ul>
         {weakMust.length > 0 ? (
-          <Callout tone="warn">
+          <KeyPoint tone="caution">
             <p>{t.status.weakMust(weakMust.length)}</p>
             <p className="s-idlist">
               {weakMust.map((i) => (
@@ -63,7 +63,7 @@ export function Verification(): ReactNode {
                 </a>
               ))}
             </p>
-          </Callout>
+          </KeyPoint>
         ) : null}
       </Section>
 

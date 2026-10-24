@@ -97,6 +97,9 @@ export default {
     hide: 'コードを閉じる',
   },
 
+  /** 要点（KeyPoint）。注意のときだけ、見出し語を色の付いた文字で添える。 */
+  keyPoint: { caution: '注意' },
+
   component: {
     eyebrow: 'コンポーネント',
     tabs: 'このページの内容',

@@ -6,7 +6,7 @@ import { data } from '../../data';
 import { useT } from '../../i18n';
 import { Guideline, Guidelines, MockPanel, MockScreen } from '../../ui/Guidelines';
 import { md, Paras } from '../../ui/Markdown';
-import { Callout, PageHeader, Prose, Section } from '../../ui/Page';
+import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 import { SpecChips, SpecTable } from '../../ui/Spec';
 
 export function Accessibility(): ReactNode {
@@ -20,7 +20,7 @@ export function Accessibility(): ReactNode {
 
       <Section id="native" title={t.native.title} intro={t.native.intro}>
         <SpecTable ids={['L-01', 'L-02', 'K-01', 'K-02', 'K-06', 'A-03', 'A-04']} caption={t.native.tableCaption} />
-        <Callout>{md(t.native.callout)}</Callout>
+        <KeyPoint>{md(t.native.callout)}</KeyPoint>
       </Section>
 
       <Section id="name" title={t.name.title}>

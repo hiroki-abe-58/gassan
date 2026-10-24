@@ -341,6 +341,32 @@ describe('tokens / contrast (G-10 K-07 F-06 S-07)', () => {
   it('ダークのトークンの組はすべて最低コントラスト比を満たす（ゲート中の primary を含む）', () => {
     expect(shortfalls('dark')).toEqual([]);
   });
+
+  it('スイッチの摘みは、入っている間はアクセントの上の文字色で塗る（明るいアクセントで摘みが溶けない）', () => {
+    // 白で固定していた頃、ダークの既定（--g-accent: #eef0f4）では白い摘みが白い線に溶けていた。
+    // --g-on-accent / --g-accent は上の組の検査で 4.5:1 以上が保証されている。
+    expect(block('.g-switch[aria-checked="true"] .g-switch-thumb')).toMatch(/background:\s*var\(--g-on-accent\)/);
+  });
+});
+
+/* ========================================================================== */
+/* 強調の作法 §5-21                                                            */
+/* ========================================================================== */
+
+describe('tokens / emphasis without boxes (§5-21)', () => {
+  it('強調に太い横の線を使わない（コールアウトの左の帯を、ライブラリにもサイトにも作らない）', () => {
+    const site = readFileSync(resolve(process.cwd(), 'site/site.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const sheet of [css, site]) {
+      expect(sheet).not.toMatch(/border-(?:inline-start|inline-end|left|right)(?:-width)?\s*:\s*(?:[2-9]|\d{2,})(?:\.\d+)?px/);
+      expect(sheet).not.toMatch(/box-shadow:\s*inset\s+-?(?:[2-9]|\d{2,})px\s+0\s/);
+    }
+  });
+
+  it('Alert は枠で囲まず地の色で分け、枠は強制カラーモード（地の色が消える）でだけ出す', () => {
+    expect(block('.g-alert')).not.toMatch(/border\s*:/);
+    expect(block('.g-alert')).toMatch(/background:/);
+    expect(css).toMatch(/\.g-alert\s*\{\s*border:\s*1px solid CanvasText;?\s*\}/);
+  });
 });
 
 /* ========================================================================== */
