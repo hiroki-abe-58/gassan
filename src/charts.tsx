@@ -1,5 +1,4 @@
 import {
-  useEffect,
   useId,
   useRef,
   useState,
@@ -7,7 +6,6 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
-  type RefObject,
 } from 'react';
 
 import type { StatusTone } from './display';
@@ -26,8 +24,8 @@ import {
   valueExtent,
   type Point,
 } from './internal/chart-scale';
-import { hasResizeObserver } from './internal/dom';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useWidth } from './internal/use-width';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
 
@@ -136,24 +134,6 @@ function useFormats(valueFormat: ChartFormat | undefined, axisFormat?: ChartForm
       ? value
       : makeFormat(locale, axisFormat ?? valueFormat, { notation: 'compact', maximumFractionDigits: 1 });
   return { value, axis };
-}
-
-/** 器の幅（px）。横の目盛りの文字を間引く本数にだけ使う。測れない間（サーバー・初回の描画・jsdom）は fallback。 */
-function useWidth(ref: RefObject<HTMLElement | null>, fallback: number): number {
-  const [width, setWidth] = useState(fallback);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !hasResizeObserver()) return undefined;
-    const measure = (): void => {
-      const next = el.getBoundingClientRect().width;
-      if (next > 0) setWidth(next);
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [ref]);
-  return width;
 }
 
 /** 凡例で隠した系列。最後の 1 つは隠さない（何も描かれないグラフにしない）。Q-11。 */

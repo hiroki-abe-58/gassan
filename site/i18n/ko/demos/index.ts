@@ -1,6 +1,8 @@
 import type ja from '../../ja/demos';
 import bodyScroll from './bodyScroll';
 import bookingCalendar from './bookingCalendar';
+import carouselCases from './carouselCases';
+import carouselNews from './carouselNews';
 import chartFeatures from './chartFeatures';
 import chartReport from './chartReport';
 import chartRevenue from './chartRevenue';
@@ -42,6 +44,8 @@ import toastUndo from './toastUndo';
 export default {
   bodyScroll,
   bookingCalendar,
+  carouselCases,
+  carouselNews,
   chartFeatures,
   chartReport,
   chartRevenue,

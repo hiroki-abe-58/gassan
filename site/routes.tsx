@@ -32,6 +32,7 @@ import { UiBadgesPage } from './pages/ui/BadgesPage';
 import { UiButtonsPage } from './pages/ui/ButtonsPage';
 import { UiCommandPage } from './pages/ui/CommandPage';
 import { UiChartsPage } from './pages/ui/ChartsPage';
+import { UiCarouselPage } from './pages/ui/CarouselPage';
 import { UiDataPage } from './pages/ui/DataPage';
 import { UiFeedbackPage } from './pages/ui/FeedbackPage';
 import { UiLayoutPage } from './pages/ui/LayoutPage';
@@ -113,6 +114,7 @@ export const PAGES: readonly PageDef[] = [
   { path: '/ui/data', key: 'uiData', section: 'ui', Component: UiDataPage },
   { path: '/ui/command', key: 'uiCommand', section: 'ui', Component: UiCommandPage },
   { path: '/ui/charts', key: 'uiCharts', section: 'ui', Component: UiChartsPage },
+  { path: '/ui/carousel', key: 'uiCarousel', section: 'ui', Component: UiCarouselPage },
   { path: '/components/provider', key: 'provider', section: 'components', Component: ProviderPage },
 
   // 公開済みのリンクを壊さないよう、パスは /components の下のまま。ナビの節だけを分ける。

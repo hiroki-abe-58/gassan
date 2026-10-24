@@ -97,6 +97,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-paused',
   'data-placeholder',
   'data-placement',
+  'data-playing',
   'data-position',
   'data-required',
   'data-scrim',

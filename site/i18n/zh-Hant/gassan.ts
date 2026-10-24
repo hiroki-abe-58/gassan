@@ -131,6 +131,12 @@ const labels: GassanLabels = {
   noData: '沒有資料',
   chartPoint: (x, entries) => `${x}：${entries.map(([name, value]) => `${name} ${value}`).join('，')}`,
   sparkline: ({ min, max, last }) => `最小 ${min}，最大 ${max}，最新 ${last}`,
+  carousel: '輪播',
+  slide: '投影片',
+  slideNumber: (n) => `第 ${n} 張投影片`,
+  slidePicker: '選擇投影片',
+  startRotation: '開始自動播放投影片',
+  stopRotation: '停止自動播放投影片',
 };
 
 export default labels;

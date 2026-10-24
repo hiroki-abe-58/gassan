@@ -182,6 +182,15 @@ export interface GassanLabels {
   chartPoint: (x: string, entries: readonly (readonly [string, string])[]) => string;
   /** 小さな推移の読み上げ（最小・最大・最新）。Q-06。 */
   sparkline: (summary: { min: string; max: string; last: string }) => string;
+  /** カルーセルとスライドの役割の説明（aria-roledescription）。U-28。 */
+  carousel: string;
+  slide: string;
+  /** スライドを選ぶ点の名前と、点の並びの名前。U-28。 */
+  slideNumber: (n: number) => string;
+  slidePicker: string;
+  /** 自動再生を始める・止めるボタンの名前。U-29。 */
+  startRotation: string;
+  stopRotation: string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -289,6 +298,12 @@ export const japaneseLabels: GassanLabels = {
   noData: 'データがありません',
   chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join('、')}`,
   sparkline: ({ min, max, last }) => `最小 ${min}、最大 ${max}、最新 ${last}`,
+  carousel: 'カルーセル',
+  slide: 'スライド',
+  slideNumber: (n) => `${n}枚目のスライド`,
+  slidePicker: 'スライドを選ぶ',
+  startRotation: 'スライドの自動再生を始める',
+  stopRotation: 'スライドの自動再生を止める',
 };
 
 export const englishLabels: GassanLabels = {
@@ -403,6 +418,12 @@ export const englishLabels: GassanLabels = {
   noData: 'No data',
   chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join(', ')}`,
   sparkline: ({ min, max, last }) => `min ${min}, max ${max}, latest ${last}`,
+  carousel: 'carousel',
+  slide: 'slide',
+  slideNumber: (n) => `Slide ${n}`,
+  slidePicker: 'Choose a slide',
+  startRotation: 'Start automatic slide show',
+  stopRotation: 'Stop automatic slide show',
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

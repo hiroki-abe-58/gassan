@@ -20,6 +20,7 @@ import {
   DataTable,
   BarChart,
   BarList,
+  Carousel,
   DonutChart,
   Gauge,
   LineChart,
@@ -516,6 +517,29 @@ for (const [label, passed] of [
 ]) {
   if (passed) ok(label);
   else fail(label);
+}
+
+// カルーセル（U-28 / U-29）。自動再生は、動きを減らす設定を見てから始めるので、サーバーでは止めた状態で描く
+// （止めるボタンは「始める」の名前。hydration の後に送り始める）。
+const carouselHtml = renderToString(
+  h(Carousel, {
+    label: 'お知らせ',
+    autoplay: true,
+    items: [
+      { id: 'a', content: h('p', null, '新しいダッシュボード') },
+      { id: 'b', content: h('p', null, '請求書をまとめてダウンロード') },
+    ],
+  }),
+);
+if (
+  /<section[^>]*aria-roledescription="カルーセル"/.test(carouselHtml) &&
+  /aria-label="スライドの自動再生を始める"/.test(carouselHtml) &&
+  !/data-playing/.test(carouselHtml) &&
+  /aria-roledescription="スライド"[^>]*aria-label="2件中1件目"|aria-label="2件中1件目"[^>]*aria-roledescription="スライド"/.test(carouselHtml)
+) {
+  ok('Carousel renders the named region, the slides and a stopped rotation control on the server');
+} else {
+  fail('Carousel renders the named region, the slides and a stopped rotation control on the server');
 }
 
 // アプリの中のページ（P-13〜P-17）。見ている人の時間帯はサーバーでは分からないので、SiteProvider の timeZone が無ければ

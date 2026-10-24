@@ -974,6 +974,53 @@
   align-items: center;
   gap: 10px;
 }
+/* カルーセルのページ: お知らせのスライド（左上の止めるボタンに文字を重ねない余白）と、導入事例のカード */
+.s-news-slide {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 10px;
+  min-block-size: 220px;
+  block-size: 100%;
+  padding: 52px clamp(20px, 5vw, 48px) 32px;
+  box-sizing: border-box;
+  border-radius: var(--g-radius);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--s-accent) 16%, var(--s-surface)), color-mix(in srgb, var(--s-accent) 4%, var(--s-surface)));
+}
+.s-news-slide h3 {
+  margin: 0;
+  font-size: 1.375rem;
+}
+.s-news-slide p {
+  max-inline-size: 36rem;
+  margin: 0 0 6px;
+  color: var(--s-ink-2);
+}
+.s-case-card {
+  display: grid;
+  gap: 16px;
+  block-size: 100%;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--s-line);
+  border-radius: var(--g-radius);
+  background: var(--s-surface);
+}
+.s-case-card blockquote {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.s-case-card figcaption {
+  display: grid;
+  align-self: end;
+  gap: 2px;
+  font-size: 0.8125rem;
+}
+.s-case-card figcaption span {
+  color: var(--s-ink-3);
+}
 .s-skeleton-card {
   display: flex;
   align-items: center;
