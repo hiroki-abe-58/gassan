@@ -368,7 +368,7 @@ describe('tokens / contrast (G-10 K-07 F-06 S-07)', () => {
   });
 
   it('スイッチの摘みは、入っている間はアクセントの上の文字色で塗る（明るいアクセントで摘みが溶けない）', () => {
-    // 白で固定していた頃、ダークの既定（--g-accent: #eef0f4）では白い摘みが白い線に溶けていた。
+    // 白で固定していた頃、墨色だったダークの既定（--g-accent: #eef0f4）では白い摘みが白い線に溶けていた。
     // --g-on-accent / --g-accent は上の組の検査で 4.5:1 以上が保証されている。
     expect(block('.g-switch[aria-checked="true"] .g-switch-thumb')).toMatch(/background:\s*var\(--g-on-accent\)/);
   });
@@ -391,6 +391,11 @@ describe('tokens / emphasis without boxes (§5-21)', () => {
     expect(block('.g-alert')).not.toMatch(/border\s*:/);
     expect(block('.g-alert')).toMatch(/background:/);
     expect(css).toMatch(/\.g-alert\s*\{\s*border:\s*1px solid CanvasText;?\s*\}/);
+  });
+
+  it('成功の Alert の地は成功の色から引く（アクセントは選んだ色なので、赤や青のテーマで成功が赤や青に見えない）', () => {
+    expect(block('.g-alert[data-tone="success"]')).toMatch(/var\(--g-success\)/);
+    expect(block('.g-alert[data-tone="success"]')).not.toMatch(/--g-accent/);
   });
 });
 

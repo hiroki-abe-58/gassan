@@ -312,31 +312,30 @@ export interface Preset {
   id: PresetId;
   /** 種の色。ここから明度を調整して実際のアクセントを導く。 */
   seed: string;
-  /** false なら gassan のモーダルは既定の墨色のまま（サイトだけ色を変える）。 */
-  themesGassan: boolean;
 }
 
 export const PRESETS: readonly Preset[] = [
-  { id: 'default', seed: '#3346d3', themesGassan: false },
-  { id: 'magenta', seed: '#d6336c', themesGassan: true },
-  { id: 'red', seed: '#e03131', themesGassan: true },
+  // 「既定」が導く色は、gassan の既定のアクセント（styles.css）と同じ。サイトで見た色が、入れただけの見た目になる
+  { id: 'default', seed: '#3346d3' },
+  { id: 'magenta', seed: '#d6336c' },
+  { id: 'red', seed: '#e03131' },
   // サーモンピンク。色相は「赤」とほぼ同じ（28°）だが、彩度が低い（0.11）ので、ライトで暗くしても赤とは離れる（くすんだ赤茶になる）。
-  { id: 'salmon', seed: '#f69c90', themesGassan: true },
+  { id: 'salmon', seed: '#f69c90' },
   // 赤寄りのオレンジ。#f2552c だと、ライトで暗くしたときに「赤」とほぼ同じ色になった（tests/theme.test.ts が検出）。
-  { id: 'vermilion', seed: '#f76707', themesGassan: true },
-  { id: 'amber', seed: '#f59f00', themesGassan: true },
+  { id: 'vermilion', seed: '#f76707' },
+  { id: 'amber', seed: '#f59f00' },
   // 黄色〜青は、ライトとダークの両方で「隣り合うプリセットのアクセントが最も離れる」色相を
   // 総当たりで選んだ（OKLCH の色相 98 / 123 / 140 / 155 / 180 / 240）。黄色〜黄緑は、ライトで白い面に 4.5:1 を取ると
   // どれもオリーブの狭い帯に寄るので、勘で選ぶと隣と見分けられなくなる。
   // #fcc419 だと「黄色寄りのオレンジ」と見分けにくかった。ライムイエローを足すときは、黄色を 101° から 98° へ、
   // 黄緑を 130° から 140° へ動かして間を空けた（黄緑が 130° のままだと、ライトで隣との距離が 0.035 しか取れない）。
-  { id: 'yellow', seed: '#f0d100', themesGassan: true },
-  { id: 'lime-yellow', seed: '#bfec36', themesGassan: true },
-  { id: 'lime', seed: '#53b93a', themesGassan: true },
-  { id: 'green', seed: '#00a05b', themesGassan: true },
-  { id: 'teal', seed: '#009c89', themesGassan: true },
-  { id: 'blue', seed: '#0089c9', themesGassan: true },
-  { id: 'indigo', seed: '#6741d9', themesGassan: true },
+  { id: 'yellow', seed: '#f0d100' },
+  { id: 'lime-yellow', seed: '#bfec36' },
+  { id: 'lime', seed: '#53b93a' },
+  { id: 'green', seed: '#00a05b' },
+  { id: 'teal', seed: '#009c89' },
+  { id: 'blue', seed: '#0089c9' },
+  { id: 'indigo', seed: '#6741d9' },
 ];
 
 export const CUSTOM_PRESET_ID = 'custom' as const;
@@ -428,15 +427,11 @@ const check = (id: CheckId, fg: string, bg: string, min: number): ContrastCheck 
   return { id, fg, bg, min, ratio, pass: ratio >= min };
 };
 
-/**
- * テーマを組み立てる。gassanTokens は styles.css のその表示の値（--g-surface など）。
- * themesGassan が false なら、gassan のアクセントは既定のまま（墨色）。背景の色づけ（tint）は、それとは別に効く。
- */
+/** テーマを組み立てる。gassanTokens は styles.css のその表示の値（--g-surface など）。 */
 export function buildTheme(
   seedHex: string,
   scheme: Scheme,
   gassanTokens: Record<string, string>,
-  themesGassan: boolean,
   tint: Tint = 'neutral',
 ): Theme {
   const neutrals = tintNeutrals({ ...SITE_NEUTRALS[scheme], ...gassanTokens }, hexToOklch(seedHex), scheme, tint);
@@ -449,12 +444,10 @@ export function buildTheme(
     '--s-on-accent': accent.onAccent,
     '--s-accent-soft': accent.soft,
     '--s-on-accent-soft': accent.onSoft,
+    '--g-accent': accent.accent,
+    '--g-on-accent': accent.onAccent,
+    '--g-focus': accent.accent,
   };
-  if (themesGassan) {
-    vars['--g-accent'] = accent.accent;
-    vars['--g-on-accent'] = accent.onAccent;
-    vars['--g-focus'] = accent.accent;
-  }
 
   const s = (name: string): string => vars[name] ?? '#000000';
   /** サイトの文字は、載りうる面のうち比がいちばん小さい面で測る。 */

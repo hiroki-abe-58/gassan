@@ -2409,8 +2409,8 @@
   --s-ink-2: #c1c6d0;
   --s-accent-soft: #262d59;
   --s-do-soft: #11301f;
-  --g-accent: #eef0f4;
-  --g-on-accent: #16181d;
+  --g-accent: #708fff;
+  --g-on-accent: #0b0c10;
 }
 .s-dark-sample[data-variant="lift"] .s-mock-panel {
   background: #262a33;
