@@ -34,11 +34,14 @@ import { gzipSync } from 'node:zlib';
  * トーストは名前つき import（toast / ToastHost）でだけ使うので、使わないアプリには tree shaking で載らない。
  * 同日、JS を 49 → 53 KB、CSS を 12 → 14 KB に引き上げた。ページの部品 18 個（U-01〜U-16）と、フォーム部品の
  * 中立の名前を足したため（JS 約 4.2 KB・CSS 約 2.2 KB）。部品は Modal 名前空間に入れていないので、使わない部品の JS は載らない。
+ * 同日、JS を 53 → 60 KB、CSS を 14 → 16 KB に引き上げた。ページの部品の 2 段目（U-17〜U-24）とタグの入力・パスワードの強さ
+ * （I-21 / I-22）を足したため（JS 約 7.2 KB・CSS 約 2.4 KB）。タブ・アコーディオン・ツールチップ・ポップオーバー・メニュー・
+ * パンくず・ページ送り・ステップは Modal 名前空間に入れていないので、使わないアプリの JS には載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 53 * 1024,
-  'dist/index.cjs': 53 * 1024,
-  'dist/styles.css': 14 * 1024,
+  'dist/index.js': 60 * 1024,
+  'dist/index.cjs': 60 * 1024,
+  'dist/styles.css': 16 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -111,6 +114,9 @@ const REQUIRED_EXPORTS = [
   'japaneseHolidayResolver',
   // 時刻の選択。I-20。
   'ModalTimePicker',
+  // タグの入力・パスワードの強さ。I-21 / I-22。
+  'ModalTagInput',
+  'ModalPasswordStrength',
   // トースト。N-01〜N-08。
   'toast',
   'ToastHost',
@@ -134,6 +140,15 @@ const REQUIRED_EXPORTS = [
   'Spinner',
   'Skeleton',
   'Banner',
+  // ページの上の部品の 2 段目。U-17〜U-24。
+  'Tabs',
+  'Accordion',
+  'Tooltip',
+  'Popover',
+  'Menu',
+  'Breadcrumbs',
+  'Pagination',
+  'Steps',
   // フォーム部品の中立の名前（ModalInput などと同じもの）。
   'Field',
   'Fieldset',
@@ -156,6 +171,8 @@ const REQUIRED_EXPORTS = [
   'Calendar',
   'RangeCalendar',
   'TimePicker',
+  'TagInput',
+  'PasswordStrength',
   'FileDrop',
   'Chips',
   'Switch',

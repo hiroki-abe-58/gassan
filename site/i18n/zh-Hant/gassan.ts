@@ -92,6 +92,22 @@ const labels: GassanLabels = {
   copied: '已複製',
   copyFailed: '無法複製',
   moreCount: (count) => `另外 ${String(count)} 人`,
+  breadcrumbs: '麵包屑',
+  pagination: '分頁',
+  previousPage: '上一頁',
+  nextPage: '下一頁',
+  pageNumber: (page) => `第 ${String(page)} 頁`,
+  stepStatus: (state) => ({ complete: '已完成', current: '進行中', upcoming: '未開始' })[state],
+  removeTag: (tag) => `移除 ${tag}`,
+  tagAdded: (tag) => `已新增 ${tag}`,
+  tagRemoved: (tag) => `已移除 ${tag}`,
+  passwordStrength: (score) => (['太弱', '弱', '普通', '強', '很強'] as const)[score],
+  passwordLength: (min) => `至少 ${String(min)} 個字元`,
+  passwordNumber: '包含數字',
+  passwordSymbol: '包含符號',
+  passwordCase: '包含大寫和小寫字母',
+  ruleMet: '已符合',
+  ruleUnmet: '尚未符合',
 };
 
 export default labels;

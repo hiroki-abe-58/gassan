@@ -8,11 +8,14 @@ export interface Specimen {
   render: (labelId: string) => ReactNode;
 }
 
-/** 本物の部品を状態ごとに並べる。見本なので、部品の名前は見出しの文字列から取る。 */
-export function Specimens({ caption, items }: { caption: string; items: readonly Specimen[] }): ReactNode {
+/**
+ * 本物の部品を状態ごとに並べる。見本なので、部品の名前は見出しの文字列から取る。
+ * wide は 1 行に 1 つずつ器いっぱいに置く（器の幅で形が変わる部品を、広い形で見せる）。
+ */
+export function Specimens({ caption, items, wide = false }: { caption: string; items: readonly Specimen[]; wide?: boolean }): ReactNode {
   const id = useId();
   return (
-    <div className="s-specimens" role="group" aria-label={caption}>
+    <div className={wide ? 's-specimens s-specimens-wide' : 's-specimens'} role="group" aria-label={caption}>
       {items.map((item, index) => {
         const labelId = `${id}-${String(index)}`;
         return (

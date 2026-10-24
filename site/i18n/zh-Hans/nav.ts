@@ -48,6 +48,8 @@ export default {
     uiBadges: '徽标与头像',
     uiFeedback: '进度与通知',
     uiLayout: '卡片与摘要',
+    uiNavigation: '标签页与分页',
+    uiOverlays: '工具提示与菜单',
     provider: 'GassanProvider',
     spec: '行为规范',
     verification: '验证',

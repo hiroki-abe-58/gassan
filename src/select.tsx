@@ -10,7 +10,7 @@ import {
 
 import type { ControlAria } from './fields';
 import { useControllable } from './internal/controllable';
-import { warnDuplicateKeys } from './internal/dom';
+import { isComposing, warnDuplicateKeys } from './internal/dom';
 import { Icon } from './internal/icons';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { Popup } from './internal/popup';
@@ -58,11 +58,6 @@ function navigate(key: string, options: readonly SelectOption[], active: number)
     default:
       return null;
   }
-}
-
-/** IME で変換中のキーは、確定の Enter も含めて部品が扱わない。 */
-function isComposing(event: ReactKeyboardEvent): boolean {
-  return event.nativeEvent.isComposing || event.keyCode === 229;
 }
 
 function useWarnDuplicates(component: string, options: readonly SelectOption[]): void {

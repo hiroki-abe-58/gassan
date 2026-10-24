@@ -234,6 +234,14 @@ const EXTRA_INTERFACES = new Set([
   'ToastPromiseMessages',
   'DescriptionItem',
   'TimelineItem',
+  'TabItem',
+  'AccordionItem',
+  'MenuItem',
+  'MenuGroup',
+  'MenuSeparator',
+  'BreadcrumbItem',
+  'StepItem',
+  'PasswordRule',
 ]);
 
 /** Props 型 → 既定値を読む関数名。名前から機械的に決まらないものだけ書く。 */

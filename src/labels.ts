@@ -124,6 +124,27 @@ export interface GassanLabels {
   copyFailed: string;
   /** AvatarGroup の「+3」の読み上げ名。U-05。 */
   moreCount: (count: number) => string;
+  /** パンくずリストとページ送りの nav の名前。U-22 / U-23。 */
+  breadcrumbs: string;
+  pagination: string;
+  /** ページ送りの前後のボタンと、番号の読み上げ名（「3ページ目」）。U-23。 */
+  previousPage: string;
+  nextPage: string;
+  pageNumber: (page: number) => string;
+  /** 手順の表示で、目に見えない状態（完了・進行中・未着手）を読み上げに添える。U-24。 */
+  stepStatus: (state: 'complete' | 'current' | 'upcoming') => string;
+  /** タグの入力の × ボタンと、足した・取り除いたときの知らせ。I-21。 */
+  removeTag: (tag: string) => string;
+  tagAdded: (tag: string) => string;
+  tagRemoved: (tag: string) => string;
+  /** パスワードの強さ（0〜4）と、既定の条件の文。条件を満たしたか・まだかの読み上げ。I-22。 */
+  passwordStrength: (score: 0 | 1 | 2 | 3 | 4) => string;
+  passwordLength: (min: number) => string;
+  passwordNumber: string;
+  passwordSymbol: string;
+  passwordCase: string;
+  ruleMet: string;
+  ruleUnmet: string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -192,6 +213,22 @@ export const japaneseLabels: GassanLabels = {
   copied: 'コピーしました',
   copyFailed: 'コピーできませんでした',
   moreCount: (count) => `ほか${String(count)}人`,
+  breadcrumbs: 'パンくずリスト',
+  pagination: 'ページ送り',
+  previousPage: '前のページ',
+  nextPage: '次のページ',
+  pageNumber: (page) => `${String(page)}ページ目`,
+  stepStatus: (state) => ({ complete: '完了', current: '進行中', upcoming: '未着手' })[state],
+  removeTag: (tag) => `${tag} を取り除く`,
+  tagAdded: (tag) => `${tag} を追加しました`,
+  tagRemoved: (tag) => `${tag} を取り除きました`,
+  passwordStrength: (score) => (['弱すぎる', '弱い', '普通', '強い', 'とても強い'] as const)[score],
+  passwordLength: (min) => `${String(min)} 文字以上`,
+  passwordNumber: '数字を含む',
+  passwordSymbol: '記号を含む',
+  passwordCase: '大文字と小文字を含む',
+  ruleMet: '満たしています',
+  ruleUnmet: 'まだ満たしていません',
 };
 
 export const englishLabels: GassanLabels = {
@@ -267,6 +304,22 @@ export const englishLabels: GassanLabels = {
   copied: 'Copied',
   copyFailed: 'Could not copy',
   moreCount: (count) => `${String(count)} more`,
+  breadcrumbs: 'Breadcrumb',
+  pagination: 'Pagination',
+  previousPage: 'Previous page',
+  nextPage: 'Next page',
+  pageNumber: (page) => `Page ${String(page)}`,
+  stepStatus: (state) => ({ complete: 'Completed', current: 'Current', upcoming: 'Not started' })[state],
+  removeTag: (tag) => `Remove ${tag}`,
+  tagAdded: (tag) => `Added ${tag}`,
+  tagRemoved: (tag) => `Removed ${tag}`,
+  passwordStrength: (score) => (['Too weak', 'Weak', 'Fair', 'Strong', 'Very strong'] as const)[score],
+  passwordLength: (min) => `At least ${String(min)} characters`,
+  passwordNumber: 'Contains a number',
+  passwordSymbol: 'Contains a symbol',
+  passwordCase: 'Contains upper and lower case letters',
+  ruleMet: 'met',
+  ruleUnmet: 'not met yet',
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

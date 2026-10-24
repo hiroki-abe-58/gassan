@@ -1,5 +1,5 @@
 export default {
-  lead: 'Input・PasswordInput・SearchInput・Textarea・NumberField・CodeInput。中身はネイティブの input と textarea のままで、gassan は枠と、ネイティブに無い小さな約束（表示の切り替え・消去・文字数・増減・桁の箱）だけを足す。',
+  lead: 'Input・PasswordInput・SearchInput・Textarea・NumberField・CodeInput・TagInput・PasswordStrength。中身はネイティブの input と textarea のままで、gassan は枠と、ネイティブに無い小さな約束（表示の切り替え・消去・文字数・増減・桁の箱・タグ・強さ）だけを足す。',
   gallery: {
     title: '見本',
     intro: '状態ごとに並べた本物の部品。モーダルの外でも同じ部品が使える。右上のテーマを変えると、フォーカスのリングの色が変わる。',
@@ -25,6 +25,37 @@ export default {
       invalidValue: 'hanako@',
     },
   },
+  tags: {
+    title: 'タグ',
+    intro: 'Enter かカンマ・読点で付け、× か空の入力欄の Backspace で外す（Backspace は最後のタグを入力欄へ戻すので、消さずに直せる）。貼り付けた「営業, 開発, 採用」は 3 つに分かれ、変換中の Enter では付かない。',
+    items: {
+      plain: '付け外し',
+      suggestions: '候補つき',
+      limit: '3 つまで',
+    },
+    samples: {
+      design: 'デザイン',
+      billing: '請求',
+      placeholder: 'タグを入力して Enter',
+      sales: '営業',
+      engineering: '開発',
+      support: 'サポート',
+      hiring: '採用',
+    },
+  },
+  strength: {
+    title: 'パスワードの強さ',
+    intro: '4 つの区切りのメーターと強さの言葉、条件ごとの印と状態を出す。打つたびには読み上げず、入力欄の aria-describedby から指して、入力欄に入ったときに条件を読ませる。',
+    items: {
+      live: '打って確かめる',
+      custom: '条件を差し替える',
+    },
+    samples: {
+      password: 'Gassan2026',
+      passphrase: 'correct horse battery',
+      longRule: '15 文字以上',
+    },
+  },
   modal: {
     title: 'モーダルの中で',
     intro: 'Modal.Field の render prop が渡す配線を、そのまま広げて渡す。',
@@ -42,6 +73,8 @@ export default {
       { part: 'Modal.Textarea', adds: 'maxLength を渡したときの「n / max」。説明として読ませ、打つたびには割り込ませない。高さは中身に合わせて伸びる' },
       { part: 'Modal.NumberField', adds: '− と +。範囲の端で押せなくなり、step の桁で丸める。離れたときに範囲の外なら端へ戻す' },
       { part: 'Modal.CodeInput', adds: '桁の箱。入力欄は 1 つのままなので、SMS の自動入力と貼り付けが効く。全角数字も受ける' },
+      { part: 'Modal.TagInput', adds: 'タグの付け外しと、その読み上げ。区切り・貼り付け・変換中の Enter・Backspace を受け持つ。name を渡すとタグごとに hidden の input を置く' },
+      { part: 'Modal.PasswordStrength', adds: '強さのメーターと条件の一覧。色と印に言葉を添え、打つたびには読み上げない' },
     ],
   },
   apiNote: 'PasswordInput と SearchInput は ModalInputProps から type・start・end を除いたもの、Textarea は textarea の属性をそのまま受ける。どれも ref は中の要素に届く。',

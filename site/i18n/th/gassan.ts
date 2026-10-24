@@ -99,6 +99,22 @@ const labels: GassanLabels = {
   copied: 'คัดลอกแล้ว',
   copyFailed: 'คัดลอกไม่สำเร็จ',
   moreCount: (count) => `และอีก ${String(count)} คน`,
+  breadcrumbs: 'เส้นทางนำทาง',
+  pagination: 'การแบ่งหน้า',
+  previousPage: 'หน้าก่อนหน้า',
+  nextPage: 'หน้าถัดไป',
+  pageNumber: (page) => `หน้า ${String(page)}`,
+  stepStatus: (state) => ({ complete: 'เสร็จแล้ว', current: 'กำลังดำเนินการ', upcoming: 'ยังไม่เริ่ม' })[state],
+  removeTag: (tag) => `นำ ${tag} ออก`,
+  tagAdded: (tag) => `เพิ่ม ${tag} แล้ว`,
+  tagRemoved: (tag) => `นำ ${tag} ออกแล้ว`,
+  passwordStrength: (score) => (['อ่อนเกินไป', 'อ่อน', 'ปานกลาง', 'แข็งแรง', 'แข็งแรงมาก'] as const)[score],
+  passwordLength: (min) => `อย่างน้อย ${String(min)} ตัวอักษร`,
+  passwordNumber: 'มีตัวเลข',
+  passwordSymbol: 'มีสัญลักษณ์',
+  passwordCase: 'มีทั้งตัวพิมพ์ใหญ่และตัวพิมพ์เล็ก',
+  ruleMet: 'ผ่านแล้ว',
+  ruleUnmet: 'ยังไม่ผ่าน',
 };
 
 export default labels;

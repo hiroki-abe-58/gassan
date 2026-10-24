@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   useEffect,
   useId,
   useRef,
@@ -60,21 +61,12 @@ function ButtonBody({ iconStart, iconEnd, children }: Pick<ButtonLook, 'iconStar
  * 見た目と押した手応えは Modal.Button と同じ（V-06）。モーダルの外でも使え、ゲートや閉じる理由は持たない。
  * 処理中は aria-busy と「処理中」の説明を足し、名前は消さない。押せない理由を伝えたいときは
  * disabled にせず、aria-disabled と説明を自分で添える（G-07 と同じ考え方）。
+ * ref は button に届く（Tooltip・Menu の起点にできる）。
  */
-export function Button({
-  variant = 'secondary',
-  size = 'md',
-  iconStart,
-  iconEnd,
-  block = false,
-  loading = false,
-  onAction,
-  onClick,
-  children,
-  className,
-  type = 'button',
-  ...rest
-}: ButtonProps): ReactNode {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { variant = 'secondary', size = 'md', iconStart, iconEnd, block = false, loading = false, onAction, onClick, children, className, type = 'button', ...rest },
+  ref,
+) {
   const labels = useLabels();
   const busyId = `${useId()}-busy`;
   const [pending, setPending] = useState(false);
@@ -113,6 +105,7 @@ export function Button({
     <>
       <button
         {...stripReservedData(rest, 'Button')}
+        ref={ref}
         type={type}
         className={className ? `g-btn ${className}` : 'g-btn'}
         data-variant={variant}
@@ -137,7 +130,7 @@ export function Button({
       ) : null}
     </>
   );
-}
+});
 
 export interface ButtonLinkProps extends ButtonLook, Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'> {
   href: string;
@@ -145,19 +138,14 @@ export interface ButtonLinkProps extends ButtonLook, Omit<AnchorHTMLAttributes<H
 }
 
 /** ボタンの見た目のリンク。行き先が別のページなら、役割はリンクのまま（Enter で辿り、Space では押せない）。U-01。 */
-export function ButtonLink({
-  variant = 'secondary',
-  size = 'md',
-  iconStart,
-  iconEnd,
-  block = false,
-  children,
-  className,
-  ...rest
-}: ButtonLinkProps): ReactNode {
+export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(
+  { variant = 'secondary', size = 'md', iconStart, iconEnd, block = false, children, className, ...rest },
+  ref,
+) {
   return (
     <a
       {...stripReservedData(rest, 'ButtonLink')}
+      ref={ref}
       className={className ? `g-btn ${className}` : 'g-btn'}
       data-variant={variant}
       data-size={size === 'md' ? undefined : size}
@@ -168,7 +156,7 @@ export function ButtonLink({
       </ButtonBody>
     </a>
   );
-}
+});
 
 export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className' | 'aria-label'> {
   /** 読み上げる名前（必須）。印だけのボタンは、名前が無いと何のボタンか分からない。 */
@@ -182,11 +170,15 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
   className?: string;
 }
 
-/** 印だけのボタン。名前は label で必ず渡す（title 属性の吹き出しには頼らない）。U-02。 */
-export function IconButton({ label, children, variant = 'ghost', size = 'md', className, type = 'button', ...rest }: IconButtonProps): ReactNode {
+/** 印だけのボタン。名前は label で必ず渡す（title 属性の吹き出しには頼らず、要るなら Tooltip を添える）。U-02。 */
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
+  { label, children, variant = 'ghost', size = 'md', className, type = 'button', ...rest },
+  ref,
+) {
   return (
     <button
       {...stripReservedData(rest, 'IconButton')}
+      ref={ref}
       type={type}
       className={className ? `g-iconbtn ${className}` : 'g-iconbtn'}
       data-variant={variant === 'ghost' ? undefined : variant}
@@ -196,7 +188,7 @@ export function IconButton({ label, children, variant = 'ghost', size = 'md', cl
       {children}
     </button>
   );
-}
+});
 
 export interface CopyButtonProps extends DataAttributes {
   /** 写す文字列。押したときに作るなら関数で渡す。 */

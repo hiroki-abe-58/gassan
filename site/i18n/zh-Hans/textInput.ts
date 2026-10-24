@@ -1,7 +1,7 @@
 import type ja from '../ja/textInput';
 
 export default {
-  lead: 'Input、PasswordInput、SearchInput、Textarea、NumberField、CodeInput。里面仍是原生的 input 和 textarea，gassan 只加上边框，以及原生所没有的几条小约定（切换显示、清除、字数、增减、逐位方框）。',
+  lead: 'Input、PasswordInput、SearchInput、Textarea、NumberField、CodeInput、TagInput、PasswordStrength。里面仍是原生的 input 和 textarea，gassan 只加上边框，以及原生所没有的几条小约定（切换显示、清除、字数、增减、逐位方框、标签、强度）。',
   gallery: {
     title: '示例',
     intro: '按状态排列的真实部件。在模态框之外也能使用同样的部件。切换右上角的主题，焦点环的颜色会随之改变。',
@@ -27,6 +27,37 @@ export default {
       invalidValue: 'lihua@',
     },
   },
+  tags: {
+    title: '标签',
+    intro: '用 Enter、逗号或顿号添加，用 × 或在空的输入框中按 Backspace 移除（Backspace 会把最后一个标签放回输入框，所以不用删除就能修改）。粘贴的“销售, 开发, 招聘”会分成 3 个，输入法组字中的 Enter 不会添加标签。',
+    items: {
+      plain: '添加与移除',
+      suggestions: '带候选',
+      limit: '最多 3 个',
+    },
+    samples: {
+      design: '设计',
+      billing: '账单',
+      placeholder: '输入标签后按 Enter',
+      sales: '销售',
+      engineering: '开发',
+      support: '客服',
+      hiring: '招聘',
+    },
+  },
+  strength: {
+    title: '密码强度',
+    intro: '显示分成 4 段的计量条、表示强度的文字，以及每个条件的标记和状态。不会每次输入都播报，而是由输入框的 aria-describedby 指向它，在焦点进入输入框时读出条件。',
+    items: {
+      live: '输入试试',
+      custom: '替换条件',
+    },
+    samples: {
+      password: 'Gassan2026',
+      passphrase: 'correct horse battery',
+      longRule: '至少 15 个字符',
+    },
+  },
   modal: {
     title: '在模态框中',
     intro: '把 Modal.Field 的 render prop 传来的关联原样展开传入。',
@@ -44,6 +75,8 @@ export default {
       { part: 'Modal.Textarea', adds: '传入 maxLength 时显示“n / max”。作为说明读出，不会每次输入都打断。高度随内容增长' },
       { part: 'Modal.NumberField', adds: '− 和 +。到达范围端点时不可按，并按 step 的位数取整。失去焦点时如果超出范围，就回到端点' },
       { part: 'Modal.CodeInput', adds: '逐位方框。输入框仍然只有一个，所以短信自动填充和粘贴都有效。也接受全角数字' },
+      { part: 'Modal.TagInput', adds: '标签的添加与移除，以及相应的播报。负责处理分隔符、粘贴、输入法组字中的 Enter 和 Backspace。传入 name 时，为每个标签放一个 hidden 的 input' },
+      { part: 'Modal.PasswordStrength', adds: '强度计量条与条件列表。颜色和标记都配有文字，不会每次输入都播报' },
     ],
   },
   apiNote: 'PasswordInput 和 SearchInput 接受 ModalInputProps 去掉 type、start、end 后的属性，Textarea 原样接受 textarea 的属性。所有部件的 ref 都指向内部的元素。',

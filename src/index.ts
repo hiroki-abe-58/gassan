@@ -20,8 +20,10 @@ import {
   ModalSearchInput,
   ModalTextarea,
 } from './inputs';
+import { ModalPasswordStrength } from './password-strength';
 import { ModalCombobox, ModalSelect } from './select';
 import { ModalRangeSlider, ModalSlider } from './slider';
+import { ModalTagInput } from './tag-input';
 import { ModalTimePicker } from './time-picker';
 import { ModalButton, ModalFooter } from './footer';
 import { ModalConsent, ModalGate, ModalGateStatus } from './gate';
@@ -61,16 +63,22 @@ export { ModalSelect, ModalCombobox } from './select';
 export { ModalDatePicker } from './date-picker';
 export { ModalCalendar, ModalRangeCalendar, ModalDateRangePicker, commonDateRanges } from './calendar';
 export { ModalTimePicker } from './time-picker';
+export { ModalTagInput } from './tag-input';
+export { ModalPasswordStrength } from './password-strength';
 export { toast, ToastHost, resetToasts } from './toast';
 export { ModalFileDrop } from './file-drop';
 export { ModalChart } from './chart';
 
 /* ------------------------------------------------------------------- ui parts */
 
-// ページの上で使う部品（U-01〜U-16）。モーダルの部品ではないので Modal 名前空間には入れない。
+// ページの上で使う部品（U-01〜U-24）。モーダルの部品ではないので Modal 名前空間には入れない。
 export { Button, ButtonLink, IconButton, CopyButton } from './button';
 export { Badge, Avatar, AvatarGroup, Kbd, Divider, Card, Stat, EmptyState, DescriptionList, Timeline } from './display';
 export { Progress, Spinner, Skeleton, Banner } from './feedback';
+export { Tabs } from './tabs';
+export { Accordion } from './disclosure';
+export { Tooltip, Popover, Menu } from './overlay';
+export { Breadcrumbs, Pagination, Steps } from './navigation';
 
 /*
  * フォーム部品の中立の名前。ページの上でもモーダルの中でも同じ部品なので、Modal を付けずに書ける。
@@ -91,6 +99,8 @@ export { ModalSelect as Select, ModalCombobox as Combobox } from './select';
 export { ModalDatePicker as DatePicker } from './date-picker';
 export { ModalCalendar as Calendar, ModalRangeCalendar as RangeCalendar, ModalDateRangePicker as DateRangePicker } from './calendar';
 export { ModalTimePicker as TimePicker } from './time-picker';
+export { ModalTagInput as TagInput } from './tag-input';
+export { ModalPasswordStrength as PasswordStrength } from './password-strength';
 export { ModalFileDrop as FileDrop } from './file-drop';
 export { ModalChart as Chart } from './chart';
 export { ModalHandle } from './sheet';
@@ -167,6 +177,8 @@ export type { SelectOption, ModalSelectProps, ModalComboboxProps } from './selec
 export type { ModalDatePickerProps, CalendarOptions } from './date-picker';
 export type { ModalCalendarProps, ModalRangeCalendarProps, ModalDateRangePickerProps, DateRangePreset } from './calendar';
 export type { ModalTimePickerProps } from './time-picker';
+export type { ModalTagInputProps } from './tag-input';
+export type { ModalPasswordStrengthProps, PasswordRule, PasswordScore } from './password-strength';
 export type {
   ToastAction,
   ToastHostProps,
@@ -193,6 +205,10 @@ export type {
   TimelineProps,
 } from './display';
 export type { ProgressProps, SpinnerProps, SkeletonProps, BannerProps } from './feedback';
+export type { TabItem, TabsProps } from './tabs';
+export type { AccordionItem, AccordionProps } from './disclosure';
+export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps } from './overlay';
+export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, StepsProps } from './navigation';
 export type { ModalFileDropProps } from './file-drop';
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';
@@ -261,6 +277,8 @@ export const Modal = {
   Calendar: ModalCalendar,
   RangeCalendar: ModalRangeCalendar,
   TimePicker: ModalTimePicker,
+  TagInput: ModalTagInput,
+  PasswordStrength: ModalPasswordStrength,
   FileDrop: ModalFileDrop,
   Chips: ModalChips,
   Switch: ModalSwitch,

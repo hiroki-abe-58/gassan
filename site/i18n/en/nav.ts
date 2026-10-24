@@ -48,6 +48,8 @@ export default {
     uiBadges: 'Badges and avatars',
     uiFeedback: 'Progress and notices',
     uiLayout: 'Cards and stats',
+    uiNavigation: 'Tabs and pagination',
+    uiOverlays: 'Tooltips and menus',
     provider: 'GassanProvider',
     spec: 'Behavior specification',
     verification: 'Verification',

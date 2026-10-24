@@ -4,13 +4,13 @@ import {
   useRef,
   useState,
   type InputHTMLAttributes,
-  type MouseEvent as ReactMouseEvent,
   type ReactNode,
   type TextareaHTMLAttributes,
 } from 'react';
 
 import type { ControlAria } from './fields';
 import { clampToStep, mergeRefs, useControllable } from './internal/controllable';
+import { focusInputOnFrame } from './internal/dom';
 import { Icon } from './internal/icons';
 import { domPassthrough, stripReservedData, type DataAttributes } from './internal/passthrough';
 import { useLabels } from './labels';
@@ -24,14 +24,6 @@ export interface ModalInputProps extends InputHTMLAttributes<HTMLInputElement> {
   start?: ReactNode;
   /** 入力欄の後ろに置くもの（「円」「kg」、ボタン）。 */
   end?: ReactNode;
-}
-
-/** 枠の余白を押しても入力欄にフォーカスを移す。中のボタンやリンクはそのまま。 */
-function focusInputOnFrame(event: ReactMouseEvent<HTMLDivElement>): void {
-  const target = event.target as Element;
-  if (target.closest('input, button, a, textarea, select')) return;
-  event.preventDefault();
-  event.currentTarget.querySelector('input')?.focus();
 }
 
 /**

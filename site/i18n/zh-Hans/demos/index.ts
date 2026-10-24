@@ -7,6 +7,7 @@ import choiceForm from './choiceForm';
 import dateForm from './dateForm';
 import fieldForm from './fieldForm';
 import fileForm from './fileForm';
+import filterToolbar from './filterToolbar';
 import footerButtons from './footerButtons';
 import gateCustom from './gateCustom';
 import imperativeConfirm from './imperativeConfirm';
@@ -17,6 +18,7 @@ import kindForm from './kindForm';
 import kindView from './kindView';
 import lineBreakModal from './lineBreakModal';
 import playground from './playground';
+import projectSettings from './projectSettings';
 import providerEnglish from './providerEnglish';
 import quickStart from './quickStart';
 import rangeReport from './rangeReport';
@@ -40,6 +42,7 @@ export default {
   dateForm,
   fieldForm,
   fileForm,
+  filterToolbar,
   footerButtons,
   gateCustom,
   imperativeConfirm,
@@ -50,6 +53,7 @@ export default {
   kindView,
   lineBreakModal,
   playground,
+  projectSettings,
   providerEnglish,
   quickStart,
   rangeReport,

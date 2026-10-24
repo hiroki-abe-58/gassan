@@ -12,11 +12,21 @@ import { Fragment, createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
 import {
+  Accordion,
+  Breadcrumbs,
   GassanProvider,
+  Menu,
   Modal,
   ModalHost,
+  Pagination,
+  PasswordStrength,
   Phrase,
+  Popover,
+  Steps,
+  Tabs,
+  TagInput,
   ToastHost,
+  Tooltip,
   englishLabels,
 } from '../dist/index.js';
 
@@ -326,6 +336,41 @@ else fail(`TimePicker did not render 9:05 PM on the server: ${englishTime}`);
 const toastHtml = renderToString(h(ToastHost));
 if (toastHtml === '') ok('ToastHost renders nothing on the server (the region mounts on the client)');
 else fail(`ToastHost rendered markup on the server: ${toastHtml}`);
+
+// ページの部品の 2 段目（U-17〜U-24）と、タグ・パスワードの強さ（I-21 / I-22）。
+// 起点の脇に出る部品は、閉じている間は起点だけを描く（ツールチップの文は説明として DOM に置く）。
+const button = (label) => h('button', { type: 'button' }, label);
+const partsHtml = renderToString(
+  h(
+    Fragment,
+    null,
+    h(Tabs, { label: 'タブ', items: [{ value: 'a', label: '概要', content: 'A' }, { value: 'b', label: '設定', content: 'B' }] }),
+    h(Accordion, { items: [{ value: 'q', title: 'Q', content: 'A' }], defaultValue: ['q'] }),
+    h(Tooltip, { content: '補足の文' }, button('起点')),
+    h(Popover, { trigger: button('開く'), title: '窓' }, '中身'),
+    h(Menu, { trigger: button('操作'), items: [{ value: 'x', label: '項目' }] }),
+    h(Breadcrumbs, { items: [{ label: 'ホーム', href: '/' }, { label: '今' }] }),
+    h(Pagination, { count: 10, defaultPage: 5 }),
+    h(Steps, { items: [{ label: '一' }, { label: '二' }], current: 1 }),
+    h(TagInput, { 'aria-label': 'タグ', defaultValue: ['営業'] }),
+    h(PasswordStrength, { value: 'Abcdefg1!' }),
+  ),
+);
+for (const [label, passed] of [
+  ['Tabs renders the tablist and the selected tab on the server', partsHtml.includes('role="tablist"') && partsHtml.includes('aria-selected="true"')],
+  ['Accordion renders native details (open by defaultValue) on the server', /<details[^>]*open=""/.test(partsHtml)],
+  ['Tooltip renders only the description on the server (no bubble)', partsHtml.includes('>補足の文</span>') && !partsHtml.includes('g-tooltip')],
+  ['Popover renders a collapsed trigger on the server', partsHtml.includes('aria-haspopup="dialog"') && partsHtml.includes('aria-expanded="false"')],
+  ['Menu renders a collapsed menu button on the server', partsHtml.includes('aria-haspopup="menu"') && !partsHtml.includes('role="menu"')],
+  ['Breadcrumbs marks the current page on the server', partsHtml.includes('aria-current="page"')],
+  ['Pagination names each page on the server', partsHtml.includes('aria-label="5ページ目"')],
+  ['Steps marks the current step on the server', partsHtml.includes('aria-current="step"')],
+  ['TagInput renders named remove buttons on the server', partsHtml.includes('aria-label="営業 を取り除く"')],
+  ['PasswordStrength renders the strength word on the server', partsHtml.includes('とても強い')],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
 
 if (failed) {
   console.error('\nssr smoke test failed.');

@@ -1,5 +1,5 @@
 /**
- * ページの上の部品（U-01〜U-16）と、フォーム部品の中立の名前。
+ * ページの上の部品（U-01〜U-16）と、フォーム部品の中立の名前。受け渡しの突き合わせは U-17〜U-24 も含む。
  *
  * 見た目（トーンの地の色・押した手応え・骨組みの光）は CSS の不変条件として tokens.test.ts で、
  * 実際の描画はヘッドレス Chrome で確かめる。ここでは役割・名前・状態・受け渡しを見る。
@@ -11,10 +11,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import * as gassan from '../src';
 import {
+  Accordion,
   Avatar,
   AvatarGroup,
   Badge,
   Banner,
+  Breadcrumbs,
   Button,
   ButtonLink,
   Card,
@@ -24,15 +26,25 @@ import {
   EmptyState,
   IconButton,
   Kbd,
+  Menu,
+  Pagination,
+  Popover,
   Progress,
   Skeleton,
   Spinner,
   Stat,
+  Steps,
+  Tabs,
   Timeline,
+  Tooltip,
 } from '../src';
 import * as buttons from '../src/button';
+import * as disclosure from '../src/disclosure';
 import * as display from '../src/display';
 import * as feedback from '../src/feedback';
+import * as navigation from '../src/navigation';
+import * as overlay from '../src/overlay';
+import * as tabs from '../src/tabs';
 
 afterEach(() => {
   vi.useRealTimers();
@@ -375,11 +387,31 @@ describe('受け渡しと中立の名前', () => {
       Spinner: () => <Spinner data-testid="probe" />,
       Skeleton: () => <Skeleton data-testid="probe" />,
       Banner: () => <Banner data-testid="probe">b</Banner>,
+      Tabs: () => <Tabs label="t" items={[{ value: 'a', label: 'A' }]} data-testid="probe" />,
+      Accordion: () => <Accordion items={[]} data-testid="probe" />,
+      // 吹き出しは自分の器を持たない。data-* は起点（利用者の要素）にそのまま残る。
+      Tooltip: () => (
+        <Tooltip content="c">
+          <button type="button" data-testid="probe">
+            b
+          </button>
+        </Tooltip>
+      ),
+      Popover: () => (
+        <Popover trigger={<button type="button">o</button>} title="t" defaultOpen data-testid="probe">
+          c
+        </Popover>
+      ),
+      Menu: () => <Menu trigger={<button type="button">m</button>} items={[{ value: 'a', label: 'A' }]} defaultOpen data-testid="probe" />,
+      Breadcrumbs: () => <Breadcrumbs items={[{ label: 'a' }]} data-testid="probe" />,
+      Pagination: () => <Pagination count={3} data-testid="probe" />,
+      Steps: () => <Steps items={[{ label: 'a' }]} current={0} data-testid="probe" />,
     };
-    // 部品の一覧を手で書き漏らさないよう、3 つのモジュールが出している部品（大文字で始まる関数）と突き合わせる。
-    const exported = [buttons, display, feedback]
+    // 部品の一覧を手で書き漏らさないよう、モジュールが出している部品（大文字で始まる関数と forwardRef）と突き合わせる。
+    const isComponent = (value: unknown): boolean => typeof value === 'function' || (typeof value === 'object' && value !== null && '$$typeof' in value);
+    const exported = [buttons, display, feedback, tabs, disclosure, overlay, navigation]
       .flatMap((module) => Object.entries(module))
-      .filter(([name, value]) => /^[A-Z]/.test(name) && typeof value === 'function')
+      .filter(([name, value]) => /^[A-Z]/.test(name) && isComponent(value))
       .map(([name]) => name)
       .sort();
     expect(Object.keys(cases).sort()).toEqual(exported);
