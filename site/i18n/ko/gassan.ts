@@ -84,6 +84,11 @@ const labels: GassanLabels = {
   dropFiles: '여기에 파일을 놓으세요',
   chooseFiles: '파일 선택',
   removeFile: (name) => `${name} 제거`,
+  hour: '시',
+  minute: '분',
+  dayPeriod: '오전/오후',
+  now: '현재 시각',
+  chooseTime: '시간 선택',
 };
 
 export default labels;

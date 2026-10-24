@@ -85,6 +85,11 @@ const labels: GassanLabels = {
   dropFiles: '将文件拖放到此处',
   chooseFiles: '选择文件',
   removeFile: (name) => `移除 ${name}`,
+  hour: '时',
+  minute: '分',
+  dayPeriod: '上午/下午',
+  now: '现在',
+  chooseTime: '选择时间',
 };
 
 export default labels;

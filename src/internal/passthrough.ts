@@ -40,6 +40,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-blocked',
   'data-clamped',
   'data-cols',
+  'data-column',
   'data-current',
   'data-detent',
   'data-disabled',

@@ -4,6 +4,7 @@ import { selectBlockers, shouldDismissBySwipe } from '../src';
 import {
   isPrimaryPointer,
   isTextEntry,
+  motionStill,
   readCssDurationMs,
 } from '../src/internal/dom';
 import { isTopModal, popModal, pushModal, resetModalStack } from '../src/internal/stack';
@@ -100,6 +101,19 @@ describe('readCssDurationMs', () => {
     el.style.setProperty('--a', 'fast');
     document.body.append(el);
     expect(readCssDurationMs(el, '--a', 99)).toBe(99);
+    el.remove();
+  });
+});
+
+describe('motionStill', () => {
+  it('動きの段 none（と動きを減らす設定）が --g-dur-fast を 1ms にした要素では、滑らせない', () => {
+    const el = document.createElement('div');
+    document.body.append(el);
+    expect(motionStill(el)).toBe(false); // トークンが読めない（CSS の無い環境）なら、これまでどおり
+    el.style.setProperty('--g-dur-fast', '140ms');
+    expect(motionStill(el)).toBe(false);
+    el.style.setProperty('--g-dur-fast', '1ms');
+    expect(motionStill(el)).toBe(true);
     el.remove();
   });
 });

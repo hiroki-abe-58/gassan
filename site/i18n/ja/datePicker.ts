@@ -1,12 +1,15 @@
 export default {
-  lead: 'DatePicker と DateRangePicker はポップアップのカレンダーで、Calendar と RangeCalendar はページの上に置くカレンダー。どれも日本の祝日と土日を色と名前で示し、見出しから月と年を飛べる。月名と曜日は GassanProvider の locale から Intl で出すので、言語を変えるとカレンダーも変わる。',
+  lead: 'DatePicker と DateRangePicker はポップアップのカレンダーで、Calendar と RangeCalendar はページの上に置くカレンダー。どれも日本の祝日と土日を色と名前で示し、見出しから月と年を飛べる。TimePicker は時と分の列から時刻を選ぶ。月名・曜日・時刻の書き方は GassanProvider の locale から Intl で出すので、言語を変えると一緒に変わる。',
   gallery: {
     title: '見本',
-    intro: '選んだ日はアクセント色で塗り、今日には細い輪を付ける。日曜と祝日は赤、土曜は青。',
+    intro: '選んだ日と時刻はアクセント色で塗り、今日には細い輪を付ける。日曜と祝日は赤、土曜は青。',
     items: {
       datePicker: 'カレンダー',
       rangePicker: '期間',
       limited: '今日から 30 日まで',
+      timePicker: '時刻',
+      time12: '12 時間制',
+      businessHours: '10:00〜18:00、15 分刻み',
       date: '日付（ネイティブ）',
       time: '時刻（ネイティブ）',
       color: '色（ネイティブ）',
@@ -41,11 +44,33 @@ export default {
     codeCaption: '祝日の出し方を変える',
     code: "import { japaneseHolidayResolver, japaneseHoliday } from '@genelab/gassan';\n\n// 自社の休業日を足す\nconst closed: Record<string, string> = { '2026-12-29': '年末休業', '2026-12-30': '年末休業' };\nconst holidays = (date: string) => closed[date] ?? japaneseHolidayResolver()(date);\n\n<Modal.DatePicker holidays={holidays} />\n\n// 祝日を出さない\n<Modal.DatePicker holidays={null} />\n\n// 1 日だけ調べる\njapaneseHoliday('2026-09-22'); // { date: '2026-09-22', key: 'citizens', name: '国民の休日' }",
   },
+  time: {
+    title: '時刻',
+    intro: '時と分（12 時間制なら午前・午後も）の列から選ぶ。列は選んでいる値を真ん中に置き、値を動かすと滑って追いかける。',
+    body: [
+      '値はネイティブの `type="time"` と同じ 24 時間の `HH:mm` で、12 時間制で選んでも変わらない。表示の時計（24 時間か 12 時間か）と午前・午後の名前は `labels.locale` の Intl に従い、`hourCycle` で固定できる。',
+      '`step`（分）に乗らない時刻と `min` / `max` の外は選べない。刻みに乗らない値を渡すと、ボタンにはそのまま出し、開くといちばん近い時刻を指す。',
+      'ポインタでは、時を押すと分の列へ進み、分を押すと決まる（12 時間制は午前・午後を押して決まる）。決めずに見比べたいときは、キーで動かしてから OK を押す。',
+    ],
+    codeCaption: '時刻の選択',
+    code: "// 値はどちらの時計でも 24 時間の 'HH:mm'\n<Modal.TimePicker aria-label=\"開始時刻\" value={time} onValueChange={setTime} />\n\n// 15 分刻みで、営業時間の中だけ\n<Modal.TimePicker step={15} min=\"10:00\" max=\"18:00\" />\n\n// 12 時間制に固定する（省略すると labels.locale の慣習）\n<Modal.TimePicker hourCycle=\"h12\" />",
+    keysCaption: '時刻の選択のキー操作',
+    keys: [
+      { key: '↑ / ↓', action: '前・次の値（端を越えると反対の端へ回る）' },
+      { key: 'PageUp / PageDown', action: '列の 4 分の 1 ずつ' },
+      { key: 'Home / End', action: '列の最初・最後' },
+      { key: '← / →', action: '前・次の列' },
+      { key: '0〜9', action: 'その時刻へ飛ぶ（続けて打つと桁がつながる）' },
+      { key: 'A / P', action: '午前・午後（12 時間制）' },
+      { key: 'Enter / Space', action: '決めて閉じ、ボタンへ戻る' },
+      { key: 'Esc', action: '決めずに閉じ、ボタンへ戻る（モーダルは閉じない）' },
+    ],
+  },
   modal: {
     title: 'モーダルの中で',
-    intro: 'カレンダーは popover で top layer に出る。Esc はカレンダーだけを閉じ、ボタンへフォーカスを戻す。',
+    intro: 'カレンダーと時刻の列は popover で top layer に出る。Esc はポップアップだけを閉じ、ボタンへフォーカスを戻す。',
     exampleTitle: '予約する',
-    exampleDescription: '日付はカレンダーで、時刻はネイティブの入力で選ぶ。過去の日は選べない。',
+    exampleDescription: '日付はカレンダーで、時刻は 15 分刻みの列で選ぶ。過去の日と営業時間の外は選べない。',
   },
   keys: {
     title: 'キー操作',
@@ -63,9 +88,10 @@ export default {
     note: '見出し（「2026年10月」）を押すと月の一覧、もう一度押すと年の一覧になる。一覧の中も矢印で動き、Enter で 1 段降りる。「今日」を押すと今日へ戻る。',
   },
   native: {
-    title: 'ネイティブの日付入力との使い分け',
+    title: 'ネイティブの日付・時刻の入力との使い分け',
     body: [
       'スマホでは、OS の日付のホイールのほうが速いことが多い。曜日や祝日を見ながら選ばせたい、選べない日を見せたい、期間を選ばせたい、見た目をほかの部品とそろえたい、というときは DatePicker を使う。そうでなければ `type="date"` を Modal.Input に入れる。枠と明暗（`--g-color-scheme`）は同じになる（I-15）。',
+      '時刻も同じ。ネイティブの `type="time"` は、ポップアップの見た目がテーマに従わず、刻みや範囲の外も打てる。刻みと範囲を目で見せたい、テーマの色で選ばせたいときは TimePicker を使う。',
     ],
   },
   apiCaption: {
@@ -73,6 +99,7 @@ export default {
     rangePicker: 'Modal.DateRangePicker',
     calendar: 'Modal.Calendar',
     rangeCalendar: 'Modal.RangeCalendar',
+    timePicker: 'Modal.TimePicker',
   },
   a11yCaption: '日付と時刻が満たす仕様',
 };

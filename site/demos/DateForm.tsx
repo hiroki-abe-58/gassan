@@ -28,9 +28,9 @@ export default function DateForm(): ReactNode {
             {(control) => <Modal.DatePicker {...control} value={date} onValueChange={setDate} min={today} />}
           </Modal.Field>
 
-          {/* t:native */}
-          <Modal.Field label={t.time}>
-            {(control) => <Modal.Input {...control} type="time" defaultValue="19:00" step={900} />}
+          {/* t:time */}
+          <Modal.Field label={t.time} help={t.timeHelp}>
+            {(control) => <Modal.TimePicker {...control} defaultValue="19:00" step={15} min="11:00" max="21:00" />}
           </Modal.Field>
 
           <Modal.Field label={t.people}>

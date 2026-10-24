@@ -1,14 +1,17 @@
 import type ja from '../ja/datePicker';
 
 export default {
-  lead: 'DatePicker 與 DateRangePicker 是彈出式的月曆，Calendar 與 RangeCalendar 則是放在頁面上的月曆。這些月曆都以顏色與名稱標示日本的國定假日與週末，並可從標題跳到其他月份與年份。月份名稱與星期由 GassanProvider 的 locale 透過 Intl 產生，所以切換語言後，月曆也會跟著改變。',
+  lead: 'DatePicker 與 DateRangePicker 是彈出式的月曆，Calendar 與 RangeCalendar 則是放在頁面上的月曆。這些月曆都以顏色與名稱標示日本的國定假日與週末，並可從標題跳到其他月份與年份。TimePicker 從時與分的欄中選擇時間。月份名稱、星期與時間的寫法由 GassanProvider 的 locale 透過 Intl 產生，所以切換語言時會一起改變。',
   gallery: {
     title: '範例',
-    intro: '選取的日期以強調色填色，今天則加上細圓框。週日與國定假日為紅色，週六為藍色。',
+    intro: '選取的日期與時間以強調色填色，今天則加上細圓框。週日與國定假日為紅色，週六為藍色。',
     items: {
       datePicker: '月曆',
       rangePicker: '日期範圍',
       limited: '從今天起 30 天內',
+      timePicker: '時間',
+      time12: '12 小時制',
+      businessHours: '10:00〜18:00，間隔 15 分鐘',
       date: '日期（原生）',
       time: '時間（原生）',
       color: '顏色（原生）',
@@ -43,11 +46,33 @@ export default {
     codeCaption: '變更國定假日的顯示方式',
     code: "import { japaneseHolidayResolver, japaneseHoliday } from '@genelab/gassan';\n\n// 加上自家公司的休假日\nconst closed: Record<string, string> = { '2026-12-29': '年末公休', '2026-12-30': '年末公休' };\nconst holidays = (date: string) => closed[date] ?? japaneseHolidayResolver()(date);\n\n<Modal.DatePicker holidays={holidays} />\n\n// 不顯示國定假日\n<Modal.DatePicker holidays={null} />\n\n// 只查詢某一天\njapaneseHoliday('2026-09-22'); // { date: '2026-09-22', key: 'citizens', name: \"国民の休日\" }（名稱預設為日文）",
   },
+  time: {
+    title: '時間',
+    intro: '從時與分（12 小時制時還有上午/下午）的欄中選擇。各欄會把選取的值放在正中間，值一移動就滑動跟上。',
+    body: [
+      '值與原生的 `type="time"` 相同，是 24 小時制的 `HH:mm`，即使以 12 小時制選擇也不會改變。顯示時採用 24 小時制還是 12 小時制，以及上午/下午的名稱，都依循 `labels.locale` 的 Intl；可用 `hourCycle` 固定為其中一種。',
+      '不符合 `step`（分鐘）間隔的時間，以及 `min` / `max` 之外的時間，都無法選擇。傳入不符合間隔的值時，按鈕上會照原樣顯示，開啟後則指向最接近的時間。',
+      '以指標操作時，按下小時會進到分鐘的欄，按下分鐘即確定（12 小時制則在按下上午/下午時確定）。想先比較再決定時，就用按鍵移動，然後按「確定」。',
+    ],
+    codeCaption: '選擇時間',
+    code: "// 無論哪種小時制，值都是 24 小時制的 'HH:mm'\n<Modal.TimePicker aria-label=\"開始時間\" value={time} onValueChange={setTime} />\n\n// 間隔 15 分鐘，只能選營業時間內\n<Modal.TimePicker step={15} min=\"10:00\" max=\"18:00\" />\n\n// 固定為 12 小時制（省略時依 labels.locale 的慣例）\n<Modal.TimePicker hourCycle=\"h12\" />",
+    keysCaption: '時間選擇的鍵盤操作',
+    keys: [
+      { key: '↑ / ↓', action: '前一個值、下一個值（越過一端時繞到另一端）' },
+      { key: 'PageUp / PageDown', action: '每次移動一欄的四分之一' },
+      { key: 'Home / End', action: '欄中的第一個、最後一個值' },
+      { key: '← / →', action: '前一欄、後一欄' },
+      { key: '0〜9', action: '跳到對應的時間（連續輸入時各位數字會連起來）' },
+      { key: 'A / P', action: '上午、下午（12 小時制）' },
+      { key: 'Enter / Space', action: '確定並關閉，回到按鈕' },
+      { key: 'Esc', action: '不確定直接關閉，回到按鈕（不會關閉模態視窗）' },
+    ],
+  },
   modal: {
     title: '在模態視窗中',
-    intro: '月曆以 popover 顯示在 top layer。Esc 只關閉月曆，並把焦點移回按鈕。',
+    intro: '月曆與時間的欄以 popover 顯示在 top layer。Esc 只關閉彈出元件，並把焦點移回按鈕。',
     exampleTitle: '預約',
-    exampleDescription: '日期用月曆選擇，時間用原生的輸入選擇。無法選擇過去的日期。',
+    exampleDescription: '日期用月曆選擇，時間用間隔 15 分鐘的欄選擇。無法選擇過去的日期與營業時間以外的時間。',
   },
   keys: {
     title: '鍵盤操作',
@@ -65,9 +90,10 @@ export default {
     note: '按下標題（「2026年10月」）會顯示月份清單，再按一次會顯示年份清單。清單中也能用方向鍵移動，按 Enter 進入下一層。按下「今天」會回到今天。',
   },
   native: {
-    title: '與原生日期輸入的分工',
+    title: '與原生日期、時間輸入的分工',
     body: [
       '在手機上，作業系統的日期滾輪往往更快。想讓人邊看星期與國定假日邊選、想呈現無法選擇的日期、想讓人選擇日期範圍、想讓外觀與其他元件一致時，使用 DatePicker。否則就把 `type="date"` 放進 Modal.Input。外框與明暗（`--g-color-scheme`）都會相同（I-15）。',
+      '時間也一樣。原生的 `type="time"`，彈出元件的外觀不會依循主題，也能輸入不符合間隔或超出範圍的時間。想讓間隔與範圍一目了然、想讓人以主題的顏色選擇時，使用 TimePicker。',
     ],
   },
   apiCaption: {
@@ -75,6 +101,7 @@ export default {
     rangePicker: 'Modal.DateRangePicker',
     calendar: 'Modal.Calendar',
     rangeCalendar: 'Modal.RangeCalendar',
+    timePicker: 'Modal.TimePicker',
   },
   a11yCaption: '日期與時間滿足的規格',
 } satisfies typeof ja;

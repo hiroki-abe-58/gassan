@@ -60,7 +60,7 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
       rest={rest}
       title={nav.pages.datePicker}
       lead={t.lead}
-      ids={['I-13', 'I-16', 'I-17', 'I-18', 'I-19', 'I-15']}
+      ids={['I-13', 'I-16', 'I-17', 'I-18', 'I-19', 'I-20', 'I-15']}
       overview={() => (
         <>
           <Section id="gallery" title={t.gallery.title} intro={t.gallery.intro}>
@@ -75,6 +75,15 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
                 {
                   label: items.limited,
                   render: (id) => <Modal.DatePicker aria-labelledby={id} min={localISO()} max={localISO(30)} />,
+                },
+                { label: items.timePicker, render: (id) => <Modal.TimePicker aria-labelledby={id} defaultValue="19:00" /> },
+                {
+                  label: items.time12,
+                  render: (id) => <Modal.TimePicker aria-labelledby={id} defaultValue="19:00" hourCycle="h12" />,
+                },
+                {
+                  label: items.businessHours,
+                  render: (id) => <Modal.TimePicker aria-labelledby={id} step={15} min="10:00" max="18:00" />,
                 },
                 { label: items.date, render: (id) => <Modal.Input aria-labelledby={id} type="date" defaultValue={localISO()} /> },
                 { label: items.time, render: (id) => <Modal.Input aria-labelledby={id} type="time" defaultValue="19:00" /> },
@@ -111,6 +120,18 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
             <CodeBlock lang="tsx" caption={t.holidays.codeCaption} code={t.holidays.code} />
           </Section>
 
+          <Section id="time" title={t.time.title} intro={t.time.intro}>
+            <Prose>
+              <Paras items={t.time.body} />
+            </Prose>
+            <CodeBlock lang="tsx" caption={t.time.codeCaption} code={t.time.code} />
+            <DataTable
+              caption={t.time.keysCaption}
+              head={[t.keys.head.key, t.keys.head.action]}
+              rows={t.time.keys.map((row) => [<kbd key="key">{row.key}</kbd>, row.action])}
+            />
+          </Section>
+
           <Section id="modal" title={t.modal.title} intro={t.modal.intro}>
             <Example title={t.modal.exampleTitle} description={t.modal.exampleDescription} code={dateFormSource} demo="dateForm">
               <DateForm />
@@ -141,13 +162,14 @@ export function DatePickerPage({ rest }: PageProps): ReactNode {
           <ApiTable name="ModalDateRangePickerProps" title={t.apiCaption.rangePicker} />
           <ApiTable name="ModalCalendarProps" title={t.apiCaption.calendar} />
           <ApiTable name="ModalRangeCalendarProps" title={t.apiCaption.rangeCalendar} />
+          <ApiTable name="ModalTimePickerProps" title={t.apiCaption.timePicker} />
           <ApiTable name="CalendarOptions" />
           <ApiTable name="DateRange" />
           <ApiTable name="DateRangePreset" />
         </>
       )}
       a11y={() => (
-        <SpecTable ids={['I-01', 'I-02', 'I-13', 'I-15', 'I-16', 'I-17', 'I-18', 'I-19', 'V-04']} caption={t.a11yCaption} />
+        <SpecTable ids={['I-01', 'I-02', 'I-13', 'I-15', 'I-16', 'I-17', 'I-18', 'I-19', 'I-20', 'V-04']} caption={t.a11yCaption} />
       )}
     />
   );

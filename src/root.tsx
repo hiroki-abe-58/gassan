@@ -25,6 +25,7 @@ import {
   isPrimaryPointer,
   isTextEntry,
   matchMediaSafe,
+  motionStill,
   prefersReducedMotion,
   readCssDurationMs,
   viewportHeight,
@@ -637,7 +638,7 @@ export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function 
     const body = bodyRef.current;
     if (!body) return;
     const delta = Math.max(80, body.clientHeight * 0.85);
-    const behavior: ScrollBehavior = prefersReducedMotion() ? 'auto' : 'smooth';
+    const behavior: ScrollBehavior = motionStill(body) ? 'auto' : 'smooth';
     if (typeof body.scrollBy === 'function') body.scrollBy({ top: delta, behavior });
     else body.scrollTop += delta;
   });

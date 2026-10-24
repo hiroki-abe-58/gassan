@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import { prefersReducedMotion, warnDuplicateKeys, warnOnce } from './internal/dom';
+import { motionStill, warnDuplicateKeys, warnOnce } from './internal/dom';
 import { Icon } from './internal/icons';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
@@ -184,7 +184,7 @@ export function ModalGallery({
     if (typeof track.scrollTo === 'function') {
       track.scrollTo({
         left,
-        behavior: state.source === 'init' || prefersReducedMotion() ? 'auto' : 'smooth',
+        behavior: state.source === 'init' || motionStill(track) ? 'auto' : 'smooth',
       });
     } else {
       track.scrollLeft = left;

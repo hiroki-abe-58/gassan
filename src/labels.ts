@@ -106,6 +106,14 @@ export interface GassanLabels {
   marked: string;
   /** よく使う期間の名前。I-17。 */
   rangePreset: (key: DateRangePresetKey) => string;
+  /** 時刻の選択の列の名前（listbox の名前）。I-20。 */
+  hour: string;
+  minute: string;
+  dayPeriod: string;
+  /** 時刻の選択の「現在時刻」。I-20。 */
+  now: string;
+  /** 時刻の選択の窓の名前。I-20。 */
+  chooseTime: string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -163,6 +171,11 @@ export const japaneseLabels: GassanLabels = {
   marked: '予定あり',
   rangePreset: (key) =>
     ({ today: '今日', yesterday: '昨日', last7: '過去7日間', last30: '過去30日間', thisMonth: '今月', lastMonth: '先月' })[key],
+  hour: '時',
+  minute: '分',
+  dayPeriod: '午前・午後',
+  now: '現在時刻',
+  chooseTime: '時刻を選ぶ',
 };
 
 export const englishLabels: GassanLabels = {
@@ -227,6 +240,11 @@ export const englishLabels: GassanLabels = {
       thisMonth: 'This month',
       lastMonth: 'Last month',
     })[key],
+  hour: 'Hour',
+  minute: 'Minute',
+  dayPeriod: 'AM/PM',
+  now: 'Now',
+  chooseTime: 'Choose a time',
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

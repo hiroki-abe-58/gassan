@@ -1,14 +1,17 @@
 import type ja from '../ja/datePicker';
 
 export default {
-  lead: 'DatePicker and DateRangePicker are popup calendars; Calendar and RangeCalendar are calendars placed on the page. All of them show Japanese public holidays and weekends with colors and names, and let you jump to a month or year from the heading. Month names and weekdays come from Intl using the locale of GassanProvider, so changing the language changes the calendar too.',
+  lead: 'DatePicker and DateRangePicker are popup calendars; Calendar and RangeCalendar are calendars placed on the page. All of them show Japanese public holidays and weekends with colors and names, and let you jump to a month or year from the heading. TimePicker lets you pick a time from hour and minute columns. Month names, weekdays, and time formatting come from Intl using the locale of GassanProvider, so they change along with the language.',
   gallery: {
     title: 'Examples',
-    intro: 'The selected day is filled with the accent color, and today gets a thin ring. Sundays and holidays are red; Saturdays are blue.',
+    intro: 'The selected day and time are filled with the accent color, and today gets a thin ring. Sundays and holidays are red; Saturdays are blue.',
     items: {
       datePicker: 'Calendar',
       rangePicker: 'Date range',
       limited: 'From today, up to 30 days ahead',
+      timePicker: 'Time',
+      time12: '12-hour clock',
+      businessHours: '10:00–18:00, every 15 minutes',
       date: 'Date (native)',
       time: 'Time (native)',
       color: 'Color (native)',
@@ -43,11 +46,33 @@ export default {
     codeCaption: 'Changing how holidays are shown',
     code: "import { japaneseHolidayResolver, japaneseHoliday } from '@genelab/gassan';\n\n// Add your company's closing days\nconst closed: Record<string, string> = { '2026-12-29': 'Year-end closure', '2026-12-30': 'Year-end closure' };\nconst holidays = (date: string) => closed[date] ?? japaneseHolidayResolver()(date);\n\n<Modal.DatePicker holidays={holidays} />\n\n// Show no holidays\n<Modal.DatePicker holidays={null} />\n\n// Look up a single day\njapaneseHoliday('2026-09-22'); // { date: '2026-09-22', key: 'citizens', name: \"国民の休日\" }\n// English names: japaneseHoliday('2026-09-22', japaneseHolidayNames.en)?.name → \"Citizens' Holiday\"",
   },
+  time: {
+    title: 'Time',
+    intro: 'Pick from columns of hours and minutes (plus AM/PM on a 12-hour clock). Each column keeps the selected value in the middle and slides to follow it when the value moves.',
+    body: [
+      'The value is a 24-hour `HH:mm`, the same as the native `type="time"`, even when it is picked on a 12-hour clock. The clock shown (24-hour or 12-hour) and the names for AM and PM follow Intl with `labels.locale`; `hourCycle` pins the clock.',
+      'Times that do not land on the `step` (in minutes) and times outside `min` / `max` cannot be chosen. If you pass a value that is off the step, the button shows it as is, and opening the picker points to the nearest time.',
+      'With a pointer, pressing an hour moves on to the minute column, and pressing a minute commits the choice (on a 12-hour clock, pressing AM or PM commits it). To look around before committing, move with the keys, then press OK.',
+    ],
+    codeCaption: 'Choosing a time',
+    code: "// The value is a 24-hour 'HH:mm' on either clock\n<Modal.TimePicker aria-label=\"Start time\" value={time} onValueChange={setTime} />\n\n// Every 15 minutes, within business hours only\n<Modal.TimePicker step={15} min=\"10:00\" max=\"18:00\" />\n\n// Pin the 12-hour clock (when omitted, follows the convention of labels.locale)\n<Modal.TimePicker hourCycle=\"h12\" />",
+    keysCaption: 'Time picker keyboard interaction',
+    keys: [
+      { key: '↑ / ↓', action: 'Previous / next value (going past an end wraps around to the other end)' },
+      { key: 'PageUp / PageDown', action: 'A quarter of the column at a time' },
+      { key: 'Home / End', action: 'First / last value in the column' },
+      { key: '← / →', action: 'Previous / next column' },
+      { key: '0–9', action: 'Jumps to that time (digits typed in quick succession are combined)' },
+      { key: 'A / P', action: 'AM / PM (12-hour clock)' },
+      { key: 'Enter / Space', action: 'Selects, closes and returns to the button' },
+      { key: 'Esc', action: 'Closes without selecting and returns to the button (the modal stays open)' },
+    ],
+  },
   modal: {
     title: 'Inside a modal',
-    intro: 'The calendar opens in the top layer via popover. Esc closes only the calendar and returns focus to the button.',
+    intro: 'The calendar and the time columns open in the top layer via popover. Esc closes only the popup and returns focus to the button.',
     exampleTitle: 'Make a reservation',
-    exampleDescription: 'Choose the date with the calendar and the time with the native input. Past days cannot be chosen.',
+    exampleDescription: 'Choose the date with the calendar and the time from columns in 15-minute steps. Past days and times outside business hours cannot be chosen.',
   },
   keys: {
     title: 'Keyboard interaction',
@@ -65,9 +90,10 @@ export default {
     note: 'Pressing the heading (“October 2026”) shows a list of months; pressing it again shows a list of years. The arrow keys move within the lists too, and Enter goes down one level. Pressing “Today” goes back to today.',
   },
   native: {
-    title: 'DatePicker or the native date input',
+    title: 'DatePicker and TimePicker, or the native date and time inputs',
     body: [
       'On phones, the OS date wheel is often faster. Use DatePicker when you want users to see the weekdays and holidays as they choose, to show days that cannot be chosen, to let users pick a range, or to match the look of the other components. Otherwise, put `type="date"` in Modal.Input. The frame and the light/dark scheme (`--g-color-scheme`) come out the same (I-15).',
+      'The same goes for times. The native `type="time"` has a popup that does not follow the theme, and it lets users type times off the step or outside the range. Use TimePicker when you want the step and range to be visible, or want users to choose in the theme’s colors.',
     ],
   },
   apiCaption: {
@@ -75,6 +101,7 @@ export default {
     rangePicker: 'Modal.DateRangePicker',
     calendar: 'Modal.Calendar',
     rangeCalendar: 'Modal.RangeCalendar',
+    timePicker: 'Modal.TimePicker',
   },
   a11yCaption: 'Specification items date and time inputs satisfy',
 } satisfies typeof ja;
