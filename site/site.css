@@ -1021,6 +1021,50 @@
 .s-case-card figcaption span {
   color: var(--s-ink-3);
 }
+/* チャットのページ: 会話の枠（列は枠の高さの中でスクロールし、入力欄は下に置く） */
+.s-chat-demo {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  inline-size: 100%;
+  block-size: 440px;
+  overflow: hidden;
+  border: 1px solid var(--s-line);
+  border-radius: var(--g-radius);
+  background: var(--s-surface);
+}
+.s-chat-demo-foot {
+  display: grid;
+  gap: 6px;
+  padding: 8px 12px 12px;
+  border-block-start: 1px solid var(--s-line);
+}
+.s-chat-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-block-size: 0;
+  padding: 20px;
+  overflow-y: auto;
+}
+/* 上下の auto の余白で真ん中に置く。収まらなければ余白が 0 になって上から並ぶ（center だと上が切れて戻れない） */
+.s-chat-empty > :first-child {
+  margin-block-start: auto;
+}
+.s-chat-empty > :last-child {
+  margin-block-end: auto;
+}
+.s-chat-greeting {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+.s-chat-note {
+  margin: 0;
+  padding-inline: 12px;
+  color: var(--s-ink-3);
+  font-size: 0.75rem;
+}
 .s-skeleton-card {
   display: flex;
   align-items: center;

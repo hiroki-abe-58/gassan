@@ -283,6 +283,10 @@ const EXTRA_INTERFACES = new Set([
   'BarListItem',
   // カルーセル（U-28）。
   'CarouselItem',
+  // 会話（E-01〜E-08）。
+  'ChatMessage',
+  'ChatAuthor',
+  'ChatSuggestion',
 ]);
 
 /** Props 型 → 既定値を読む関数名。名前から機械的に決まらないものだけ書く。 */

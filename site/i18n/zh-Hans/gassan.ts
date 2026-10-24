@@ -141,6 +141,22 @@ const labels: GassanLabels = {
   slidePicker: '选择幻灯片',
   startRotation: '开始自动播放幻灯片',
   stopRotation: '停止自动播放幻灯片',
+  message: '消息',
+  send: '发送',
+  stop: '停止',
+  sending: '发送中',
+  sendFailed: '发送失败',
+  retry: '重新发送',
+  read: '已读',
+  edited: '已编辑',
+  yesterday: '昨天',
+  newMessages: (n) => `${n} 条新消息`,
+  unread: '以下为新消息',
+  loadOlder: '加载更早的消息',
+  typing: (names) =>
+    names.length === 1 ? `${names[0] ?? ''} 正在输入` : names.length === 2 ? `${names[0] ?? ''} 和 ${names[1] ?? ''} 正在输入` : `${names.length} 人正在输入`,
+  sendHint: (mode) => (mode === 'enter' ? '按 Enter 发送，Shift+Enter 换行' : '按 Ctrl+Enter（Mac 为 ⌘+Enter）发送，Enter 换行'),
+  suggestions: '示例问题',
 };
 
 export default labels;

@@ -55,6 +55,7 @@ export default {
     uiCommand: '命令面板',
     uiCharts: '圖表',
     uiCarousel: '輪播',
+    uiChat: '聊天',
     templatesAuth: '登入與註冊',
     templatesStatus: '錯誤與維護',
     templatesPublic: '價格、常見問題與條款',

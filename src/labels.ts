@@ -191,6 +191,31 @@ export interface GassanLabels {
   /** 自動再生を始める・止めるボタンの名前。U-29。 */
   startRotation: string;
   stopRotation: string;
+  /** 入力欄の名前・送信・生成を止めるボタンの名前。E-05 / E-06。 */
+  message: string;
+  send: string;
+  stop: string;
+  /** 自分のメッセージの状態（送信中・失敗・既読）と、失敗したときのボタン。E-03。 */
+  sending: string;
+  sendFailed: string;
+  retry: string;
+  read: string;
+  /** 編集したメッセージの印。E-02。 */
+  edited: string;
+  /** 日付の区切り（今日は today を使う）。E-01。 */
+  yesterday: string;
+  /** 下に新しいメッセージがあるときのボタン。E-04。 */
+  newMessages: (count: number) => string;
+  /** 新着の区切りの線。E-01。 */
+  unread: string;
+  /** 前のメッセージを読み込むボタン。E-04。 */
+  loadOlder: string;
+  /** 入力中の人（1 人・2 人・3 人以上で言い方を変える）。E-07。 */
+  typing: (names: readonly string[]) => string;
+  /** 入力欄の下のキーの案内（'enter' は Enter で送信、'mod+enter' は Ctrl / ⌘ + Enter で送信）。E-05。 */
+  sendHint: (mode: 'enter' | 'mod+enter') => string;
+  /** 質問の例の並びの名前。E-08。 */
+  suggestions: string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -304,6 +329,22 @@ export const japaneseLabels: GassanLabels = {
   slidePicker: 'スライドを選ぶ',
   startRotation: 'スライドの自動再生を始める',
   stopRotation: 'スライドの自動再生を止める',
+  message: 'メッセージ',
+  send: '送信',
+  stop: '止める',
+  sending: '送信中',
+  sendFailed: '送信できませんでした',
+  retry: '再送',
+  read: '既読',
+  edited: '編集済み',
+  yesterday: '昨日',
+  newMessages: (count) => `新しいメッセージ ${count}件`,
+  unread: 'ここから新着',
+  loadOlder: '前のメッセージを読み込む',
+  typing: (names) =>
+    names.length === 1 ? `${names[0] ?? ''}さんが入力中` : names.length === 2 ? `${names[0] ?? ''}さんと${names[1] ?? ''}さんが入力中` : `${names.length}人が入力中`,
+  sendHint: (mode) => (mode === 'enter' ? 'Enter で送信、Shift+Enter で改行' : 'Ctrl+Enter（Mac は ⌘+Enter）で送信、Enter で改行'),
+  suggestions: '質問の例',
 };
 
 export const englishLabels: GassanLabels = {
@@ -424,6 +465,22 @@ export const englishLabels: GassanLabels = {
   slidePicker: 'Choose a slide',
   startRotation: 'Start automatic slide show',
   stopRotation: 'Stop automatic slide show',
+  message: 'Message',
+  send: 'Send',
+  stop: 'Stop',
+  sending: 'Sending',
+  sendFailed: 'Not sent',
+  retry: 'Retry',
+  read: 'Read',
+  edited: 'edited',
+  yesterday: 'Yesterday',
+  newMessages: (count) => `${count} new ${count === 1 ? 'message' : 'messages'}`,
+  unread: 'New messages',
+  loadOlder: 'Load earlier messages',
+  typing: (names) =>
+    names.length === 1 ? `${names[0] ?? ''} is typing` : names.length === 2 ? `${names[0] ?? ''} and ${names[1] ?? ''} are typing` : `${names.length} people are typing`,
+  sendHint: (mode) => (mode === 'enter' ? 'Enter to send, Shift+Enter for a new line' : 'Ctrl+Enter (⌘+Enter on Mac) to send, Enter for a new line'),
+  suggestions: 'Suggestions',
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

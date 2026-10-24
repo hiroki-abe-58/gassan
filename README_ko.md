@@ -18,17 +18,17 @@
 
 **문서 사이트: <https://hiroki-abe-58.github.io/gassan/#/ko>**
 — 설계 원칙(모달이 존재하는 이유, 4층 모델, 5가지 유형, 접근성), 스타일(스크림, 색과 대비, 테마, 크기, 줄바꿈, 모션),
-모든 컴포넌트와 폼 요소의 라이브 데모와 API, 페이지 템플릿, 그리고 238개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
+모든 컴포넌트와 폼 요소의 라이브 데모와 API, 페이지 템플릿, 그리고 246개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
 사이트는 한국어, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [ไทย](https://hiroki-abe-58.github.io/gassan/#/th)로 읽을 수 있다(상단 바의 지구본 버튼으로 전환한다).
 라이트 / 다크 테마와 기본 색상(primary color)을 고를 수 있고, 어떤 색을 고르든 글자와 채움 색이 WCAG 대비율을 충족하도록 도출된다.
 사이트의 모든 표, 개수, API 설명은 빌드 시 사양서와 타입 정의에서 생성되며, 손으로 쓴 숫자는 하나도 없다.
 
-전체 설계는 [`modal.skill.md`](./modal.skill.md)(238개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
+전체 설계는 [`modal.skill.md`](./modal.skill.md)(246개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
 AI 어시스턴트와 함께 코딩할 때는 이 파일을 컨텍스트에 넣는다.
 
 | 문서 | 내용 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 238개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 246개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 원래 요구 사항을 분해해 한 줄씩 정리한 표: 구현됨 / 조합으로 달성 / 로드맵에 있음 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan의 폼 요소를 모달 안에 넣는 최소 예제와, gassan에 없는 컴포넌트를 다른 라이브러리에서 가져와 감쌀 때의 주의점 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 네이티브 `<dialog>` vs Base UI vs React Aria vs Radix(2026-09-29 기준, 1차 자료만 사용) |
@@ -269,6 +269,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `PageHeader` `DataTable` `CommandPalette` | 페이지 헤더, 데이터 표(정렬, 행 선택, 일괄 작업), 명령 팔레트(⌘K) |
 | `LineChart` `BarChart` `DonutChart` `Sparkline` `BarList` `Gauge` | 의존성 없이 SVG와 HTML로 그리는 그래프. 키보드로 점을 따라가며 값을 읽어 주고, 원본 데이터를 표로 펼칠 수 있으며, 색은 테마를 따른다 |
 | `Carousel` | 손가락으로도, 이전·다음·점으로도 넘길 수 있는 캐러셀. 자동 재생은 정지 버튼을 맨 앞에 두고, 포인터나 포커스가 올라가면 멈춘다 |
+| `ChatThread` `ChatComposer` `TypingIndicator` `ChatSuggestions` | 사람끼리의 채팅과 AI와의 대화. 위를 읽는 동안에는 위치를 움직이지 않고, 입력기로 변환 중인 Enter로는 보내지 않으며, 생성하면서 쓰는 답변은 다 쓴 뒤에 읽어 준다 |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | 로그인과 계정 페이지(`templates.css`) |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | 오류, 점검, 공개 페이지 |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | 앱 셸과 그 안의 페이지 |

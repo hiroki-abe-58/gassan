@@ -506,6 +506,8 @@ describe('tokens / focus ring (K-07)', () => {
       '.g-time-col:focus-visible': '.g-time-col:focus-visible > [aria-selected="true"]',
       // カードのリンクは当たりがカード全体なので、リングはカードに描く（U-11）。
       '.g-card-link:focus-visible': '.g-card:has(.g-card-link:focus-visible)',
+      // チャットの入力欄は、添付と送信のボタンを含む枠にリングを描く（E-05）。
+      '.g-composer-input': '.g-composer-field:focus-within',
     };
     const naked = [...css.matchAll(/([^\n{}]*)\{[^{}]*outline:\s*none[^{}]*\}/g)].map((m) =>
       (m[1] ?? '').trim(),

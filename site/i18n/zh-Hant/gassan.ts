@@ -137,6 +137,22 @@ const labels: GassanLabels = {
   slidePicker: '選擇投影片',
   startRotation: '開始自動播放投影片',
   stopRotation: '停止自動播放投影片',
+  message: '訊息',
+  send: '傳送',
+  stop: '停止',
+  sending: '傳送中',
+  sendFailed: '傳送失敗',
+  retry: '重新傳送',
+  read: '已讀',
+  edited: '已編輯',
+  yesterday: '昨天',
+  newMessages: (n) => `${n} 則新訊息`,
+  unread: '以下為新訊息',
+  loadOlder: '載入較早的訊息',
+  typing: (names) =>
+    names.length === 1 ? `${names[0] ?? ''} 正在輸入` : names.length === 2 ? `${names[0] ?? ''} 和 ${names[1] ?? ''} 正在輸入` : `${names.length} 人正在輸入`,
+  sendHint: (mode) => (mode === 'enter' ? '按 Enter 傳送，Shift+Enter 換行' : '按 Ctrl+Enter（Mac 為 ⌘+Enter）傳送，Enter 換行'),
+  suggestions: '範例問題',
 };
 
 export default labels;

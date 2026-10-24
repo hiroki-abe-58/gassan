@@ -20,25 +20,9 @@ import { Modal, ModalHost, confirm, resetModalQueue } from '../src';
 import { resetWarnings } from '../src/internal/dom';
 import { resetScrollLock } from '../src/internal/scroll-lock';
 import { resetModalStack } from '../src/internal/stack';
-import { renderModal } from './utils';
+import { mockMediaQueries, renderModal } from './utils';
 
 const EXIT_MS = 140;
-
-function mockReducedMotion(): void {
-  vi.spyOn(window, 'matchMedia').mockImplementation(
-    (query: string) =>
-      ({
-        matches: query === '(prefers-reduced-motion: reduce)',
-        media: query,
-        onchange: null,
-        addListener: () => {},
-        removeListener: () => {},
-        addEventListener: () => {},
-        removeEventListener: () => {},
-        dispatchEvent: () => false,
-      }) as unknown as MediaQueryList,
-  );
-}
 
 /** polyfill の close() は queueMicrotask で close イベントを流す。それを流し切る。 */
 async function flushMicrotasks(): Promise<void> {
@@ -138,7 +122,7 @@ describe('exit fallback / L-07', () => {
   });
 
   it('prefers-reduced-motion では待たずに閉じる（最短）', () => {
-    mockReducedMotion();
+    mockMediaQueries('(prefers-reduced-motion: reduce)');
     const onExited = vi.fn();
     const { dialog, setOpen } = renderModal({ onExited });
 
