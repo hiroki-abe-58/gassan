@@ -35,6 +35,7 @@ import { warnOnce } from './dom';
  */
 export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-active',
+  'data-align',
   'data-at-end',
   'data-at-start',
   'data-block',
@@ -43,6 +44,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-cols',
   'data-column',
   'data-current',
+  'data-density',
   'data-detent',
   'data-disabled',
   'data-dragging',
@@ -67,6 +69,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-range',
   'data-recommended',
   'data-roving',
+  'data-selected',
   'data-shape',
   'data-state',
   'data-toc',

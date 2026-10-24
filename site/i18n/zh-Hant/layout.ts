@@ -8,12 +8,14 @@ export default {
   },
   placement: {
     title: '配置',
-    intro: 'placement="auto" 會先由 JS 解析為 center 或 sheet，再交給 DOM。',
+    intro: 'placement="auto" 會先由 JS 解析為 center 或 sheet，再交給 DOM。start 與 end 是從側邊滑出的面板，依用途選用（auto 不會解析為這兩者）。',
     mockTitle: '路線',
     when: {
       center: '桌面版的預設',
       top: '內容高度變化很大時。置中的話，高度一變就會上下亂跳',
       sheet: '寬度未滿 600px 時的預設。能把 primary 放在單手搆得到的位置',
+      start: '導覽抽屜。在窄螢幕上開啟應用程式的導覽',
+      end: '詳細資料或篩選的面板。一邊看清單一邊確認內容',
     },
   },
   grid: {

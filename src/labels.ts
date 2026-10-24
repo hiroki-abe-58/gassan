@@ -145,6 +145,17 @@ export interface GassanLabels {
   passwordCase: string;
   ruleMet: string;
   ruleUnmet: string;
+  /** 表の行の選択（見出しのチェックボックス・選ぶ列の見出し・選んだ数の読み上げ・選択を外すボタン）。U-26。 */
+  selectAll: string;
+  selectRows: string;
+  selectedCount: (count: number) => string;
+  clearSelection: string;
+  /** 並べ替えたことの読み上げ。column は列の見出しの文字。U-26。 */
+  sortedBy: (column: string, direction: 'ascending' | 'descending') => string;
+  /** 行の操作の列の見出し（読み上げだけ）。U-26。 */
+  rowActions: string;
+  /** 表に行が無いときの既定の文。U-26。 */
+  emptyTable: string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -229,6 +240,13 @@ export const japaneseLabels: GassanLabels = {
   passwordCase: '大文字と小文字を含む',
   ruleMet: '満たしています',
   ruleUnmet: 'まだ満たしていません',
+  selectAll: 'すべて選択',
+  selectRows: '選択',
+  selectedCount: (count) => (count === 0 ? '選択を解除しました' : `${String(count)} 件を選択中`),
+  clearSelection: '選択を解除',
+  sortedBy: (column, direction) => `${column}で${direction === 'ascending' ? '昇順' : '降順'}に並べ替えました`,
+  rowActions: '操作',
+  emptyTable: '表示するものがありません',
 };
 
 export const englishLabels: GassanLabels = {
@@ -320,6 +338,13 @@ export const englishLabels: GassanLabels = {
   passwordCase: 'Contains upper and lower case letters',
   ruleMet: 'met',
   ruleUnmet: 'not met yet',
+  selectAll: 'Select all',
+  selectRows: 'Select',
+  selectedCount: (count) => (count === 0 ? 'Selection cleared' : `${String(count)} selected`),
+  clearSelection: 'Clear selection',
+  sortedBy: (column, direction) => `Sorted by ${column}, ${direction}`,
+  rowActions: 'Actions',
+  emptyTable: 'Nothing to show',
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

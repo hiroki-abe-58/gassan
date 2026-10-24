@@ -6,13 +6,15 @@ export default {
   },
   placement: {
     title: '配置',
-    intro: 'placement="auto" は JS で center か sheet に解決してから DOM に流す。',
+    intro: 'placement="auto" は JS で center か sheet に解決してから DOM に流す。start と end は横の端から出る面で、用途で選ぶ（auto はこれに解決しない）。',
     mockTitle: '経路',
     /** 配置ごとの使いどころ。キーは placement の値。 */
     when: {
       center: 'デスクトップの既定',
       top: '内容の高さが大きく変わるとき。中央寄せだと高さの変化で上下に暴れる',
       sheet: '幅 600px 未満の既定。片手で届く場所に primary を置ける',
+      start: 'ナビゲーションの引き出し。狭い画面でアプリの案内を開く',
+      end: '詳細や絞り込みの面。一覧を見ながら中身を確かめる',
     },
   },
   grid: {

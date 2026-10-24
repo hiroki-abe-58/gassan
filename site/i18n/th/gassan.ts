@@ -115,6 +115,13 @@ const labels: GassanLabels = {
   passwordCase: 'มีทั้งตัวพิมพ์ใหญ่และตัวพิมพ์เล็ก',
   ruleMet: 'ผ่านแล้ว',
   ruleUnmet: 'ยังไม่ผ่าน',
+  selectAll: 'เลือกทั้งหมด',
+  selectRows: 'เลือก',
+  selectedCount: (count) => (count === 0 ? 'ยกเลิกการเลือกแล้ว' : `เลือกแล้ว ${String(count)} รายการ`),
+  clearSelection: 'ยกเลิกการเลือก',
+  sortedBy: (column, direction) => `เรียงตาม ${column} ${direction === 'ascending' ? 'จากน้อยไปมาก' : 'จากมากไปน้อย'}`,
+  rowActions: 'การดำเนินการ',
+  emptyTable: 'ไม่มีข้อมูลที่จะแสดง',
 };
 
 export default labels;

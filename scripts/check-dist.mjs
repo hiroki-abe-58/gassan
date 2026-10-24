@@ -41,12 +41,15 @@ import { gzipSync } from 'node:zlib';
  * 14 ページ・外枠・送信の流れ・日本語と英語の文言を足したため（JS 約 19 KB）。テンプレートは名前つき import でだけ使い、
  * Modal 名前空間からも参照しないので、使わないアプリの JS には載らない（minify した束で、Modal だけを使うアプリに
  * テンプレートの文言が 1 つも無いことを確かめた）。見た目は templates.css に分けたので、読み込まない限り CSS も増えない。
+ * 同日、JS を 80 → 84 KB、CSS を 16 → 18 KB、templates.css を 4 → 5 KB に引き上げた。横から出る面（C-13）・ページの見出しの帯
+ * （U-25）・データの表（U-26。並べ替え・行の選択・選んだ行への操作・骨組み）・アプリの枠（P-12）を足したため（JS 約 3.9 KB・
+ * CSS 約 0.8 KB・templates.css 約 0.6 KB）。表とアプリの枠は名前つき import でだけ使うので、使わないアプリの JS には載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 80 * 1024,
-  'dist/index.cjs': 80 * 1024,
-  'dist/styles.css': 16 * 1024,
-  'dist/templates.css': 4 * 1024,
+  'dist/index.js': 84 * 1024,
+  'dist/index.cjs': 84 * 1024,
+  'dist/styles.css': 18 * 1024,
+  'dist/templates.css': 5 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -154,6 +157,9 @@ const REQUIRED_EXPORTS = [
   'Breadcrumbs',
   'Pagination',
   'Steps',
+  // ページの見出しの帯とデータの表。U-25 / U-26。
+  'PageHeader',
+  'DataTable',
   // フォーム部品の中立の名前（ModalInput などと同じもの）。
   'Field',
   'Fieldset',
@@ -207,6 +213,8 @@ const REQUIRED_EXPORTS = [
   'ChangelogPage',
   'japaneseTemplateLabels',
   'englishTemplateLabels',
+  // アプリの枠。P-12。
+  'AppShell',
 ];
 
 let failed = false;

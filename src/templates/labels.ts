@@ -206,6 +206,12 @@ export interface TemplateLabels {
     tags: { new: string; improved: string; fixed: string; security: string; breaking: string };
     subscribe: string;
   };
+  /** アプリの枠（AppShell）。P-12。account はアカウントのメニューの起点の名前（見えている名前で始める）。 */
+  app: {
+    nav: string;
+    menu: string;
+    account: (name: string) => string;
+  };
 }
 
 /** 「A と B に同意します」のような、リンクを挟む文を組み立てる。 */
@@ -418,6 +424,11 @@ export const japaneseTemplateLabels: TemplateLabels = {
     tags: { new: '新機能', improved: '改善', fixed: '修正', security: 'セキュリティ', breaking: '重要な変更' },
     subscribe: 'RSS で購読する',
   },
+  app: {
+    nav: 'アプリの案内',
+    menu: 'メニュー',
+    account: (name) => `${name}のアカウント`,
+  },
 };
 
 export const englishTemplateLabels: TemplateLabels = {
@@ -626,5 +637,10 @@ export const englishTemplateLabels: TemplateLabels = {
     all: 'All',
     tags: { new: 'New', improved: 'Improved', fixed: 'Fixed', security: 'Security', breaking: 'Breaking' },
     subscribe: 'Subscribe via RSS',
+  },
+  app: {
+    nav: 'App navigation',
+    menu: 'Menu',
+    account: (name) => `${name}, account`,
   },
 };

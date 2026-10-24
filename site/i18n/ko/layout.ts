@@ -8,12 +8,14 @@ export default {
   },
   placement: {
     title: '배치',
-    intro: 'placement="auto"는 JS로 center 또는 sheet로 결정한 뒤 DOM에 넘긴다.',
+    intro: 'placement="auto"는 JS로 center 또는 sheet로 결정한 뒤 DOM에 넘긴다. start와 end는 옆쪽 끝에서 나오는 패널로, 용도에 따라 고른다(auto는 이 둘로 결정되지 않는다).',
     mockTitle: '경로',
     when: {
       center: '데스크톱의 기본값',
       top: '내용의 높이가 크게 바뀔 때. 가운데 정렬이면 높이 변화에 따라 위아래로 날뛴다',
       sheet: '너비 600px 미만의 기본값. 한 손으로 닿는 곳에 primary를 둘 수 있다',
+      start: '내비게이션 드로어. 좁은 화면에서 앱의 내비게이션을 연다',
+      end: '상세 정보나 필터를 보여 주는 패널. 목록을 보면서 내용을 확인한다',
     },
   },
   grid: {

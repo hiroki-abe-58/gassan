@@ -1,4 +1,4 @@
-import { createContext, useContext, type ComponentType, type ReactNode } from 'react';
+import { createContext, useContext, type ComponentType, type MouseEventHandler, type ReactNode } from 'react';
 
 import { ButtonBody } from '../internal/button-body';
 import { useLabels } from '../labels';
@@ -14,6 +14,8 @@ export interface SiteLinkProps {
   className?: string;
   children: ReactNode;
   'aria-current'?: 'page';
+  /** 押したとき（アプリの枠では、狭い器で開いた案内の面を閉じる）。行き先へ移るのはリンクの既定の動き。 */
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
   [data: `data-${string}`]: string | undefined;
 }
 

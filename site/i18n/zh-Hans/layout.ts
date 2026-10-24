@@ -8,12 +8,14 @@ export default {
   },
   placement: {
     title: '位置',
-    intro: 'placement="auto" 先用 JS 解析为 center 或 sheet，再交给 DOM。',
+    intro: 'placement="auto" 先用 JS 解析为 center 或 sheet，再交给 DOM。start 和 end 是从侧边滑出的面板，按用途选用（auto 不会解析为这两者）。',
     mockTitle: '路线',
     when: {
       center: '桌面端的默认值',
       top: '内容高度变化很大时。居中的话，高度一变就会上下乱跳',
       sheet: '宽度小于 600px 时的默认值。能把 primary 放在单手够得着的位置',
+      start: '导航抽屉。在窄屏上打开应用的导航',
+      end: '详情或筛选的面板。一边看列表一边确认内容',
     },
   },
   grid: {

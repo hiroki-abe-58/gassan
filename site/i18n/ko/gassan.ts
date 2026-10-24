@@ -111,6 +111,13 @@ const labels: GassanLabels = {
   passwordCase: '대문자와 소문자 포함',
   ruleMet: '충족',
   ruleUnmet: '아직 충족하지 않음',
+  selectAll: '모두 선택',
+  selectRows: '선택',
+  selectedCount: (count) => (count === 0 ? '선택을 해제했습니다' : `${String(count)}개 선택됨`),
+  clearSelection: '선택 해제',
+  sortedBy: (column, direction) => `${column} 기준 ${direction === 'ascending' ? '오름차순' : '내림차순'}으로 정렬함`,
+  rowActions: '작업',
+  emptyTable: '표시할 항목이 없습니다',
 };
 
 export default labels;

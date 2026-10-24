@@ -89,4 +89,18 @@ export default {
     },
     a11yCaption: '公開ページのテンプレートが満たす仕様',
   },
+  app: {
+    lead: 'ログインした後の画面の外枠。左の案内の帯・上の帯（検索・通知・アカウント）・本文。器が狭いときは、上の帯の「メニュー」から横の面で案内を開く。中身はページの見出しの帯・数の要約・データの表で組む。',
+    setup: {
+      title: '使い方',
+      intro: '案内はまとまりごとに渡し、いまのページの行き先を current に渡す。製品の名前とロゴ、リンクを描く部品（Next.js の Link など）は SiteProvider から引く。',
+      code: "import { AppShell, PageHeader, DataTable } from '@genelab/gassan';\n\n<AppShell\n  current={pathname}\n  nav={[\n    { items: [{ label: 'ホーム', href: '/app', icon: <HomeIcon /> }] },\n    { title: 'ワークスペース', items: [{ label: 'メンバー', href: '/app/members' }] },\n  ]}\n  actions={<IconButton label=\"検索\"><SearchIcon /></IconButton>}\n  account={{ name: '佐藤 葵', menu: [{ value: 'sign-out', label: 'ログアウト', onSelect: signOut }] }}\n>\n  <PageHeader title=\"メンバー\" actions={<Button variant=\"primary\">招待する</Button>} />\n  <DataTable label=\"メンバー\" rows={members} columns={columns} getRowId={(m) => m.id} selectable />\n</AppShell>",
+    },
+    shell: {
+      title: 'アプリの枠',
+      intro: '器が広いときは左に案内の帯を置き、いまのページを地の色と太字で示す。「スマートフォン」に切り替えると案内は畳まれ、「メニュー」から横の面で開く（Esc か外を押すと閉じ、案内のリンクを押しても閉じる）。メンバーの画面では、行の「…」から詳細を横の面で開ける。',
+      variants: { dashboard: 'ホーム（ダッシュボード）', members: 'メンバー（データの表）' },
+    },
+    a11yCaption: 'アプリの枠が満たす仕様',
+  },
 };

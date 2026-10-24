@@ -91,4 +91,18 @@ export default {
     },
     a11yCaption: '公開頁面範本滿足的規格',
   },
+  app: {
+    lead: '登入之後的畫面外框。左側的導覽列、頂端列（搜尋、通知、帳戶）與主要內容。容器較窄時，從頂端列的「選單」以側邊面板開啟導覽。內容由頁面標題列、數值摘要與資料表格組成。',
+    setup: {
+      title: '用法',
+      intro: '導覽依分組傳入，並把目前頁面的連結目的地傳給 current。產品的名稱與標誌，以及繪製連結的元件（Next.js 的 Link 等），都從 SiteProvider 取得。',
+      code: "import { AppShell, PageHeader, DataTable } from '@genelab/gassan';\n\n<AppShell\n  current={pathname}\n  nav={[\n    { items: [{ label: '首頁', href: '/app', icon: <HomeIcon /> }] },\n    { title: '工作區', items: [{ label: '成員', href: '/app/members' }] },\n  ]}\n  actions={<IconButton label=\"搜尋\"><SearchIcon /></IconButton>}\n  account={{ name: '陳怡君', menu: [{ value: 'sign-out', label: '登出', onSelect: signOut }] }}\n>\n  <PageHeader title=\"成員\" actions={<Button variant=\"primary\">邀請</Button>} />\n  <DataTable label=\"成員\" rows={members} columns={columns} getRowId={(m) => m.id} selectable />\n</AppShell>",
+    },
+    shell: {
+      title: '應用程式外框',
+      intro: '容器較寬時，在左側放置導覽列，並以底色與粗體標示目前的頁面。切換到「手機」後，導覽會收合，可以從「選單」以側邊面板開啟（按 Esc 或點擊外側即可關閉，點擊導覽中的連結也會關閉）。在成員畫面中，可以從每一列的「…」以側邊面板開啟詳細資料。',
+      variants: { dashboard: '首頁（儀表板）', members: '成員（資料表格）' },
+    },
+    a11yCaption: '應用程式外框滿足的規格',
+  },
 } satisfies typeof ja;

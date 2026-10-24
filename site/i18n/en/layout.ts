@@ -8,12 +8,14 @@ export default {
   },
   placement: {
     title: 'Placement',
-    intro: 'placement="auto" is resolved to center or sheet in JS before it reaches the DOM.',
+    intro: 'placement="auto" is resolved to center or sheet in JS before it reaches the DOM. start and end are panels that slide in from the side edges; choose them by purpose (auto never resolves to them).',
     mockTitle: 'Route',
     when: {
       center: 'Default on desktop',
       top: 'When the content height changes a lot. Centered, the panel would jump up and down as the height changes',
       sheet: 'Default below 600px wide. Puts primary within one-handed reach',
+      start: 'A navigation drawer. Opens the app’s navigation on narrow screens',
+      end: 'A panel for details or filters. Check the contents while keeping the list in view',
     },
   },
   grid: {

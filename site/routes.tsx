@@ -30,6 +30,7 @@ import { ImperativePage } from './pages/components/ImperativePage';
 import { ToastPage } from './pages/components/ToastPage';
 import { UiBadgesPage } from './pages/ui/BadgesPage';
 import { UiButtonsPage } from './pages/ui/ButtonsPage';
+import { UiDataPage } from './pages/ui/DataPage';
 import { UiFeedbackPage } from './pages/ui/FeedbackPage';
 import { UiLayoutPage } from './pages/ui/LayoutPage';
 import { UiNavigationPage } from './pages/ui/NavigationPage';
@@ -44,6 +45,7 @@ import { TextInputPage } from './pages/components/TextInputPage';
 import { TitlePage } from './pages/components/TitlePage';
 import { Spec } from './pages/reference/Spec';
 import { Verification } from './pages/reference/Verification';
+import { AppTemplatesPage } from './pages/templates/AppTemplatesPage';
 import { AuthTemplatesPage } from './pages/templates/AuthTemplatesPage';
 import { PublicTemplatesPage } from './pages/templates/PublicTemplatesPage';
 import { StatusTemplatesPage } from './pages/templates/StatusTemplatesPage';
@@ -105,6 +107,7 @@ export const PAGES: readonly PageDef[] = [
   { path: '/ui/layout', key: 'uiLayout', section: 'ui', Component: UiLayoutPage },
   { path: '/ui/navigation', key: 'uiNavigation', section: 'ui', Component: UiNavigationPage },
   { path: '/ui/overlays', key: 'uiOverlays', section: 'ui', Component: UiOverlaysPage },
+  { path: '/ui/data', key: 'uiData', section: 'ui', Component: UiDataPage },
   { path: '/components/provider', key: 'provider', section: 'components', Component: ProviderPage },
 
   // 公開済みのリンクを壊さないよう、パスは /components の下のまま。ナビの節だけを分ける。
@@ -119,6 +122,7 @@ export const PAGES: readonly PageDef[] = [
   { path: '/templates/auth', key: 'templatesAuth', section: 'templates', Component: AuthTemplatesPage },
   { path: '/templates/status', key: 'templatesStatus', section: 'templates', Component: StatusTemplatesPage },
   { path: '/templates/public', key: 'templatesPublic', section: 'templates', Component: PublicTemplatesPage },
+  { path: '/templates/app', key: 'templatesApp', section: 'templates', Component: AppTemplatesPage },
 
   { path: '/spec', key: 'spec', section: 'reference', Component: Spec },
   { path: '/verification', key: 'verification', section: 'reference', Component: Verification },

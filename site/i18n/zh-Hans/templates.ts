@@ -212,4 +212,9 @@ export default {
     tags: { new: '新功能', improved: '改进', fixed: '修复', security: '安全', breaking: '重要变更' },
     subscribe: '通过 RSS 订阅',
   },
+  app: {
+    nav: '应用导航',
+    menu: '菜单',
+    account: (name) => `${name}的账户`,
+  },
 } satisfies typeof ja;

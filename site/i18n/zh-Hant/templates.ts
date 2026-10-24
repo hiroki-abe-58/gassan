@@ -212,4 +212,9 @@ export default {
     tags: { new: '新功能', improved: '改善', fixed: '修正', security: '安全性', breaking: '重大變更' },
     subscribe: '透過 RSS 訂閱',
   },
+  app: {
+    nav: '應用程式導覽',
+    menu: '選單',
+    account: (name) => `${name}的帳戶`,
+  },
 } satisfies typeof ja;
