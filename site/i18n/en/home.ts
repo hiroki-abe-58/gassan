@@ -1,16 +1,60 @@
 import type ja from '../ja/home';
 
 export default {
-  eyebrow: 'A modal shell for React',
-  heroTitle: ['Leave layer 1', 'to the browser.'],
-  lead: 'gassan is a modal shell for React built on the native `<dialog>`. Focus trapping, Esc and making the background inert are not implemented here, not a single line. Instead, it puts everything into the layer that existing libraries have barely touched — information structure, activation gates and close reasons.',
+  eyebrow: 'A React UI library for SaaS',
+  heroTitle: ['From sign-in to billing,', 'just place one component.'],
+  lead: 'gassan is a React UI library built on the native `<dialog>`. It ships modals, form controls, UI parts, toasts and a command palette, and goes as far as pages for sign-in, errors, pricing, settings, members and billing. Focus trapping, Esc and making the background inert are left to the browser. Instead, what screen readers announce, keyboard operation and Japanese line breaking are written into the specification and checked by tests.',
   start: 'Get started',
-  philosophy: 'Read the design principles',
+  templates: 'See the templates',
   stats: {
+    exports: 'Public APIs',
     items: 'Behaviors listed',
     tests: 'Automated tests',
-    proven: 'Behaviors proven by tests',
     trap: 'Hand-rolled focus traps',
+  },
+  showcase: {
+    title: 'Sample app',
+    intro: 'Atlas is a fictional SaaS. Its navigation and buttons take you around inside it: home, members, plan and billing, settings, sign-in and pricing. The screens are built from gassan’s templates and parts; the only additions are the logo, the sample data and the way the numbers are laid out on the home screen. Switch to “Phone” for the narrow-screen layout.',
+    frameTitle: 'Atlas',
+    variants: { dashboard: 'Home', members: 'Members', billing: 'Plan and billing', settings: 'Settings', signIn: 'Sign-in', pricing: 'Pricing' },
+  },
+  features: {
+    title: 'What’s included',
+    intro: 'What SaaS screens need, as components and as whole pages. Everything is a named import, and parts you don’t use are not bundled into your app.',
+    items: {
+      modal: {
+        title: 'Modals',
+        body: 'Five kinds, activation gates, title truncation, close reasons and sheets that stop at detents. Focus, Esc and the background are left to the browser.',
+      },
+      forms: {
+        title: 'Form controls',
+        body: 'Text fields, choices, selects, a calendar with Japanese public holidays and range selection, a time picker, tags, password strength and files.',
+      },
+      ui: {
+        title: 'UI parts',
+        body: 'Buttons, badges, cards, stats, tabs, menus, breadcrumbs, pagination, steps, data tables and a command palette.',
+      },
+      feedback: {
+        title: 'Notices',
+        body: 'Toasts with a meter that runs down the time left, banners and progress. A toast can be paused to read, and closed with a swipe or by hand.',
+      },
+      templates: {
+        title: 'Page templates',
+        body: 'Sign-in, sign-up, two-step verification, password reset, errors, maintenance, pricing, FAQ, terms, contact and changelog.',
+      },
+      app: {
+        title: 'App screens',
+        body: 'The app shell, and pages for settings, members, plan and billing, getting started and accepting an invitation. Pass only data and handlers, and they work.',
+      },
+      motion: {
+        title: 'Motion',
+        body: 'Choose from four motion levels, complete down to press feedback, exits and springs that settle back. The reduced-motion setting is always respected.',
+      },
+      a11y: {
+        title: 'Screen readers and keyboard',
+        body: 'For each component, the name, the state and where focus goes are written into the specification and checked by tests. Nothing is conveyed by color alone.',
+      },
+    },
   },
   languages: {
     title: 'Built for Japanese, Chinese and Korean screens',
@@ -35,7 +79,7 @@ export default {
     },
   },
   promises: {
-    title: 'Four things other libraries have not solved',
+    title: 'The modal core — four things other libraries have not solved',
     intro: 'The browser has already solved layer 1 (top layer, focus, Esc). gassan spends its time on the design work above it.',
     gate: {
       title: 'Activation gates',
@@ -89,6 +133,8 @@ export default {
   install: {
     title: 'Install',
     caption: 'Installation',
+    cssCaption: 'Load the styles',
+    css: "import '@genelab/gassan/styles.css';\n// Only when you use the page templates (load it after styles.css)\nimport '@genelab/gassan/templates.css';",
     more: 'Minimal example and browser requirements →',
   },
 } satisfies typeof ja;

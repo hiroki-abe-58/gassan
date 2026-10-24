@@ -2,17 +2,19 @@
 
 [English](./README.md) · [日本語](./README_ja.md) · [简体中文](./README_zh.md) · [繁體中文](./README_zh-Hant.md) · **한국어** · [ไทย](./README_th.md)
 
-네이티브 `<dialog>`를 토대로 한 React용 모달 셸.
+네이티브 `<dialog>`를 토대로 한, SaaS를 위한 React UI 라이브러리.
+
+모달, 폼 요소, UI 요소, 토스트, 명령 팔레트부터 로그인·오류·요금 페이지, 설정·멤버·결제를 안에 담은 앱 셸까지, 모두 컴포넌트 하나만 두면 된다.
 포커스 트랩, Esc, 배경의 inert 처리, top layer는 **여기서 한 줄도 구현하지 않았다**. 브라우저가 처리한다.
+일본어·중국어·한국어 줄바꿈과 접근성은 사양으로 적어 두고 테스트로 확인한다.
 
-그 대신 gassan은 기존 라이브러리가 거의 손대지 않은 층에 집중한다.
-
-- **활성화 게이트** — "끝까지 읽으면", "체크하면" 누를 수 있게 되는 버튼을 `disabled` 없이 만든다
-- **제목 말줄임** — DOM의 텍스트를 자르지 않고 말줄임하므로, 접근 가능한 이름(accessible name)은 언제나 온전하게 남는다
-- **닫기 사유** — 8종류의 `CloseReason`을 구별하고, 닫기를 거부할 때는 반드시 사유를 돌려준다
-- **스크림** — 하드코딩된 60% 검정을 버리고, 의도별 4단계 토큰을 쓴다
+- **모달** — 5가지 유형. 활성화 게이트("끝까지 읽으면", "체크하면" 누를 수 있게 되는 버튼을 `disabled` 없이 만든다). 접근 가능한 이름(accessible name)을 온전하게 지키는 제목 말줄임. 8종류의 `CloseReason`(닫기를 거부할 때는 반드시 사유를 돌려준다). 디텐트에서 멈추는 시트. 하드코딩된 60% 검정을 버린, 의도별 4단계 스크림 토큰
+- **폼 요소** — 텍스트, 비밀번호, 검색, 숫자, 인증 코드, 체크박스, 라디오, 세그먼트, 평점, 스위치, 칩, 슬라이더, 셀렉트, 콤보박스, 일본 공휴일과 기간 선택을 갖춘 달력, 시간 선택, 태그, 비밀번호 강도, 파일. 안쪽은 네이티브 요소 그대로 두고 테두리와 표시만 다시 그리며, 색은 테마의 강조색을 따른다. 목록과 달력은 top layer에 나타나므로 모달에 잘리지 않는다
+- **UI 요소** — 버튼, 배지, 아바타, 진행률, 스켈레톤, 카드, 수치 요약, 빈 상태, 이름과 값의 목록, 타임라인, 알림 배너, 탭, 아코디언, 툴팁, 팝오버, 메뉴, 브레드크럼, 페이지 이동, 단계, 페이지 헤더, 데이터 표(정렬, 행 선택, 일괄 작업), 명령 팔레트(⌘K)
+- **토스트** — 사라질 때까지 남은 시간을 미터로 보여 준다. 포인터가 올라가 있거나 포커스가 안에 있으면 멈추고, 스와이프로도 직접 눌러서도 닫을 수 있다
+- **페이지 템플릿** — 로그인, 계정 만들기, 2단계 인증, 비밀번호 재설정, 이메일 확인, 로그아웃, 4xx / 5xx와 오프라인 오류, 점검, 약관과 개인정보 처리방침, 자주 묻는 질문, 요금, 문의하기, 업데이트 내역. 그리고 앱 셸과, 그 안의 설정·멤버·요금제와 결제·초기 설정·초대 수락 페이지
 - **일본어·중국어·한국어 줄바꿈** — 버튼, 제목, 표의 셀, 차트 요약 어디에서든 단어 중간에서 줄을 바꾸지 않는다. 일본어는 문절 경계(「プロフィールを｜編集」이지, 「プロフィールを編｜集」이 아니다), 중국어는 단어 경계, 한국어는 공백에서만 끊는다. 태국어와 영어는 브라우저가 이미 올바르게 끊으므로 브라우저에 맡긴다
-- **폼 요소** — 텍스트, 비밀번호, 검색, 숫자, 인증 코드, 체크박스, 라디오, 세그먼트, 평점, 슬라이더, 셀렉트, 콤보박스, 달력, 파일 등 18개 컴포넌트. 안쪽은 네이티브 요소 그대로 두고 테두리와 표시만 다시 그리며, 색은 테마의 강조색을 따른다. 목록과 달력은 top layer에 나타나므로 모달에 잘리지 않는다
+- **모션과 테마** — 4단계의 모션 중에서 고를 수 있다(동작 줄이기 설정은 반드시 따른다). 라이트와 다크, 원하는 기본 색상(primary color). 어떤 색을 고르든 글자와 채움 색이 WCAG 대비율을 충족하도록 도출된다
 
 **문서 사이트: <https://hiroki-abe-58.github.io/gassan/#/ko>**
 — 설계 원칙(모달이 존재하는 이유, 4층 모델, 5가지 유형, 접근성), 스타일(스크림, 색과 대비, 테마, 크기, 줄바꿈, 모션),
@@ -93,6 +95,37 @@ function Example() {
 
 **모달은 항상 마운트해 둔다.** `{open && <Modal.Root .../>}`처럼 쓰지 않는다.
 조건부로 마운트하면 닫히는 애니메이션을 아예 그릴 수 없다.
+
+---
+
+## 페이지 템플릿
+
+앱의 루트에 `SiteProvider`를 하나 두면(제품 이름, 로고, 링크, 라우터의 링크 컴포넌트), 페이지는 컴포넌트 하나로 나온다.
+템플릿의 스타일은 `templates.css`에 있다. `styles.css` 다음에 불러온다.
+
+```tsx
+import { SiteProvider, SignInPage } from '@genelab/gassan';
+import '@genelab/gassan/styles.css';
+import '@genelab/gassan/templates.css';
+
+export function SignIn() {
+  return (
+    <SiteProvider name="Atlas" links={{ home: '/', signUp: '/signup', forgotPassword: '/forgot' }}>
+      <SignInPage
+        onSubmit={async ({ email, password }) => {
+          const ok = await signIn(email, password);
+          // 실패하면 기본 문구를 보여 준다(어느 쪽이 틀렸는지 밝히지 않는다)
+          if (!ok) return { error: true };
+        }}
+      />
+    </SiteProvider>
+  );
+}
+```
+
+로그인한 뒤에는 `AppShell`이 왼쪽 내비게이션 바, 상단 바, 좁은 화면의 내비게이션 패널을 맡고, 그 안을 `SettingsPage`, `MembersPage`, `BillingPage`, `OnboardingPage`, `InviteAcceptPage`로 채운다.
+넘기는 것은 데이터와 처리 함수뿐이다. 처리 함수가 `{ error }`를 돌려주면 그 문장을 읽어 주고, 중복 제출은 일어나지 않는다.
+날짜와 시간은 `SiteProvider`의 `timeZone`으로 그린다. 지정하지 않으면 보는 사람의 시간대로 그리고, hydration이 끝날 때까지는 UTC로 그리므로, 서버와 브라우저의 글자가 어긋나지 않는다.
 
 ---
 
@@ -227,9 +260,20 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Chart` | 차트를 담는 컨테이너. 이름(`label`)과 추세의 텍스트 대체(`summary`)를 연결하고, 원본 데이터를 `<details>`로 보여 준다. 직접 그리지는 않는다 |
 | `Modal.Handle` | 시트의 손잡이. 디텐트가 있으면 `role="slider"` 컨트롤, 없으면 장식용으로 잡는 영역 |
 | `ModalHost` `useModals` | 명령형 API(`await confirm()`) |
+| `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | 일본 공휴일과 기간 선택을 갖춘 달력, 테마로 그리는 시간 선택 |
+| `Modal.TagInput` `Modal.PasswordStrength` | 태그(붙여넣기와 IME 대응)와 새 비밀번호의 강도 |
+| `toast` `ToastHost` | 남은 시간 미터가 달린 토스트 |
+| `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | 페이지 위(모달 밖)에서 쓰는 버튼과 표시 |
+| `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 컨테이너, 숫자, 진행 상황, 알림 |
+| `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | 이동을 위한 컴포넌트와, 트리거 옆에 나타나는 컴포넌트 |
+| `PageHeader` `DataTable` `CommandPalette` | 페이지 헤더, 데이터 표(정렬, 행 선택, 일괄 작업), 명령 팔레트(⌘K) |
+| `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | 로그인과 계정 페이지(`templates.css`) |
+| `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | 오류, 점검, 공개 페이지 |
+| `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | 앱 셸과 그 안의 페이지 |
 | `GassanProvider` | UI 문자열 교체(기본은 일본어, `englishLabels` 동봉)와 줄바꿈 전환(`lineBreak`) |
 | `Phrase` `splitPhrases` | 직접 만든 UI의 일본어·중국어·한국어 텍스트에도 같은 줄바꿈을 적용(gassan 컴포넌트 안에서는 기본으로 켜져 있다) |
 
+폼 요소에는 `Modal`을 붙이지 않은 중립적인 이름(`Field`, `Input`, `Select`, `Calendar` …)도 있어, 페이지 위에서도 그대로 쓸 수 있다.
 폼 요소는 안쪽이 네이티브 요소이며, `Modal.Field`의 render prop을 그대로 펼쳐서 받는다.
 선택지 그룹(라디오, 여러 체크박스, 평점, 손잡이가 두 개인 슬라이더)은 `label`이 아니라 `Modal.Fieldset`(`fieldset` / `legend`)으로 이름을 붙인다.
 목록과 달력은 popover API로 top layer에 띄우며, 열려 있을 때의 Esc는 목록만 닫는다.

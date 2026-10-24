@@ -1,7 +1,7 @@
 import type ja from '../ja/common';
 
 export default {
-  siteTitle: 'gassan — 為原生 dialog 打造的模態視窗外殼',
+  siteTitle: 'gassan — 為 SaaS 打造的 React UI 函式庫',
   skipToMain: '跳至主要內容',
   openMenu: '開啟選單',
   menu: '選單',

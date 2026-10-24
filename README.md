@@ -2,17 +2,19 @@
 
 **English** · [日本語](./README_ja.md) · [简体中文](./README_zh.md) · [繁體中文](./README_zh-Hant.md) · [한국어](./README_ko.md) · [ไทย](./README_th.md)
 
-A modal shell for React, built on the native `<dialog>`.
+A React UI library for SaaS, built on the native `<dialog>`.
+
+Modals, form controls, UI parts, toasts, a command palette, and page templates — from sign-in, errors and pricing to an app shell with settings, members and billing inside it — each placed as a single component.
 Focus trapping, Esc, making the background inert and the top layer are **not implemented here at all, not a single line**. The browser does them.
+Line breaking for Japanese, Chinese and Korean and accessibility are written down as a specification and verified by tests.
 
-Instead, gassan concentrates on the layer that existing libraries have barely touched.
-
-- **Activation gates** — buttons that become pressable "once you have read to the end" or "once you have ticked the box", built without `disabled`
-- **Title truncation** — truncate without cutting the DOM text, so the accessible name always stays complete
-- **Close reasons** — distinguish 8 kinds of `CloseReason`, and always return a reason when refusing to close
-- **Scrim** — drop the hard-coded 60% black and use four intent-based tokens instead
+- **Modals** — five kinds; activation gates (buttons that become pressable "once you have read to the end" or "once you have ticked the box", built without `disabled`); title truncation that keeps the accessible name complete; 8 kinds of `CloseReason`, always with a reason when closing is refused; sheets that stop at detents; and four intent-based scrim tokens instead of a hard-coded 60% black
+- **Form controls** — text, password, search, number, verification code, checkbox, radio, segmented control, rating, switch, chips, sliders, select, combobox, a calendar with Japanese public holidays and range selection, a time picker, tags, password strength and file drop. Inside they stay native elements; only the frame and the marks are redrawn, and the color follows the theme's accent. Lists and calendars open in the top layer, so a modal never clips them
+- **UI parts** — buttons, badges, avatars, progress, skeletons, cards, stats, empty states, description lists, timelines, banners, tabs, accordions, tooltips, popovers, menus, breadcrumbs, pagination, steps, a page header, a data table (sorting, row selection, bulk actions) and a command palette (⌘K)
+- **Toasts** — a meter shows how long until the message disappears. It pauses under the pointer and focus, and can be swiped away or closed by hand
+- **Page templates** — sign in, sign up, two-step verification, password reset, email verification, sign out, 4xx / 5xx and offline errors, maintenance, terms and privacy, FAQ, pricing, contact and changelog; an app shell, and settings, members, billing, onboarding and invitation pages inside it
 - **Line breaking for Japanese, Chinese and Korean** — text never breaks in the middle of a word, in buttons, titles, table cells and chart summaries alike. Japanese breaks at phrase boundaries (「プロフィールを｜編集」, never 「プロフィールを編｜集」), Chinese at word boundaries, Korean only at spaces. Thai and English are left to the browser, which already breaks them correctly
-- **Form controls** — 18 parts, including text, password, search, number, verification code, checkbox, radio, segmented control, rating, slider, select, combobox, calendar and file. Inside they stay native elements; only the frame and the marks are redrawn, and the color follows the theme's accent. Lists and calendars open in the top layer, so the modal never clips them
+- **Motion and themes** — four motion levels to choose from (reduced motion always wins), light and dark, and any primary color: its text and fills are derived to meet the WCAG contrast ratios
 
 **Documentation site: <https://hiroki-abe-58.github.io/gassan/#/en>**
 — design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, line breaking, motion),
@@ -93,6 +95,37 @@ function Example() {
 
 **Keep the modal mounted at all times.** Do not write `{open && <Modal.Root .../>}`.
 With conditional mounting, the closing animation simply cannot be drawn.
+
+---
+
+## Page templates
+
+Put one `SiteProvider` at the root of your app (the product name, the logo, the links and your router's link component), and each page is a single component.
+The templates' styles are in `templates.css`; load it after `styles.css`.
+
+```tsx
+import { SiteProvider, SignInPage } from '@genelab/gassan';
+import '@genelab/gassan/styles.css';
+import '@genelab/gassan/templates.css';
+
+export function SignIn() {
+  return (
+    <SiteProvider name="Atlas" links={{ home: '/', signUp: '/signup', forgotPassword: '/forgot' }}>
+      <SignInPage
+        onSubmit={async ({ email, password }) => {
+          const ok = await signIn(email, password);
+          // A failure shows the default message, which does not reveal which of the two was wrong
+          if (!ok) return { error: true };
+        }}
+      />
+    </SiteProvider>
+  );
+}
+```
+
+After sign-in, `AppShell` gives the sidebar, the top bar and, on narrow screens, the navigation drawer; `SettingsPage`, `MembersPage`, `BillingPage`, `OnboardingPage` and `InviteAcceptPage` fill it.
+Pass only data and handlers. When a handler returns `{ error }`, the message is announced, and nothing is submitted twice.
+Dates are drawn in `SiteProvider`'s `timeZone`. Without one they are drawn in the viewer's time zone, and in UTC until hydration finishes, so the server and the browser never disagree.
 
 ---
 
@@ -227,9 +260,20 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Chart` | A container for charts. Wires up the name (`label`) and a text alternative for the trend (`summary`), and exposes the raw data in a `<details>`. It does not draw anything |
 | `Modal.Handle` | The grip of a sheet. With detents it is a `role="slider"` control; without them, a decorative grab area |
 | `ModalHost` `useModals` | Imperative API (`await confirm()`) |
+| `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | Calendars with Japanese public holidays and ranges, and a time picker drawn in the theme |
+| `Modal.TagInput` `Modal.PasswordStrength` | Tags (aware of pasting and IME) and the strength of a new password |
+| `toast` `ToastHost` | Toasts with a meter for the time left |
+| `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | Buttons and marks for the page, outside modals |
+| `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | Containers, numbers, progress and notices |
+| `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | Navigation, and the parts that open beside a trigger |
+| `PageHeader` `DataTable` `CommandPalette` | A page header, a data table (sorting, row selection, bulk actions) and a command palette (⌘K) |
+| `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | Sign-in and account pages (`templates.css`) |
+| `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | Errors, maintenance and public pages |
+| `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | The app shell and the pages inside it |
 | `GassanProvider` | Replaces UI strings (Japanese by default; `englishLabels` is bundled) and switches line breaking (`lineBreak`) |
 | `Phrase` `splitPhrases` | The same line breaking for Japanese, Chinese and Korean text in your own UI (inside gassan's components it is on by default) |
 
+The form controls also have neutral names without `Modal` (`Field`, `Input`, `Select`, `Calendar` …), for use on the page.
 The form controls are native elements inside, and take the props from `Modal.Field`'s render prop by simply spreading them.
 Groups of options (radios, multiple checkboxes, ratings, two-thumb sliders) are named with `Modal.Fieldset` (`fieldset` / `legend`), not `label`.
 Lists and calendars open in the top layer through the popover API, and while one is open, Esc closes only the list.

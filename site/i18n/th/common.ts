@@ -1,7 +1,7 @@
 import type ja from '../ja/common';
 
 export default {
-  siteTitle: 'gassan — modal shell สำหรับ dialog แบบเนทีฟ',
+  siteTitle: 'gassan — ไลบรารี React UI สำหรับ SaaS',
   skipToMain: 'ข้ามไปยังเนื้อหาหลัก',
   openMenu: 'เปิดเมนู',
   menu: 'เมนู',

@@ -2,17 +2,19 @@
 
 [English](./README.md) · [日本語](./README_ja.md) · [简体中文](./README_zh.md) · **繁體中文** · [한국어](./README_ko.md) · [ไทย](./README_th.md)
 
-以原生 `<dialog>` 為基礎打造的 React modal 外殼（modal shell）。
+以原生 `<dialog>` 為基礎、為 SaaS 打造的 React UI 函式庫。
+
+從 modal、表單元件、UI 元件、快顯通知、命令面板，到登入、錯誤、價格頁面，以及內含設定、成員、帳單的應用程式外框，每一樣都只要放一個元件。
 焦點陷阱、Esc、讓背景變成 inert、top layer，**這裡一行都沒有實作**。全部交給瀏覽器。
+日文、中文、韓文的換行與無障礙，都寫進了規格，並以測試驗證。
 
-取而代之，gassan 專注在現有函式庫幾乎沒碰過的那一層。
-
-- **啟用閘門（activation gate）** — 不用 `disabled`，做出「讀到最後」或「勾選之後」才能按的按鈕
-- **標題截斷** — 不切斷 DOM 中的文字也能截斷顯示，無障礙名稱（accessible name）始終保持完整
-- **關閉原因** — 區分 8 種 `CloseReason`，拒絕關閉時一定會回傳原因
-- **遮罩層（scrim）** — 不再寫死 60% 的黑色，改用依意圖區分的四個 token
+- **Modal** — 五種類型。啟用閘門（不用 `disabled`，做出「讀到最後」或「勾選之後」才能按的按鈕）。始終保持無障礙名稱（accessible name）完整的標題截斷。8 種 `CloseReason`（拒絕關閉時一定會回傳原因）。依停駐點停靠的底部面板。不再寫死 60% 的黑色、依意圖區分的四個遮罩層（scrim）token
+- **表單元件** — 文字、密碼、搜尋、數字、驗證碼、核取方塊、單選按鈕、分段控制、評分、開關、標籤組（chips）、滑桿、下拉選單、組合框、具備日本國定假日與期間選擇的月曆、時間選擇、標籤、密碼強度、檔案。內部維持原生元素，只重新繪製外框與記號，顏色跟隨主題的強調色。清單與月曆顯示在 top layer，所以不會被 modal 裁切
+- **UI 元件** — 按鈕、徽章、頭像、進度、骨架屏、卡片、數值摘要、空狀態、名稱與值的清單、時間軸、通知橫幅、頁籤、摺疊面板、工具提示、彈出框、選單、麵包屑、分頁、步驟條、頁面標題列、資料表格（排序、選取列、批次操作）、命令面板（⌘K）
+- **快顯通知** — 以計時條顯示訊息消失前的剩餘時間。指標停在上方或焦點位於其中時會暫停，滑動或手動都能關閉
+- **頁面範本** — 登入、建立帳號、兩步驟驗證、重設密碼、驗證電子郵件、登出、4xx / 5xx 與離線時的錯誤、維護、條款與隱私權政策、常見問題、價格、聯絡我們、更新紀錄。以及應用程式外框，和其中的設定、成員、方案與帳單、初始設定、接受邀請頁面
 - **日文、中文、韓文的換行** — 無論是按鈕、標題、表格儲存格還是圖表摘要，文字都不會在詞的中間斷開。日文在文節邊界斷行（是「プロフィールを｜編集」，絕不會是「プロフィールを編｜集」），中文在詞的邊界，韓文只在空格處。泰文和英文交給瀏覽器處理，因為瀏覽器原本就能正確斷行
-- **表單元件** — 文字、密碼、搜尋、數字、驗證碼、核取方塊、單選按鈕、分段控制、評分、滑桿、下拉選單、組合框、月曆、檔案等 18 種元件。內部維持原生元素，只重新繪製外框與記號，顏色跟隨主題的強調色。清單與月曆顯示在 top layer，所以不會被 modal 裁切
+- **動態效果與主題** — 可從 4 個等級的動態效果中選擇（始終遵從「減少動態效果」的設定）。淺色與深色，以及任意主色。無論選哪個顏色，文字與填色都會經過推算，以符合 WCAG 的對比度要求
 
 **文件網站：<https://hiroki-abe-58.github.io/gassan/#/zh-Hant>**
 — 以類似 Material Design 3 指南的形式，整理了設計理念（modal 存在的理由、四層模型、五種類型、無障礙）、樣式（遮罩層、色彩與對比、主題、尺寸、換行、動態效果）、
@@ -93,6 +95,37 @@ function Example() {
 
 **請讓 modal 始終保持掛載。** 不要寫成 `{open && <Modal.Root .../>}`。
 改成條件式掛載的話，關閉動畫從根本上就畫不出來。
+
+---
+
+## 頁面範本
+
+在應用程式的根部放一個 `SiteProvider`（產品名稱、標誌、各個連結目的地、路由器的連結元件），每個頁面只要放一個元件。
+範本的外觀在 `templates.css` 中，請在 `styles.css` 之後載入。
+
+```tsx
+import { SiteProvider, SignInPage } from '@genelab/gassan';
+import '@genelab/gassan/styles.css';
+import '@genelab/gassan/templates.css';
+
+export function SignIn() {
+  return (
+    <SiteProvider name="Atlas" links={{ home: '/', signUp: '/signup', forgotPassword: '/forgot' }}>
+      <SignInPage
+        onSubmit={async ({ email, password }) => {
+          const ok = await signIn(email, password);
+          // 失敗時顯示預設的訊息（不透露是哪一項錯誤）
+          if (!ok) return { error: true };
+        }}
+      />
+    </SiteProvider>
+  );
+}
+```
+
+登入之後，由 `AppShell` 提供左側的導覽列、頂端列，以及窄螢幕時的導覽面板，其中的內容則以 `SettingsPage`、`MembersPage`、`BillingPage`、`OnboardingPage`、`InviteAcceptPage` 填入。
+只需傳入資料與處理函式。處理函式回傳 `{ error }` 時會朗讀這段訊息，也不會重複送出。
+日期與時間依 `SiteProvider` 的 `timeZone` 繪製。沒有指定時依瀏覽者所在的時區繪製，在 hydration 完成之前以 UTC 繪製，因此伺服器端與瀏覽器的文字不會不一致。
 
 ---
 
@@ -227,9 +260,20 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Chart` | 圖表的容器。關聯名稱（`label`）與趨勢的替代文字（`summary`），並以 `<details>` 呈現原始資料。本身不負責繪圖 |
 | `Modal.Handle` | 底部面板（sheet）的拖曳把手。有停駐點（detent）時是 `role="slider"` 的控制項；沒有時只是裝飾性的抓取區域 |
 | `ModalHost` `useModals` | 命令式 API（`await confirm()`） |
+| `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` | 具備日本國定假日與期間選擇的月曆，以及依主題繪製的時間選擇 |
+| `Modal.TagInput` `Modal.PasswordStrength` | 標籤（支援貼上與輸入法）與新密碼的強度 |
+| `toast` `ToastHost` | 附剩餘時間計時條的快顯通知 |
+| `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | 在頁面上（modal 之外）使用的按鈕與記號 |
+| `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 容器、數值、進度與通知 |
+| `Tabs` `Accordion` `Tooltip` `Popover` `Menu` `Breadcrumbs` `Pagination` `Steps` | 導覽類元件，以及顯示在觸發元素旁的元件 |
+| `PageHeader` `DataTable` `CommandPalette` | 頁面標題列、資料表格（排序、選取列、批次操作）、命令面板（⌘K） |
+| `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | 登入與帳號相關的頁面（`templates.css`） |
+| `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | 錯誤、維護與公開頁面 |
+| `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` | 應用程式外框及其中的頁面 |
 | `GassanProvider` | 替換 UI 字串（預設為日文，內附 `englishLabels`），並切換換行方式（`lineBreak`） |
 | `Phrase` `splitPhrases` | 讓自己 UI 中的日文、中文、韓文套用同樣的換行規則（gassan 的元件內部預設已啟用） |
 
+表單元件也有不加 `Modal` 的中性名稱（`Field`、`Input`、`Select`、`Calendar` …），在頁面上也能直接使用。
 表單元件的內部是原生元素，直接展開 `Modal.Field` 的 render prop 來接收。
 選項群組（單選按鈕、多個核取方塊、評分、雙把手滑桿）要用 `Modal.Fieldset`（`fieldset` / `legend`）命名，而不是 `label`。
 清單與月曆以 popover API 顯示在 top layer，開啟時按 Esc 只會關閉清單。

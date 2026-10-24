@@ -18,6 +18,7 @@ import { LayerStack } from '../ui/LayerStack';
 import { md } from '../ui/Markdown';
 import { Section, Stats } from '../ui/Page';
 import { STATUS_ORDER, StatusBadge, useStatusLabel } from '../ui/Spec';
+import { TemplateFrame } from '../ui/TemplateFrame';
 
 /**
  * 言語の見本。サイトの言語に関わらず、この 3 つを並べる（訳さない。見本そのものが言語の例）。
@@ -45,7 +46,6 @@ export function Home(): ReactNode {
     status,
     count: allItems.filter((item) => item.status === status).length,
   })).filter((entry) => entry.count > 0);
-  const proven = byStatus.find((entry) => entry.status === '実装')?.count ?? 0;
   const yesNo = (allowed: boolean): string => (allowed ? t.kinds.closes : t.kinds.stays);
 
   const promises: readonly { key: string; title: string; body: string; href: string; visual: ReactNode }[] = [
@@ -109,6 +109,18 @@ export function Home(): ReactNode {
     },
   ];
 
+  /** 揃っているもの。分野ごとに、ドキュメントの入り口のページへつなぐ。 */
+  const features: readonly { key: string; title: string; body: string; href: string }[] = [
+    { key: 'modal', ...t.features.items.modal, href: '/foundations/kinds' },
+    { key: 'forms', ...t.features.items.forms, href: '/components/field' },
+    { key: 'ui', ...t.features.items.ui, href: '/ui/buttons' },
+    { key: 'feedback', ...t.features.items.feedback, href: '/components/toast' },
+    { key: 'templates', ...t.features.items.templates, href: '/templates/auth' },
+    { key: 'app', ...t.features.items.app, href: '/templates/app-pages' },
+    { key: 'motion', ...t.features.items.motion, href: '/styles/motion' },
+    { key: 'a11y', ...t.features.items.a11y, href: '/foundations/accessibility' },
+  ];
+
   const details: readonly { title: string; body: string; href: string }[] = [
     { ...t.languages.details.lineBreak, href: '/styles/line-break' },
     { title: t.languages.details.theme.title, body: t.languages.details.theme.body(PRESETS.length), href: '/styles/theme' },
@@ -137,8 +149,8 @@ export function Home(): ReactNode {
             <a className="s-btn s-btn-lg" href={to('/start')}>
               {t.start}
             </a>
-            <a className="s-btn s-btn-lg s-btn-tonal" href={to('/foundations/layers')}>
-              {t.philosophy}
+            <a className="s-btn s-btn-lg s-btn-tonal" href={to('/templates/app')}>
+              {t.templates}
             </a>
           </div>
         </div>
@@ -147,12 +159,44 @@ export function Home(): ReactNode {
 
       <Stats
         items={[
+          { value: meta.exports, label: t.stats.exports },
           { value: meta.items, label: t.stats.items },
           { value: meta.tests, label: t.stats.tests },
-          { value: `${String(Math.round((proven / meta.items) * 100))}%`, label: t.stats.proven },
           { value: 0, label: t.stats.trap },
         ]}
       />
+
+      <Section id="showcase" title={t.showcase.title} intro={t.showcase.intro}>
+        <TemplateFrame
+          title={t.showcase.frameTitle}
+          height={720}
+          variants={[
+            { name: 'app-dashboard', label: t.showcase.variants.dashboard },
+            { name: 'app-members', label: t.showcase.variants.members },
+            { name: 'app-billing', label: t.showcase.variants.billing },
+            { name: 'app-settings', label: t.showcase.variants.settings },
+            { name: 'sign-in', label: t.showcase.variants.signIn },
+            { name: 'pricing', label: t.showcase.variants.pricing },
+          ]}
+        />
+      </Section>
+
+      <Section id="features" title={t.features.title} intro={t.features.intro}>
+        <ul className="s-cards s-cards-4 s-feature-cards">
+          {features.map((feature) => (
+            <li key={feature.key} className="s-card s-card-plain">
+              <h3>
+                <a href={to(feature.href)} className="s-card-link">
+                  <Phrase>{feature.title}</Phrase>
+                </a>
+              </h3>
+              <p>
+                <Phrase>{feature.body}</Phrase>
+              </p>
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       <Section id="languages" title={t.languages.title} intro={t.languages.intro}>
         <BreakCompare width={9.5} browserNote={t.languages.browserNote} phraseNote={t.languages.phraseNote}>
@@ -258,16 +302,17 @@ export function Home(): ReactNode {
         </ul>
         <div className="s-home-links">
           <a className="s-btn s-btn-tonal" href={to('/spec')}>
-            {t.verified.spec(meta.items)}
+            <Phrase>{t.verified.spec(meta.items)}</Phrase>
           </a>
           <a className="s-btn s-btn-text" href={to('/verification')}>
-            {t.verified.verification}
+            <Phrase>{t.verified.verification}</Phrase>
           </a>
         </div>
       </Section>
 
       <Section id="install" title={t.install.title}>
         <CodeBlock code={`npm install @genelab/gassan`} lang="bash" caption={t.install.caption} />
+        <CodeBlock code={t.install.css} lang="tsx" caption={t.install.cssCaption} />
         <p className="s-more">
           <a href={to('/start')}>{t.install.more}</a>
         </p>

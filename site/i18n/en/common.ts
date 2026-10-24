@@ -1,7 +1,7 @@
 import type ja from '../ja/common';
 
 export default {
-  siteTitle: 'gassan — a modal shell for the native dialog',
+  siteTitle: 'gassan — a React UI library for SaaS',
   skipToMain: 'Skip to main content',
   openMenu: 'Open menu',
   menu: 'Menu',
@@ -11,7 +11,7 @@ export default {
   search: 'Search',
   searchPalette: 'Search this site',
   searchPlaceholder: 'Type a page name',
-  spec: 'Specification',
+  spec: 'Spec',
   pager: 'Previous and next pages',
   prev: 'Previous',
   next: 'Next',
