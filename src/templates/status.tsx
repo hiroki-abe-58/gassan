@@ -6,25 +6,73 @@ import { Icon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { usePhrase } from '../phrase';
 import { useCooldown } from './form';
-import type { ErrorCopyKey, ErrorStatus } from './labels';
+import { ERROR_STATUSES, type ErrorCopyKey, type ErrorStatus } from './labels';
 import { StatusLayout } from './layouts';
 import { SiteButtonLink, useSite, useTimeZone } from './site';
 
-const KNOWN: readonly string[] = ['400', '401', '403', '404', '408', '410', '429', '500', '502', '503', '504'];
+const isRegistered = (status: number): status is (typeof ERROR_STATUSES)[number] => (ERROR_STATUSES as readonly number[]).includes(status);
 
-/** 状態から文言の鍵を引く。知らない 4xx / 5xx は '4xx' / '5xx'。 */
+/** 状態から文言の鍵を引く。登録に無い 4xx / 5xx は '4xx' / '5xx'。 */
 function copyKey(status: ErrorStatus | number): ErrorCopyKey {
   if (status === 'offline') return 'offline';
-  const text = String(status);
-  if (KNOWN.includes(text)) return text as ErrorCopyKey;
+  if (isRegistered(status)) return `${status}` as const;
   return status >= 500 ? '5xx' : '4xx';
 }
 
-/** 時間をおけば直る見込みがある状態（もう一度試すを先に出す）。 */
-const retryable = (status: ErrorStatus | number): boolean => status === 'offline' || status === 408 || status === 429 || (typeof status === 'number' && status >= 500);
+/**
+ * 次の一歩。retry は時間をおくか読み込み直せば直るとき、retryWithStatus はそれに稼働状況を添える（サーバー側の問題）。
+ * back は送った内容に問題があるとき、home はページや機能にたどり着けないとき、contact は利用者が自分では直せないとき。
+ */
+type NextStep = 'retry' | 'retryWithStatus' | 'back' | 'home' | 'contact' | 'signIn' | 'billing';
+
+const NEXT: Record<ErrorCopyKey, NextStep> = {
+  '400': 'back',
+  '401': 'signIn',
+  '402': 'billing',
+  '403': 'contact',
+  '404': 'home',
+  '405': 'back',
+  '406': 'back',
+  '407': 'retry',
+  '408': 'retry',
+  '409': 'retry',
+  '410': 'home',
+  '411': 'back',
+  '412': 'retry',
+  '413': 'back',
+  '414': 'home',
+  '415': 'back',
+  '416': 'retry',
+  '417': 'retry',
+  '418': 'home',
+  '421': 'retry',
+  '422': 'back',
+  '423': 'retry',
+  '424': 'retry',
+  '425': 'retry',
+  '426': 'retry',
+  '428': 'retry',
+  '429': 'retry',
+  '431': 'retry',
+  '451': 'contact',
+  '500': 'retryWithStatus',
+  '501': 'home',
+  '502': 'retryWithStatus',
+  '503': 'retryWithStatus',
+  '504': 'retryWithStatus',
+  '505': 'retry',
+  '506': 'retryWithStatus',
+  '507': 'retryWithStatus',
+  '508': 'retryWithStatus',
+  '510': 'back',
+  '511': 'retry',
+  offline: 'retry',
+  '4xx': 'back',
+  '5xx': 'retryWithStatus',
+};
 
 export interface ErrorPageProps extends DataAttributes {
-  /** HTTP の状態コード（404 など）か 'offline'。既定 404。知らない 4xx / 5xx も受ける。 */
+  /** HTTP の状態コード（404 など）か 'offline'。既定 404。登録に無い 4xx / 5xx も受ける。 */
   status?: ErrorStatus | number;
   title?: ReactNode;
   description?: ReactNode;
@@ -43,8 +91,10 @@ export interface ErrorPageProps extends DataAttributes {
 /**
  * 4xx / 5xx とオフラインのページ。P-05。
  *
- * 何が起きたか・なぜか・次に何ができるかを、利用者を責めない言葉で書く。次の一歩は状態で変える
- * （401 はログイン、403 は権限の依頼、404 はホームと前のページ、408・429・5xx・オフラインはもう一度試す）。
+ * 何が起きたか・なぜか・次に何ができるかを、利用者を責めない言葉で書く。IANA に登録された 4xx / 5xx（ERROR_STATUSES）は
+ * それぞれの見出しと説明を持ち、登録に無い状態は 4xx / 5xx の文で出す。次の一歩は状態で変える（401 はログイン、402 は請求の設定、
+ * 403・451 は問い合わせ、ページや機能にたどり着けないときはホーム、送った内容に問題があるときは前のページ、
+ * 時間をおくか読み込み直せば直るときはもう一度試す。サーバー側の問題には稼働状況も添える）。
  * 状態コードは大きく見せ、読み上げでは「エラー 404」と読ませる。問い合わせ番号は写せる。
  */
 export function ErrorPage({
@@ -78,48 +128,71 @@ export function ErrorPage({
       </span>
     );
 
-  const home = links.home ? (
-    <SiteButtonLink href={links.home} variant={retryable(status) || status === 401 ? 'secondary' : 'primary'}>
-      {common.home}
-    </SiteButtonLink>
-  ) : null;
-
-  const defaultActions = retryable(status) ? (
-    <>
-      {/* 待つ間は aria-disabled（フォーカスは止まり、待ち時間を説明として読む）。待ち時間は毎秒変わるので読み上げの領域にしない */}
-      <Button variant="primary" aria-disabled={waiting || undefined} aria-describedby={waiting ? waitId : undefined} onClick={retry}>
-        {common.retry}
-      </Button>
-      {home}
-      {links.status && key !== 'offline' && key !== '408' && key !== '429' ? (
-        <SiteButtonLink href={links.status} variant="tertiary">
-          {common.statusPage}
-        </SiteButtonLink>
-      ) : null}
-    </>
-  ) : status === 401 ? (
-    <>
-      {links.signIn ? (
-        <SiteButtonLink href={links.signIn} variant="primary">
-          {common.signIn}
-        </SiteButtonLink>
-      ) : null}
-      {home}
-    </>
-  ) : (
-    <>
-      {home}
-      {status === 403 && links.contact ? (
-        <SiteButtonLink href={links.contact} variant="tertiary">
-          {common.contactSupport}
-        </SiteButtonLink>
-      ) : (
-        <Button variant="tertiary" onClick={() => window.history.back()}>
-          {common.back}
-        </Button>
-      )}
-    </>
+  const link = (href: string | undefined, label: string, variant: 'primary' | 'secondary' | 'tertiary'): ReactNode =>
+    href ? (
+      <SiteButtonLink href={href} variant={variant}>
+        {label}
+      </SiteButtonLink>
+    ) : null;
+  const back = (variant: 'primary' | 'tertiary'): ReactNode => (
+    <Button variant={variant} onClick={() => window.history.back()}>
+      {common.back}
+    </Button>
   );
+
+  // 請求の設定が無ければ、402 は問い合わせへ案内する
+  const step =NEXT[key] === 'billing' && !links.billing ? 'contact' : NEXT[key];
+  const defaultActions = ((): ReactNode => {
+    switch (step) {
+      case 'retry':
+      case 'retryWithStatus':
+        return (
+          <>
+            {/* 待つ間は aria-disabled（フォーカスは止まり、待ち時間を説明として読む）。待ち時間は毎秒変わるので読み上げの領域にしない */}
+            <Button variant="primary" aria-disabled={waiting || undefined} aria-describedby={waiting ? waitId : undefined} onClick={retry}>
+              {common.retry}
+            </Button>
+            {link(links.home, common.home, 'secondary')}
+            {step === 'retryWithStatus' ? link(links.status, common.statusPage, 'tertiary') : null}
+          </>
+        );
+      case 'signIn':
+        return (
+          <>
+            {link(links.signIn, common.signIn, 'primary')}
+            {link(links.home, common.home, 'secondary')}
+          </>
+        );
+      case 'billing':
+        return (
+          <>
+            {link(links.billing, common.billing, 'primary')}
+            {link(links.home, common.home, 'secondary')}
+          </>
+        );
+      case 'back':
+        return (
+          <>
+            {back('primary')}
+            {link(links.home, common.home, 'secondary')}
+          </>
+        );
+      case 'home':
+        return (
+          <>
+            {link(links.home, common.home, 'primary')}
+            {back('tertiary')}
+          </>
+        );
+      case 'contact':
+        return (
+          <>
+            {link(links.home, common.home, 'primary')}
+            {links.contact ? link(links.contact, common.contactSupport, 'tertiary') : back('tertiary')}
+          </>
+        );
+    }
+  })();
 
   return (
     <StatusLayout

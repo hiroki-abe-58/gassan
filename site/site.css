@@ -1242,8 +1242,9 @@
   font-size: 0.875rem;
   font-weight: 650;
 }
+/* エラーのページの見本は「404 ページが見つかりません」のように見出しまで名前に入るので、そのまま読める幅にする */
 .s-frame-select {
-  inline-size: 13rem;
+  inline-size: min(100%, 20rem);
 }
 .s-frame-open {
   color: var(--s-accent);

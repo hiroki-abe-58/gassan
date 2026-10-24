@@ -34,6 +34,8 @@ export interface SiteLinks {
   changelog?: string;
   /** 稼働状況のページ（障害とメンテナンスの知らせ）。 */
   status?: string;
+  /** 請求の設定（402 のページが「請求の設定を開く」で案内する）。 */
+  billing?: string;
 }
 
 /** ヘッダとフッタに並べるリンク。 */

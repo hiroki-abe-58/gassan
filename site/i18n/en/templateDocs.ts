@@ -43,15 +43,10 @@ export default {
     lead: '4xx / 5xx, offline and maintenance. Each says what happened, why, and what you can do next, in words that don’t blame the user, and the next step changes with each status.',
     error: {
       title: 'Error pages',
-      intro: '401 leads to sign-in, 403 to asking for access, 404 to home and the previous page, and 429, 5xx and offline to trying again. The status code is shown large and read out as “Error 404”. The reference on 5xx can be copied. On 429, “Try again” can’t be pressed while the wait lasts.',
-      variants: {
-        notFound: '404 Not found',
-        server: '500 Server problem',
-        forbidden: '403 No access',
-        unauthorized: '401 Sign-in required',
-        tooMany: '429 Too many requests',
-        offline: 'Offline',
-      },
+      intro: 'Each of the 40 IANA-registered 4xx and 5xx codes, plus offline, has its own heading, description and next step (a status that isn’t registered falls back to the general 4xx / 5xx text). The next step changes with the status: sign-in for 401, billing settings for 402, contacting support for 403 and 451, home when a page or feature can’t be reached (404, 410 and so on), the previous page when there’s a problem with what was sent, and trying again when a wait or a reload will fix it (for server-side problems, the status page too). The status code is shown large and read out as “Error 404”. The reference on 5xx can be copied. On 429, “Try again” can’t be pressed while the wait lasts.',
+      offline: 'Offline',
+      tableCaption: 'Statuses the error page covers',
+      head: { code: 'Code', title: 'Heading', description: 'Description' },
     },
     maintenance: {
       title: 'Maintenance',

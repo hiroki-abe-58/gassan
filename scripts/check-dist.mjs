@@ -64,10 +64,12 @@ import { gzipSync } from 'node:zlib';
  * （U-30〜U-33）と、その日本語と英語の文言を足したため（JS 約 3.5 KB・CSS 約 1 KB）。使わないアプリの JS には載らない。
  * 同日、JS を 124 → 127 KB に引き上げた。右クリックのメニュー（U-34）と色の選択（I-23）を足したため（JS 約 3 KB・CSS 約 0.5 KB）。
  * 色の選択は入力部品なので Modal 名前空間にも入る（Modal.ColorPicker。時刻の選択と同じ扱い）。
+ * 同日、JS を 127 → 130 KB に引き上げた。エラーのページ（P-05）が IANA に登録された 4xx / 5xx の 40 個すべてに見出しと説明を
+ * 持つようにしたため（29 個ぶんの日本語と英語の文言。JS 約 3.5 KB）。文言はテンプレートからだけ引くので、使わないアプリの JS には載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 127 * 1024,
-  'dist/index.cjs': 127 * 1024,
+  'dist/index.js': 130 * 1024,
+  'dist/index.cjs': 130 * 1024,
   'dist/styles.css': 23 * 1024,
   'dist/templates.css': 7 * 1024,
 };
@@ -257,6 +259,7 @@ const REQUIRED_EXPORTS = [
   'ChangelogPage',
   'japaneseTemplateLabels',
   'englishTemplateLabels',
+  'ERROR_STATUSES',
   // アプリの枠。P-12。
   'AppShell',
   // アプリの中のページ。P-13〜P-17。
