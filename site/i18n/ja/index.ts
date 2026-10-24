@@ -19,6 +19,7 @@ import gate from './gate';
 import header from './header';
 import home from './home';
 import imperative from './imperative';
+import toast from './toast';
 import kinds from './kinds';
 import layers from './layers';
 import layout from './layout';
@@ -78,6 +79,7 @@ const messages = {
   chart,
   sheet,
   imperative,
+  toast,
   provider,
   spec,
   verification,

@@ -89,6 +89,8 @@ const labels: GassanLabels = {
   dayPeriod: '오전/오후',
   now: '현재 시각',
   chooseTime: '시간 선택',
+  notifications: '알림',
+  closeNotification: '알림 닫기',
 };
 
 export default labels;

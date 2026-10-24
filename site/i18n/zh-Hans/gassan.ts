@@ -90,6 +90,8 @@ const labels: GassanLabels = {
   dayPeriod: '上午/下午',
   now: '现在',
   chooseTime: '选择时间',
+  notifications: '通知',
+  closeNotification: '关闭通知',
 };
 
 export default labels;

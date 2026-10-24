@@ -42,6 +42,7 @@ export default {
     chart: 'Modal.Chart',
     sheet: 'Sheets and Handle',
     imperative: 'Imperative API',
+    toast: 'Toast',
     provider: 'GassanProvider',
     spec: 'Behavior specification',
     verification: 'Verification',

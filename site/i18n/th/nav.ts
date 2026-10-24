@@ -42,6 +42,7 @@ export default {
     chart: 'Modal.Chart',
     sheet: 'Sheet และ Handle',
     imperative: 'Imperative API',
+    toast: 'โทสต์',
     provider: 'GassanProvider',
     spec: 'สเปกพฤติกรรม',
     verification: 'การตรวจสอบ',

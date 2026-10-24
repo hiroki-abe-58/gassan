@@ -42,6 +42,7 @@ export default {
     chart: 'Modal.Chart',
     sheet: '시트와 Handle',
     imperative: '명령형 API',
+    toast: '토스트',
     provider: 'GassanProvider',
     spec: '동작 명세',
     verification: '검증',

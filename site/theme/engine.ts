@@ -249,6 +249,10 @@ const TEXT_TOKENS: readonly { name: string; on: readonly string[]; tinted: boole
   { name: '--g-fg', on: ['--g-surface'], tinted: true },
   { name: '--g-fg-muted', on: ['--g-surface'], tinted: true },
   { name: '--g-danger', on: ['--g-surface'], tinted: false },
+  // トーストの成功・注意・お知らせ。意味の色なので色相を保つ。
+  { name: '--g-success', on: ['--g-surface'], tinted: false },
+  { name: '--g-warning', on: ['--g-surface'], tinted: false },
+  { name: '--g-info', on: ['--g-surface'], tinted: false },
   // カレンダーの日曜・祝日と土曜。曜日の意味の色なので色相を保つ。
   { name: '--g-sunday', on: ['--g-surface'], tinted: false },
   { name: '--g-saturday', on: ['--g-surface'], tinted: false },
@@ -372,6 +376,9 @@ export type CheckId =
   | 'gassanBody'
   | 'gassanMuted'
   | 'gassanDanger'
+  | 'gassanSuccess'
+  | 'gassanWarning'
+  | 'gassanInfo'
   | 'gassanSunday'
   | 'gassanSaturday'
   | 'focusRing'
@@ -473,6 +480,9 @@ export function buildTheme(
     check('gassanBody', s('--g-fg'), s('--g-surface'), 4.5),
     check('gassanMuted', s('--g-fg-muted'), s('--g-surface'), 4.5),
     check('gassanDanger', s('--g-danger'), s('--g-surface'), 4.5),
+    check('gassanSuccess', s('--g-success'), s('--g-surface'), 4.5),
+    check('gassanWarning', s('--g-warning'), s('--g-surface'), 4.5),
+    check('gassanInfo', s('--g-info'), s('--g-surface'), 4.5),
     check('gassanSunday', s('--g-sunday'), s('--g-surface'), 4.5),
     check('gassanSaturday', s('--g-saturday'), s('--g-surface'), 4.5),
     check('focusRing', s('--g-focus'), s('--g-surface'), 3),
