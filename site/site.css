@@ -927,6 +927,48 @@
   color: var(--s-ink-2);
   font-size: 0.9375rem;
 }
+/* UI 部品のページの見本 */
+.s-dashboard {
+  display: grid;
+  gap: 12px;
+  inline-size: 100%;
+  max-inline-size: 56rem;
+}
+.s-dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 12px;
+}
+.s-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
+  align-items: start;
+}
+.s-dashboard-stack {
+  display: grid;
+  gap: 16px;
+}
+.s-skeleton-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.s-skeleton-card-lines {
+  display: grid;
+  flex: 1;
+  gap: 8px;
+}
+.s-banner-stack {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+.s-toolbar {
+  align-items: center;
+  justify-content: flex-start;
+}
+
 /* トーストの「元に戻す」のデモ。下書きの行 */
 .s-draft-list {
   display: grid;
@@ -3234,6 +3276,10 @@
 }
 .s-specimen-stage {
   min-inline-size: 0;
+}
+/* 見本の中の横並びは、ほかの見本と同じく左に寄せる（デモの台の中央寄せを持ち込まない）。 */
+.s-specimen-stage > .s-demo-row {
+  justify-content: flex-start;
 }
 
 @media (prefers-reduced-motion: reduce) {

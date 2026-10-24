@@ -118,6 +118,12 @@ export interface GassanLabels {
   notifications: string;
   /** トーストの × ボタン。N-04。 */
   closeNotification: string;
+  /** CopyButton の名前と、写したあと・写せなかったときの知らせ。U-03。 */
+  copy: string;
+  copied: string;
+  copyFailed: string;
+  /** AvatarGroup の「+3」の読み上げ名。U-05。 */
+  moreCount: (count: number) => string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -182,6 +188,10 @@ export const japaneseLabels: GassanLabels = {
   chooseTime: '時刻を選ぶ',
   notifications: '通知',
   closeNotification: '通知を閉じる',
+  copy: 'コピー',
+  copied: 'コピーしました',
+  copyFailed: 'コピーできませんでした',
+  moreCount: (count) => `ほか${String(count)}人`,
 };
 
 export const englishLabels: GassanLabels = {
@@ -253,6 +263,10 @@ export const englishLabels: GassanLabels = {
   chooseTime: 'Choose a time',
   notifications: 'Notifications',
   closeNotification: 'Dismiss notification',
+  copy: 'Copy',
+  copied: 'Copied',
+  copyFailed: 'Could not copy',
+  moreCount: (count) => `${String(count)} more`,
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

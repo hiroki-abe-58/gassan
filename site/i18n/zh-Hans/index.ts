@@ -20,6 +20,10 @@ import header from './header';
 import home from './home';
 import imperative from './imperative';
 import toast from './toast';
+import uiBadges from './uiBadges';
+import uiButtons from './uiButtons';
+import uiFeedback from './uiFeedback';
+import uiLayout from './uiLayout';
 import kinds from './kinds';
 import layers from './layers';
 import layout from './layout';
@@ -80,6 +84,10 @@ export default {
   sheet,
   imperative,
   toast,
+  uiButtons,
+  uiBadges,
+  uiFeedback,
+  uiLayout,
   provider,
   spec,
   verification,

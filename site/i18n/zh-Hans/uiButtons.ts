@@ -1,0 +1,60 @@
+import type ja from '../ja/uiButtons';
+
+export default {
+  lead: '用在页面上的按钮。外观和按下时的手感与模态框中的按钮相同，在模态框之外也能使用。可以选择强弱和大小；处理中时不清除名称，而是附加“处理中”。',
+  variants: {
+    title: '强弱',
+    intro: 'primary 每个画面只放一个。无法撤销的操作用 danger，其余的降为 secondary（默认）或 tertiary。',
+  },
+  sizes: {
+    title: '大小',
+    intro: 'sm 看起来高 36px，但可点击区域仍是 44px（用手指按也不会按偏）。lg 用于注册、登录等主要操作。',
+  },
+  states: {
+    title: '状态与形式',
+    intro: '处理中时按下也不会有任何反应，名称保留，并把“处理中”加进说明。如果要前往另一个页面，就使用角色仍为链接的 ButtonLink。',
+  },
+  icon: {
+    title: '只有图标的按钮',
+    intro: 'IconButton 一定要传入名称（label）。只有图标的话，读屏无法说明这是什么按钮。不要依赖 title 属性的提示框。',
+  },
+  copy: {
+    title: '复制',
+    intro: 'CopyButton 按下后复制到剪贴板，把图标换成对勾，并播报“已复制”。只显示图标时，名称要让人看出复制的是什么。',
+    value: 'https://example.com/invite/7Hq2',
+    label: '复制邀请链接',
+  },
+  labels: {
+    primary: 'primary',
+    secondary: 'secondary（默认）',
+    tertiary: 'tertiary',
+    danger: 'danger',
+    sm: 'sm（36px）',
+    md: 'md（44px，默认）',
+    lg: 'lg（52px）',
+    loading: '处理中',
+    iconStart: '带图标',
+    block: '占满宽度',
+    link: '链接（ButtonLink）',
+    ghost: 'ghost（默认）',
+    tonal: 'tonal',
+    small: 'sm',
+    copyIcon: '只有图标',
+    copyText: '带文字',
+  },
+  sample: {
+    save: '保存',
+    cancel: '取消',
+    details: '查看详情',
+    remove: '删除账号',
+    create: '新建项目',
+    pricing: '查看价格',
+    settings: '打开设置',
+    more: '更多操作',
+    filter: '筛选',
+    copyLink: '复制链接',
+  },
+  code: "import { Button, ButtonLink, IconButton, CopyButton } from '@genelab/gassan';\n\n// 按下后进入处理中，完成之前无法再次按下\n<Button variant=\"primary\" onAction={save}>保存</Button>\n\n<ButtonLink href=\"/pricing\" variant=\"secondary\">查看价格</ButtonLink>\n\n<IconButton label=\"打开设置\"><SettingsIcon aria-hidden /></IconButton>\n\n<CopyButton value={inviteUrl} label=\"复制邀请链接\" />",
+  codeCaption: '用法',
+  a11yCaption: '按钮满足的规范',
+} satisfies typeof ja;

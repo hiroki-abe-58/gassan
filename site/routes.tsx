@@ -28,6 +28,10 @@ import { GatePage } from './pages/components/GatePage';
 import { HeaderPage } from './pages/components/HeaderPage';
 import { ImperativePage } from './pages/components/ImperativePage';
 import { ToastPage } from './pages/components/ToastPage';
+import { UiBadgesPage } from './pages/ui/BadgesPage';
+import { UiButtonsPage } from './pages/ui/ButtonsPage';
+import { UiFeedbackPage } from './pages/ui/FeedbackPage';
+import { UiLayoutPage } from './pages/ui/LayoutPage';
 import { MediaPage } from './pages/components/MediaPage';
 import { ProviderPage } from './pages/components/ProviderPage';
 import { RootPage } from './pages/components/RootPage';
@@ -56,7 +60,7 @@ export interface PageDef {
   Component: ComponentType<PageProps>;
 }
 
-export const SECTIONS: readonly SectionId[] = ['start', 'foundations', 'styles', 'components', 'forms', 'reference'];
+export const SECTIONS: readonly SectionId[] = ['start', 'foundations', 'styles', 'components', 'ui', 'forms', 'reference'];
 
 /** ナビの並び順がそのまま「前へ / 次へ」の順になる。 */
 export const PAGES: readonly PageDef[] = [
@@ -89,6 +93,11 @@ export const PAGES: readonly PageDef[] = [
   { path: '/components/sheet', key: 'sheet', section: 'components', Component: SheetPage },
   { path: '/components/imperative', key: 'imperative', section: 'components', Component: ImperativePage },
   { path: '/components/toast', key: 'toast', section: 'components', Component: ToastPage },
+
+  { path: '/ui/buttons', key: 'uiButtons', section: 'ui', Component: UiButtonsPage },
+  { path: '/ui/badges', key: 'uiBadges', section: 'ui', Component: UiBadgesPage },
+  { path: '/ui/feedback', key: 'uiFeedback', section: 'ui', Component: UiFeedbackPage },
+  { path: '/ui/layout', key: 'uiLayout', section: 'ui', Component: UiLayoutPage },
   { path: '/components/provider', key: 'provider', section: 'components', Component: ProviderPage },
 
   // 公開済みのリンクを壊さないよう、パスは /components の下のまま。ナビの節だけを分ける。

@@ -95,6 +95,10 @@ const labels: GassanLabels = {
   chooseTime: 'เลือกเวลา',
   notifications: 'การแจ้งเตือน',
   closeNotification: 'ปิดการแจ้งเตือน',
+  copy: 'คัดลอก',
+  copied: 'คัดลอกแล้ว',
+  copyFailed: 'คัดลอกไม่สำเร็จ',
+  moreCount: (count) => `และอีก ${String(count)} คน`,
 };
 
 export default labels;

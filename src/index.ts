@@ -64,6 +64,35 @@ export { ModalTimePicker } from './time-picker';
 export { toast, ToastHost, resetToasts } from './toast';
 export { ModalFileDrop } from './file-drop';
 export { ModalChart } from './chart';
+
+/* ------------------------------------------------------------------- ui parts */
+
+// ページの上で使う部品（U-01〜U-16）。モーダルの部品ではないので Modal 名前空間には入れない。
+export { Button, ButtonLink, IconButton, CopyButton } from './button';
+export { Badge, Avatar, AvatarGroup, Kbd, Divider, Card, Stat, EmptyState, DescriptionList, Timeline } from './display';
+export { Progress, Spinner, Skeleton, Banner } from './feedback';
+
+/*
+ * フォーム部品の中立の名前。ページの上でもモーダルの中でも同じ部品なので、Modal を付けずに書ける。
+ * Modal.Input / ModalInput は残す（同じものを指す）。
+ */
+export { ModalField as Field, ModalFieldset as Fieldset, ModalChips as Chips, ModalSwitch as Switch, ModalTable as Table, ModalAlert as Alert } from './fields';
+export {
+  ModalInput as Input,
+  ModalPasswordInput as PasswordInput,
+  ModalSearchInput as SearchInput,
+  ModalTextarea as Textarea,
+  ModalNumberField as NumberField,
+  ModalCodeInput as CodeInput,
+} from './inputs';
+export { ModalCheckbox as Checkbox, ModalRadioGroup as RadioGroup, ModalSegmented as Segmented, ModalRating as Rating } from './choices';
+export { ModalSlider as Slider, ModalRangeSlider as RangeSlider } from './slider';
+export { ModalSelect as Select, ModalCombobox as Combobox } from './select';
+export { ModalDatePicker as DatePicker } from './date-picker';
+export { ModalCalendar as Calendar, ModalRangeCalendar as RangeCalendar, ModalDateRangePicker as DateRangePicker } from './calendar';
+export { ModalTimePicker as TimePicker } from './time-picker';
+export { ModalFileDrop as FileDrop } from './file-drop';
+export { ModalChart as Chart } from './chart';
 export { ModalHandle } from './sheet';
 export { ModalHost, useModals, confirm, resetModalQueue } from './imperative';
 export { GassanProvider, japaneseLabels, englishLabels, useLabels } from './labels';
@@ -146,6 +175,24 @@ export type {
   ToastPromiseMessages,
   ToastTone,
 } from './toast';
+export type { ButtonProps, ButtonLinkProps, ButtonSize, IconButtonProps, CopyButtonProps } from './button';
+export type {
+  StatusTone,
+  BadgeProps,
+  AvatarProps,
+  AvatarSize,
+  AvatarGroupProps,
+  KbdProps,
+  DividerProps,
+  CardProps,
+  StatProps,
+  EmptyStateProps,
+  DescriptionItem,
+  DescriptionListProps,
+  TimelineItem,
+  TimelineProps,
+} from './display';
+export type { ProgressProps, SpinnerProps, SkeletonProps, BannerProps } from './feedback';
 export type { ModalFileDropProps } from './file-drop';
 export type { ModalChartProps } from './chart';
 export type { ConfirmOptions, ModalsApi } from './imperative';

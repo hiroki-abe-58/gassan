@@ -91,6 +91,10 @@ const labels: GassanLabels = {
   chooseTime: '시간 선택',
   notifications: '알림',
   closeNotification: '알림 닫기',
+  copy: '복사',
+  copied: '복사했습니다',
+  copyFailed: '복사하지 못했습니다',
+  moreCount: (count) => `외 ${String(count)}명`,
 };
 
 export default labels;

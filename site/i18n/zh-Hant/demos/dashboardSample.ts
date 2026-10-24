@@ -1,0 +1,30 @@
+import type ja from '../../ja/demos/dashboardSample';
+
+export default {
+  revenue: '本月營收',
+  churn: '流失率',
+  active: '週活躍使用者',
+  vsLastMonth: '較上月',
+  vsLastWeek: '較上週',
+  usage: '用量',
+  nearLimit: '即將用完',
+  storage: '儲存空間',
+  gb: '{0} / {1} GB',
+  seats: '席位',
+  people: '{0} / {1} 人',
+  plan: '方案',
+  planValue: 'Pro（年繳）',
+  renewal: '續約日',
+  renewalValue: '2027年4月1日',
+  activity: '最近動態',
+  invited: '已邀請陳怡君',
+  invitedAt: '今天 9:12',
+  exported: '已匯出帳單',
+  exportedAt: '昨天 18:40',
+  failedSync: '行事曆同步失敗',
+  failedSyncAt: '昨天 8:05',
+  failedSyncDetail: '整合的授權已失效。請從設定重新連線。',
+  comments: {
+    churn: '流失率越低越好。以 goodWhen="down" 將下降的差值顯示為成功色（U-12）',
+  },
+} satisfies typeof ja;

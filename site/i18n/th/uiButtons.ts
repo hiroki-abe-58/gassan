@@ -1,0 +1,60 @@
+import type ja from '../ja/uiButtons';
+
+export default {
+  lead: 'ปุ่มสำหรับใช้บนหน้าเว็บ หน้าตาและความรู้สึกเวลากดเหมือนกับปุ่มของโมดอล และใช้นอกโมดอลได้ด้วย เลือกระดับความเด่นและขนาดได้ ระหว่างกำลังประมวลผลจะไม่ลบชื่อออก แต่เติม “กำลังดำเนินการ” เข้าไป',
+  variants: {
+    title: 'ระดับความเด่น',
+    intro: 'primary มีได้หนึ่งปุ่มต่อหน้าจอ การกระทำที่ย้อนกลับไม่ได้ใช้ danger ส่วนที่เหลือลดลงเป็น secondary (ค่าเริ่มต้น) หรือ tertiary',
+  },
+  sizes: {
+    title: 'ขนาด',
+    intro: 'sm ดูสูง 36px แต่พื้นที่กดยังเป็น 44px เท่าเดิม (ใช้นิ้วกดก็ไม่พลาด) ส่วน lg ใช้กับการกระทำหลักอย่างการสมัครหรือการเข้าสู่ระบบ',
+  },
+  states: {
+    title: 'สถานะและรูปแบบ',
+    intro: 'ระหว่างกำลังประมวลผล กดแล้วจะไม่มีอะไรเกิดขึ้น ชื่อยังอยู่ และเติม “กำลังดำเนินการ” เข้าไปในคำอธิบาย ถ้าปลายทางเป็นอีกหน้าหนึ่ง ให้ใช้ ButtonLink ที่บทบาทยังเป็นลิงก์',
+  },
+  icon: {
+    title: 'ปุ่มที่มีแต่ไอคอน',
+    intro: 'ต้องส่งชื่อ (label) ให้ IconButton เสมอ ถ้ามีแต่ไอคอน การอ่านออกเสียงจะบอกไม่ได้ว่าเป็นปุ่มอะไร และอย่าพึ่ง tooltip จากแอตทริบิวต์ title',
+  },
+  copy: {
+    title: 'คัดลอก',
+    intro: 'เมื่อกด CopyButton จะคัดลอกไปยังคลิปบอร์ด เปลี่ยนไอคอนเป็นเครื่องหมายถูก และอ่านออกเสียงว่า “คัดลอกแล้ว” ถ้ามีแต่ไอคอน ให้ตั้งชื่อที่บอกได้ว่าคัดลอกอะไร',
+    value: 'https://example.com/invite/7Hq2',
+    label: 'คัดลอกลิงก์คำเชิญ',
+  },
+  labels: {
+    primary: 'primary',
+    secondary: 'secondary (ค่าเริ่มต้น)',
+    tertiary: 'tertiary',
+    danger: 'danger',
+    sm: 'sm (36px)',
+    md: 'md (44px, ค่าเริ่มต้น)',
+    lg: 'lg (52px)',
+    loading: 'กำลังประมวลผล',
+    iconStart: 'มีไอคอน',
+    block: 'เต็มความกว้าง',
+    link: 'ลิงก์ (ButtonLink)',
+    ghost: 'ghost (ค่าเริ่มต้น)',
+    tonal: 'tonal',
+    small: 'sm',
+    copyIcon: 'มีแต่ไอคอน',
+    copyText: 'มีข้อความ',
+  },
+  sample: {
+    save: 'บันทึก',
+    cancel: 'ยกเลิก',
+    details: 'ดูรายละเอียด',
+    remove: 'ลบบัญชี',
+    create: 'โปรเจกต์ใหม่',
+    pricing: 'ดูราคา',
+    settings: 'เปิดการตั้งค่า',
+    more: 'การกระทำอื่น',
+    filter: 'กรอง',
+    copyLink: 'คัดลอกลิงก์',
+  },
+  code: "import { Button, ButtonLink, IconButton, CopyButton } from '@genelab/gassan';\n\n// เมื่อกดจะเข้าสู่สถานะกำลังประมวลผล และกดซ้ำไม่ได้จนกว่าจะเสร็จ\n<Button variant=\"primary\" onAction={save}>บันทึก</Button>\n\n<ButtonLink href=\"/pricing\" variant=\"secondary\">ดูราคา</ButtonLink>\n\n<IconButton label=\"เปิดการตั้งค่า\"><SettingsIcon aria-hidden /></IconButton>\n\n<CopyButton value={inviteUrl} label=\"คัดลอกลิงก์คำเชิญ\" />",
+  codeCaption: 'วิธีใช้',
+  a11yCaption: 'สเปกที่ปุ่มทำตาม',
+} satisfies typeof ja;

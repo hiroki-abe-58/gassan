@@ -2,6 +2,7 @@ import type ja from '../../ja/demos';
 import bodyScroll from './bodyScroll';
 import bookingCalendar from './bookingCalendar';
 import chartReport from './chartReport';
+import dashboardSample from './dashboardSample';
 import choiceForm from './choiceForm';
 import dateForm from './dateForm';
 import fieldForm from './fieldForm';
@@ -35,6 +36,7 @@ export default {
   bookingCalendar,
   chartReport,
   choiceForm,
+  dashboardSample,
   dateForm,
   fieldForm,
   fileForm,

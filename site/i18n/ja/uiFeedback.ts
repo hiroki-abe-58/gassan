@@ -1,0 +1,46 @@
+export default {
+  lead: '進み具合の線、回る印、読み込む前の骨組み、ページの上の知らせの帯。どれも「いま何が起きているか」を、目と読み上げの両方に伝える。',
+  progress: {
+    title: '進み具合',
+    intro: 'role="progressbar" に名前と値を持たせる。値は既定で割合を読み上げ、valueText で「12 / 20 GB」のようにも書ける。値が分からないときは線が流れる。',
+  },
+  spinner: {
+    title: '回る印',
+    intro: '短い待ちに。role="status" で「処理中」を一度だけ読み上げ、輪は飾りにする。動きを減らす設定では回転を遅くする。',
+  },
+  skeleton: {
+    title: '骨組み',
+    intro: '読み込む前に形だけを見せ、出たときの揺れを減らす。飾りなので読み上げない。読み込み中であることは、置いた器の aria-busy か回る印で伝える。光が流れる動きは、動きを減らす設定と動きの段 none では止まる。',
+  },
+  banner: {
+    title: '知らせの帯',
+    intro: 'メンテナンスの予告・支払いの失敗・試用期間の残りなど、ページ全体に関わる知らせ。控えめな地の色で本文から分け、枠や左の太い線では囲まない。後から出すときだけ live で読み上げる。',
+  },
+  labels: {
+    value: '値あり',
+    custom: '値の書き方を変える',
+    small: '細い（sm）',
+    indeterminate: '値が分からない',
+    sizes: '大きさ',
+    text: '文の骨組み',
+    card: 'カードの骨組み',
+  },
+  sample: {
+    upload: 'アップロード',
+    storage: '保存容量',
+    storageText: (used: number, max: number): string => `${String(used)} / ${String(max)} GB`,
+    sync: '同期',
+    preparing: '書き出しを準備しています',
+    maintenanceTitle: 'メンテナンスのお知らせ',
+    maintenance: '10月24日（土）2:00〜4:00 はサービスを停止します。',
+    paymentTitle: '支払いに失敗しました',
+    payment: '登録されたカードで決済できませんでした。カードを更新してください。',
+    update: 'カードを更新',
+    trial: '試用期間は残り 5 日です。',
+    upgrade: 'プランを選ぶ',
+    saved: '設定を保存しました。',
+  },
+  code: "import { Progress, Spinner, Skeleton, Banner } from '@genelab/gassan';\n\n<Progress label=\"保存容量\" value={12} max={20} valueText={(v, m) => `${v} / ${m} GB`} />\n\n<Spinner label=\"同期しています\" />\n\n<div aria-busy={loading}>{loading ? <Skeleton lines={3} /> : <Article />}</div>\n\n<Banner tone=\"error\" title=\"支払いに失敗しました\" action={<Button size=\"sm\">カードを更新</Button>}>\n  登録されたカードで決済できませんでした。\n</Banner>",
+  codeCaption: '使い方',
+  a11yCaption: '進み具合と知らせが満たす仕様',
+};
