@@ -61,6 +61,7 @@ export default {
     templatesPublic: 'Pricing, FAQ and legal',
     templatesApp: 'App shell',
     templatesAppPages: 'Settings, members and billing',
+    templatesConversations: 'Chat and AI assistant',
     provider: 'GassanProvider',
     spec: 'Behavior specification',
     verification: 'Verification',

@@ -135,4 +135,21 @@ export default {
     },
     a11yCaption: '앱 안의 페이지 템플릿이 충족하는 명세',
   },
+  conversations: {
+    lead: '채팅과 AI 어시스턴트 화면. 앱 셸 안에 두고 대화와 메시지, 보내는 처리 함수만 넘기면, 목록과 대화의 전환·읽지 않은 메시지 수·대화마다 남는 작성 중인 글·답변을 멈추는 버튼까지 갖춰진다.',
+    setup: {
+      title: '사용법',
+      intro: '열려 있는 대화와 그 메시지는 사용하는 쪽이 관리한다. 대화를 고르면 onConversationChange가, 기록의 대화를 고르면 onThreadChange가 호출된다. 컨테이너가 좁을 때는 목록과 대화를 전환해서 보여 준다.',
+      code: "import { AssistantPage, ChatPage } from '@genelab/gassan';\n\n<ChatPage\n  conversations={conversations}\n  current={currentId}\n  onConversationChange={setCurrentId}\n  messages={messagesOf(currentId)}\n  currentUserId={user.id}\n  onSend={(text) => send(currentId, text)}\n/>\n\n<AssistantPage\n  messages={messages}\n  currentUserId={user.id}\n  onSend={ask}\n  generating={generating}\n  onStop={stop}\n  suggestions={suggestions}\n  history={threads}\n  currentThreadId={threadId}\n  onThreadChange={openThread}\n  onNewThread={startThread}\n/>",
+    },
+    chat: {
+      title: '채팅',
+      intro: '왼쪽에 대화 목록(채널과 다이렉트 메시지·읽지 않은 메시지 수·마지막 메시지), 오른쪽에 열려 있는 대화. 대화를 열면 읽지 않은 메시지 수가 사라지고, 새 메시지 구분선부터 읽기 시작한다. 보내면 “보내는 중”이던 상태가 바뀌고, 다이렉트 메시지에서는 입력 중 표시 뒤에 답장이 도착한다. “스마트폰”으로 바꾸면 목록과 대화를 전환해서 보여 주며, 제목 앞의 “대화 목록으로 돌아가기”로 목록에 돌아간다.',
+    },
+    assistant: {
+      title: 'AI 어시스턴트',
+      intro: '아직 아무 대화도 없으면 인사말과 질문 예시를 보여 주고, 대화를 시작하면 답변을 스트리밍하며 써 내려간다. 쓰는 동안에는 보내기 버튼이 “멈추기”가 된다. 왼쪽의 기록은 오늘·어제·지난 7일·그 이전으로 나누고, “새 대화”로 질문 예시 화면에 돌아간다. “스마트폰”에서는 제목 앞의 시계 버튼으로 기록을 연다.',
+    },
+    a11yCaption: '대화 페이지 템플릿이 충족하는 명세',
+  },
 } satisfies typeof ja;

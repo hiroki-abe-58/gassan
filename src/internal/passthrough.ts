@@ -109,6 +109,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-status',
   'data-stop',
   'data-tone',
+  'data-unread',
   'data-variant',
 ]);
 

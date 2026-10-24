@@ -60,6 +60,7 @@ export default {
     templatesPublic: '料金・FAQ・規約',
     templatesApp: 'アプリの枠',
     templatesAppPages: '設定・メンバー・請求',
+    templatesConversations: 'チャットと AI アシスタント',
     provider: 'GassanProvider',
     spec: '振る舞い仕様',
     verification: '検証',

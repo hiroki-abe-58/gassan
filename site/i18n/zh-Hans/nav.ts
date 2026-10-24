@@ -61,6 +61,7 @@ export default {
     templatesPublic: '价格、常见问题与条款',
     templatesApp: '应用外框',
     templatesAppPages: '设置、成员与账单',
+    templatesConversations: '聊天与 AI 助手',
     provider: 'GassanProvider',
     spec: '行为规范',
     verification: '验证',

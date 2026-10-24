@@ -633,6 +633,155 @@
   .g-onboarding-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
   .g-onboarding-actions > .g-btn[data-variant="primary"] { min-inline-size: 8rem; }
   .g-invite-from { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+  /* --- T16 一覧と中身（P-18 / P-19） -------------------------------------------------
+   * チャットとアシスタントは AppShell の main の中で画面の高さに収め（上の帯と main の上下の余白のぶん 10rem を引く）、
+   * 一覧と会話はそれぞれの中でスクロールさせる。器が広ければ一覧（20rem）と中身を並べ、狭ければ data-view の
+   * 片方だけを見せる（切り替えとフォーカスは list-detail.ts）。いまの項目は地の色と太字で示す（左の太い線は使わない）。 */
+  .g-split {
+    container-type: inline-size;
+    box-sizing: border-box;
+    block-size: max(28rem, calc(100dvh - 10rem));
+    min-inline-size: 0;
+  }
+  .g-split-frame {
+    display: flex;
+    block-size: 100%;
+    overflow: hidden;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius);
+    background: var(--g-surface);
+  }
+  .g-split-list {
+    position: relative;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    inline-size: 100%;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .g-split-detail {
+    display: grid;
+    flex: 1;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
+  .g-split-list-head { display: flex; align-items: center; gap: 8px; padding: 14px 12px 4px 16px; }
+  .g-split-list-title { flex: 1; margin: 0; font-size: 1.125rem; font-weight: 700; line-height: 1.4; }
+  .g-split-search { padding: 8px 12px; }
+  .g-split-nav { display: grid; align-content: start; gap: 12px; padding: 4px 8px 12px; }
+  .g-split-group { display: grid; gap: 2px; }
+  .g-split-group-title { margin: 0; padding: 6px 8px 2px; color: var(--g-fg-muted); font-size: 0.75rem; font-weight: 650; }
+  .g-split-items { display: grid; gap: 1px; margin: 0; padding: 0; list-style: none; }
+  .g-split-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: var(--g-tap);
+    padding: 6px 8px;
+    border: 0;
+    border-radius: var(--g-radius-control);
+    background: transparent;
+    color: var(--g-fg);
+    font: inherit;
+    font-size: 0.875rem;
+    text-align: start;
+    cursor: pointer;
+  }
+  .g-split-item:hover { background: var(--g-hover); }
+  .g-split-item[aria-current="true"] { background: color-mix(in srgb, var(--g-accent) 9%, var(--g-surface)); font-weight: 650; }
+  .g-split-empty { margin: 0; padding: 8px; color: var(--g-fg-muted); font-size: 0.875rem; }
+  .g-split-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-block-size: 56px;
+    padding: 8px 12px 8px 16px;
+    border-block-end: 1px solid var(--g-border);
+  }
+  .g-split-back {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: var(--g-tap);
+    block-size: var(--g-tap);
+    margin-inline-start: -8px;
+    border: 0;
+    border-radius: var(--g-radius-control);
+    background: transparent;
+    color: var(--g-fg);
+    cursor: pointer;
+  }
+  .g-split-back > svg { inline-size: 20px; block-size: 20px; }
+  .g-split-back:hover { background: var(--g-hover); }
+  /* 右から左の文書では、戻る向きの矢印を左右に返す */
+  .g-split-back:dir(rtl) > svg { scale: -1 1; }
+  .g-split-heading { display: grid; flex: 1; gap: 2px; min-inline-size: 0; }
+  .g-split-title { margin: 0; font-size: 1.0625rem; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+  .g-split-title:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-split-description { margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.5; }
+  .g-split-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+  .g-split-thread { min-block-size: 0; }
+  .g-split-foot { display: grid; gap: 6px; padding: 8px 12px 12px; }
+  :is(.g-split-item, .g-split-back):focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+  /* 器の幅で決める形は、各部品の規則より後に書く（@container は詳細度を足さないので、前に書くと後の display に負ける） */
+  @container (max-width: 639px) {
+    .g-split[data-view="detail"] .g-split-list,
+    .g-split[data-view="list"] .g-split-detail { display: none; }
+  }
+  @container (min-width: 640px) {
+    .g-split-list { inline-size: 20rem; border-inline-end: 1px solid var(--g-border); }
+    .g-split-back { display: none; }
+  }
+
+  /* T17 chat（P-18）。一覧の項目は、印・名前と日時・最後のメッセージ・未読の数。未読がある会話は名前を太くする。 */
+  .g-chat-page-mark { display: grid; flex: none; place-items: center; inline-size: 32px; block-size: 32px; color: var(--g-fg-muted); }
+  .g-chat-page-mark > svg { inline-size: 18px; block-size: 18px; }
+  .g-chat-page-item-body { display: grid; flex: 1; gap: 1px; min-inline-size: 0; }
+  .g-chat-page-item-top { display: flex; align-items: baseline; gap: 8px; min-inline-size: 0; }
+  .g-chat-page-item-name { flex: 1; min-inline-size: 0; overflow: hidden; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+  .g-chat-page-item[data-unread] .g-chat-page-item-name { font-weight: 700; }
+  .g-chat-page-item-time { flex: none; color: var(--g-fg-muted); font-size: 0.75rem; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .g-chat-page-item-preview { overflow: hidden; color: var(--g-fg-muted); font-size: 0.8125rem; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+  /* 1 行で … で切る。Chrome は nowrap の中でも <wbr> で折るので消す（§10-35） */
+  :where(.g-chat-page-item-name, .g-chat-page-item-preview) wbr { display: none; }
+  .g-chat-page-item-unread {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    min-inline-size: 20px;
+    block-size: 20px;
+    padding-inline: 6px;
+    box-sizing: border-box;
+    border-radius: 999px;
+    background: var(--g-accent);
+    color: var(--g-on-accent);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* T18 assistant（P-19）。何も話していなければ、問いかけと質問の例を真ん中に置く（収まらなければ上から並ぶ）。 */
+  .g-assistant-item { overflow-wrap: anywhere; }
+  .g-assistant-empty {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-block-size: 0;
+    padding: 20px 16px;
+    overflow-y: auto;
+  }
+  .g-assistant-empty > :first-child { margin-block-start: auto; }
+  .g-assistant-empty > :last-child { margin-block-end: auto; }
+  .g-assistant-greeting { margin: 0; font-size: 1.375rem; font-weight: 700; line-height: 1.4; text-align: center; }
+  .g-assistant-empty > .g-suggestions { inline-size: min(100%, 48rem); margin-inline: auto; }
+  .g-assistant-note { margin: 0; padding-inline: 12px; color: var(--g-fg-muted); font-size: 0.75rem; line-height: 1.5; }
 }
 
 @layer gassan.theme {
@@ -649,5 +798,8 @@
     :is(.g-form-summary, .g-status-reference) { border: 1px solid CanvasText; }
     /* いまのページの地の色は消えるので、選んだ色で示す */
     .g-app-nav-link[aria-current="page"] { forced-color-adjust: none; background: SelectedItem; color: SelectedItemText; }
+    .g-split-item[aria-current="true"] { forced-color-adjust: none; background: SelectedItem; color: SelectedItemText; }
+    /* 未読の数の地の色は消えるので、枠で数を囲む */
+    .g-chat-page-item-unread { border: 1px solid CanvasText; }
   }
 }

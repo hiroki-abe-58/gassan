@@ -14,6 +14,7 @@ import { renderToString } from 'react-dom/server';
 import {
   Accordion,
   AppShell,
+  AssistantPage,
   BillingPage,
   Breadcrumbs,
   CommandPalette,
@@ -22,6 +23,7 @@ import {
   BarList,
   Carousel,
   ChatComposer,
+  ChatPage,
   ChatThread,
   DonutChart,
   Gauge,
@@ -610,12 +612,34 @@ const onboardingHtml = render(
   }),
 );
 const inviteHtml = render(h(InviteAcceptPage, { workspace: 'Mirai Design', inviter: '佐藤 葵', role: '編集者', signedIn: false }));
+// 会話のページ（P-18 / P-19）。器の幅はサーバーでは分からないので、data-view と CSS で形を決める（チャットは一覧から）。
+const chatPageHtml = render(
+  h(ChatPage, {
+    conversations: [
+      { id: 'general', name: 'general', unread: 2, lastAt: '2026-10-23T00:30:00Z' },
+      { id: 'ren', name: '鈴木 蓮', kind: 'direct' },
+    ],
+    current: 'general',
+    onConversationChange: noop,
+    messages: [{ id: 'm1', author: { id: 'ren', name: '鈴木 蓮' }, content: 'おはようございます', sentAt: '2026-10-23T00:30:00Z' }],
+    currentUserId: 'aoi',
+    onSend: noop,
+  }),
+);
+const assistantPageHtml = render(
+  h(AssistantPage, { messages: [], currentUserId: 'aoi', onSend: noop, suggestions: [{ id: 's1', label: '先月の売上をまとめて' }] }),
+);
 for (const [label, passed] of [
   ['SettingsPage renders the sections and writes times in UTC until hydration on the server', /autocomplete="email"/i.test(settingsHtml) && textOf(settingsHtml).includes('2026/10/23 0:30')],
   ['MembersPage leaves the current user without a checkbox on the server', (membersHtml.match(/type="checkbox"/g) ?? []).length === 2 && textOf(membersHtml).includes('鈴木 蓮')],
   ['BillingPage renders the price, the renewal date and the invoices on the server', textOf(billingHtml).includes('月額 ￥9,000') && /datetime="2026-11-01"/i.test(billingHtml) && billingHtml.includes('href="/invoices/1.pdf"')],
   ['OnboardingPage renders the progress with the current step on the server', onboardingHtml.includes('aria-current="step"') && textOf(onboardingHtml).includes('メンバーを招待する')],
   ['InviteAcceptPage sends signed-out visitors to sign in or sign up on the server', inviteHtml.includes('href="/login"') && inviteHtml.includes('href="/signup"')],
+  [
+    'ChatPage renders the list first, the unread count and the open conversation on the server',
+    /data-view="list"/.test(chatPageHtml) && textOf(chatPageHtml).includes('未読 2件') && /role="log"[^>]*aria-label="general のメッセージ"/.test(chatPageHtml),
+  ],
+  ['AssistantPage renders the greeting, the suggestions and the note on the server', textOf(assistantPageHtml).includes('何をお手伝いしましょうか？') && textOf(assistantPageHtml).includes('先月の売上をまとめて') && assistantPageHtml.includes('g-assistant-note')],
 ]) {
   if (passed) ok(label);
   else fail(label);

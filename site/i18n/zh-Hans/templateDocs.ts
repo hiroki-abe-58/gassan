@@ -135,4 +135,21 @@ export default {
     },
     a11yCaption: '应用内页面模板满足的规范',
   },
+  conversations: {
+    lead: '聊天与 AI 助手的界面。放在应用外框中，只要传入会话、消息和发送的处理函数，列表与会话的切换、未读数、按会话保留的草稿，连停止回答的按钮也都处理好了。',
+    setup: {
+      title: '用法',
+      intro: '打开的会话及其消息由应用自行管理。选择会话时调用 onConversationChange，选择历史记录中的对话时调用 onThreadChange。容器较窄时，列表和会话切换着显示。',
+      code: "import { AssistantPage, ChatPage } from '@genelab/gassan';\n\n<ChatPage\n  conversations={conversations}\n  current={currentId}\n  onConversationChange={setCurrentId}\n  messages={messagesOf(currentId)}\n  currentUserId={user.id}\n  onSend={(text) => send(currentId, text)}\n/>\n\n<AssistantPage\n  messages={messages}\n  currentUserId={user.id}\n  onSend={ask}\n  generating={generating}\n  onStop={stop}\n  suggestions={suggestions}\n  history={threads}\n  currentThreadId={threadId}\n  onThreadChange={openThread}\n  onNewThread={startThread}\n/>",
+    },
+    chat: {
+      title: '聊天',
+      intro: '左侧是会话列表（频道和私信、未读数、最后一条消息），右侧是打开的会话。打开会话后未读数会清零，并从新消息的分隔线开始阅读。发送后，“发送中”的状态会随之更新；在私信中，输入中提示之后会收到回复。切换到“手机”后，列表和会话切换显示，点击标题前的“返回会话列表”即可回到列表。',
+    },
+    assistant: {
+      title: 'AI 助手',
+      intro: '还没有对话时，显示问候语和示例问题；开始对话后，回答会以流式方式边写边显示。写的过程中，发送按钮会变成“停止”。左侧的历史记录分为今天、昨天、过去 7 天、更早，点击“新对话”即可回到示例问题的画面。切换到“手机”后，用标题前的时钟按钮打开历史记录。',
+    },
+    a11yCaption: '会话页面模板满足的规范',
+  },
 } satisfies typeof ja;

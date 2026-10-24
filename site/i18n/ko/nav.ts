@@ -61,6 +61,7 @@ export default {
     templatesPublic: '요금·FAQ·약관',
     templatesApp: '앱 셸',
     templatesAppPages: '설정·멤버·결제',
+    templatesConversations: '채팅과 AI 어시스턴트',
     provider: 'GassanProvider',
     spec: '동작 명세',
     verification: '검증',

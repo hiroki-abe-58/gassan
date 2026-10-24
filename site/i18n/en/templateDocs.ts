@@ -135,4 +135,21 @@ export default {
     },
     a11yCaption: 'Specification items the in-app page templates satisfy',
   },
+  conversations: {
+    lead: 'Screens for chat and an AI assistant. Place them inside the app shell and pass only the conversations, the messages and a send handler, and you get switching between the list and the conversation, unread counts, a draft kept for each conversation and even a button that stops the answer.',
+    setup: {
+      title: 'Usage',
+      intro: 'Your app holds the open conversation and its messages. Choosing a conversation calls onConversationChange, and choosing a conversation from the history calls onThreadChange. When the container is narrow, the list and the conversation are shown one at a time.',
+      code: "import { AssistantPage, ChatPage } from '@genelab/gassan';\n\n<ChatPage\n  conversations={conversations}\n  current={currentId}\n  onConversationChange={setCurrentId}\n  messages={messagesOf(currentId)}\n  currentUserId={user.id}\n  onSend={(text) => send(currentId, text)}\n/>\n\n<AssistantPage\n  messages={messages}\n  currentUserId={user.id}\n  onSend={ask}\n  generating={generating}\n  onStop={stop}\n  suggestions={suggestions}\n  history={threads}\n  currentThreadId={threadId}\n  onThreadChange={openThread}\n  onNewThread={startThread}\n/>",
+    },
+    chat: {
+      title: 'Chat',
+      intro: 'The conversation list on the left (channels and direct messages, with unread counts and the last message), and the open conversation on the right. Opening a conversation clears its unread count, and reading starts from the line that marks new messages. When you send a message, its “Sending” status changes, and in a direct message the reply arrives after the typing indicator. Switch to “Phone”, and the list and the conversation take turns on screen; the “Back to conversations” button before the heading returns you to the list.',
+    },
+    assistant: {
+      title: 'AI assistant',
+      intro: 'Before anything has been said, it shows a greeting and suggestions; once the conversation starts, answers stream in as they are written. While an answer is being written, the send button becomes “Stop”. The history on the left is grouped into “Today”, “Yesterday”, “Previous 7 days” and “Older”, and “New chat” goes back to the screen with the suggestions. On “Phone”, the clock button before the heading opens the history.',
+    },
+    a11yCaption: 'Specification items the conversation page templates satisfy',
+  },
 } satisfies typeof ja;

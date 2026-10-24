@@ -135,4 +135,21 @@ export default {
     },
     a11yCaption: '應用程式內頁面範本滿足的規格',
   },
+  conversations: {
+    lead: '聊天與 AI 助理的畫面。放在應用程式外框中，只要傳入對話、訊息與傳送的處理函式，清單與對話的切換、未讀數、依對話保留的草稿，連停止回答的按鈕也都處理好了。',
+    setup: {
+      title: '用法',
+      intro: '開啟中的對話及其訊息由應用程式自行管理。選擇對話時會呼叫 onConversationChange，選擇歷史紀錄中的對話時會呼叫 onThreadChange。容器較窄時，清單與對話會切換顯示。',
+      code: "import { AssistantPage, ChatPage } from '@genelab/gassan';\n\n<ChatPage\n  conversations={conversations}\n  current={currentId}\n  onConversationChange={setCurrentId}\n  messages={messagesOf(currentId)}\n  currentUserId={user.id}\n  onSend={(text) => send(currentId, text)}\n/>\n\n<AssistantPage\n  messages={messages}\n  currentUserId={user.id}\n  onSend={ask}\n  generating={generating}\n  onStop={stop}\n  suggestions={suggestions}\n  history={threads}\n  currentThreadId={threadId}\n  onThreadChange={openThread}\n  onNewThread={startThread}\n/>",
+    },
+    chat: {
+      title: '聊天',
+      intro: '左側是對話清單（頻道與私人訊息、未讀數、最後一則訊息），右側是開啟中的對話。開啟對話後未讀數會歸零，並從新訊息的分隔線開始閱讀。傳送後，「傳送中」的狀態會隨之更新；在私人訊息中，會在輸入中提示之後收到回覆。切換到「手機」後，清單與對話會切換顯示，點擊標題前的「返回對話清單」即可回到清單。',
+    },
+    assistant: {
+      title: 'AI 助理',
+      intro: '還沒有對話時，顯示問候語與範例問題；開始對話後，回答會以串流方式邊寫邊顯示。撰寫期間，傳送按鈕會變成「停止」。左側的歷史紀錄分為今天、昨天、過去 7 天、更早，點擊「新對話」即可回到範例問題的畫面。切換到「手機」後，以標題前的時鐘按鈕開啟歷史紀錄。',
+    },
+    a11yCaption: '對話頁面範本滿足的規格',
+  },
 } satisfies typeof ja;
