@@ -16,17 +16,17 @@
 
 **文件網站：<https://hiroki-abe-58.github.io/gassan/#/zh-Hant>**
 — 以類似 Material Design 3 指南的形式，整理了設計理念（modal 存在的理由、四層模型、五種類型、無障礙）、樣式（遮罩層、色彩與對比、主題、尺寸、換行、動態效果）、
-每個元件與表單元件可實際操作的示範與 API，以及 156 項行為的規格。
+每個元件與表單元件可實際操作的示範與 API，以及 164 項行為的規格。
 網站提供 [English](https://hiroki-abe-58.github.io/gassan/#/en)、[日本語](https://hiroki-abe-58.github.io/gassan/)、[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)、繁體中文、[한국어](https://hiroki-abe-58.github.io/gassan/#/ko) 與 [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) 版本（用頂端列的地球圖示按鈕切換）。
 網站可切換淺色 / 深色主題與主色；無論選哪個顏色，文字與填色都會經過推算，以符合 WCAG 的對比度要求。
 網站上所有的表格、數量與 API 說明，都是在建置時從規格書與型別定義自動產生，沒有任何手寫的數字。
 
-完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（156 項行為表、決策矩陣、品質評分準則）。
+完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（164 項行為表、決策矩陣、品質評分準則）。
 用 AI 助理寫程式時，請把這個檔案放進上下文（context）。
 
 | 文件 | 內容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 156 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 164 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 將原始需求逐項拆解，每項一列，標示已實作 / 透過組合達成 / 列入路線圖 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | 在 modal 中放入 gassan 表單元件的最小範例，以及從其他函式庫包裝 gassan 沒有的元件時的注意事項 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 原生 `<dialog>`、Base UI、React Aria、Radix 的比較（截至 2026-09-29，僅引用第一手資料） |

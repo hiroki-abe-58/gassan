@@ -46,6 +46,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-filled',
   'data-full',
   'data-gated',
+  'data-indicator',
   'data-inline',
   'data-invalid',
   'data-g-blocked',
@@ -74,8 +75,10 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
 /**
  * 消費者が置く側の data-*（gassan が読む）。予約ではない。
  * 例: `data-g-no-swipe` を付けた要素の上ではスワイプを始めない。
+ * `data-g-motion` は動きの段（V-01）。`<html>` にも、モーダル 1 枚（`<Modal.Root data-g-motion>`）にも置ける。
+ * GassanProvider の motion も同じ属性を器に書くが、その器は消費者の props を受けないので衝突しない。
  */
-export const CONSUMER_DATA: readonly string[] = ['data-g-no-swipe'];
+export const CONSUMER_DATA: readonly string[] = ['data-g-no-swipe', 'data-g-motion'];
 
 /**
  * 各コンポーネントの props に混ぜる、data-* の受け口。

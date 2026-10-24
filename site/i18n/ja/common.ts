@@ -6,6 +6,8 @@
  *   - サイト内リンクは #/path で書く。言語の頭（#/en/...）は描くときに付く
  *   - 数や名前を差し込む文は関数にする
  */
+import type { MotionPreset } from '@genelab/gassan';
+
 import type { CUSTOM_PRESET_ID, CheckId, PresetId, Tint } from '../../theme/engine';
 
 export default {
@@ -37,6 +39,8 @@ export default {
     schemes: { light: 'ライト', dark: 'ダーク', system: 'OS に合わせる' },
     background: '背景',
     tints: { neutral: '無彩色', soft: '淡い', strong: '濃い' } satisfies Record<Tint, string>,
+    motion: '動き',
+    motions: { none: 'なし', subtle: '控えめ', standard: '標準', expressive: '豊か' } satisfies Record<MotionPreset, string>,
     primary: 'プライマリカラー',
     presets: {
       default: '既定',

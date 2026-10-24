@@ -84,11 +84,28 @@
     --g-sheet-max-block: 92dvh;
 
     /* --- motion -----------------------------------------------------------
-     * 退出は入場より速く。人は「開く」を待てるが「閉じる」を待てない。 */
+     * 退出は入場より速く。人は「開く」を待てるが「閉じる」を待てない。
+     * ここの値は既定のプリセット（standard）。data-g-motion の 4 段（V-01、下の 1b）は
+     * このトークンだけを差し替え、部品の CSS は同じ規則のまま動く。 */
     --g-dur-in: 180ms;
     --g-dur-out: 120ms;
+    --g-dur-fast: 140ms;            /* 押す・切り替える（摘み・印・色） */
+    --g-dur-slow: 260ms;            /* 位置が移る（選択中の塗り）・大きな面の高さ */
     --g-ease-in: cubic-bezier(0.2, 0, 0, 1);
     --g-ease-out: cubic-bezier(0.3, 0, 1, 1);
+    --g-ease-move: cubic-bezier(0.2, 0, 0, 1);
+    /* 行き過ぎない減速。画面の端に付いた面（シート）が使い、どの段でもバネにしない。 */
+    --g-ease-settle: cubic-bezier(0.2, 0, 0, 1);
+    /* 減衰振動（減衰比 0.8・初速あり）を linear() の点列にしたもの。行き過ぎは 5%、
+     * 最初の 1 割で 6 割まで進む。expressive の入場と移る印が使う（V-03）。
+     * linear() を知らないブラウザでは宣言ごと無効になり、遷移の既定（ease）で動く。 */
+    --g-ease-spring: linear(0, 0.211 2.75%, 0.391 5.5%, 0.543 8.25%, 0.678 11.25%, 0.793 14.5%, 0.886 18%, 0.959 22%, 1.013 26.75%, 1.044 32.75%, 1.049 41.5%, 1.006 73.25%, 1);
+    --g-motion-distance: 8px;       /* 入場の距離（下から） */
+    --g-motion-scale: 0.97;         /* 入場の縮み */
+    --g-motion-blur: 0px;           /* 入場のぼかし */
+    --g-stagger: 0ms;               /* 順に出すときの 1 つあたりの遅れ（V-08） */
+    --g-enter: none;                /* 順に出す塊の入場のキーフレーム。expressive だけが g-rise を入れる */
+    --g-press-scale: 0.97;          /* 押している間の縮み（V-06） */
   }
 
   @media (prefers-color-scheme: dark) {
@@ -112,6 +129,89 @@
       --g-shadow:
         0 1px 2px rgb(0 0 0 / 0.4),
         0 16px 40px -8px rgb(0 0 0 / 0.55);
+    }
+  }
+
+  /* --- 1b. motion presets（V-01） ------------------------------------------
+   * <html data-g-motion="…"> か、GassanProvider の motion が置く器に付ける。カスタムプロパティは
+   * 継承するので、その枝の中の部品（top layer に出たモーダルとポップアップも DOM の上では子孫）に効く。
+   * 詳細度はどれも 0（:where）。同じ要素に重なったら後に書いたものが勝つので、並びに意味がある。 */
+  /* 段は入れ子にできるので、どの段も全部のトークンを書く（外側の段の値を引きずらない）。 */
+  :where([data-g-motion="none"]) {
+    --g-dur-in: 1ms;
+    --g-dur-out: 1ms;
+    --g-dur-fast: 1ms;
+    --g-dur-slow: 1ms;
+    --g-ease-in: cubic-bezier(0.2, 0, 0, 1);
+    --g-ease-move: cubic-bezier(0.2, 0, 0, 1);
+    --g-motion-distance: 0px;
+    --g-motion-scale: 1;
+    --g-motion-blur: 0px;
+    --g-stagger: 0ms;
+    --g-enter: none;
+    --g-press-scale: 1;
+  }
+  :where([data-g-motion="subtle"]) {
+    --g-dur-in: 140ms;
+    --g-dur-out: 100ms;
+    --g-dur-fast: 100ms;
+    --g-dur-slow: 180ms;
+    --g-ease-in: cubic-bezier(0.2, 0, 0, 1);
+    --g-ease-move: cubic-bezier(0.2, 0, 0, 1);
+    --g-motion-distance: 4px;
+    --g-motion-scale: 0.99;
+    --g-motion-blur: 0px;
+    --g-stagger: 0ms;
+    --g-enter: none;
+    --g-press-scale: 0.985;
+  }
+  /* 外側で別の段を選んだ枝の中で、既定に戻すための段。値は :root と同じ。 */
+  :where([data-g-motion="standard"]) {
+    --g-dur-in: 180ms;
+    --g-dur-out: 120ms;
+    --g-dur-fast: 140ms;
+    --g-dur-slow: 260ms;
+    --g-ease-in: cubic-bezier(0.2, 0, 0, 1);
+    --g-ease-move: cubic-bezier(0.2, 0, 0, 1);
+    --g-motion-distance: 8px;
+    --g-motion-scale: 0.97;
+    --g-motion-blur: 0px;
+    --g-stagger: 0ms;
+    --g-enter: none;
+    --g-press-scale: 0.97;
+  }
+  /* 豊か: バネで行き過ぎて戻り、ぼかしから像を結び、中身が順に出る。
+   * 退出は速いまま（閉じるのを待たせない）。シートはバネを使わない（3.4 の注記）。 */
+  :where([data-g-motion="expressive"]) {
+    --g-dur-in: 440ms;
+    --g-dur-out: 160ms;
+    --g-dur-fast: 220ms;
+    --g-dur-slow: 440ms;
+    --g-ease-in: var(--g-ease-spring);
+    --g-ease-move: var(--g-ease-spring);
+    --g-motion-distance: 18px;
+    --g-motion-scale: 0.9;
+    --g-motion-blur: 6px;
+    --g-stagger: 40ms;
+    --g-enter: g-rise;
+    --g-press-scale: 0.95;
+  }
+
+  /* 動きを減らす設定は、選んだ段より強い（V-02）。:root と、段を選んだ器の両方に書き直す
+   * （器が自分で持つ値は、:root から継承した値に勝つため）。1ms にするのは 0 にすると
+   * discrete な遷移が壊れるため（S-05）。 */
+  @media (prefers-reduced-motion: reduce) {
+    :where(:root, [data-g-motion]) {
+      --g-dur-in: 1ms;
+      --g-dur-out: 1ms;
+      --g-dur-fast: 1ms;
+      --g-dur-slow: 1ms;
+      --g-motion-distance: 0px;
+      --g-motion-scale: 1;
+      --g-motion-blur: 0px;
+      --g-stagger: 0ms;
+      --g-enter: none;
+      --g-press-scale: 1;
     }
   }
 }
@@ -244,10 +344,13 @@
     overflow: hidden;
     outline: none;
 
+    /* 閉状態。距離・縮み・ぼかしは動きの段のトークン（V-01）。ぼかしは standard では 0px。
+     * 開いた後は filter: none に戻す（filter が残ると、中の fixed の包含ブロックが変わる）。 */
     opacity: 0;
-    scale: 0.97;
-    translate: 0 8px;
-    transition-property: opacity, scale, translate;
+    scale: var(--g-motion-scale);
+    translate: 0 var(--g-motion-distance);
+    filter: blur(var(--g-motion-blur));
+    transition-property: opacity, scale, translate, filter;
     transition-duration: var(--g-dur-out);
     transition-timing-function: var(--g-ease-out);
   }
@@ -255,11 +358,17 @@
     opacity: 1;
     scale: 1;
     translate: 0 0;
+    filter: none;
     transition-duration: var(--g-dur-in);
     transition-timing-function: var(--g-ease-in);
   }
   @starting-style {
-    .g-dialog[open] .g-panel { opacity: 0; scale: 0.97; translate: 0 8px; }
+    .g-dialog[open] .g-panel {
+      opacity: 0;
+      scale: var(--g-motion-scale);
+      translate: 0 var(--g-motion-distance);
+      filter: blur(var(--g-motion-blur));
+    }
   }
 
   /* 行を明示。暗黙行に落ちると minmax の効果が消える。 */
@@ -302,10 +411,15 @@
     border-block-end: 0;
     scale: 1;
     translate: 0 100%;
+    filter: none;
   }
-  .g-dialog[data-placement="sheet"][open] .g-panel { translate: 0 0; }
+  /* 下端に付いた面はバネで行き過ぎると、行き過ぎた分だけ下に隙間が開く。どの段でも減速で止める。 */
+  .g-dialog[data-placement="sheet"][open] .g-panel {
+    translate: 0 0;
+    transition-timing-function: var(--g-ease-settle);
+  }
   @starting-style {
-    .g-dialog[data-placement="sheet"][open] .g-panel { translate: 0 100%; }
+    .g-dialog[data-placement="sheet"][open] .g-panel { translate: 0 100%; filter: none; }
   }
   .g-dialog[data-placement="sheet"] .g-footer {
     padding-block-end: max(12px, env(safe-area-inset-bottom));
@@ -324,8 +438,9 @@
   /* center と top は同じ退出。 */
   .g-dialog[open][data-exiting] .g-panel {
     opacity: 0;
-    scale: 0.97;
-    translate: 0 8px;
+    scale: var(--g-motion-scale);
+    translate: 0 var(--g-motion-distance);
+    filter: blur(var(--g-motion-blur));
     transition-duration: var(--g-dur-out);
     transition-timing-function: var(--g-ease-out);
   }
@@ -333,6 +448,7 @@
   .g-dialog[data-placement="sheet"][open][data-exiting] .g-panel {
     scale: 1;
     translate: 0 100%;
+    filter: none;
   }
   /* 退出は JS が描き終えている。overlay 対応環境で display / overlay の
    * discrete transition をもう一周させない（二重待ち・見えない要素の居座りを防ぐ）。 */
@@ -369,8 +485,10 @@
     color: var(--g-fg);
     cursor: pointer;
     padding: 0;
+    transition: background-color var(--g-dur-fast) linear, scale var(--g-dur-fast) var(--g-ease-move);
   }
   .g-iconbtn:hover { background: var(--g-hover); }
+  .g-iconbtn:not([aria-disabled="true"]):active { scale: var(--g-press-scale); }
   .g-iconbtn > svg { inline-size: 20px; block-size: 20px; }
 
   .g-indicator {
@@ -547,8 +665,14 @@
     font-weight: 600;
     font-size: 0.9375rem;
     cursor: pointer;
-    transition: background-color 120ms linear, border-color 120ms linear;
+    transition:
+      background-color var(--g-dur-fast) linear,
+      border-color var(--g-dur-fast) linear,
+      box-shadow var(--g-dur-fast) linear,
+      scale var(--g-dur-fast) var(--g-ease-move);
   }
+  /* 押している間だけわずかに縮む（V-06）。ゲート中・処理中・使用不可は押しても何も始まらないので縮まない。 */
+  .g-btn:not(:disabled, [data-gated], [data-loading]):active { scale: var(--g-press-scale); }
   .g-btn[data-variant="primary"]   { background: var(--g-accent); color: var(--g-on-accent); }
   .g-btn[data-variant="danger"]    { background: var(--g-danger); color: var(--g-on-danger); }
   .g-btn[data-variant="secondary"] { background: transparent; border-color: var(--g-border-strong); color: var(--g-fg); }
@@ -864,8 +988,14 @@
     font: inherit;
     font-size: 0.8125rem;
     cursor: pointer;
+    transition:
+      background-color var(--g-dur-fast) linear,
+      border-color var(--g-dur-fast) linear,
+      color var(--g-dur-fast) linear,
+      scale var(--g-dur-fast) var(--g-ease-move);
   }
   .g-chip:hover { background: var(--g-hover); }
+  .g-chip:active { scale: var(--g-press-scale); }
   .g-chip[aria-pressed="true"] {
     background: var(--g-accent);
     border-color: transparent;
@@ -895,19 +1025,24 @@
     padding: 2px;
     border-radius: 999px;
     background: var(--g-border-strong);
-    transition: background-color var(--g-dur-out) linear;
+    transition: background-color var(--g-dur-fast) linear;
   }
   .g-switch-thumb {
     inline-size: 20px;
     block-size: 20px;
-    border-radius: 50%;
+    border-radius: 999px;
     background: #fff;
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
     translate: 0;
     transition:
-      translate var(--g-dur-out) var(--g-ease-out),
-      background-color var(--g-dur-out) linear;
+      translate var(--g-dur-fast) var(--g-ease-move),
+      inline-size var(--g-dur-fast) var(--g-ease-move),
+      background-color var(--g-dur-fast) linear;
   }
+  /* 押している間は摘みが進む向きへ伸びる（V-06）。入っているときは右端を保ったまま左へ伸びる。 */
+  .g-switch:active .g-switch-thumb { inline-size: 24px; }
+  .g-switch[aria-checked="true"]:active .g-switch-thumb { translate: 12px 0; }
+  .g-switch[aria-checked="true"]:active:dir(rtl) .g-switch-thumb { translate: -12px 0; }
   .g-switch[aria-checked="true"] .g-switch-track { background: var(--g-accent); }
   /* 入っている間の摘みは、アクセントの上の文字色で塗る。白で固定すると、明るいアクセント
    * （ダークの既定 #eef0f4、テーマの黄色）の上で摘みが溶け、入り切りが見分けられなかった。
@@ -1213,7 +1348,7 @@
     inline-size: 18px;
     block-size: 18px;
     color: var(--g-fg-muted);
-    transition: rotate var(--g-dur-out) var(--g-ease-out);
+    transition: rotate var(--g-dur-fast) var(--g-ease-move);
   }
   .g-select:not(.g-date) > [aria-expanded="true"] > .g-select-icon,
   .g-combobox:has(> [aria-expanded="true"]) > .g-input-action > svg { rotate: 180deg; }
@@ -1235,11 +1370,26 @@
     color: var(--g-fg);
     box-shadow: var(--g-shadow);
     color-scheme: var(--g-color-scheme);
+    /* 起点の側から広がって出る（V-04）。起点の中央への原点は JS（placePopup）が入れる。 */
     opacity: 1;
-    transition: opacity var(--g-dur-in) var(--g-ease-in);
+    scale: 1;
+    transform-origin: 50% 0;
+    transition:
+      opacity var(--g-dur-in) var(--g-ease-in),
+      scale var(--g-dur-in) var(--g-ease-in);
   }
+  .g-popup[data-side="above"] { transform-origin: 50% 100%; }
   @starting-style {
-    .g-popup:popover-open { opacity: 0; }
+    .g-popup:popover-open { opacity: 0; scale: var(--g-motion-scale); }
+  }
+  /* 閉じた後も、退出を描き終えるまで残す。その間の押下は受けない。待つ時間は、この状態の
+   * transition-duration の計算値から JS が読む（遷移が無ければその場で外す）。 */
+  .g-popup[data-exiting] {
+    opacity: 0;
+    scale: var(--g-motion-scale);
+    pointer-events: none;
+    transition-duration: var(--g-dur-out);
+    transition-timing-function: var(--g-ease-out);
   }
   .g-popup:has(> .g-listbox) { max-block-size: min(20rem, var(--g-popup-room, 20rem)); }
   /* popover API の無い環境: 起点の直下に置く。 */
@@ -1302,9 +1452,15 @@
     border-radius: 5px;
     background: var(--g-surface);
     cursor: inherit;
-    transition: background-color var(--g-dur-out) linear, border-color var(--g-dur-out) linear;
+    transition: background-color var(--g-dur-fast) linear, border-color var(--g-dur-fast) linear;
   }
-  .g-radio { border-radius: 50%; }
+  /* ラジオの点は中心から広がる（V-07）。外していても地の色の内側の影で中を埋めておき、
+   * 選ぶと影が 3px まで退いて、塗り（アクセント）が中から現れる。塗りの色は遷移させない。 */
+  .g-radio {
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 10px var(--g-surface);
+    transition: border-color var(--g-dur-fast) linear, box-shadow var(--g-dur-fast) var(--g-ease-move);
+  }
   .g-check:is(:checked, :indeterminate) { border-color: var(--g-accent); background: var(--g-accent); }
   .g-radio:checked {
     border-color: var(--g-accent);
@@ -1323,8 +1479,15 @@
     pointer-events: none;
     opacity: 0;
   }
-  .g-check-icon > path { stroke-width: 2.4; }
+  /* 印は線を引くように出る（V-07）。線の長さは pathLength="1" で 1 にそろえてある。 */
+  .g-check-icon > path {
+    stroke-width: 2.4;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset var(--g-dur-fast) var(--g-ease-in);
+  }
   .g-check:is(:checked, :indeterminate) + .g-check-icon { opacity: 1; }
+  .g-check:is(:checked, :indeterminate) + .g-check-icon > path { stroke-dashoffset: 0; }
   /* 補足は label の外（名前に混ぜない）。印の幅だけ字下げして、ラベルの文字にそろえる。 */
   .g-choice-desc {
     margin-block-start: -8px;
@@ -1336,6 +1499,7 @@
 
   /* --- 6.6 segmented ------------------------------------------------------- */
   .g-segmented {
+    position: relative;
     display: inline-flex;
     flex-wrap: wrap;
     gap: 2px;
@@ -1345,6 +1509,31 @@
     border-radius: 999px;
     background: var(--g-surface);
   }
+  /* 選択中の塗りは 1 枚の板で、選び直すと前の位置から滑って移る（V-05）。
+   * 位置と大きさは JS が選択中の区画を測って --g-ind-* に入れ、測り終えると data-indicator が付く。
+   * 測る前（SSR と初回の描画）は板を隠し、選択中の区画そのものを塗る。
+   * offsetLeft は物理の座標なので、板も left / top / width / height の物理の値で置く。
+   * 重なりは z-index を使わず DOM の順で決める（板が先頭の子、区画は position: relative なので後から上に塗られる）。 */
+  .g-segment-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--g-ind-w, 0);
+    height: var(--g-ind-h, 0);
+    translate: var(--g-ind-x, 0) var(--g-ind-y, 0);
+    border-radius: 999px;
+    background: var(--g-accent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .g-segmented[data-indicator] > .g-segment-indicator {
+    opacity: 1;
+    transition:
+      translate var(--g-dur-slow) var(--g-ease-move),
+      width var(--g-dur-slow) var(--g-ease-move),
+      height var(--g-dur-slow) var(--g-ease-move);
+  }
+  .g-segmented[data-indicator] .g-segment-input:checked + .g-segment-label { background: transparent; }
   .g-segmented[data-disabled] { opacity: 0.55; }
   .g-segment { position: relative; display: grid; flex: 1 1 auto; }
   .g-segment-input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
@@ -1359,7 +1548,8 @@
     font-size: 0.875rem;
     font-weight: 600;
     text-align: center;
-    transition: background-color var(--g-dur-out) linear, color var(--g-dur-out) linear;
+    /* 文字の色は板が着くまでの時間で変える。先に白へ変えると、板がまだ来ていない面の上で文字が消える。 */
+    transition: background-color var(--g-dur-fast) linear, color var(--g-dur-slow) var(--g-ease-settle);
   }
   .g-segment-input:hover:not(:checked, :disabled) + .g-segment-label { background: var(--g-hover); color: var(--g-fg); }
   .g-segment-input:checked + .g-segment-label { background: var(--g-accent); color: var(--g-on-accent); }
@@ -1616,6 +1806,35 @@
     white-space: nowrap;
   }
   .g-file-size { flex: none; font-size: 0.8125rem; font-variant-numeric: tabular-nums; color: var(--g-fg-muted); }
+}
+
+/* ===========================================================================
+ * 7. motion（V-01〜V-08）
+ * ---------------------------------------------------------------------------
+ * 部品ごとの動き（摘み・印・板・押した手応え・ポップアップ）は、それぞれの節に
+ * トークンで書いてある。ここは複数の部品にまたがる「順に出す」だけ。
+ * ======================================================================== */
+
+@layer gassan.core {
+  /* --- 7.1 stagger（V-08） ---------------------------------------------------
+   * モーダルの本文の塊と、一覧の選択肢を、上から --g-stagger ずつ遅らせて出す。
+   * キーフレームの名前（--g-enter）を入れるのは expressive だけで、ほかの段では none。
+   * 遅れは 8 個目で頭打ちにする（長い一覧の最後が待たされない）。 */
+  @keyframes g-rise {
+    from { opacity: 0; translate: 0 calc(var(--g-motion-distance) / 2); }
+  }
+  .g-dialog[open] .g-body-inner > *,
+  .g-popup:popover-open .g-listbox > * {
+    animation: var(--g-enter) var(--g-dur-in) var(--g-ease-in) both;
+    animation-delay: calc(var(--g-i, 0) * var(--g-stagger));
+  }
+  :is(.g-body-inner, .g-listbox) > :nth-child(2) { --g-i: 1; }
+  :is(.g-body-inner, .g-listbox) > :nth-child(3) { --g-i: 2; }
+  :is(.g-body-inner, .g-listbox) > :nth-child(4) { --g-i: 3; }
+  :is(.g-body-inner, .g-listbox) > :nth-child(5) { --g-i: 4; }
+  :is(.g-body-inner, .g-listbox) > :nth-child(6) { --g-i: 5; }
+  :is(.g-body-inner, .g-listbox) > :nth-child(7) { --g-i: 6; }
+  :is(.g-body-inner, .g-listbox) > :nth-child(n + 8) { --g-i: 7; }
 }
 
 @layer gassan.theme {

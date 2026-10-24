@@ -19,6 +19,7 @@ import type {
   EvidenceKind,
   GassanData,
   MdTable,
+  MotionPresetTokens,
   Priority,
   SpecCategory,
   SpecNote,
@@ -342,13 +343,27 @@ function tokenDeclarations(block: string): Map<string, { group: string; value: s
   return out;
 }
 
+/** `index` の後の最初の `{` から、対応する `}` までの中身。 */
+function braceBlock(css: string, index: number): { body: string; end: number } {
+  const open = css.indexOf('{', index);
+  let depth = 0;
+  for (let at = open; at < css.length; at += 1) {
+    if (css[at] === '{') depth += 1;
+    if (css[at] === '}') {
+      depth -= 1;
+      if (depth === 0) return { body: css.slice(open + 1, at), end: at + 1 };
+    }
+  }
+  return { body: css.slice(open + 1), end: css.length };
+}
+
 function parseTokens(): TokenGroup[] {
   const css = read('src/styles.css');
   const start = css.indexOf('@layer gassan.tokens {');
   const dark = css.indexOf('@media (prefers-color-scheme: dark)', start);
-  const end = css.indexOf('@layer gassan.reset {', dark);
   const light = tokenDeclarations(css.slice(start, dark));
-  const darkValues = tokenDeclarations(css.slice(dark, end));
+  // ダークの値はダークの @media の中だけ。後ろに続く動きの段（data-g-motion）を混ぜない。
+  const darkValues = tokenDeclarations(braceBlock(css, dark).body);
 
   const groups: TokenGroup[] = [];
   for (const [name, { group, value }] of light) {
@@ -361,6 +376,18 @@ function parseTokens(): TokenGroup[] {
     target.tokens.push({ name, light: value, ...(darkValue !== undefined ? { dark: darkValue } : {}) });
   }
   return groups;
+}
+
+/** 動きの段（V-01）。`:where([data-g-motion="…"]) { … }` を書かれた順に読む。 */
+function parseMotionPresets(): MotionPresetTokens[] {
+  const css = read('src/styles.css');
+  const presets: MotionPresetTokens[] = [];
+  for (const m of css.matchAll(/:where\(\[data-g-motion="(\w+)"\]\)\s*\{/g)) {
+    const tokens: Record<string, string> = {};
+    for (const [name, { value }] of tokenDeclarations(braceBlock(css, m.index ?? 0).body)) tokens[name] = value;
+    presets.push({ name: m[1] ?? '', tokens });
+  }
+  return presets;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -410,6 +437,7 @@ export function buildData(): GassanData {
     statusLegend: trace.legend,
     api: parseApi(),
     tokens: parseTokens(),
+    motionPresets: parseMotionPresets(),
   };
 }
 

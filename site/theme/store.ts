@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
+import { MOTION_PRESETS, type MotionPreset } from '@genelab/gassan';
+
 import { data } from '../data';
 import { CUSTOM_PRESET_ID, PRESETS, TINTS, buildTheme, type Scheme, type Theme, type Tint } from './engine';
 
@@ -20,10 +22,12 @@ export interface ThemeState {
   custom: string;
   /** 背景の色づけ */
   tint: Tint;
+  /** 動きの段（V-01）。<html data-g-motion> に書く。 */
+  motion: MotionPreset;
 }
 
 const STORAGE_KEY = 'gassan-site-theme';
-const INITIAL: ThemeState = { scheme: 'system', preset: 'default', custom: '#0b6bcb', tint: 'neutral' };
+const INITIAL: ThemeState = { scheme: 'system', preset: 'default', custom: '#0b6bcb', tint: 'neutral', motion: 'standard' };
 const HEX = /^#[0-9a-f]{6}$/i;
 
 function load(): ThemeState {
@@ -38,7 +42,8 @@ function load(): ThemeState {
         : INITIAL.preset;
     const custom = typeof parsed.custom === 'string' && HEX.test(parsed.custom) ? parsed.custom : INITIAL.custom;
     const tint = TINTS.find((value) => value === parsed.tint) ?? INITIAL.tint;
-    return { scheme, preset, custom, tint };
+    const motion = MOTION_PRESETS.find((value) => value === parsed.motion) ?? INITIAL.motion;
+    return { scheme, preset, custom, tint, motion };
   } catch {
     // 保存領域が使えない環境（プライベートブラウズ、無効化など）でも、既定のテーマで動く。
     return INITIAL;
@@ -98,6 +103,7 @@ function apply(state: ThemeState): void {
   for (const [name, value] of Object.entries(theme.vars)) root.style.setProperty(name, value);
   root.style.colorScheme = theme.scheme;
   root.dataset.theme = theme.scheme;
+  root.dataset.gMotion = state.motion;
   snapshot = { state, theme };
   for (const listener of listeners) listener();
 }

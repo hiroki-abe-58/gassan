@@ -73,6 +73,7 @@ function useWarnDuplicates(component: string, options: readonly SelectOption[]):
 }
 
 interface ListboxProps {
+  open: boolean;
   id: string;
   labelledBy: string | undefined;
   options: readonly SelectOption[];
@@ -91,7 +92,7 @@ interface ListboxProps {
  * 「いまどれを指しているか」だけを伝える。押下で起点からフォーカスを奪わないよう、
  * mousedown の既定動作を止める。
  */
-function Listbox({ id, labelledBy, options, active, selected, anchorRef, onActive, onPick, onDismiss }: ListboxProps): ReactNode {
+function Listbox({ open, id, labelledBy, options, active, selected, anchorRef, onActive, onPick, onDismiss }: ListboxProps): ReactNode {
   const labels = useLabels();
   const phrase = usePhrase();
   const listRef = useRef<HTMLUListElement>(null);
@@ -101,7 +102,7 @@ function Listbox({ id, labelledBy, options, active, selected, anchorRef, onActiv
   }, [active]);
 
   return (
-    <Popup anchorRef={anchorRef} onDismiss={onDismiss} onMouseDown={(event) => event.preventDefault()}>
+    <Popup open={open} anchorRef={anchorRef} onDismiss={onDismiss} onMouseDown={(event) => event.preventDefault()}>
       <ul ref={listRef} className="g-listbox" role="listbox" id={id} aria-labelledby={labelledBy}>
         {options.map((option, index) => (
           <li
@@ -280,22 +281,21 @@ export function ModalSelect({
         </span>
         <Icon name="chevronDown" className="g-select-icon" />
       </button>
-      {open ? (
-        <Listbox
-          id={listId}
-          labelledBy={ariaLabelledBy ?? id}
-          options={options}
-          active={active}
-          selected={selected}
-          anchorRef={anchorRef}
-          onActive={setActive}
-          onPick={(index) => {
-            pick(index);
-            triggerRef.current?.focus();
-          }}
-          onDismiss={() => setOpen(false)}
-        />
-      ) : null}
+      <Listbox
+        open={open}
+        id={listId}
+        labelledBy={ariaLabelledBy ?? id}
+        options={options}
+        active={active}
+        selected={selected}
+        anchorRef={anchorRef}
+        onActive={setActive}
+        onPick={(index) => {
+          pick(index);
+          triggerRef.current?.focus();
+        }}
+        onDismiss={() => setOpen(false)}
+      />
       {name ? <input type="hidden" name={name} value={selected ?? ''} /> : null}
     </div>
   );
@@ -464,19 +464,18 @@ export function ModalCombobox({
       >
         <Icon name="chevronDown" />
       </button>
-      {open ? (
-        <Listbox
-          id={listId}
-          labelledBy={ariaLabelledBy ?? id}
-          options={shown}
-          active={active}
-          selected={selected}
-          anchorRef={anchorRef}
-          onActive={setActive}
-          onPick={(index) => choose(shown[index])}
-          onDismiss={() => setOpen(false)}
-        />
-      ) : null}
+      <Listbox
+        open={open}
+        id={listId}
+        labelledBy={ariaLabelledBy ?? id}
+        options={shown}
+        active={active}
+        selected={selected}
+        anchorRef={anchorRef}
+        onActive={setActive}
+        onPick={(index) => choose(shown[index])}
+        onDismiss={() => setOpen(false)}
+      />
       {name ? <input type="hidden" name={name} value={selected ?? ''} /> : null}
     </div>
   );

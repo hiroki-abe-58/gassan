@@ -2278,6 +2278,68 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * motion（モーションのページ。段の一覧・試す台・自分で決める）
+ * -------------------------------------------------------------------------*/
+.s-motion-presets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0 28px;
+  margin: 0 0 36px;
+}
+.s-motion-presets > div {
+  padding-block: 14px 4px;
+  border-block-start: 1px solid var(--s-line);
+}
+.s-motion-presets dt {
+  font-weight: 700;
+}
+.s-motion-presets dd {
+  margin: 4px 0 0;
+  color: var(--s-ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.s-subhead {
+  margin: 32px 0 8px;
+  font-size: 1.0625rem;
+}
+.s-motion-pick {
+  max-inline-size: 30rem;
+  margin-block: 8px 16px;
+}
+.s-motion-stage {
+  margin-block: 0 20px;
+  padding: 28px 24px;
+  border-radius: var(--s-radius-lg);
+  background: var(--s-surface-1);
+}
+.s-motion-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+.s-motion-controls > .g-select {
+  inline-size: 12rem;
+}
+.s-motion-playground {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 24px 32px;
+  align-items: start;
+}
+.s-motion-sliders {
+  display: grid;
+  gap: 16px;
+}
+.s-motion-sliders > .s-btn {
+  justify-self: start;
+}
+.s-motion-table td code {
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
  * playground / filters / fields
  * -------------------------------------------------------------------------*/
 .s-field {

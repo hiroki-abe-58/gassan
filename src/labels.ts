@@ -1,7 +1,7 @@
 import { createContext, createElement, useContext, type ReactNode } from 'react';
 
 import { LineBreakContext, type LineBreakMode } from './phrase';
-import { DEFAULT_BLOCKED_MESSAGE, DEFAULT_UNRESOLVED_GATE_MESSAGE } from './types';
+import { DEFAULT_BLOCKED_MESSAGE, DEFAULT_UNRESOLVED_GATE_MESSAGE, type MotionPreset } from './types';
 
 /**
  * 画面に出る文字列と読み上げ専用文字列の集合。
@@ -174,22 +174,32 @@ export interface GassanProviderProps {
    * 'browser' にするとブラウザ任せ（文字単位）に戻る。省略すると外側の Provider に従う。W-01〜W-06。
    */
   lineBreak?: LineBreakMode;
+  /**
+   * 動きの段（V-01）。渡すと、中身を `data-g-motion` の器（`display: contents`）で包み、その枝の
+   * 動きのトークンを差し替える。モーダルとポップアップは top layer に出ても DOM の上では子孫なので、同じ段で動く。
+   * 省略すると器を足さず、外側（`<html data-g-motion>` か、外側の Provider）に従う。
+   */
+  motion?: MotionPreset;
   children: ReactNode;
 }
 
 /**
- * 文言と、折り返し方を差し替える。文言は部分指定でよい。
- * どちらも、省略した分は外側の Provider に従う（文言は外側の文言に重ねる）。
+ * 文言と、折り返し方と、動きの段を差し替える。文言は部分指定でよい。
+ * どれも、省略した分は外側の Provider に従う（文言は外側の文言に重ねる）。
  * 英語の Provider の内側に lineBreak だけを指定した Provider を置いても、文言は日本語に戻らない。
  * JSX を使わないのは、このファイルを .ts のまま保つため。
  */
-export function GassanProvider({ labels, lineBreak, children }: GassanProviderProps): ReactNode {
+export function GassanProvider({ labels, lineBreak, motion, children }: GassanProviderProps): ReactNode {
   const outer = useContext(LabelsContext);
   const merged: GassanLabels = labels ? { ...outer, ...labels } : outer;
   const inherited = useContext(LineBreakContext);
-  return createElement(
+  const provided = createElement(
     LineBreakContext.Provider,
     { value: lineBreak ?? inherited },
     createElement(LabelsContext.Provider, { value: merged }, children),
   );
+  // 段はカスタムプロパティなので、継承させるための器が要る。レイアウトには参加させない。
+  return motion
+    ? createElement('div', { 'data-g-motion': motion, style: { display: 'contents' } }, provided)
+    : provided;
 }

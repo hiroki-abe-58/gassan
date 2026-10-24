@@ -34,6 +34,15 @@ export type PlacementToken = 'center' | 'top' | 'sheet';
 export type PlacementOption = PlacementToken | 'auto';
 
 /**
+ * 動きの段。V-01。弱い順。
+ * none は動かさない（1ms）、subtle は短く小さく、standard が既定、expressive はバネ・ぼかし・順に出す。
+ * どれを選んでも、OS の「動きを減らす」設定が勝つ（V-02）。
+ */
+export const MOTION_PRESETS = ['none', 'subtle', 'standard', 'expressive'] as const;
+
+export type MotionPreset = (typeof MOTION_PRESETS)[number];
+
+/**
  * モーダルの5類型（§2）。
  * これを指定すると scrim と dismiss の既定が決まる。
  * 複数該当するなら、それは分割すべき2つのモーダルである。

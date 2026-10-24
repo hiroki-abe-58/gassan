@@ -16,17 +16,17 @@
 
 **문서 사이트: <https://hiroki-abe-58.github.io/gassan/#/ko>**
 — 설계 원칙(모달이 존재하는 이유, 4층 모델, 5가지 유형, 접근성), 스타일(스크림, 색과 대비, 테마, 크기, 줄바꿈, 모션),
-모든 컴포넌트와 폼 요소의 라이브 데모와 API, 그리고 156개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
+모든 컴포넌트와 폼 요소의 라이브 데모와 API, 그리고 164개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
 사이트는 한국어, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [ไทย](https://hiroki-abe-58.github.io/gassan/#/th)로 읽을 수 있다(상단 바의 지구본 버튼으로 전환한다).
 라이트 / 다크 테마와 기본 색상(primary color)을 고를 수 있고, 어떤 색을 고르든 글자와 채움 색이 WCAG 대비율을 충족하도록 도출된다.
 사이트의 모든 표, 개수, API 설명은 빌드 시 사양서와 타입 정의에서 생성되며, 손으로 쓴 숫자는 하나도 없다.
 
-전체 설계는 [`modal.skill.md`](./modal.skill.md)(156개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
+전체 설계는 [`modal.skill.md`](./modal.skill.md)(164개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
 AI 어시스턴트와 함께 코딩할 때는 이 파일을 컨텍스트에 넣는다.
 
 | 문서 | 내용 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 156개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 164개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 원래 요구 사항을 분해해 한 줄씩 정리한 표: 구현됨 / 조합으로 달성 / 로드맵에 있음 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan의 폼 요소를 모달 안에 넣는 최소 예제와, gassan에 없는 컴포넌트를 다른 라이브러리에서 가져와 감쌀 때의 주의점 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 네이티브 `<dialog>` vs Base UI vs React Aria vs Radix(2026-09-29 기준, 1차 자료만 사용) |

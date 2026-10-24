@@ -78,8 +78,9 @@ export type {
   GateEntry,
   ButtonVariant,
   GateSelector,
+  MotionPreset,
 } from './types';
-export { KIND_DEFAULTS, DEFAULT_BLOCKED_MESSAGE, DEFAULT_UNRESOLVED_GATE_MESSAGE } from './types';
+export { KIND_DEFAULTS, DEFAULT_BLOCKED_MESSAGE, DEFAULT_UNRESOLVED_GATE_MESSAGE, MOTION_PRESETS } from './types';
 
 export type { DataAttributes } from './internal/passthrough';
 export type { ModalRootProps } from './root';

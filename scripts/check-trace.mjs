@@ -90,7 +90,7 @@ for (const { letter } of skillItems.values()) {
 }
 
 // 1-c. 合計
-const TOTAL = 156;
+const TOTAL = 164;
 if (skillItems.size !== TOTAL) {
   fail(`${SKILL}: §4 の項目数が ${skillItems.size} 件（${TOTAL} 件であるべき）`);
 } else {
