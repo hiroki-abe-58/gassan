@@ -83,6 +83,7 @@ export { PageHeader } from './page-header';
 export { DataTable } from './data-table';
 export { CommandPalette } from './command-palette';
 export { LineChart, BarChart, DonutChart, Sparkline, BarList, Gauge } from './charts';
+export { Carousel } from './carousel';
 
 /* ------------------------------------------------------------------ templates */
 
@@ -246,6 +247,7 @@ export type {
   LineChartProps,
   SparklineProps,
 } from './charts';
+export type { CarouselItem, CarouselProps } from './carousel';
 export type { AccordionItem, AccordionProps } from './disclosure';
 export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps } from './overlay';
 export type { BreadcrumbItem, BreadcrumbsProps, PaginationProps, StepItem, StepsProps } from './navigation';

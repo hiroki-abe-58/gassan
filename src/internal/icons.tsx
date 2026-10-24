@@ -10,6 +10,9 @@ export const ICONS = {
   chevronDown: 'm5 7.5 5 5 5-5',
   chevronLeft: 'M12.5 4.5 7 10l5.5 5.5',
   chevronRight: 'M7.5 4.5 13 10l-5.5 5.5',
+  // カルーセルの自動再生（U-29）。線画の三角と 2 本の縦線
+  play: 'M7 4.75v10.5L15.25 10 7 4.75Z',
+  pause: 'M7.5 5v10M12.5 5v10',
   close: 'm5 5 10 10M15 5 5 15',
   check: 'm4.5 10.5 3.5 3.5 7.5-8',
   minus: 'M5 10h10',

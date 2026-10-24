@@ -51,10 +51,12 @@ import { gzipSync } from 'node:zlib';
  * 2026-10-24、JS を 96 → 106 KB、CSS を 18 → 21 KB に引き上げた。グラフ（Q-01〜Q-12。折れ線と面・棒・ドーナツ・
  * 小さな推移・順位の棒・メーターと、目盛り・線の形の計算）を足したため（JS 約 9.3 KB・CSS 約 2.3 KB）。グラフは名前つき import
  * でだけ使うので、使わないアプリの JS には載らない（minify した束で、Modal だけを使うアプリにグラフのコードが無いことを確かめた）。
+ * 同日、JS を 106 → 110 KB に引き上げた。カルーセル（U-28 / U-29。前へ・次へ・点・自動再生と、モーダルのギャラリーと共有にした
+ * scroll-snap の位置の読み取り）を足したため（JS 約 2.3 KB・CSS 約 0.6 KB）。使わないアプリの JS には載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 106 * 1024,
-  'dist/index.cjs': 106 * 1024,
+  'dist/index.js': 110 * 1024,
+  'dist/index.cjs': 110 * 1024,
   'dist/styles.css': 21 * 1024,
   'dist/templates.css': 5 * 1024,
 };
@@ -175,6 +177,8 @@ const REQUIRED_EXPORTS = [
   'Sparkline',
   'BarList',
   'Gauge',
+  // カルーセル。U-28 / U-29。
+  'Carousel',
   // フォーム部品の中立の名前（ModalInput などと同じもの）。
   'Field',
   'Fieldset',

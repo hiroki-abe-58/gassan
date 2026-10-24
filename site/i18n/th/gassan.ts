@@ -138,6 +138,12 @@ const labels: GassanLabels = {
   noData: 'ไม่มีข้อมูล',
   chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join(', ')}`,
   sparkline: ({ min, max, last }) => `ต่ำสุด ${min}, สูงสุด ${max}, ล่าสุด ${last}`,
+  carousel: 'ภาพหมุนเวียน',
+  slide: 'สไลด์',
+  slideNumber: (n) => `สไลด์ที่ ${n}`,
+  slidePicker: 'เลือกสไลด์',
+  startRotation: 'เริ่มเล่นสไลด์อัตโนมัติ',
+  stopRotation: 'หยุดเล่นสไลด์อัตโนมัติ',
 };
 
 export default labels;

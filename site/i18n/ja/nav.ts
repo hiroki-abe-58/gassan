@@ -53,6 +53,7 @@ export default {
     uiData: '見出しと表',
     uiCommand: 'コマンドパレット',
     uiCharts: 'グラフ',
+    uiCarousel: 'カルーセル',
     templatesAuth: 'ログインと登録',
     templatesStatus: 'エラーとメンテナンス',
     templatesPublic: '料金・FAQ・規約',

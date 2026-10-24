@@ -3337,6 +3337,109 @@
     font-size: 0.75rem;
   }
   .g-command-hint { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* --- 9.25 carousel（U-28 / U-29） -------------------------------------------------------
+   * スライドは scroll-snap の横の列（指やトラックパッドではそのまま送れる）。前へ・点・次へは下の列に並べ、
+   * スライドには重ねない（狭い画面でも中身を隠さない）。自動再生の止めるボタンは先頭（左上）に置く。今の点には、
+   * 次へ送るまでの残り時間の線が伸びる（ポインタやフォーカスで止まっている間は線も止まる）。1 度に見せる枚数は --g-carousel-per-view。 */
+  .g-carousel {
+    --g-carousel-gap: 16px;
+    display: grid;
+    gap: 10px;
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+  .g-carousel-viewport { position: relative; min-inline-size: 0; }
+  .g-carousel-track {
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - (var(--g-carousel-per-view, 1) - 1) * var(--g-carousel-gap)) / var(--g-carousel-per-view, 1));
+    gap: var(--g-carousel-gap);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    border-radius: var(--g-radius);
+  }
+  .g-carousel-track::-webkit-scrollbar { display: none; }
+  .g-carousel-slide { min-inline-size: 0; scroll-snap-align: start; }
+  :is(.g-carousel-arrow, .g-carousel-rotation) {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: 36px;
+    block-size: 36px;
+    padding: 0;
+    border: 1px solid var(--g-border);
+    border-radius: 50%;
+    background: var(--g-surface);
+    color: var(--g-fg);
+    cursor: pointer;
+    transition: scale var(--g-dur-fast) var(--g-ease-move), background-color var(--g-dur-fast) linear;
+  }
+  :is(.g-carousel-arrow, .g-carousel-rotation) > svg { inline-size: 18px; block-size: 18px; }
+  :is(.g-carousel-arrow, .g-carousel-rotation):hover { background: color-mix(in srgb, var(--g-fg) 6%, var(--g-surface)); }
+  :is(.g-carousel-arrow, .g-carousel-rotation):active { scale: var(--g-press-scale); }
+  .g-carousel-arrow:dir(rtl) > svg { scale: -1 1; }
+  /* 端では押せない。フォーカスは止まる（aria-disabled）ので、消さずに薄くする */
+  .g-carousel-arrow[aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; }
+  /* 止めるボタンだけはスライドの左上に重ねる（Tab で最初に止まり、目でも最初に見つかる所） */
+  .g-carousel-rotation {
+    position: absolute;
+    inset-block-start: 8px;
+    inset-inline-start: 8px;
+    inline-size: 32px;
+    block-size: 32px;
+    border-color: transparent;
+    background: color-mix(in srgb, var(--g-surface) 92%, transparent);
+    box-shadow: 0 0 0 1px var(--g-border), 0 4px 14px -6px rgb(0 0 0 / 0.35);
+  }
+  .g-carousel-rotation > svg { inline-size: 16px; block-size: 16px; }
+  :is(.g-carousel-arrow, .g-carousel-rotation, .g-carousel-dot):focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-carousel-controls { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .g-carousel-dots { display: flex; flex-wrap: wrap; justify-content: center; min-inline-size: 0; }
+  /* 当たりは 24px（WCAG 2.5.8）。見えるのは中の 8px の点で、今の点は 24px の線に伸びる */
+  .g-carousel-dot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: 24px;
+    block-size: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: inline-size var(--g-dur-slow) var(--g-ease-move);
+  }
+  .g-carousel-dot::before {
+    content: '';
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 999px;
+    background: var(--g-border-strong);
+    transition: inline-size var(--g-dur-slow) var(--g-ease-move), background-color var(--g-dur-fast) linear;
+  }
+  .g-carousel-dot:hover::before { background: var(--g-fg-muted); }
+  .g-carousel-dot[aria-current="true"] { inline-size: 32px; }
+  .g-carousel-dot[aria-current="true"]::before { inline-size: 24px; background: var(--g-accent); }
+  /* 自動で送っている間、今の点は地を薄くし、残り時間の線を伸ばす */
+  .g-carousel[data-playing] .g-carousel-dot[aria-current="true"]::before { background: color-mix(in srgb, var(--g-accent) 30%, transparent); }
+  .g-carousel[data-playing] .g-carousel-dot[aria-current="true"]::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 8px;
+    inset-inline-start: 4px;
+    inline-size: 24px;
+    block-size: 8px;
+    border-radius: 999px;
+    background: var(--g-accent);
+    transform-origin: left center;
+    animation: g-carousel-progress var(--g-carousel-interval, 6s) linear both;
+  }
+  .g-carousel[data-playing] .g-carousel-dot[aria-current="true"]:dir(rtl)::after { transform-origin: right center; }
+  .g-carousel[data-paused] .g-carousel-dot[aria-current="true"]::after { animation-play-state: paused; }
+  @keyframes g-carousel-progress { from { scale: 0 1; } }
 }
 
 /* ===========================================================================
@@ -3800,6 +3903,18 @@
   @media (prefers-reduced-motion: reduce) {
     /* 10。グラフの描き込みは飾りなので止める（値ははじめから全部見える） */
     :is(.g-viz-svg, .g-viz-dot, .g-viz-slot, .g-donut-segment, .g-gauge-fill, .g-bar-list-bar) { animation: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* 9.25。点が伸びる動きは飾りなので止める（残り時間の線は情報なので残す） */
+    .g-carousel-dot,
+    .g-carousel-dot::before { transition: none; }
+  }
+  @media (forced-colors: active) {
+    /* 9.25。点は地の色で描いているので消える。点は GrayText、今の点と残り時間の線は Highlight で残す */
+    .g-carousel-dot::before { forced-color-adjust: none; background: GrayText; }
+    .g-carousel-dot[aria-current="true"]::before,
+    .g-carousel[data-playing] .g-carousel-dot[aria-current="true"]::after { forced-color-adjust: none; background: Highlight; }
+    :is(.g-carousel-arrow, .g-carousel-rotation) { border: 1px solid CanvasText; }
   }
   @media (forced-colors: active) {
     /* 10。系列の色を残す。Canvas と CanvasText に塗り替えると、棒と面が消えて系列が見分けられない */

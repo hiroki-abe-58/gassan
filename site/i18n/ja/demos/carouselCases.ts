@@ -1,0 +1,21 @@
+export default {
+  label: '導入事例',
+  financeQuote: '月末の請求の締めが、3 日から半日になった。',
+  financeName: '田中 美咲',
+  financeCompany: '経理部・株式会社ミナト',
+  salesQuote: '商談の記録が 1 か所にまとまり、引き継ぎで聞き直すことが無くなった。',
+  salesName: '佐々木 健',
+  salesCompany: '営業部・ハルカ商事',
+  supportQuote: '問い合わせの一覧から、同じ質問がすぐに見つかる。返事が早くなった。',
+  supportName: '山口 遥',
+  supportCompany: 'サポート・株式会社ツバメ',
+  productQuote: '使われている機能が数で見えるので、次に何を作るかで迷わない。',
+  productName: '中村 翔',
+  productCompany: 'プロダクト・ソラノ',
+  hrQuote: '入社の手続きが画面の上で終わり、紙の書類を探さなくなった。',
+  hrName: '小林 葵',
+  hrCompany: '人事・株式会社アオバ',
+  comments: {
+    fit: 'minSlideWidth で、器の幅に収まる枚数を並べる。狭い画面では 1 枚ずつになる',
+  },
+};

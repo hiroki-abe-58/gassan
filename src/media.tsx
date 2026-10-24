@@ -2,14 +2,14 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from 'react';
 
-import { motionStill, warnDuplicateKeys, warnOnce } from './internal/dom';
+import { warnDuplicateKeys, warnOnce } from './internal/dom';
 import { Icon } from './internal/icons';
+import { useSnapTrack } from './internal/snap-track';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { usePhrase } from './phrase';
@@ -117,24 +117,10 @@ export interface ModalGalleryProps extends DataAttributes {
   className?: string;
 }
 
-type IndexSource = 'init' | 'command' | 'scroll';
-
-function clampIndex(value: number, length: number): number {
-  if (length <= 0) return 0;
-  if (value < 0) return 0;
-  if (value > length - 1) return length - 1;
-  return value;
-}
-
 /**
  * 画像・動画のスライダー。B-12。
  *
- * scroll-snap で実体を作り、ボタンとキーボードは「位置を指示するだけ」にする。
- * JS でトランスフォームを積むと、慣性スクロールと二重管理になって必ずずれる。
- *
- * index の変更元を持っているのは、
- * 指スクロール由来の index 更新に対してこちらから scrollTo を呼び返すと、
- * スクロールが自分自身と綱引きして震えるため。
+ * scroll-snap で実体を作り、ボタンとキーボードは「位置を指示するだけ」にする（useSnapTrack。カルーセルと共有）。
  */
 export function ModalGallery({
   label,
@@ -145,15 +131,8 @@ export function ModalGallery({
   ...rest
 }: ModalGalleryProps): ReactNode {
   const labels = useLabels();
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const frameRef = useRef<number | null>(null);
   const total = items.length;
-
-  const [state, setState] = useState<{ index: number; source: IndexSource }>(() => ({
-    index: clampIndex(initialIndex, total),
-    source: 'init',
-  }));
-  const index = clampIndex(state.index, total);
+  const { trackRef, index, go, onScroll } = useSnapTrack(total - 1, initialIndex);
 
   const ids = items.map((item) => item.id).join('\u0000');
   useEffect(() => {
@@ -172,61 +151,6 @@ export function ModalGallery({
     notified.current = index;
     notify.current?.(index);
   }, [index]);
-
-  // 指示による移動のときだけスクロールを animate する。
-  useEffect(() => {
-    if (state.source === 'scroll') return;
-    const track = trackRef.current;
-    if (!track) return;
-    const child = track.children.item(index) as HTMLElement | null;
-    if (!child) return;
-    const left = child.offsetLeft;
-    if (typeof track.scrollTo === 'function') {
-      track.scrollTo({
-        left,
-        behavior: state.source === 'init' || motionStill(track) ? 'auto' : 'smooth',
-      });
-    } else {
-      track.scrollLeft = left;
-    }
-  }, [index, state.source]);
-
-  const handleScroll = useCallback(() => {
-    if (frameRef.current !== null) return;
-    const raf =
-      typeof requestAnimationFrame === 'function'
-        ? requestAnimationFrame
-        : (cb: FrameRequestCallback) => setTimeout(() => cb(0), 16) as unknown as number;
-    frameRef.current = raf(() => {
-      frameRef.current = null;
-      const track = trackRef.current;
-      if (!track) return;
-      // 幅 0 は「0 だった」ではなく「測れない」（閉じた dialog の中など）。
-      // ここで割り算すると位置が 0 に化け、ボタンやキーで進めた index を巻き戻す。§10-1 と同じ穴。
-      const width = track.clientWidth;
-      if (!width) return;
-      const next = clampIndex(Math.round(track.scrollLeft / width), total);
-      setState((previous) =>
-        previous.index === next ? previous : { index: next, source: 'scroll' },
-      );
-    });
-  }, [total]);
-
-  useEffect(
-    () => () => {
-      if (frameRef.current !== null && typeof cancelAnimationFrame === 'function') {
-        cancelAnimationFrame(frameRef.current);
-      }
-    },
-    [],
-  );
-
-  const go = useCallback(
-    (next: number) => {
-      setState({ index: clampIndex(next, total), source: 'command' });
-    },
-    [total],
-  );
 
   const handleKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLDivElement>) => {
@@ -268,7 +192,7 @@ export function ModalGallery({
         tabIndex={0}
         role="group"
         aria-label={label}
-        onScroll={handleScroll}
+        onScroll={onScroll}
         onKeyDown={handleKeyDown}
       >
         {items.map((item, i) => (
