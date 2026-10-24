@@ -31,7 +31,10 @@ import {
   SiteProvider,
   TwoFactorPage,
   VerifyEmailPage,
+  ERROR_STATUSES,
   englishLabels,
+  englishTemplateLabels,
+  japaneseTemplateLabels,
   type SiteLinkProps,
 } from '../src';
 import * as appShell from '../src/templates/app-shell';
@@ -710,9 +713,10 @@ describe('エラーとメンテナンス / P-05 / P-06', () => {
     );
     expect(screen.getByRole('button', { name: 'もう一度試す' })).toHaveAttribute('data-variant', 'primary');
     expect(screen.getByRole('link', { name: '稼働状況を見る' })).toHaveAttribute('href', 'https://status.example.com');
+    // 登録に無い状態は 4xx / 5xx の文で出す
     rerender(
       <Site>
-        <ErrorPage status={418} />
+        <ErrorPage status={499} />
       </Site>,
     );
     expect(screen.getByRole('heading', { level: 1, name: 'リクエストを完了できませんでした' })).toBeInTheDocument();
@@ -723,6 +727,76 @@ describe('エラーとメンテナンス / P-05 / P-06', () => {
     );
     expect(screen.getByRole('heading', { level: 1, name: 'インターネットに接続されていません' })).toBeInTheDocument();
     expect(document.querySelector('.g-status-code')).toBeNull();
+  });
+
+  it('IANA に登録された 4xx / 5xx は、どれも自分の見出しと説明で出す', () => {
+    // https://www.iana.org/assignments/http-status-codes の 4xx / 5xx（418 は使われていないが、登録に残っている）
+    expect(ERROR_STATUSES).toEqual([
+      400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429,
+      431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 510, 511,
+    ]);
+    // 写し間違いで 2 つの状態が同じ文にならない
+    for (const { error } of [japaneseTemplateLabels, englishTemplateLabels]) {
+      expect(new Set(ERROR_STATUSES.map((code) => error.titles[code])).size).toBe(ERROR_STATUSES.length);
+      expect(new Set(ERROR_STATUSES.map((code) => error.descriptions[code])).size).toBe(ERROR_STATUSES.length);
+    }
+    const { rerender } = renderInSite(<ErrorPage status={400} />);
+    for (const code of ERROR_STATUSES) {
+      rerender(
+        <Site>
+          <ErrorPage status={code} />
+        </Site>,
+      );
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(japaneseTemplateLabels.error.titles[code]);
+      expect(document.querySelector('.g-status-description')).toHaveTextContent(japaneseTemplateLabels.error.descriptions[code]);
+    }
+  });
+
+  it('次の一歩は状態で決め、稼働状況はサーバー側の問題にだけ添える', () => {
+    const links = { ...LINKS, billing: '/settings/billing' };
+    const page = (status: number) => (
+      <SiteProvider name="Atlas" links={links}>
+        <ErrorPage status={status} />
+      </SiteProvider>
+    );
+    const { rerender } = render(page(400));
+    const primary: Record<string, number[]> = {};
+    const status: number[] = [];
+    const contact: number[] = [];
+    // 登録に無い 499 / 599 は 4xx / 5xx の次の一歩
+    for (const code of [...ERROR_STATUSES, 499, 599]) {
+      rerender(page(code));
+      const actions = within(screen.getByRole('main'));
+      const label = screen.getByRole('main').querySelector('.g-status-actions [data-variant="primary"]')?.textContent ?? '';
+      (primary[label] ??= []).push(code);
+      if (actions.queryByRole('link', { name: '稼働状況を見る' })) status.push(code);
+      if (actions.queryByRole('link', { name: 'サポートに問い合わせる' })) contact.push(code);
+    }
+    expect(primary).toEqual({
+      ログイン: [401],
+      請求の設定を開く: [402],
+      前のページへ戻る: [400, 405, 406, 411, 413, 415, 422, 510, 499],
+      ホームへ戻る: [403, 404, 410, 414, 418, 451, 501],
+      もう一度試す: [407, 408, 409, 412, 416, 417, 421, 423, 424, 425, 426, 428, 429, 431, 500, 502, 503, 504, 505, 506, 507, 508, 511, 599],
+    });
+    expect(status).toEqual([500, 502, 503, 504, 506, 507, 508, 599]);
+    expect(contact).toEqual([403, 451]);
+    rerender(page(402));
+    expect(screen.getByRole('link', { name: '請求の設定を開く' })).toHaveAttribute('href', '/settings/billing');
+    // 請求の設定が無ければ、402 は問い合わせへ案内する
+    rerender(
+      <SiteProvider name="Atlas" links={LINKS}>
+        <ErrorPage status={402} />
+      </SiteProvider>,
+    );
+    expect(screen.getByRole('link', { name: 'ホームへ戻る' })).toHaveAttribute('data-variant', 'primary');
+    expect(screen.getByRole('link', { name: 'サポートに問い合わせる' })).toHaveAttribute('href', '/contact');
+  });
+
+  it('サイトの見本は、登録された状態とオフラインをすべて並べる（改行の検査がどの文も通る）', () => {
+    const list = readFileSync(resolve(process.cwd(), 'site/previews/TemplatePreview.tsx'), 'utf8').match(/export const PREVIEWS = \[([\s\S]*?)\] as const/)?.[1] ?? '';
+    const errors = [...list.matchAll(/'(error-[^']+)'/g)].map((match) => match[1]);
+    expect(errors).toEqual([...ERROR_STATUSES.map((code) => `error-${String(code)}`), 'error-offline']);
   });
 
   it('問い合わせ番号は写せ、Retry-After の間は「もう一度試す」を押せない', async () => {

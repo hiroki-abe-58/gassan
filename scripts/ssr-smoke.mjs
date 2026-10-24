@@ -63,7 +63,9 @@ import {
   ToastHost,
   Tooltip,
   TreeView,
+  ERROR_STATUSES,
   englishLabels,
+  japaneseTemplateLabels,
 } from '../dist/index.js';
 
 let failed = false;
@@ -426,6 +428,9 @@ const textOf = (markup) => markup.replace(/<[^>]+>/g, '');
 const signInHtml = render(h(SignInPage, { onSubmit: noop }));
 const notFoundHtml = render(h(ErrorPage, { status: 404 }));
 const unavailableHtml = render(h(ErrorPage, { status: 503, retryAfter: 30 }));
+// 登録された 4xx / 5xx は、どれも自分の見出しで描く（4xx / 5xx の文に落ちない）
+const headingOf = (markup) => textOf(markup.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? '');
+const ownHeadings = ERROR_STATUSES.every((status) => headingOf(render(h(ErrorPage, { status }))) === japaneseTemplateLabels.error.titles[status]);
 const maintenanceHtml = render(h(MaintenancePage, { start: '2026-10-24T02:00:00+09:00', end: '2026-10-24T04:00:00+09:00', timeZone: 'Asia/Tokyo' }));
 const pricingHtml = render(
   h(PricingPage, {
@@ -452,6 +457,7 @@ for (const [label, passed] of [
   ['SignInPage renders the autofill attributes on the server', /autocomplete="username"/i.test(signInHtml) && /autocomplete="current-password"/i.test(signInHtml)],
   ['ErrorPage renders the status code and the way home on the server', notFoundHtml.includes('404') && notFoundHtml.includes('href="/"')],
   ['ErrorPage starts the Retry-After countdown at the given seconds on the server', textOf(unavailableHtml).includes('30 秒後') && /<button[^>]*aria-disabled="true"/.test(unavailableHtml)],
+  [`ErrorPage gives each of the ${String(ERROR_STATUSES.length)} registered 4xx / 5xx statuses its own heading on the server`, ownHeadings],
   ['MaintenancePage writes the schedule in the given time zone on the server', textOf(maintenanceHtml).includes('10月24日(土) 2:00〜4:00 (JST)')],
   ['PricingPage formats prices and marks the recommended plan on the server', pricingHtml.includes('1,500') && pricingHtml.includes('data-recommended')],
   ['DocumentPage renders the table of contents and the effective date on the server', documentHtml.includes('data-toc') && /datetime="2026-04-01"/i.test(documentHtml)],

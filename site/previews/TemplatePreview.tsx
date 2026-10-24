@@ -50,11 +50,46 @@ export const PREVIEWS = [
   'verify-email',
   'sign-out',
   'sign-out-confirm',
-  'error-404',
-  'error-500',
-  'error-403',
+  'error-400',
   'error-401',
+  'error-402',
+  'error-403',
+  'error-404',
+  'error-405',
+  'error-406',
+  'error-407',
+  'error-408',
+  'error-409',
+  'error-410',
+  'error-411',
+  'error-412',
+  'error-413',
+  'error-414',
+  'error-415',
+  'error-416',
+  'error-417',
+  'error-418',
+  'error-421',
+  'error-422',
+  'error-423',
+  'error-424',
+  'error-425',
+  'error-426',
+  'error-428',
   'error-429',
+  'error-431',
+  'error-451',
+  'error-500',
+  'error-501',
+  'error-502',
+  'error-503',
+  'error-504',
+  'error-505',
+  'error-506',
+  'error-507',
+  'error-508',
+  'error-510',
+  'error-511',
   'error-offline',
   'maintenance',
   'pricing',
@@ -77,14 +112,12 @@ export const PREVIEWS = [
   'invite-expired',
 ] as const;
 
-const ERRORS: Record<string, ErrorStatus> = {
-  'error-404': 404,
-  'error-500': 500,
-  'error-403': 403,
-  'error-401': 401,
-  'error-429': 429,
-  'error-offline': 'offline',
-};
+/** 見本の名前から状態を引く（'error-404' → 404、'error-offline' → 'offline'）。知らない名前は 404 のページ。 */
+function errorStatus(name: string): ErrorStatus | number {
+  if (name === 'error-offline') return 'offline';
+  const code = /^error-(\d{3})$/.exec(name)?.[1];
+  return code ? Number(code) : 404;
+}
 
 /**
  * テンプレートの見本（#/preview/<name>）。ドキュメントのページの iframe の中で描く。
@@ -107,6 +140,7 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
     faq: preview('faq'),
     changelog: preview('changelog'),
     status: preview('maintenance'),
+    billing: preview('app-billing'),
   };
   const nav = [
     { label: s.nav.pricing, href: links.pricing },
@@ -343,8 +377,11 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
             }))}
           />
         );
-      default:
-        return <ErrorPage status={ERRORS[name] ?? 404} reference={name === 'error-500' ? s.reference : undefined} retryAfter={name === 'error-429' ? 15 : 0} />;
+      default: {
+        const status = errorStatus(name);
+        // サーバー側の問題には、ログを引く問い合わせ番号を添える
+        return <ErrorPage status={status} reference={typeof status === 'number' && status >= 500 ? s.reference : undefined} retryAfter={status === 429 ? 15 : 0} />;
+      }
     }
   })();
 

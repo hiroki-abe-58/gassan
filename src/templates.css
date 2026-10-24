@@ -163,8 +163,9 @@
   }
   .g-status-icon { inline-size: 72px; block-size: 72px; color: var(--g-fg-muted); }
   .g-status-icon > path { stroke-width: 1.1; }
-  .g-status-title { margin: 0; font-size: 1.75rem; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; }
-  .g-status-description { max-inline-size: 32em; margin: 0; color: var(--g-fg-muted); line-height: 1.7; }
+  /* 中央寄せなので、最後の行に 1 語だけ残さない（見出しは行の長さをそろえ、説明は最後の行を短くしすぎない） */
+  .g-status-title { margin: 0; font-size: 1.75rem; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; text-wrap: balance; }
+  .g-status-description { max-inline-size: 32em; margin: 0; color: var(--g-fg-muted); line-height: 1.7; text-wrap: pretty; }
   .g-status-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-block-start: 12px; }
   .g-status-hint { margin: 0; color: var(--g-fg-muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
   .g-status-reference {

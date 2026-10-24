@@ -109,7 +109,7 @@ export { OnboardingPage } from './templates/onboarding';
 export { InviteAcceptPage } from './templates/invite';
 export { ChatPage, AssistantPage } from './templates/conversations';
 export { MailboxPage } from './templates/mailbox';
-export { japaneseTemplateLabels, englishTemplateLabels } from './templates/labels';
+export { ERROR_STATUSES, japaneseTemplateLabels, englishTemplateLabels } from './templates/labels';
 
 /*
  * フォーム部品の中立の名前。ページの上でもモーダルの中でも同じ部品なので、Modal を付けずに書ける。

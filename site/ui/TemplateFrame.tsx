@@ -23,10 +23,21 @@ const DESKTOP = 1280;
  * パソコンの形は 1280px で描いて枠の幅まで縮める（ドキュメントの本文の幅のままだと、パソコンの形にならない）。
  * テーマは localStorage を通じて iframe の中にも届く（theme/store.ts の storage イベント）。
  */
-export function TemplateFrame({ title, variants, height = 760 }: { title: string; variants: readonly FrameVariant[]; height?: number }): ReactNode {
+export function TemplateFrame({
+  title,
+  variants,
+  initial,
+  height = 760,
+}: {
+  title: string;
+  variants: readonly FrameVariant[];
+  /** 最初に見せる見本の名前。既定は variants の先頭。 */
+  initial?: string;
+  height?: number;
+}): ReactNode {
   const t = useT().common.frame;
   const [width, setWidth] = useState('wide');
-  const [current, setCurrent] = useState(variants[0]?.name ?? '');
+  const [current, setCurrent] = useState(initial ?? variants[0]?.name ?? '');
   const stageRef = useRef<HTMLDivElement>(null);
   const [stageWidth, setStageWidth] = useState(DESKTOP);
   const src = to(`/preview/${current}`);
