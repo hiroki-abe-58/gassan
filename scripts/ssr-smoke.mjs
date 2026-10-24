@@ -36,6 +36,7 @@ import {
   FaqPage,
   GassanProvider,
   InviteAcceptPage,
+  MailboxPage,
   MaintenancePage,
   MembersPage,
   Menu,
@@ -629,6 +630,16 @@ const chatPageHtml = render(
 const assistantPageHtml = render(
   h(AssistantPage, { messages: [], currentUserId: 'aoi', onSend: noop, suggestions: [{ id: 's1', label: '先月の売上をまとめて' }] }),
 );
+// メール（P-20）。一覧の日時もサーバーでは UTC で描く。
+const mailboxHtml = render(
+  h(MailboxPage, {
+    folders: [{ id: 'inbox', label: '受信トレイ', unread: 2 }],
+    currentFolder: 'inbox',
+    onFolderChange: noop,
+    messages: [{ id: 'm1', from: { name: '鈴木 蓮', email: 'ren@example.com' }, subject: '請求書の件', receivedAt: `${new Date().toISOString().slice(0, 10)}T00:30:00Z` }],
+    onOpen: noop,
+  }),
+);
 for (const [label, passed] of [
   ['SettingsPage renders the sections and writes times in UTC until hydration on the server', /autocomplete="email"/i.test(settingsHtml) && textOf(settingsHtml).includes('2026/10/23 0:30')],
   ['MembersPage leaves the current user without a checkbox on the server', (membersHtml.match(/type="checkbox"/g) ?? []).length === 2 && textOf(membersHtml).includes('鈴木 蓮')],
@@ -640,6 +651,10 @@ for (const [label, passed] of [
     /data-view="list"/.test(chatPageHtml) && textOf(chatPageHtml).includes('未読 2件') && /role="log"[^>]*aria-label="general のメッセージ"/.test(chatPageHtml),
   ],
   ['AssistantPage renders the greeting, the suggestions and the note on the server', textOf(assistantPageHtml).includes('何をお手伝いしましょうか？') && textOf(assistantPageHtml).includes('先月の売上をまとめて') && assistantPageHtml.includes('g-assistant-note')],
+  [
+    'MailboxPage renders the folders, the unread row with its time in UTC and the empty reader on the server',
+    textOf(mailboxHtml).includes('未読 2件') && textOf(mailboxHtml).includes('0:30') && textOf(mailboxHtml).includes('メールを選んでください') && /data-view="list"/.test(mailboxHtml),
+  ],
 ]) {
   if (passed) ok(label);
   else fail(label);

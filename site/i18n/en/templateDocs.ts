@@ -152,4 +152,17 @@ export default {
     },
     a11yCaption: 'Specification items the conversation page templates satisfy',
   },
+  mail: {
+    lead: 'The mail screen. Depending on the container’s width, the folders, the message list and the reading pane appear in three columns, two columns, or one at a time. Select rows to archive, delete or mark them as read all at once; Compose, Reply and Forward open a modal to write in.',
+    setup: {
+      title: 'Usage',
+      intro: 'Your app holds the current folder and the open message. Opening a message calls onOpen (marking it as read is also up to your app). For bulk actions and sending, you pass only handlers. If a handler fails, return { error }, and that message is announced, interrupting whatever is being read. Actions you don’t pass aren’t shown.',
+      code: "import { MailboxPage } from '@genelab/gassan';\n\n<MailboxPage\n  folders={folders}\n  currentFolder={folderId}\n  onFolderChange={setFolderId}\n  messages={messagesIn(folderId)}\n  current={messageId}\n  onOpen={openMessage}\n  onArchive={(ids) => archive(ids)}\n  onDelete={(ids) => moveToTrash(ids)}\n  onMarkRead={(ids, read) => markRead(ids, read)}\n  onStar={(id, starred) => star(id, starred)}\n  onSend={(values) => send(values)}\n/>",
+    },
+    preview: {
+      title: 'Mail',
+      intro: 'In a wide container, the folders, the list and the reading pane sit side by side. Selecting rows brings up “n selected” and the bulk actions at the top, and the result of archiving or deleting is announced. Opening a message marks it as read, and Reply opens the compose window with the recipient and subject already filled in. Switch to “Phone”, and the folders become a select above the list, while the list and the reading pane take turns on screen.',
+    },
+    a11yCaption: 'Specification items the mail template satisfies',
+  },
 } satisfies typeof ja;

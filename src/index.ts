@@ -102,6 +102,7 @@ export { BillingPage } from './templates/billing';
 export { OnboardingPage } from './templates/onboarding';
 export { InviteAcceptPage } from './templates/invite';
 export { ChatPage, AssistantPage } from './templates/conversations';
+export { MailboxPage } from './templates/mailbox';
 export { japaneseTemplateLabels, englishTemplateLabels } from './templates/labels';
 
 /*
@@ -280,6 +281,7 @@ export type { BillingPageProps, BillingPlan, BillingStatus, BillingUsage, Billin
 export type { OnboardingPageProps, OnboardingStep } from './templates/onboarding';
 export type { InviteAcceptPageProps } from './templates/invite';
 export type { ChatPageProps, ChatConversation, AssistantPageProps, AssistantThread } from './templates/conversations';
+export type { MailboxPageProps, MailFolder, MailMessage, MailAddress, MailAttachment, MailComposeValues } from './templates/mailbox';
 export type {
   DocumentSection,
   DocumentPageProps,

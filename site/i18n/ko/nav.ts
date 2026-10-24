@@ -62,6 +62,7 @@ export default {
     templatesApp: '앱 셸',
     templatesAppPages: '설정·멤버·결제',
     templatesConversations: '채팅과 AI 어시스턴트',
+    templatesMail: '메일',
     provider: 'GassanProvider',
     spec: '동작 명세',
     verification: '검증',

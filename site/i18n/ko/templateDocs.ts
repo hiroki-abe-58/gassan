@@ -152,4 +152,17 @@ export default {
     },
     a11yCaption: '대화 페이지 템플릿이 충족하는 명세',
   },
+  mail: {
+    lead: '메일 화면. 폴더·메일 목록·읽기 창을 컨테이너 너비에 맞춰 3열이나 2열로, 또는 전환해서 보여 준다. 행을 골라 한꺼번에 보관·삭제·읽음으로 표시할 수 있고, 메일 쓰기·답장·전달은 모달에서 작성한다.',
+    setup: {
+      title: '사용법',
+      intro: '폴더와 열려 있는 메일은 사용하는 쪽이 관리한다. 메일을 열면 onOpen이 호출된다(읽음으로 표시하는 것도 사용하는 쪽이 한다). 한꺼번에 하는 작업과 보내기는 처리 함수만 넘기면 되고, 실패했을 때 { error }를 돌려주면 그 문장이 끼어들어 읽힌다. 넘기지 않은 작업은 보여 주지 않는다.',
+      code: "import { MailboxPage } from '@genelab/gassan';\n\n<MailboxPage\n  folders={folders}\n  currentFolder={folderId}\n  onFolderChange={setFolderId}\n  messages={messagesIn(folderId)}\n  current={messageId}\n  onOpen={openMessage}\n  onArchive={(ids) => archive(ids)}\n  onDelete={(ids) => moveToTrash(ids)}\n  onMarkRead={(ids, read) => markRead(ids, read)}\n  onStar={(id, starred) => star(id, starred)}\n  onSend={(values) => send(values)}\n/>",
+    },
+    preview: {
+      title: '메일',
+      intro: '컨테이너가 넓을 때는 폴더·목록·읽기 창을 나란히 놓는다. 행을 고르면 위쪽에 “n개 선택됨”과 한꺼번에 하는 작업이 나타나고, 보관이나 삭제의 결과를 읽어 준다. 메일을 열면 읽음으로 표시되고, “답장”을 누르면 받는 사람과 제목이 채워진 메일 쓰기 화면이 열린다. “스마트폰”으로 바꾸면 폴더는 목록 위의 셀렉트가 되고, 목록과 읽기 창을 전환해서 보여 준다.',
+    },
+    a11yCaption: '메일 템플릿이 충족하는 명세',
+  },
 } satisfies typeof ja;

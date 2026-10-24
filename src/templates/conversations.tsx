@@ -5,7 +5,7 @@ import { ChatComposer, ChatSuggestions, ChatThread, type ChatAuthor, type ChatMe
 import { Avatar } from '../display';
 import { ModalSearchInput } from '../inputs';
 import { dayKeyFormat, daysBetween } from '../internal/day-key';
-import { Icon } from '../internal/icons';
+import { Icon, PathIcon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { useLabels } from '../labels';
 import { usePhrase } from '../phrase';
@@ -67,11 +67,14 @@ export interface ChatPageProps extends DataAttributes {
   className?: string;
 }
 
+/** チャンネルの印（#）。このページだけが使うので、共有の ICONS には入れない。 */
+const HASH = 'M8.25 3.5 6.75 16.5M13.25 3.5l-1.5 13M4 7.5h12.5M3.5 12.5H16';
+
 /** 一覧と見出しの前に置く印（飾り）。チャンネルは #、相手との会話は顔。 */
 function ConversationMark({ conversation }: { conversation: ChatConversation }): ReactNode {
   return (
     <span className="g-chat-page-mark" aria-hidden="true">
-      {conversation.kind === 'direct' ? <Avatar name={conversation.name} src={conversation.avatarSrc} size="sm" /> : <Icon name="hash" />}
+      {conversation.kind === 'direct' ? <Avatar name={conversation.name} src={conversation.avatarSrc} size="sm" /> : <PathIcon d={HASH} />}
     </span>
   );
 }

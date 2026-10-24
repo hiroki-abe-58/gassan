@@ -696,10 +696,12 @@
   .g-split-item:hover { background: var(--g-hover); }
   .g-split-item[aria-current="true"] { background: color-mix(in srgb, var(--g-accent) 9%, var(--g-surface)); font-weight: 650; }
   .g-split-empty { margin: 0; padding: 8px; color: var(--g-fg-muted); font-size: 0.875rem; }
+  /* 見出しの右の操作が多いと、狭い器では見出しが細い列に押し込まれる。見出しに 12rem を取れなければ操作を次の行へ送る */
   .g-split-head {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
+    gap: 4px 10px;
     min-block-size: 56px;
     padding: 8px 12px 8px 16px;
     border-block-end: 1px solid var(--g-border);
@@ -721,11 +723,11 @@
   .g-split-back:hover { background: var(--g-hover); }
   /* 右から左の文書では、戻る向きの矢印を左右に返す */
   .g-split-back:dir(rtl) > svg { scale: -1 1; }
-  .g-split-heading { display: grid; flex: 1; gap: 2px; min-inline-size: 0; }
+  .g-split-heading { display: grid; flex: 1 1 12rem; gap: 2px; min-inline-size: 0; }
   .g-split-title { margin: 0; font-size: 1.0625rem; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
   .g-split-title:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
   .g-split-description { margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.5; }
-  .g-split-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+  .g-split-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-inline-start: auto; }
   .g-split-thread { min-block-size: 0; }
   .g-split-foot { display: grid; gap: 6px; padding: 8px 12px 12px; }
   :is(.g-split-item, .g-split-back):focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
@@ -782,6 +784,125 @@
   .g-assistant-greeting { margin: 0; font-size: 1.375rem; font-weight: 700; line-height: 1.4; text-align: center; }
   .g-assistant-empty > .g-suggestions { inline-size: min(100%, 48rem); margin-inline: auto; }
   .g-assistant-note { margin: 0; padding-inline: 12px; color: var(--g-fg-muted); font-size: 0.75rem; line-height: 1.5; }
+
+  /* T19 mail（P-20）。器が広ければフォルダ（12rem）・一覧・読む面の 3 列。それより狭ければフォルダは一覧の上のセレクトにする。
+   * 読んでいないメールは差出人と件名を太字にし、頭に点を置く（読み上げには「未読」の言葉を足している）。 */
+  .g-mail-folders {
+    position: relative;
+    display: none;
+    flex: none;
+    flex-direction: column;
+    gap: 4px;
+    inline-size: 12rem;
+    padding: 12px 8px;
+    overflow-y: auto;
+    border-inline-end: 1px solid var(--g-border);
+  }
+  .g-mail-folder-icon { display: grid; flex: none; inline-size: 18px; block-size: 18px; color: var(--g-fg-muted); }
+  .g-mail-folder-icon > svg { inline-size: 100%; block-size: 100%; }
+  .g-mail-folder-label { flex: 1; min-inline-size: 0; }
+  .g-mail-folder-count { color: var(--g-fg-muted); font-size: 0.75rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .g-mail-folder-select { padding: 8px 12px 0; }
+  .g-mail-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-block-size: 48px;
+    padding: 0 8px 0 4px;
+    border-block-end: 1px solid var(--g-border);
+  }
+  .g-mail-selected,
+  .g-mail-folder-name { flex: 1; min-inline-size: 0; padding-inline-start: 4px; font-size: 0.8125rem; font-weight: 650; }
+  .g-mail-folder-name { color: var(--g-fg-muted); }
+  .g-mail-check { display: grid; flex: none; place-items: center; min-inline-size: var(--g-tap); min-block-size: var(--g-tap); cursor: pointer; }
+  .g-mail-check .g-choice-mark { margin: 0; }
+  .g-mail-rows { display: grid; margin: 0; padding: 0; list-style: none; }
+  .g-mail-row { display: flex; align-items: center; gap: 2px; padding: 2px 6px 2px 4px; border-block-end: 1px solid var(--g-border); }
+  .g-mail-row[data-selected] { background: color-mix(in srgb, var(--g-accent) 6%, var(--g-surface)); }
+  .g-mail-item {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-inline-size: 0;
+    padding: 8px;
+    border: 0;
+    border-radius: var(--g-radius-control);
+    background: transparent;
+    color: var(--g-fg);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .g-mail-item:hover { background: var(--g-hover); }
+  .g-mail-item[aria-current="true"] { background: color-mix(in srgb, var(--g-accent) 9%, var(--g-surface)); }
+  .g-mail-item-top { display: flex; align-items: center; gap: 6px; min-inline-size: 0; }
+  .g-mail-item-from { flex: 1; min-inline-size: 0; overflow: hidden; font-size: 0.875rem; text-overflow: ellipsis; white-space: nowrap; }
+  .g-mail-row[data-unread] :is(.g-mail-item-from, .g-mail-item-subject) { font-weight: 700; }
+  .g-mail-row[data-unread] .g-mail-item-from::before {
+    content: '';
+    display: inline-block;
+    inline-size: 7px;
+    block-size: 7px;
+    margin-inline-end: 6px;
+    border-radius: 50%;
+    background: var(--g-accent);
+    vertical-align: 0.1em;
+  }
+  .g-mail-item-clip { display: inline-grid; color: var(--g-fg-muted); }
+  .g-mail-item-clip > svg { inline-size: 14px; block-size: 14px; }
+  .g-mail-item-time { flex: none; color: var(--g-fg-muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+  .g-mail-item-subject { overflow: hidden; font-size: 0.875rem; text-overflow: ellipsis; white-space: nowrap; }
+  .g-mail-item-snippet { overflow: hidden; color: var(--g-fg-muted); font-size: 0.8125rem; text-overflow: ellipsis; white-space: nowrap; }
+  /* 1 行で … で切る。Chrome は nowrap の中でも <wbr> で折るので消す（§10-35） */
+  :where(.g-mail-item-from, .g-mail-item-subject, .g-mail-item-snippet) wbr { display: none; }
+  .g-mail-star {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: 36px;
+    block-size: 36px;
+    border: 0;
+    border-radius: var(--g-radius-control);
+    background: transparent;
+    color: var(--g-fg-muted);
+    cursor: pointer;
+  }
+  .g-mail-star > svg { inline-size: 18px; block-size: 18px; }
+  .g-mail-star:hover { background: var(--g-hover); }
+  :is(.g-mail-star, .g-mail-star-toggle)[aria-pressed="true"] { color: var(--g-warning); }
+  :is(.g-mail-star, .g-mail-star-toggle)[aria-pressed="true"] path { fill: currentColor; }
+  :is(.g-mail-item, .g-mail-star):focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+  .g-mail-body { position: relative; display: grid; align-content: start; gap: 20px; min-block-size: 0; padding: 20px 20px 32px; overflow-y: auto; }
+  .g-mail-meta { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 12px; }
+  .g-mail-meta-avatar { display: grid; flex: none; }
+  .g-mail-meta-text { display: grid; flex: 1 1 14rem; gap: 2px; min-inline-size: 0; }
+  .g-mail-from { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; margin: 0; font-size: 0.875rem; overflow-wrap: anywhere; }
+  .g-mail-from-name { font-weight: 650; }
+  :is(.g-mail-from-email, .g-mail-to, .g-mail-date) { color: var(--g-fg-muted); font-size: 0.8125rem; }
+  .g-mail-to { margin: 0; overflow-wrap: anywhere; }
+  .g-mail-date { font-variant-numeric: tabular-nums; }
+  .g-mail-content { max-inline-size: 42rem; line-height: 1.75; overflow-wrap: anywhere; }
+  .g-mail-content > :first-child { margin-block-start: 0; }
+  .g-mail-content > :last-child { margin-block-end: 0; }
+  .g-mail-attachments { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .g-mail-attachment {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-block-size: 40px;
+    padding: 6px 12px;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius-control);
+    font-size: 0.8125rem;
+  }
+  .g-mail-attachment > svg { inline-size: 18px; block-size: 18px; color: var(--g-fg-muted); }
+  .g-mail-attachment-name { font-weight: 600; overflow-wrap: anywhere; }
+  .g-mail-attachment-size { color: var(--g-fg-muted); font-variant-numeric: tabular-nums; }
+  /* 器の幅で決める形は、各部品の規則より後に書く（@container は詳細度を足さないので） */
+  @container (min-width: 900px) {
+    .g-mail-folders { display: flex; }
+    .g-mail-folder-select { display: none; }
+  }
 }
 
 @layer gassan.theme {
@@ -801,5 +922,10 @@
     .g-split-item[aria-current="true"] { forced-color-adjust: none; background: SelectedItem; color: SelectedItemText; }
     /* 未読の数の地の色は消えるので、枠で数を囲む */
     .g-chat-page-item-unread { border: 1px solid CanvasText; }
+    /* 選んだメールの地の色と、未読の点は消える。選んだ行は枠で、未読は太字と読み上げの言葉で残る */
+    .g-mail-item[aria-current="true"] { forced-color-adjust: none; background: SelectedItem; color: SelectedItemText; }
+    /* forced-color-adjust: none は子へ受け継がれるので、控えめな色の日時や冒頭の文も選んだ色の文字にそろえる */
+    :is(.g-split-item, .g-mail-item)[aria-current="true"] * { color: inherit; }
+    .g-mail-row[data-selected] { outline: 1px solid CanvasText; outline-offset: -1px; }
   }
 }

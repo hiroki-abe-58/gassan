@@ -152,4 +152,17 @@ export default {
     },
     a11yCaption: '對話頁面範本滿足的規格',
   },
+  mail: {
+    lead: '郵件的畫面。資料夾、郵件清單與閱讀窗格會依容器的寬度，以三欄、兩欄或切換的方式顯示。可以選取多列，一次封存、刪除、標示為已讀；撰寫郵件、回覆與轉寄都在模態視窗中進行。',
+    setup: {
+      title: '用法',
+      intro: '資料夾與開啟中的郵件由應用程式自行管理。開啟郵件時會呼叫 onOpen（標示為已讀也由應用程式負責）。批次操作與傳送只要傳入處理函式，處理失敗時回傳 { error }，這段訊息就會插入朗讀。沒有傳入的操作不會顯示。',
+      code: "import { MailboxPage } from '@genelab/gassan';\n\n<MailboxPage\n  folders={folders}\n  currentFolder={folderId}\n  onFolderChange={setFolderId}\n  messages={messagesIn(folderId)}\n  current={messageId}\n  onOpen={openMessage}\n  onArchive={(ids) => archive(ids)}\n  onDelete={(ids) => moveToTrash(ids)}\n  onMarkRead={(ids, read) => markRead(ids, read)}\n  onStar={(id, starred) => star(id, starred)}\n  onSend={(values) => send(values)}\n/>",
+    },
+    preview: {
+      title: '郵件',
+      intro: '容器較寬時，資料夾、清單與閱讀窗格並排顯示。選取列之後，上方會出現「已選取 n 封」與批次操作，並朗讀封存或刪除的結果。開啟郵件後會標示為已讀；點擊「回覆」會開啟已填入收件者與主旨的撰寫畫面。切換到「手機」後，資料夾會變成清單上方的下拉選單，清單與閱讀窗格會切換顯示。',
+    },
+    a11yCaption: '郵件範本滿足的規格',
+  },
 } satisfies typeof ja;

@@ -11,6 +11,7 @@ import {
   DescriptionList,
   IconButton,
   InviteAcceptPage,
+  MailboxPage,
   MembersPage,
   ModalField,
   ModalInput,
@@ -25,6 +26,7 @@ import {
   type ChatConversation,
   type ChatMessage,
   type CommandItem,
+  type MailMessage,
   type MemberInvitation,
   type SettingsSession,
   type WorkspaceMember,
@@ -42,6 +44,12 @@ const ICON_PATHS = {
   home: 'M3.5 9.5 10 4l6.5 5.5M5.5 8v8h9V8',
   members: 'M7.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM2.5 16c0-2.5 2.2-4 5-4s5 1.5 5 4M13 4.2a2.5 2.5 0 0 1 0 4.6M14.5 12c1.8.4 3 1.6 3 4',
   chat: 'M4.5 4.5h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H9l-3.5 3v-3h-1a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z',
+  mail: 'M3.5 5.5h13v9h-13v-9ZM3.75 6l6.25 4.75L16.25 6',
+  inbox: 'M3.5 11.5h4l1 2h3l1-2h4M5.2 5.4 3.5 11.5V15A1.5 1.5 0 0 0 5 16.5h10a1.5 1.5 0 0 0 1.5-1.5v-3.5l-1.7-6.1A1.5 1.5 0 0 0 13.4 4.3H6.6a1.5 1.5 0 0 0-1.4 1.1Z',
+  starred: 'm10 2.8 2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7L10 2.8Z',
+  sent: 'M16.5 3.5 8.75 11.25M16.5 3.5l-4.75 13-3-5.25-5.25-3 13-4.75Z',
+  archive: 'M3.5 4.5h13v3h-13v-3ZM4.5 7.5v7a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-7M8.5 10.5h3',
+  trash: 'M4 6h12M8 6V4.5h4V6M5.75 6l.7 9.6a1 1 0 0 0 1 .9h5.1a1 1 0 0 0 1-.9l.7-9.6',
   assistant: 'M10 3.5l1.6 4.9 4.9 1.6-4.9 1.6L10 16.5l-1.6-4.9L3.5 10l4.9-1.6L10 3.5Z',
   billing: 'M3 6.5A1.5 1.5 0 0 1 4.5 5h11A1.5 1.5 0 0 1 17 6.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 13.5v-7ZM3 8.5h14M6 12h3',
   settings: 'M3.5 6.5h6M13.5 6.5h3M11.5 8.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM3.5 13.5h2M9.5 13.5h7M7.5 15.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
@@ -402,11 +410,126 @@ function AssistantContent(): ReactNode {
   );
 }
 
+type MailFolderId = 'inbox' | 'sent' | 'archive' | 'trash';
+
+/** 本文の段落（見本の文は、空行で段落を分けてある）。 */
+const paragraphs = (text: string): ReactNode => text.split('\n\n').map((part) => <p key={part}>{part}</p>);
+
+/**
+ * メール（P-20）。名前はメンバーの見本と同じ人たちで、ログインしているのは 1 人目。
+ * 開くと既読になり、アーカイブ・削除はそのフォルダへ移す。スター付きは、ゴミ箱以外のスターの付いたメール。送ると送信済みに入る。
+ */
+function MailContent(): ReactNode {
+  const { templateSamples: s } = useT();
+  const t = s.mail;
+  const names = useDemoText('memberTable');
+  const me = { name: names.m1, email: USER_EMAIL };
+  const ren = { name: names.m2, email: 'ren@example.com' };
+  const hina = { name: names.m3, email: 'hina@example.com' };
+  const minato = { name: names.m4, email: 'minato@example.com' };
+  const [store, setStore] = useState<(MailMessage & { folder: MailFolderId })[]>(() => [
+    {
+      id: 'm1',
+      folder: 'inbox',
+      from: ren,
+      to: [me],
+      subject: t.m1Subject,
+      snippet: t.m1Snippet,
+      body: paragraphs(t.m1Body),
+      receivedAt: minutesAgo(35),
+      attachments: [{ name: 'invoice-2026-10.pdf', size: 186_000, href: '#' }],
+    },
+    { id: 'm2', folder: 'inbox', from: hina, to: [me], subject: t.m2Subject, snippet: t.m2Snippet, body: paragraphs(t.m2Body), receivedAt: minutesAgo(140) },
+    {
+      id: 'm3',
+      folder: 'inbox',
+      from: { name: t.newsName, email: 'news@atlas.example' },
+      to: [me],
+      subject: t.m3Subject,
+      snippet: t.m3Snippet,
+      body: paragraphs(t.m3Body),
+      receivedAt: minutesAgo(26 * 60),
+      read: true,
+      starred: true,
+    },
+    { id: 'm4', folder: 'inbox', from: minato, to: [me, ren], subject: t.m4Subject, snippet: t.m4Snippet, body: paragraphs(t.m4Body), receivedAt: minutesAgo(3 * 24 * 60), read: true },
+    {
+      id: 'm5',
+      folder: 'inbox',
+      from: { name: t.billingName, email: 'billing@atlas.example' },
+      to: [me],
+      subject: t.m5Subject,
+      snippet: t.m5Snippet,
+      body: paragraphs(t.m5Body),
+      receivedAt: minutesAgo(9 * 24 * 60),
+      read: true,
+      attachments: [{ name: 'receipt-2026-10.pdf', size: 92_000, href: '#' }],
+    },
+    { id: 's1', folder: 'sent', from: me, to: [ren], subject: t.s1Subject, snippet: t.s1Snippet, body: paragraphs(t.s1Body), receivedAt: minutesAgo(2 * 24 * 60), read: true },
+  ]);
+  const [folder, setFolder] = useState('inbox');
+  const [current, setCurrent] = useState<string | undefined>();
+  const unread = store.filter((message) => message.folder === 'inbox' && !message.read).length;
+  const folders = [
+    { id: 'inbox', label: t.inbox, icon: <NavIcon d={ICON_PATHS.inbox} />, unread: unread > 0 ? unread : undefined },
+    { id: 'starred', label: t.starred, icon: <NavIcon d={ICON_PATHS.starred} /> },
+    { id: 'sent', label: t.sent, icon: <NavIcon d={ICON_PATHS.sent} /> },
+    { id: 'archive', label: t.archive, icon: <NavIcon d={ICON_PATHS.archive} /> },
+    { id: 'trash', label: t.trash, icon: <NavIcon d={ICON_PATHS.trash} /> },
+  ];
+  const shown = folder === 'starred' ? store.filter((message) => message.starred && message.folder !== 'trash') : store.filter((message) => message.folder === folder);
+  const update = (ids: readonly string[], change: Partial<MailMessage & { folder: MailFolderId }>): void =>
+    setStore((list) => list.map((message) => (ids.includes(message.id) ? { ...message, ...change } : message)));
+  const move = async (ids: string[], to: MailFolderId): Promise<void> => {
+    await wait(300);
+    update(ids, { folder: to });
+    if (current !== undefined && ids.includes(current)) setCurrent(undefined);
+  };
+  return (
+    <MailboxPage
+      folders={folders}
+      currentFolder={folder}
+      onFolderChange={(id) => {
+        setFolder(id);
+        setCurrent(undefined);
+      }}
+      messages={shown}
+      current={current}
+      onOpen={(id) => {
+        setCurrent(id);
+        update([id], { read: true });
+      }}
+      onArchive={(ids) => move(ids, 'archive')}
+      onDelete={(ids) => move(ids, 'trash')}
+      onMarkRead={(ids, read) => update(ids, { read })}
+      onStar={(id, starred) => update([id], { starred })}
+      onSend={async ({ to, subject, body }) => {
+        await wait(600);
+        setStore((list) => [
+          {
+            id: `s-${String(Date.now())}`,
+            folder: 'sent',
+            from: me,
+            to: to.map((email) => ({ email })),
+            subject: subject.trim() || t.noSubject,
+            snippet: body.slice(0, 80),
+            body: paragraphs(body),
+            receivedAt: new Date().toISOString(),
+            read: true,
+          },
+          ...list,
+        ]);
+      }}
+    />
+  );
+}
+
 /** アプリの枠に入れる見本。 */
 const APP_PAGES = {
   'app-dashboard': DashboardContent,
   'app-members': MembersContent,
   'app-chat': ChatContent,
+  'app-mail': MailContent,
   'app-assistant': AssistantContent,
   'app-billing': BillingContent,
   'app-settings': SettingsContent,
@@ -429,6 +552,7 @@ export function AtlasApp({ page }: { page: AppPreviewName }): ReactNode {
         { target: 'app-dashboard', label: app.home, icon: ICON_PATHS.home },
         { target: 'app-members', label: app.members, icon: ICON_PATHS.members, badge: <Badge>6</Badge> },
         { target: 'app-chat', label: app.chat, icon: ICON_PATHS.chat },
+        { target: 'app-mail', label: app.mail, icon: ICON_PATHS.mail },
         { target: 'app-assistant', label: app.assistant, icon: ICON_PATHS.assistant },
       ],
     },

@@ -35,8 +35,6 @@ export const ICONS = {
   arrowUp: 'M10 15.5v-11M5.5 9 10 4.5 14.5 9',
   arrowDown: 'M10 4.5v11M5.5 11l4.5 4.5 4.5-4.5',
   inbox: 'M3.5 11.5h4l1 2h3l1-2h4M5.2 5.4 3.5 11.5V15A1.5 1.5 0 0 0 5 16.5h10a1.5 1.5 0 0 0 1.5-1.5v-3.5l-1.7-6.1A1.5 1.5 0 0 0 13.4 4.3H6.6a1.5 1.5 0 0 0-1.4 1.1Z',
-  // チャットのチャンネルの印（P-18）。
-  hash: 'M8.25 3.5 6.75 16.5M13.25 3.5l-1.5 13M4 7.5h12.5M3.5 12.5H16',
   // 公開ページのヘッダの、案内を開くボタン（P-01）。
   menu: 'M3.5 6h13M3.5 10h13M3.5 14h13',
   // 表の並べ替え（U-26）。並べ替えていない列は上下の両方を示す。
@@ -50,16 +48,17 @@ export const ICONS = {
 } as const;
 
 export function Icon({ name, className }: { name: keyof typeof ICONS; className?: string }): ReactNode {
+  return <PathIcon d={ICONS[name]} className={className} />;
+}
+
+/**
+ * 線を渡して描く印。1 つのページだけが使う印は、ICONS に入れずにそのページの中に置いてこれで描く
+ * （ICONS は 1 つの表なので、入れた印は、そのページを使わないアプリの束にも載る）。
+ */
+export function PathIcon({ d, className }: { d: string; className?: string }): ReactNode {
   return (
     <svg className={className} viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
-      <path
-        d={ICONS[name]}
-        pathLength={1}
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d={d} pathLength={1} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

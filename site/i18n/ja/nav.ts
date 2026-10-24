@@ -61,6 +61,7 @@ export default {
     templatesApp: 'アプリの枠',
     templatesAppPages: '設定・メンバー・請求',
     templatesConversations: 'チャットと AI アシスタント',
+    templatesMail: 'メール',
     provider: 'GassanProvider',
     spec: '振る舞い仕様',
     verification: '検証',

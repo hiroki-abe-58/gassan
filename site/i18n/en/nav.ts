@@ -62,6 +62,7 @@ export default {
     templatesApp: 'App shell',
     templatesAppPages: 'Settings, members and billing',
     templatesConversations: 'Chat and AI assistant',
+    templatesMail: 'Mail',
     provider: 'GassanProvider',
     spec: 'Behavior specification',
     verification: 'Verification',
