@@ -97,14 +97,6 @@ export default {
     } satisfies Record<CheckId, string>,
   },
 
-  code: {
-    copy: 'コピー',
-    copied: 'コピーしました',
-    copiedStatus: 'コードをコピーしました',
-    label: 'コード',
-    labelOf: (caption: string): string => `${caption} のコード`,
-  },
-
   example: {
     show: 'コードを見る',
     hide: 'コードを閉じる',

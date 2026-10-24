@@ -25,6 +25,8 @@ import {
   ChatComposer,
   ChatPage,
   ChatThread,
+  Checklist,
+  CodeBlock,
   DonutChart,
   Gauge,
   LineChart,
@@ -42,6 +44,7 @@ import {
   Menu,
   Modal,
   ModalHost,
+  NotificationCenter,
   OnboardingPage,
   PageHeader,
   Pagination,
@@ -57,6 +60,7 @@ import {
   TagInput,
   ToastHost,
   Tooltip,
+  TreeView,
   englishLabels,
 } from '../dist/index.js';
 
@@ -573,6 +577,48 @@ if (
   ok('ChatThread and ChatComposer render the log, the time in UTC, the typing indicator and the key hint on the server');
 } else {
   fail('ChatThread and ChatComposer render the log, the time in UTC, the typing indicator and the key hint on the server');
+}
+
+// コードの塊・ツリー・通知の一覧・はじめのチェックリスト（U-30〜U-33）。ツリーの Tab の止まり先は選んでいる項目の 1 つだけ。
+// 通知の一覧は閉じた鈴だけを描き（一覧は描かない）、未読の数をボタンの名前に含める。
+const appPartsHtml = renderToString(
+  h(
+    Fragment,
+    null,
+    h(CodeBlock, { title: 'curl', language: 'bash', code: 'curl https://api.example.com' }),
+    h(TreeView, {
+      label: 'ファイル',
+      items: [
+        { id: 'docs', label: 'ドキュメント', children: [{ id: 'guide', label: 'はじめに.md' }] },
+        { id: 'readme', label: 'README.md' },
+      ],
+      defaultExpanded: ['docs'],
+      defaultSelected: 'guide',
+    }),
+    h(NotificationCenter, { items: [{ id: 'n1', title: '請求書を発行しました', time: '2026-10-24T00:00:00Z' }] }),
+    h(Checklist, {
+      title: 'はじめにやること',
+      items: [
+        { id: 'account', title: 'アカウントを作る', done: true },
+        { id: 'invite', title: 'メンバーを招待する', action: h('button', { type: 'button' }, '招待する') },
+      ],
+    }),
+  ),
+);
+if (
+  /<pre[^>]*class="g-codeblock-body"[^>]*tabindex="0"[^>]*aria-label="curl のコード"/.test(appPartsHtml) &&
+  /aria-label="コードをコピー"/.test(appPartsHtml) &&
+  /role="tree"[^>]*aria-label="ファイル"/.test(appPartsHtml) &&
+  /aria-level="2"[^>]*aria-selected="true" tabindex="0"/.test(appPartsHtml) &&
+  (appPartsHtml.match(/role="treeitem"[^>]*tabindex="0"/g) ?? []).length === 1 &&
+  /aria-haspopup="dialog"[^>]*aria-expanded="false"[^>]*aria-label="通知 未読 1件"/.test(appPartsHtml) &&
+  !appPartsHtml.includes('g-notify-list') &&
+  /role="progressbar"[^>]*aria-valuetext="1 \/ 2 完了"/.test(appPartsHtml) &&
+  textOf(appPartsHtml).includes('完了 アカウントを作る')
+) {
+  ok('CodeBlock, TreeView, NotificationCenter and Checklist render the names, one tab stop, the closed bell with the unread count and the progress on the server');
+} else {
+  fail('CodeBlock, TreeView, NotificationCenter and Checklist render the names, one tab stop, the closed bell with the unread count and the progress on the server');
 }
 
 // アプリの中のページ（P-13〜P-17）。見ている人の時間帯はサーバーでは分からないので、SiteProvider の timeZone が無ければ

@@ -73,6 +73,10 @@ export { ModalChart } from './chart';
 
 // ページの上で使う部品（U-01〜U-27）。モーダルの部品ではないので Modal 名前空間には入れない。
 export { Button, ButtonLink, IconButton, CopyButton } from './button';
+export { CodeBlock } from './code-block';
+export { TreeView } from './tree-view';
+export { NotificationCenter } from './notification-center';
+export { Checklist } from './checklist';
 export { Badge, Avatar, AvatarGroup, Kbd, Divider, Card, Stat, EmptyState, DescriptionList, Timeline } from './display';
 export { Progress, Spinner, Skeleton, Banner } from './feedback';
 export { Tabs } from './tabs';
@@ -213,6 +217,10 @@ export type {
   ToastTone,
 } from './toast';
 export type { ButtonProps, ButtonLinkProps, ButtonSize, IconButtonProps, CopyButtonProps } from './button';
+export type { CodeBlockProps } from './code-block';
+export type { TreeViewProps, TreeNode } from './tree-view';
+export type { NotificationCenterProps, NotificationEntry } from './notification-center';
+export type { ChecklistProps, ChecklistItem } from './checklist';
 export type {
   StatusTone,
   BadgeProps,

@@ -824,7 +824,8 @@
     flex: 1;
     gap: 2px;
     min-inline-size: 0;
-    padding: 8px;
+    padding-block: 8px;
+    padding-inline: 20px 8px;
     border: 0;
     border-radius: var(--g-radius-control);
     background: transparent;
@@ -835,18 +836,19 @@
   }
   .g-mail-item:hover { background: var(--g-hover); }
   .g-mail-item[aria-current="true"] { background: color-mix(in srgb, var(--g-accent) 9%, var(--g-surface)); }
-  .g-mail-item-top { display: flex; align-items: center; gap: 6px; min-inline-size: 0; }
+  .g-mail-item-top { position: relative; display: flex; align-items: center; gap: 6px; min-inline-size: 0; }
   .g-mail-item-from { flex: 1; min-inline-size: 0; overflow: hidden; font-size: 0.875rem; text-overflow: ellipsis; white-space: nowrap; }
   .g-mail-row[data-unread] :is(.g-mail-item-from, .g-mail-item-subject) { font-weight: 700; }
-  .g-mail-row[data-unread] .g-mail-item-from::before {
+  /* 未読の点は項目の頭の溝に置き、差出人と件名の頭を既読の行とそろえる（差出人の行の高さの中ほど） */
+  .g-mail-row[data-unread] .g-mail-item-top::before {
     content: '';
-    display: inline-block;
+    position: absolute;
+    inset-block-start: calc(50% - 3.5px);
+    inset-inline-start: -13px;
     inline-size: 7px;
     block-size: 7px;
-    margin-inline-end: 6px;
     border-radius: 50%;
     background: var(--g-accent);
-    vertical-align: 0.1em;
   }
   .g-mail-item-clip { display: inline-grid; color: var(--g-fg-muted); }
   .g-mail-item-clip > svg { inline-size: 14px; block-size: 14px; }

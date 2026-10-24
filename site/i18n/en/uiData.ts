@@ -16,6 +16,12 @@ export default {
     title: 'Data table',
     intro: 'Drawn as a real table element, named by its caption, with column and row headers. Numbers and amounts align to the end, so their digits line up. With no rows, it shows a sentence or an empty state; while loading, it shows skeletons. Only when the table is wider than its container does the region that scrolls it sideways become focusable.',
   },
+  codeblock: {
+    title: 'Code block',
+    intro: 'Shows examples of API calls and configuration. A bar along the top holds the title and the copy button, and the code scrolls sideways instead of wrapping (the code container is a Tab stop, and the arrow keys scroll it too). It does no syntax highlighting of its own; you can pass elements highlighted with Shiki, Prism or the like as children. What gets copied is always the original string. The code on this site is drawn by this component too, with the highlighting passed in.',
+    exampleTitle: 'API examples',
+    exampleDescription: 'Copy with the button at the top right, and its icon turns into a check mark and “Copied” is announced.',
+  },
   labels: {
     full: 'Breadcrumbs and actions',
     narrow: 'Narrow container',

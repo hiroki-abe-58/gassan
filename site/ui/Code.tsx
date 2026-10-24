@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { Phrase } from '@genelab/gassan';
-
-import { useT } from '../i18n';
+import { CodeBlock as GassanCodeBlock } from '@genelab/gassan';
 
 /**
  * 依存を足さない、軽いシンタックスハイライト。
@@ -75,36 +73,11 @@ export interface CodeBlockProps {
   textLang?: string;
 }
 
+/** gassan の CodeBlock（U-30）に、このサイトの色分けを渡す。暗い地は .s-code がトークンを差し替えて作る。 */
 export function CodeBlock({ code, lang = 'tsx', caption, textLang }: CodeBlockProps): ReactNode {
-  const t = useT().common.code;
-  const [copied, setCopied] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  useEffect(() => () => clearTimeout(timer.current), []);
-
-  const copy = (): void => {
-    void navigator.clipboard?.writeText(code).then(() => {
-      setCopied(true);
-      clearTimeout(timer.current);
-      timer.current = setTimeout(() => setCopied(false), 1800);
-    });
-  };
-
   return (
-    <div className="s-code">
-      <div className="s-code-bar">
-        <span className="s-code-lang">
-          <Phrase>{caption ?? lang}</Phrase>
-        </span>
-        <button type="button" className="s-code-copy" onClick={copy}>
-          {copied ? t.copied : t.copy}
-        </button>
-        <span className="s-sr-only" role="status">
-          {copied ? t.copiedStatus : ''}
-        </span>
-      </div>
-      <pre tabIndex={0} role="group" aria-label={caption ? t.labelOf(caption) : t.label} lang={textLang}>
-        <code>{highlight(code, lang)}</code>
-      </pre>
-    </div>
+    <GassanCodeBlock className="s-code" code={code} language={lang} title={caption} textLang={textLang}>
+      {highlight(code, lang)}
+    </GassanCodeBlock>
   );
 }

@@ -60,11 +60,13 @@ import { gzipSync } from 'node:zlib';
  * 同日、JS を 118 → 120 KB、templates.css を 6 → 7 KB に引き上げた。メール（P-20。フォルダ・一覧・読む面・まとめての操作・
  * 作成と返信のモーダル・日本語と英語の文言）を足したため（JS 約 4.6 KB・templates.css 約 0.7 KB）。メールだけが使う印は
  * 共有の ICONS に入れずにページの中に置いた（Modal だけを使う束は 17 B 減った）。
+ * 同日、JS を 120 → 124 KB、CSS を 22 → 23 KB に引き上げた。コードの塊・ツリー・通知の一覧・はじめのチェックリスト
+ * （U-30〜U-33）と、その日本語と英語の文言を足したため（JS 約 3.5 KB・CSS 約 1 KB）。使わないアプリの JS には載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 120 * 1024,
-  'dist/index.cjs': 120 * 1024,
-  'dist/styles.css': 22 * 1024,
+  'dist/index.js': 124 * 1024,
+  'dist/index.cjs': 124 * 1024,
+  'dist/styles.css': 23 * 1024,
   'dist/templates.css': 7 * 1024,
 };
 
@@ -191,6 +193,11 @@ const REQUIRED_EXPORTS = [
   'ChatComposer',
   'TypingIndicator',
   'ChatSuggestions',
+  // コードの塊・ツリー・通知の一覧・はじめのチェックリスト。U-30〜U-33。
+  'CodeBlock',
+  'TreeView',
+  'NotificationCenter',
+  'Checklist',
   // フォーム部品の中立の名前（ModalInput などと同じもの）。
   'Field',
   'Fieldset',

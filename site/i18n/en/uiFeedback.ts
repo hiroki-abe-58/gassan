@@ -14,6 +14,18 @@ export default {
     title: 'Skeleton',
     intro: 'Shows only the shape before content loads, to reduce the jolt when it appears. It is decoration, so it is not announced. Convey that loading is under way with aria-busy on the container it sits in, or with a spinner. The shimmer stops under the “Reduce Motion” setting and at the motion level none.',
   },
+  notifications: {
+    title: 'Notification center',
+    intro: 'A list of the notifications that have come in, opened from the bell in the top bar. The button’s name includes the unread count (the count badge is decoration), and unread items are also shown in bold with a dot. Arrival times are written as “5 minutes ago” or “yesterday”, and pressing an item can mark it as read.',
+    exampleTitle: 'Notifications',
+    exampleDescription: 'Press the bell to open the list. Pressing an item marks it as read, and “Mark all as read” marks the rest as read in one go. Closing with Esc returns focus to the bell, and pressing outside closes it too.',
+  },
+  checklist: {
+    title: 'Onboarding checklist',
+    intro: 'Lays out the steps for getting started after signing up. It shows progress such as “1 of 4 done”, and a finished step’s mark turns into a check mark. “Done” or “Not done” is added to what is announced, so it never relies on the mark and color alone.',
+    exampleTitle: 'Getting started',
+    exampleDescription: 'Press a step’s button, and that step is done and focus moves to the next step’s button. Close it with the × at the top right.',
+  },
   banner: {
     title: 'Banner',
     intro: 'Notices that concern the whole page, such as upcoming maintenance, a failed payment or the time left in a trial. A subtle background color sets it apart from the body text; it is not boxed in with a border or a thick line on the left. Only a banner that appears later is announced, with live.',

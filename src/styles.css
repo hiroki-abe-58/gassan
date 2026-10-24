@@ -3441,6 +3441,154 @@
   .g-carousel[data-playing] .g-carousel-dot[aria-current="true"]:dir(rtl)::after { transform-origin: right center; }
   .g-carousel[data-paused] .g-carousel-dot[aria-current="true"]::after { animation-play-state: paused; }
   @keyframes g-carousel-progress { from { scale: 0 1; } }
+
+  /* --- 9.26 code block（U-30） --------------------------------------------------------------
+   * 地は面に文字の色を 4% 混ぜる。暗い地に置きたいときは、器の上で --g-surface / --g-fg などを差し替える
+   * （トークンで色を決めているので、器の中だけ暗いテーマにできる）。コードは折り返さず横へ送る。 */
+  .g-codeblock {
+    overflow: hidden;
+    border-radius: var(--g-radius);
+    background: color-mix(in srgb, var(--g-fg) 4%, var(--g-surface));
+    color: var(--g-fg);
+  }
+  .g-codeblock-bar { display: flex; align-items: center; gap: 12px; min-block-size: 40px; padding: 2px 4px 0 16px; }
+  .g-codeblock-title { color: var(--g-fg-muted); font: 0.75rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+  .g-codeblock-copy { margin-inline-start: auto; }
+  .g-codeblock-body {
+    position: relative;
+    margin: 0;
+    padding: 12px 16px 16px;
+    overflow-x: auto;
+    font: 0.8125rem/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    tab-size: 2;
+  }
+  .g-codeblock-bar + .g-codeblock-body { padding-block-start: 4px; }
+  .g-codeblock-body:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -4px; }
+
+  /* --- 9.27 tree（U-31） ----------------------------------------------------------------------
+   * 深さは字下げ（1 段 20px）で示す。選んだ項目は地の色と太字にする（左の太い線は使わない）。項目の要素は子の枝まで包むので、
+   * フォーカスのリングは項目ではなく行に描く。開いた枝の印は下を向く。 */
+  .g-tree,
+  .g-tree-group { margin: 0; padding: 0; list-style: none; }
+  .g-tree-item { outline: none; }
+  .g-tree-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-block-size: 36px;
+    padding-block: 2px;
+    padding-inline: calc(var(--g-tree-level, 0) * 20px + 4px) 8px;
+    border-radius: var(--g-radius-control);
+    cursor: pointer;
+    user-select: none;
+  }
+  .g-tree-row:hover { background: var(--g-hover); }
+  .g-tree-item[aria-selected="true"] > .g-tree-row { background: color-mix(in srgb, var(--g-accent) 9%, var(--g-surface)); font-weight: 650; }
+  .g-tree-item:focus-visible > .g-tree-row { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+  .g-tree-toggle { display: grid; flex: none; place-items: center; inline-size: 20px; block-size: 20px; color: var(--g-fg-muted); }
+  .g-tree-toggle > svg { inline-size: 14px; block-size: 14px; transition: rotate var(--g-dur-fast) var(--g-ease-move); }
+  .g-tree-item[aria-expanded="true"] > .g-tree-row .g-tree-toggle > svg { rotate: 90deg; }
+  /* 右から左の文書では、閉じた印は左を向き、開くと反時計回りに下を向く */
+  .g-tree-toggle > svg:dir(rtl) { scale: -1 1; }
+  .g-tree-item[aria-expanded="true"] > .g-tree-row .g-tree-toggle > svg:dir(rtl) { rotate: -90deg; }
+  .g-tree-icon { display: grid; flex: none; inline-size: 18px; block-size: 18px; color: var(--g-fg-muted); }
+  .g-tree-icon > svg { inline-size: 100%; block-size: 100%; }
+  .g-tree-label { min-inline-size: 0; overflow-wrap: anywhere; }
+
+  /* --- 9.28 notification center（U-32） ------------------------------------------------------
+   * 鈴のボタンの右上に未読の数（飾り。数は名前で読む）。一覧は窓の中でスクロールし、未読は太字と頭の点で示す。
+   * 点は項目の頭の溝に置き、既読の項目と文の頭をそろえる。 */
+  .g-notify-trigger { position: relative; }
+  .g-notify-trigger > svg { inline-size: 20px; block-size: 20px; }
+  .g-notify-badge {
+    position: absolute;
+    inset-block-start: 4px;
+    inset-inline-end: 2px;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    min-inline-size: 18px;
+    block-size: 18px;
+    padding-inline: 5px;
+    border-radius: 999px;
+    background: var(--g-danger);
+    color: var(--g-on-danger);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .g-popup.g-popover.g-notify { inline-size: min(24rem, calc(100vw - 16px)); max-inline-size: none; }
+  .g-notify-actions { display: flex; justify-content: flex-end; margin-block: -6px 4px; }
+  .g-notify-list { position: relative; display: grid; gap: 2px; max-block-size: min(60dvh, 28rem); margin: 0 -8px; padding: 0; overflow-y: auto; list-style: none; }
+  .g-notify-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding-block: 10px;
+    padding-inline: 22px 8px;
+    border: 0;
+    border-radius: var(--g-radius-control);
+    background: transparent;
+    color: var(--g-fg);
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .g-notify-item:hover { background: var(--g-hover); }
+  .g-notify-item:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+  .g-notify-icon { display: grid; flex: none; place-items: center; inline-size: 32px; block-size: 32px; border-radius: 50%; background: color-mix(in srgb, var(--g-fg) 6%, var(--g-surface)); color: var(--g-fg-muted); }
+  .g-notify-icon > svg { inline-size: 18px; block-size: 18px; }
+  .g-notify-text { display: grid; flex: 1; gap: 2px; min-inline-size: 0; }
+  .g-notify-title { font-size: 0.875rem; line-height: 1.5; }
+  [data-unread] > .g-notify-item .g-notify-title { font-weight: 700; }
+  /* 件名の 1 行目の高さの中ほど（上の余白 + 行の高さの半分 − 点の半径） */
+  [data-unread] > .g-notify-item::before {
+    content: '';
+    position: absolute;
+    inset-block-start: calc(10px + 0.875rem * 0.75 - 3.5px);
+    inset-inline-start: 8px;
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: var(--g-accent);
+  }
+  .g-notify-body { color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.5; }
+  .g-notify-time { color: var(--g-fg-muted); font-size: 0.75rem; }
+  .g-notify-empty { margin: 0; padding-block: 16px; color: var(--g-fg-muted); font-size: 0.875rem; text-align: center; }
+  .g-notify-footer { display: flex; justify-content: center; margin-block-start: 8px; padding-block-start: 8px; border-block-start: 1px solid var(--g-border); }
+
+  /* --- 9.29 checklist（U-33） --------------------------------------------------------------
+   * 手順は 1px の線で区切り、終えた手順は印をアクセントの丸に替えて文字を控えめにする（囲みや太い線は使わない）。 */
+  .g-checklist { display: grid; gap: 12px; padding: 20px; border: 1px solid var(--g-border); border-radius: var(--g-radius); background: var(--g-surface); }
+  .g-checklist-head { display: flex; align-items: flex-start; gap: 12px; }
+  .g-checklist-heading { display: grid; flex: 1; gap: 4px; min-inline-size: 0; }
+  .g-checklist-title { margin: 0; font-size: 1.0625rem; font-weight: 700; line-height: 1.4; }
+  .g-checklist-description { margin: 0; color: var(--g-fg-muted); font-size: 0.875rem; line-height: 1.6; }
+  .g-checklist-items { display: grid; margin: 0; padding: 0; list-style: none; }
+  .g-checklist-item { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-block: 12px; border-block-start: 1px solid var(--g-border); }
+  .g-checklist-mark {
+    display: grid;
+    flex: none;
+    place-items: center;
+    box-sizing: border-box;
+    inline-size: 22px;
+    block-size: 22px;
+    border: 1.5px solid var(--g-border-strong);
+    border-radius: 50%;
+    color: var(--g-on-accent);
+  }
+  .g-checklist-item[data-done] .g-checklist-mark { border-color: var(--g-accent); background: var(--g-accent); }
+  .g-checklist-mark > svg { inline-size: 14px; block-size: 14px; }
+  .g-checklist-text { display: grid; flex: 1 1 12rem; gap: 2px; min-inline-size: 0; }
+  .g-checklist-item-title { margin: 0; font-size: 0.9375rem; font-weight: 600; line-height: 1.5; }
+  .g-checklist-item[data-done] .g-checklist-item-title { color: var(--g-fg-muted); font-weight: 500; }
+  .g-checklist-item-description { margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.5; }
+  .g-checklist-action { flex: none; margin-inline-start: auto; }
 }
 
 /* ===========================================================================
@@ -4194,5 +4342,12 @@
     .g-chat-message[data-variant="assistant"] .g-chat-bubble { border: 0; }
     :is(.g-chat-jump, .g-composer-send) { forced-color-adjust: none; background: Highlight; color: HighlightText; }
     .g-composer-field { border-color: CanvasText; }
+    /* 9.27。選んだ項目の地の色は消えるので、選んだ色で示す */
+    .g-tree-item[aria-selected="true"] > .g-tree-row { forced-color-adjust: none; background: SelectedItem; color: SelectedItemText; }
+    .g-tree-item[aria-selected="true"] > .g-tree-row * { color: inherit; }
+    /* 9.26。コードの塊の地の色は消えるので、枠で囲む */
+    .g-codeblock { border: 1px solid CanvasText; }
+    /* 9.28 / 9.29。未読の数と、終えた手順の丸は地の色が消えるので、選んだ色で残す */
+    :is(.g-notify-badge, .g-checklist-item[data-done] .g-checklist-mark) { forced-color-adjust: none; border-color: Highlight; background: Highlight; color: HighlightText; }
   }
 }

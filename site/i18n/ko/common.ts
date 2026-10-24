@@ -85,14 +85,6 @@ export default {
     },
   },
 
-  code: {
-    copy: '복사',
-    copied: '복사됨',
-    copiedStatus: '코드를 복사했습니다',
-    label: '코드',
-    labelOf: (caption: string): string => `${caption} 코드`,
-  },
-
   example: {
     show: '코드 보기',
     hide: '코드 닫기',
