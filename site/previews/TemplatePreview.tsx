@@ -66,6 +66,8 @@ export const PREVIEWS = [
   'changelog',
   'app-dashboard',
   'app-members',
+  'app-chat',
+  'app-assistant',
   'app-billing',
   'app-settings',
   'onboarding',
@@ -313,6 +315,8 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
         );
       case 'app-dashboard':
       case 'app-members':
+      case 'app-chat':
+      case 'app-assistant':
       case 'app-billing':
       case 'app-settings':
         return <AtlasApp page={name} />;

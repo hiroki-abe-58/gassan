@@ -133,4 +133,21 @@ export default {
     },
     a11yCaption: 'アプリの中のページのテンプレートが満たす仕様',
   },
+  conversations: {
+    lead: 'チャットと AI アシスタントの画面。アプリの枠の中に置き、会話とメッセージと送る処理を渡すだけで、一覧と会話の切り替え・未読の数・会話ごとの書きかけ・回答を止めるボタンまで揃う。',
+    setup: {
+      title: '使い方',
+      intro: '開いている会話と、そのメッセージは利用側が持つ。会話を選ぶと onConversationChange が、履歴の会話を選ぶと onThreadChange が呼ばれる。器が狭いときは、一覧と会話を切り替えて見せる。',
+      code: "import { AssistantPage, ChatPage } from '@genelab/gassan';\n\n<ChatPage\n  conversations={conversations}\n  current={currentId}\n  onConversationChange={setCurrentId}\n  messages={messagesOf(currentId)}\n  currentUserId={user.id}\n  onSend={(text) => send(currentId, text)}\n/>\n\n<AssistantPage\n  messages={messages}\n  currentUserId={user.id}\n  onSend={ask}\n  generating={generating}\n  onStop={stop}\n  suggestions={suggestions}\n  history={threads}\n  currentThreadId={threadId}\n  onThreadChange={openThread}\n  onNewThread={startThread}\n/>",
+    },
+    chat: {
+      title: 'チャット',
+      intro: '左に会話の一覧（チャンネルと相手との会話・未読の数・最後のメッセージ）、右に開いている会話。会話を開くと未読が消え、新着の線から読み始める。送ると「送信中」から変わり、相手との会話では入力中の印のあとに返事が届く。「スマートフォン」に切り替えると一覧と会話を切り替え、見出しの前の「戻る」で一覧へ戻る。',
+    },
+    assistant: {
+      title: 'AI アシスタント',
+      intro: '何も話していなければ問いかけと質問の例を出し、話し始めたら回答を流しながら書く。書いている間は、送信のボタンが「止める」になる。左の履歴は今日・昨日・過去 7 日間・それより前に分け、「新しい会話」で質問の例の画面に戻る。「スマートフォン」では、見出しの前の時計のボタンで履歴を開く。',
+    },
+    a11yCaption: '会話のページのテンプレートが満たす仕様',
+  },
 };

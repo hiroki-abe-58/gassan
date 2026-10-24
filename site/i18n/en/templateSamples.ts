@@ -15,6 +15,8 @@ export default {
   app: {
     home: 'Home',
     members: 'Members',
+    chat: 'Chat',
+    assistant: 'Assistant',
     workspace: 'Workspace',
     billing: 'Plan and billing',
     changelog: 'Changelog',
@@ -34,6 +36,42 @@ export default {
     dashboardDescription: 'This month’s figures for the workspace, and recent activity.',
     newProject: 'Create a project',
     created: 'Project created (example)',
+  },
+  chat: {
+    generalDescription: 'Announcements for the whole workspace',
+    designDescription: 'Discussing the logo and screen designs',
+    releaseDescription: 'Getting ready for the November release',
+    renRole: 'Engineer',
+    hinaRole: 'Designer',
+    general1: 'Next Monday is a public holiday, so I’m moving our regular meeting to Tuesday at 10 a.m.',
+    general2: 'Got it. I’ll update the calendar too.',
+    design1: 'I’ve posted 3 logo options. Please send your feedback by the end of today.',
+    design2: 'I think the second one works best. It’s easy to read even at small sizes.',
+    design3: 'I vote for the second one too. I’d like to tone the colors down a little, though.',
+    release1: 'I’ve shared a draft of the release notes. If anything looks off, leave a comment.',
+    ren1: 'I fixed the invoice PDF issue. Could you check it?',
+    ren2: 'You can try it in the test workspace.',
+    hina1: 'Does 3 p.m. work for tomorrow’s review?',
+    reply: 'Got it. I’ll take a look.',
+  },
+  assistant: {
+    sales: 'Summarize last month’s revenue',
+    salesDescription: 'Compared with the month before, including why it grew',
+    churn: 'Why did churn go up?',
+    churnDescription: 'Broken down by plan and period',
+    mail: 'Write a notice to customers with unpaid invoices',
+    mailDescription: 'Polite and short',
+    answer:
+      'Last month’s revenue was ¥21.4 million, up 8% from the month before. 60% of the increase came from the annual plan launched in October. 14 workspaces also upgraded from Pro to Business, so the number of seats has grown. On the other hand, the rate of moving from Free to Pro fell by 0.4 percentage points, so there is room to revisit the guidance given during the trial.',
+    history1: 'Look into the reasons for churn',
+    history1Answer:
+      'There were 23 cancellations last month, and half of them gave “fewer people are using it” as the reason. Telling customers before they cancel that they can reduce their seats could prevent these.',
+    history2: 'Suggest changes to the pricing table',
+    history2Answer:
+      'Here’s one option: add a Business plan above Pro, starting at 50 seats. Yearly billing gets 2 months off, and people already on Pro keep their current price.',
+    history3: 'Draft the onboarding email',
+    history3Answer:
+      'I set the subject line to “Welcome to Atlas: your first 3 steps”. It walks through creating a project, inviting members and setting up notifications, in that order.',
   },
   appPages: {
     workspace: 'Mirai Design',

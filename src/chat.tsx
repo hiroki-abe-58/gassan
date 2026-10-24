@@ -10,6 +10,7 @@ import {
 
 import { Avatar } from './display';
 import { useControllable } from './internal/controllable';
+import { dayKeyFormat, daysBetween } from './internal/day-key';
 import { isCoarsePointer, isComposing, motionStill, warnDuplicateKeys } from './internal/dom';
 import { Icon } from './internal/icons';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
@@ -123,15 +124,13 @@ export function ChatThread({
   const time = new Intl.DateTimeFormat(labels.locale, { hour: 'numeric', minute: '2-digit', timeZone: zone });
   const day = new Intl.DateTimeFormat(labels.locale, { month: 'long', day: 'numeric', weekday: 'short', timeZone: zone });
   const dayWithYear = new Intl.DateTimeFormat(labels.locale, { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short', timeZone: zone });
-  // 日の比べ方は時間帯の中の年月日で（en-CA は YYYY-MM-DD）
-  const dayKey = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: zone });
-  const now = new Date();
-  const today = dayKey.format(now);
-  const yesterday = dayKey.format(new Date(now.getTime() - 24 * 60 * 60 * 1000));
+  const dayKey = dayKeyFormat(zone);
+  const today = dayKey(new Date());
   const dayLabel = (date: Date): string => {
-    const key = dayKey.format(date);
-    if (key === today) return labels.today;
-    if (key === yesterday) return labels.yesterday;
+    const key = dayKey(date);
+    const ago = daysBetween(today, key);
+    if (ago === 0) return labels.today;
+    if (ago === 1) return labels.yesterday;
     return key.slice(0, 4) === today.slice(0, 4) ? day.format(date) : dayWithYear.format(date);
   };
 
@@ -183,7 +182,7 @@ export function ChatThread({
     const date = toDate(message.sentAt);
     const previous = messages[index - 1];
     const previousDate = previous ? toDate(previous.sentAt) : null;
-    const newDay = !previousDate || dayKey.format(previousDate) !== dayKey.format(date);
+    const newDay = !previousDate || dayKey(previousDate) !== dayKey(date);
     if (newDay) {
       rows.push(
         <p key={`day-${message.id}`} className="g-chat-day">

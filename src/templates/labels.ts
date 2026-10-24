@@ -352,6 +352,36 @@ export interface TemplateLabels {
     declinedTitle: string;
     declinedDescription: string;
   };
+  /** チャット（ChatPage）。P-18。 */
+  chat: {
+    title: string;
+    conversations: string;
+    channels: string;
+    directMessages: string;
+    search: string;
+    noMatch: (query: string) => string;
+    unread: (count: number) => string;
+    back: string;
+    none: string;
+    /** メッセージの列の名前。 */
+    messagesIn: (name: string) => string;
+    placeholder: (name: string, kind: 'channel' | 'direct') => string;
+  };
+  /** AI アシスタント（AssistantPage）。P-19。履歴の「今日」「昨日」は GassanLabels の today / yesterday。 */
+  assistant: {
+    title: string;
+    history: string;
+    showHistory: string;
+    closeHistory: string;
+    newThread: string;
+    previous7Days: string;
+    older: string;
+    greeting: string;
+    /** メッセージの列の名前。 */
+    conversation: string;
+    placeholder: string;
+    note: string;
+  };
 }
 
 /** 「A と B に同意します」のような、リンクを挟む文を組み立てる。 */
@@ -706,6 +736,32 @@ export const japaneseTemplateLabels: TemplateLabels = {
     declinedTitle: '招待を断りました',
     declinedDescription: 'あとで参加したくなったら、招待した人に、もう一度送ってもらってください。',
   },
+  chat: {
+    title: 'メッセージ',
+    conversations: '会話',
+    channels: 'チャンネル',
+    directMessages: 'ダイレクトメッセージ',
+    search: '会話を探す',
+    noMatch: (query) => `「${query}」に当てはまる会話はありません`,
+    unread: (count) => `未読 ${count}件`,
+    back: '会話の一覧へ戻る',
+    none: '会話を選んでください',
+    messagesIn: (name) => `${name} のメッセージ`,
+    placeholder: (name, kind) => (kind === 'channel' ? `#${name} にメッセージを送信` : `${name}さんにメッセージを送信`),
+  },
+  assistant: {
+    title: 'アシスタント',
+    history: '履歴',
+    showHistory: '履歴を見る',
+    closeHistory: '会話へ戻る',
+    newThread: '新しい会話',
+    previous7Days: '過去 7 日間',
+    older: 'それより前',
+    greeting: '何をお手伝いしましょうか？',
+    conversation: 'アシスタントとの会話',
+    placeholder: 'アシスタントに質問する',
+    note: 'AI の回答は間違うことがあります。大事なことは確かめてください。',
+  },
 };
 
 export const englishTemplateLabels: TemplateLabels = {
@@ -1056,5 +1112,31 @@ export const englishTemplateLabels: TemplateLabels = {
     invalidDescription: 'Check that the link is correct. If you have already joined, sign in.',
     declinedTitle: 'Invitation declined',
     declinedDescription: 'If you change your mind, ask the person who invited you to send a new invitation.',
+  },
+  chat: {
+    title: 'Messages',
+    conversations: 'Conversations',
+    channels: 'Channels',
+    directMessages: 'Direct messages',
+    search: 'Search conversations',
+    noMatch: (query) => `No conversations match “${query}”`,
+    unread: (count) => `${count} unread`,
+    back: 'Back to conversations',
+    none: 'Select a conversation',
+    messagesIn: (name) => `Messages in ${name}`,
+    placeholder: (name, kind) => (kind === 'channel' ? `Message #${name}` : `Message ${name}`),
+  },
+  assistant: {
+    title: 'Assistant',
+    history: 'History',
+    showHistory: 'Show history',
+    closeHistory: 'Back to the conversation',
+    newThread: 'New chat',
+    previous7Days: 'Previous 7 days',
+    older: 'Older',
+    greeting: 'How can I help?',
+    conversation: 'Conversation with the assistant',
+    placeholder: 'Ask the assistant',
+    note: 'AI answers can be wrong. Check anything important.',
   },
 };

@@ -1,10 +1,12 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import {
   AppShell,
+  AssistantPage,
   Badge,
   BillingPage,
   Button,
+  ChatPage,
   CommandPalette,
   DescriptionList,
   IconButton,
@@ -18,7 +20,10 @@ import {
   Progress,
   SettingsPage,
   toast,
+  type AssistantThread,
   type BillingStatus,
+  type ChatConversation,
+  type ChatMessage,
   type CommandItem,
   type MemberInvitation,
   type SettingsSession,
@@ -36,6 +41,8 @@ const USER_EMAIL = 'aoi@example.com';
 const ICON_PATHS = {
   home: 'M3.5 9.5 10 4l6.5 5.5M5.5 8v8h9V8',
   members: 'M7.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM2.5 16c0-2.5 2.2-4 5-4s5 1.5 5 4M13 4.2a2.5 2.5 0 0 1 0 4.6M14.5 12c1.8.4 3 1.6 3 4',
+  chat: 'M4.5 4.5h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H9l-3.5 3v-3h-1a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z',
+  assistant: 'M10 3.5l1.6 4.9 4.9 1.6-4.9 1.6L10 16.5l-1.6-4.9L3.5 10l4.9-1.6L10 3.5Z',
   billing: 'M3 6.5A1.5 1.5 0 0 1 4.5 5h11A1.5 1.5 0 0 1 17 6.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 13.5v-7ZM3 8.5h14M6 12h3',
   settings: 'M3.5 6.5h6M13.5 6.5h3M11.5 8.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM3.5 13.5h2M9.5 13.5h7M7.5 15.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
   changelog: 'M6 4.5h8M6 8.5h8M6 12.5h5M3.5 4.5h.01M3.5 8.5h.01M3.5 12.5h.01',
@@ -194,10 +201,213 @@ function SettingsContent(): ReactNode {
   );
 }
 
+const minutesAgo = (minutes: number): string => new Date(Date.now() - minutes * 60_000).toISOString();
+
+/** 会話の最後のメッセージ（一覧に添える文と日時）。 */
+const lastOf = (messages: readonly ChatMessage[]): { preview?: string; lastAt?: string } => {
+  const last = messages[messages.length - 1];
+  return last ? { preview: typeof last.content === 'string' ? last.content : undefined, lastAt: String(last.sentAt) } : {};
+};
+
+/**
+ * チャット（P-18）。名前はメンバーの見本と同じ人たちで、ログインしているのは 1 人目。
+ * 会話を開くと未読が消え、新着の線から読み始める。送ると「送信中」から「送信済み」に変わり、
+ * 相手との会話では入力中の印のあとに返事が届く。
+ */
+function ChatContent(): ReactNode {
+  const { templateSamples: s } = useT();
+  const c = s.chat;
+  const names = useDemoText('memberTable');
+  const me = { id: 'm1', name: names.m1 };
+  const ren = { id: 'm2', name: names.m2 };
+  const hina = { id: 'm3', name: names.m3 };
+  const minato = { id: 'm4', name: names.m4 };
+  const [threads, setThreads] = useState<Record<string, ChatMessage[]>>(() => ({
+    general: [
+      { id: 'g1', author: minato, content: c.general1, sentAt: minutesAgo(26 * 60) },
+      { id: 'g2', author: me, content: c.general2, sentAt: minutesAgo(26 * 60 - 3), status: 'read' },
+    ],
+    design: [
+      { id: 'd1', author: hina, content: c.design1, sentAt: minutesAgo(95) },
+      { id: 'd2', author: ren, content: c.design2, sentAt: minutesAgo(40) },
+      { id: 'd3', author: minato, content: c.design3, sentAt: minutesAgo(12) },
+    ],
+    release: [{ id: 'r1', author: ren, content: c.release1, sentAt: minutesAgo(3 * 24 * 60) }],
+    ren: [
+      { id: 'n1', author: ren, content: c.ren1, sentAt: minutesAgo(30) },
+      { id: 'n2', author: ren, content: c.ren2, sentAt: minutesAgo(29) },
+    ],
+    hina: [{ id: 'h1', author: hina, content: c.hina1, sentAt: minutesAgo(2 * 24 * 60) }],
+  }));
+  const [unread, setUnread] = useState<Record<string, number>>({ design: 2, ren: 2 });
+  const [unreadFrom, setUnreadFrom] = useState<string | undefined>();
+  const [current, setCurrent] = useState('general');
+  const [typing, setTyping] = useState(false);
+  const timers = useRef<number[]>([]);
+  useEffect(() => () => timers.current.forEach((timer) => window.clearTimeout(timer)), []);
+
+  const directory: ChatConversation[] = [
+    { id: 'general', name: 'general', description: c.generalDescription },
+    { id: 'design', name: 'design', description: c.designDescription },
+    { id: 'release', name: 'release', description: c.releaseDescription },
+    { id: 'ren', name: ren.name, kind: 'direct', description: c.renRole },
+    { id: 'hina', name: hina.name, kind: 'direct', description: c.hinaRole },
+  ];
+  const conversations = directory.map((conversation) => ({ ...conversation, ...lastOf(threads[conversation.id] ?? []), unread: unread[conversation.id] }));
+
+  const open = (id: string): void => {
+    const thread = threads[id] ?? [];
+    const count = unread[id] ?? 0;
+    setUnreadFrom(count > 0 ? thread[thread.length - count]?.id : undefined);
+    setUnread((previous) => ({ ...previous, [id]: 0 }));
+    setTyping(false);
+    setCurrent(id);
+  };
+
+  const append = (id: string, message: ChatMessage): void => setThreads((previous) => ({ ...previous, [id]: [...(previous[id] ?? []), message] }));
+  const send = (text: string): void => {
+    const id = current;
+    const messageId = `me-${String(Date.now())}`;
+    append(id, { id: messageId, author: me, content: text, sentAt: new Date().toISOString(), status: 'sending' });
+    const partner = id === 'ren' ? ren : id === 'hina' ? hina : null;
+    timers.current.push(
+      window.setTimeout(() => {
+        setThreads((previous) => ({
+          ...previous,
+          [id]: (previous[id] ?? []).map((message) => (message.id === messageId ? { ...message, status: partner ? 'read' : 'sent' } : message)),
+        }));
+        if (partner) setTyping(true);
+      }, 700),
+    );
+    if (partner) {
+      timers.current.push(
+        window.setTimeout(() => {
+          setTyping(false);
+          append(id, { id: `${partner.id}-${String(Date.now())}`, author: partner, content: c.reply, sentAt: new Date().toISOString() });
+        }, 2400),
+      );
+    }
+  };
+
+  const partner = current === 'ren' ? ren : current === 'hina' ? hina : null;
+  return (
+    <ChatPage
+      conversations={conversations}
+      current={current}
+      onConversationChange={open}
+      messages={threads[current] ?? []}
+      currentUserId={me.id}
+      unreadFrom={unreadFrom}
+      typing={typing && partner ? [partner] : []}
+      onSend={send}
+    />
+  );
+}
+
+/**
+ * AI アシスタント（P-19）。質問すると、決まった回答を少しずつ足して流しながら書く（書いている間は止められる）。
+ * 履歴の会話を開くと、その時のやり取りを出す。「新しい会話」で質問の例の画面に戻る。
+ */
+function AssistantContent(): ReactNode {
+  const { templateSamples: s } = useT();
+  const a = s.assistant;
+  const names = useDemoText('memberTable');
+  const me = { id: 'm1', name: names.m1 };
+  const bot = { id: 'bot', name: s.app.assistant, role: 'assistant' as const };
+  const pair = (id: string, question: string, answer: string, minutes: number): ChatMessage[] => [
+    { id: `${id}-q`, author: me, content: question, sentAt: minutesAgo(minutes) },
+    { id: `${id}-a`, author: bot, content: answer, sentAt: minutesAgo(minutes - 1) },
+  ];
+  const [threads, setThreads] = useState<Record<string, ChatMessage[]>>(() => ({
+    h1: pair('h1', a.history1, a.history1Answer, 26 * 60),
+    h2: pair('h2', a.history2, a.history2Answer, 4 * 24 * 60),
+    h3: pair('h3', a.history3, a.history3Answer, 20 * 24 * 60),
+  }));
+  const [history, setHistory] = useState<AssistantThread[]>(() => [
+    { id: 'h1', title: a.history1, updatedAt: minutesAgo(26 * 60) },
+    { id: 'h2', title: a.history2, updatedAt: minutesAgo(4 * 24 * 60) },
+    { id: 'h3', title: a.history3, updatedAt: minutesAgo(20 * 24 * 60) },
+  ]);
+  const [current, setCurrent] = useState<string | undefined>();
+  const [generating, setGenerating] = useState(false);
+  const timer = useRef<number | null>(null);
+  useEffect(
+    () => () => {
+      if (timer.current !== null) window.clearInterval(timer.current);
+    },
+    [],
+  );
+
+  const stop = (): void => {
+    if (timer.current !== null) window.clearInterval(timer.current);
+    timer.current = null;
+    setGenerating(false);
+    setThreads((previous) =>
+      Object.fromEntries(Object.entries(previous).map(([id, messages]) => [id, messages.map((message) => (message.streaming ? { ...message, streaming: false } : message))])),
+    );
+  };
+
+  const ask = (text: string): void => {
+    const id = current ?? `t-${String(Date.now())}`;
+    const answerId = `${id}-${String(Date.now())}`;
+    const sentAt = new Date().toISOString();
+    if (!current) {
+      setCurrent(id);
+      setHistory((previous) => [{ id, title: text, updatedAt: sentAt }, ...previous]);
+    }
+    setThreads((previous) => ({
+      ...previous,
+      [id]: [
+        ...(previous[id] ?? []),
+        { id: `${answerId}-q`, author: me, content: text, sentAt },
+        { id: answerId, author: bot, content: '', sentAt, streaming: true },
+      ],
+    }));
+    setGenerating(true);
+    let shown = 0;
+    const answer = a.answer;
+    timer.current = window.setInterval(() => {
+      shown += 3;
+      setThreads((previous) => ({
+        ...previous,
+        [id]: (previous[id] ?? []).map((message) => (message.id === answerId ? { ...message, content: answer.slice(0, shown) } : message)),
+      }));
+      if (shown >= answer.length) stop();
+    }, 40);
+  };
+
+  return (
+    <AssistantPage
+      messages={current ? (threads[current] ?? []) : []}
+      currentUserId={me.id}
+      onSend={ask}
+      generating={generating}
+      onStop={stop}
+      suggestions={[
+        { id: 'sales', label: a.sales, description: a.salesDescription },
+        { id: 'churn', label: a.churn, description: a.churnDescription },
+        { id: 'mail', label: a.mail, description: a.mailDescription },
+      ]}
+      history={history}
+      currentThreadId={current}
+      onThreadChange={(id) => {
+        stop();
+        setCurrent(id);
+      }}
+      onNewThread={() => {
+        stop();
+        setCurrent(undefined);
+      }}
+    />
+  );
+}
+
 /** アプリの枠に入れる見本。 */
 const APP_PAGES = {
   'app-dashboard': DashboardContent,
   'app-members': MembersContent,
+  'app-chat': ChatContent,
+  'app-assistant': AssistantContent,
   'app-billing': BillingContent,
   'app-settings': SettingsContent,
 } as const;
@@ -218,6 +428,8 @@ export function AtlasApp({ page }: { page: AppPreviewName }): ReactNode {
       items: [
         { target: 'app-dashboard', label: app.home, icon: ICON_PATHS.home },
         { target: 'app-members', label: app.members, icon: ICON_PATHS.members, badge: <Badge>6</Badge> },
+        { target: 'app-chat', label: app.chat, icon: ICON_PATHS.chat },
+        { target: 'app-assistant', label: app.assistant, icon: ICON_PATHS.assistant },
       ],
     },
     {

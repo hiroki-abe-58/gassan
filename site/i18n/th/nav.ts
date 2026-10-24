@@ -61,6 +61,7 @@ export default {
     templatesPublic: 'ราคา คำถามที่พบบ่อย และข้อกำหนด',
     templatesApp: 'โครงแอป',
     templatesAppPages: 'การตั้งค่า สมาชิก และการเรียกเก็บเงิน',
+    templatesConversations: 'แชตและผู้ช่วย AI',
     provider: 'GassanProvider',
     spec: 'สเปกพฤติกรรม',
     verification: 'การตรวจสอบ',
