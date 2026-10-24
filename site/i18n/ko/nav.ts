@@ -52,6 +52,7 @@ export default {
     uiNavigation: '탭과 페이지 이동',
     uiOverlays: '툴팁과 메뉴',
     uiData: '페이지 헤더와 표',
+    uiCommand: '명령 팔레트',
     templatesAuth: '로그인과 가입',
     templatesStatus: '오류와 점검',
     templatesPublic: '요금·FAQ·약관',

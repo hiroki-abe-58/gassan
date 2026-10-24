@@ -111,7 +111,7 @@ export function ThemePicker(): ReactNode {
         style={{ '--s-theme-dot': theme.accent.accent } as CSSProperties}
       >
         <span className="s-theme-dot" aria-hidden="true" />
-        {t.button}
+        <span className="s-theme-name">{t.button}</span>
       </button>
 
       <div id={panelId} popover="auto" className="s-theme-panel" role="dialog" aria-labelledby={titleId}>

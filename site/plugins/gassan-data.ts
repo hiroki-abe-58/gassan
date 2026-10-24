@@ -253,6 +253,8 @@ const EXTRA_INTERFACES = new Set([
   'FaqItem',
   'DocumentSection',
   'ChangelogEntry',
+  // コマンドパレット（U-27）。
+  'CommandItem',
   // データの表（U-26）とアプリの枠（P-12）。
   'DataTableColumn',
   'DataTableSort',

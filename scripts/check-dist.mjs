@@ -46,10 +46,12 @@ import { gzipSync } from 'node:zlib';
  * CSS 約 0.8 KB・templates.css 約 0.6 KB）。表とアプリの枠は名前つき import でだけ使うので、使わないアプリの JS には載らない。
  * 同日、JS を 84 → 93 KB に引き上げた。アプリの中のページ（P-13〜P-17。設定・メンバー・料金と請求・はじめの設定・
  * 招待を受ける）の 5 ページと、その日本語と英語の文言を足したため（JS 約 11 KB）。これも名前つき import でだけ使う。
+ * 同日、JS を 93 → 96 KB に引き上げた。コマンドパレット（U-27。絞り込み・並べ方・開くキー・読み上げ）と文言を足したため
+ * （JS 約 2.3 KB・CSS 約 0.4 KB）。使わないアプリの JS には載らない。
  */
 const BUDGETS = {
-  'dist/index.js': 93 * 1024,
-  'dist/index.cjs': 93 * 1024,
+  'dist/index.js': 96 * 1024,
+  'dist/index.cjs': 96 * 1024,
   'dist/styles.css': 18 * 1024,
   'dist/templates.css': 5 * 1024,
 };
@@ -162,6 +164,7 @@ const REQUIRED_EXPORTS = [
   // ページの見出しの帯とデータの表。U-25 / U-26。
   'PageHeader',
   'DataTable',
+  'CommandPalette',
   // フォーム部品の中立の名前（ModalInput などと同じもの）。
   'Field',
   'Fieldset',

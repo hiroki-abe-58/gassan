@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
-import { GassanProvider, Modal, ModalHost, Phrase, ToastHost } from '@genelab/gassan';
+import { CommandPalette, GassanProvider, Modal, ModalHost, Phrase, ToastHost, type CommandItem } from '@genelab/gassan';
 
 import { data } from './data';
 import { DEFAULT_LANG, loadLang, useI18n } from './i18n';
@@ -73,6 +73,33 @@ export function App(): ReactNode {
   const toastPosition = useToastPosition();
   /** テンプレートの見本（#/preview/<name>）なら、その名前。 */
   const previewName = route.segments[0] === 'preview' ? (route.segments[1] ?? '') : null;
+  const [searchOpen, setSearchOpen] = useState(false);
+  /** 検索で選んでページが変わったら、閉じた後のフォーカスを新しいページの見出しへ送る（K-06）。 */
+  const searchMoved = useRef(false);
+  const searchFinalFocus = useMemo(
+    () => ({
+      get current(): HTMLElement | null {
+        return searchMoved.current ? document.getElementById('page-title') : null;
+      },
+    }),
+    [],
+  );
+  /** サイトの検索の候補。節ごとのまとまりで、ページのアドレス（英語）でも当たる。 */
+  const searchItems = useMemo<CommandItem[]>(
+    () =>
+      PAGES.map((item) => ({
+        id: item.path,
+        label: t.nav.pages[item.key],
+        group: t.nav.sections[item.section],
+        keywords: [item.path, item.key],
+        href: to(item.path),
+        onSelect: () => {
+          searchMoved.current = true;
+        },
+      })),
+    [t],
+  );
+  const apple = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
 
   // URL の言語が変わったら、その言語の文言を読む。読み終えるまでは前の言語で描く。
   useEffect(() => {
@@ -147,12 +174,30 @@ export function App(): ReactNode {
           </a>
           <span className="s-version">v{data.meta.version}</span>
           <span className="s-topbar-spacer" />
+          <button
+            type="button"
+            className="s-theme-btn s-search-btn"
+            // 狭い画面では文字を外して虫眼鏡だけにするので、名前は aria-label で持つ
+            aria-label={t.common.search}
+            aria-haspopup="dialog"
+            aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
+            onClick={() => setSearchOpen(true)}
+          >
+            <svg className="s-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m16 16 4 4" />
+            </svg>
+            <span className="s-search-label">{t.common.search}</span>
+            <kbd className="s-search-kbd" aria-hidden="true">
+              {apple ? '⌘K' : 'Ctrl K'}
+            </kbd>
+          </button>
           <LangPicker />
           <ThemePicker />
           <a className="s-topbar-link s-topbar-spec" href={to('/spec')}>
             {t.common.spec}
           </a>
-          <a className="s-topbar-link" href={data.meta.repository} target="_blank" rel="noreferrer">
+          <a className="s-topbar-link s-topbar-github" href={data.meta.repository} target="_blank" rel="noreferrer">
             GitHub
           </a>
         </header>
@@ -235,6 +280,19 @@ export function App(): ReactNode {
             </nav>
           </Modal.Body>
         </Modal.Root>
+
+        {/* サイトの検索は gassan の CommandPalette そのもの（⌘K / Ctrl+K）。 */}
+        <CommandPalette
+          items={searchItems}
+          open={searchOpen}
+          onOpenChange={(next) => {
+            if (next) searchMoved.current = false;
+            setSearchOpen(next);
+          }}
+          label={t.common.searchPalette}
+          placeholder={t.common.searchPlaceholder}
+          finalFocus={searchFinalFocus}
+        />
 
         <ModalHost />
         <ToastHost position={toastPosition} />

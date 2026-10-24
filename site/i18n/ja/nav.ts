@@ -51,6 +51,7 @@ export default {
     uiNavigation: 'タブとページ送り',
     uiOverlays: 'ツールチップとメニュー',
     uiData: '見出しと表',
+    uiCommand: 'コマンドパレット',
     templatesAuth: 'ログインと登録',
     templatesStatus: 'エラーとメンテナンス',
     templatesPublic: '料金・FAQ・規約',

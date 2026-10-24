@@ -156,6 +156,14 @@ export interface GassanLabels {
   rowActions: string;
   /** 表に行が無いときの既定の文。U-26。 */
   emptyTable: string;
+  /** コマンドパレットの名前と、検索欄の既定の案内。U-27。 */
+  commandPalette: string;
+  commandPlaceholder: string;
+  /** 当てはまった候補の数の読み上げ（0 なら当てはまるものが無いこと）。U-27。 */
+  commandResults: (count: number) => string;
+  /** 下端のキーの案内（↑↓ と Enter の意味）。Esc は close を使う。U-27。 */
+  commandMove: string;
+  commandSelect: string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -247,6 +255,11 @@ export const japaneseLabels: GassanLabels = {
   sortedBy: (column, direction) => `${column}で${direction === 'ascending' ? '昇順' : '降順'}に並べ替えました`,
   rowActions: '操作',
   emptyTable: '表示するものがありません',
+  commandPalette: 'コマンドパレット',
+  commandPlaceholder: 'コマンドを探す',
+  commandResults: (count) => (count === 0 ? '一致する候補がありません' : `${String(count)} 件の候補`),
+  commandMove: '移動',
+  commandSelect: '選ぶ',
 };
 
 export const englishLabels: GassanLabels = {
@@ -345,6 +358,11 @@ export const englishLabels: GassanLabels = {
   sortedBy: (column, direction) => `Sorted by ${column}, ${direction}`,
   rowActions: 'Actions',
   emptyTable: 'Nothing to show',
+  commandPalette: 'Command palette',
+  commandPlaceholder: 'Search commands',
+  commandResults: (count) => (count === 0 ? 'No matches' : count === 1 ? '1 result' : `${String(count)} results`),
+  commandMove: 'Move',
+  commandSelect: 'Select',
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);
