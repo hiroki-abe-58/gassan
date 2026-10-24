@@ -181,6 +181,9 @@ const CASES: Array<{ name: string; render: () => void }> = [
       inRoot(<Modal.Combobox aria-label="c" options={[{ value: 'a', label: 'A' }]} data-testid={TID} />),
   },
   { name: 'Modal.DatePicker', render: () => inRoot(<Modal.DatePicker aria-label="d" data-testid={TID} />) },
+  { name: 'Modal.DateRangePicker', render: () => inRoot(<Modal.DateRangePicker aria-label="r" data-testid={TID} />) },
+  { name: 'Modal.Calendar', render: () => inRoot(<Modal.Calendar aria-label="c" data-testid={TID} />) },
+  { name: 'Modal.RangeCalendar', render: () => inRoot(<Modal.RangeCalendar aria-label="c" data-testid={TID} />) },
   { name: 'Modal.FileDrop', render: () => inRoot(<Modal.FileDrop aria-label="f" data-testid={TID} />) },
   {
     name: 'Modal.Chart',
@@ -255,6 +258,9 @@ describe('data-* の受け渡し（D-11）', () => {
   it('Modal.Select は data-* をホスト要素へ渡す', () => sweep('Modal.Select'));
   it('Modal.Combobox は data-* をホスト要素へ渡す', () => sweep('Modal.Combobox'));
   it('Modal.DatePicker は data-* をホスト要素へ渡す', () => sweep('Modal.DatePicker'));
+  it('Modal.DateRangePicker は data-* をホスト要素へ渡す', () => sweep('Modal.DateRangePicker'));
+  it('Modal.Calendar は data-* をホスト要素へ渡す', () => sweep('Modal.Calendar'));
+  it('Modal.RangeCalendar は data-* をホスト要素へ渡す', () => sweep('Modal.RangeCalendar'));
   it('Modal.FileDrop は data-* をホスト要素へ渡す', () => sweep('Modal.FileDrop'));
 
   it('Modal.Gate は要素を描かないので受け渡しの対象外', () => {

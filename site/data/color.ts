@@ -30,5 +30,7 @@ export const CONTRAST_PAIRS: readonly (readonly [fg: string, bg: string, min: nu
   ['on-accent-muted', 'accent-muted', 4.5],
   ['on-danger', 'danger', 4.5],
   ['danger', 'surface', 4.5],
+  ['sunday', 'surface', 4.5],
+  ['saturday', 'surface', 4.5],
   ['focus', 'surface', 3],
 ];

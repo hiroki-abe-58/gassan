@@ -26,6 +26,8 @@ export default {
       'on-accent-muted': '게이트 적용 중인 primary(G-10)',
       'on-danger': 'danger 버튼(F-06)',
       danger: '오류 문구·필수 표시',
+      sunday: '달력의 일요일과 공휴일(I-16)',
+      saturday: '달력의 토요일(I-16)',
       focus: '포커스 링(K-07. 비텍스트는 3:1)',
     },
     pass: (min: number): string => `합격(${String(min)}:1 이상)`,

@@ -72,6 +72,8 @@ export default {
       gassanBody: '模態視窗的內文',
       gassanMuted: '模態視窗的補充文字與 tertiary',
       gassanDanger: '模態視窗的錯誤訊息',
+      gassanSunday: '日曆的週日與國定假日',
+      gassanSaturday: '日曆的週六',
       focusRing: '焦點環（非文字）',
       fill: '開關與選取中 chip 的填色（非文字）',
     },

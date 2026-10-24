@@ -1,5 +1,6 @@
 import type ja from '../../ja/demos';
 import bodyScroll from './bodyScroll';
+import bookingCalendar from './bookingCalendar';
 import chartReport from './chartReport';
 import choiceForm from './choiceForm';
 import dateForm from './dateForm';
@@ -17,6 +18,7 @@ import lineBreakModal from './lineBreakModal';
 import playground from './playground';
 import providerEnglish from './providerEnglish';
 import quickStart from './quickStart';
+import rangeReport from './rangeReport';
 import scrimLevels from './scrimLevels';
 import selectForm from './selectForm';
 import sheetDetents from './sheetDetents';
@@ -26,6 +28,7 @@ import titleClamp from './titleClamp';
 
 export default {
   bodyScroll,
+  bookingCalendar,
   chartReport,
   choiceForm,
   dateForm,
@@ -43,6 +46,7 @@ export default {
   playground,
   providerEnglish,
   quickStart,
+  rangeReport,
   scrimLevels,
   selectForm,
   sheetDetents,

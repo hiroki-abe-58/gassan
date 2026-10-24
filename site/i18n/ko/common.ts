@@ -72,6 +72,8 @@ export default {
       gassanBody: '모달 본문',
       gassanMuted: '모달의 보조 텍스트·tertiary',
       gassanDanger: '모달의 오류 문구',
+      gassanSunday: '달력의 일요일·공휴일',
+      gassanSaturday: '달력의 토요일',
       focusRing: '포커스 링(비텍스트)',
       fill: '스위치·선택된 칩의 채우기(비텍스트)',
     },

@@ -72,6 +72,8 @@ export default {
       gassanBody: '模态框的正文',
       gassanMuted: '模态框的补充说明、tertiary',
       gassanDanger: '模态框的错误提示',
+      gassanSunday: '日历的周日与节假日',
+      gassanSaturday: '日历的周六',
       focusRing: '焦点环（非文本）',
       fill: '开关、选中标签的填充（非文本）',
     },

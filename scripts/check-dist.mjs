@@ -24,11 +24,15 @@ import { gzipSync } from 'node:zlib';
  * 2026-10-22、JS を 35 → 36 KB に引き上げた。動きの段（V-01〜V-08）で、ポップアップの退出を待つ処理・
  * セグメントの板を測るフック・Provider の器を足したため（約 0.8 KB）。Popup は一覧とカレンダーが共有するので、
  * 入力部品を使うアプリには載る。
+ * 同日、JS を 36 → 43 KB、CSS を 9 → 11 KB に引き上げた。カレンダー（I-16〜I-19）で、日本の祝日の計算と
+ * 名前の表（日本語・英語）・共有の月の表（月と年の一覧・期間・印）・DateRangePicker・Calendar・RangeCalendar を
+ * 足したため（JS 約 6 KB・CSS 約 1.2 KB）。日本語の既定の文言（japaneseLabels）が祝日を引くので、
+ * 祝日の計算は labels を使う全部品に載る（名前の表のうち英語の分も一緒に載る。分けると API が割れるので分けない）。
  */
 const BUDGETS = {
-  'dist/index.js': 36 * 1024,
-  'dist/index.cjs': 36 * 1024,
-  'dist/styles.css': 9 * 1024,
+  'dist/index.js': 43 * 1024,
+  'dist/index.cjs': 43 * 1024,
+  'dist/styles.css': 11 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -89,6 +93,16 @@ const REQUIRED_EXPORTS = [
   'splitPhrases',
   // 動きの段の名前（none / subtle / standard / expressive）。選ぶ UI を作る側が並べるのに使う。V-01。
   'MOTION_PRESETS',
+  // カレンダー。期間・ページの上のカレンダー・日本の祝日。I-16〜I-19。
+  'ModalCalendar',
+  'ModalRangeCalendar',
+  'ModalDateRangePicker',
+  'commonDateRanges',
+  'DATE_RANGE_PRESETS',
+  'japaneseHoliday',
+  'japaneseHolidays',
+  'japaneseHolidayNames',
+  'japaneseHolidayResolver',
 ];
 
 let failed = false;

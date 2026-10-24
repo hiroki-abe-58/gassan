@@ -1,7 +1,7 @@
 /**
  * gassan이 내보내는 문자열(닫기·읽어 주기·게이트의 이유 등). 한국어는 사이트에서 번역한다.
  */
-import type { GassanLabels } from '@genelab/gassan';
+import { japaneseHolidayResolver, type GassanLabels } from '@genelab/gassan';
 
 const labels: GassanLabels = {
   close: '닫기',
@@ -39,6 +39,48 @@ const labels: GassanLabels = {
   rating: (value, max) => `${String(max)}점 중 ${String(value)}점`,
   previousMonth: '이전 달',
   nextMonth: '다음 달',
+  // 문서 사이트는 일본의 공휴일을 보여 준다. 이름은 한국어로 옮겼다.
+  holidays: japaneseHolidayResolver({
+    newYear: '새해 첫날',
+    comingOfAge: '성인의 날',
+    foundation: '건국기념일',
+    emperorBirthday: '천황 탄생일',
+    vernalEquinox: '춘분의 날',
+    showa: '쇼와의 날',
+    greenery: '녹색의 날',
+    constitution: '헌법기념일',
+    children: '어린이날',
+    marine: '바다의 날',
+    mountain: '산의 날',
+    respectForAged: '경로의 날',
+    autumnalEquinox: '추분의 날',
+    healthSports: '체육의 날',
+    sports: '스포츠의 날',
+    culture: '문화의 날',
+    laborThanksgiving: '근로감사의 날',
+    substitute: '대체 휴일',
+    citizens: '국민의 휴일',
+    wedding1959: '아키히토 황태자 결혼식',
+    funeral1989: '쇼와 천황 장례식',
+    enthronementCeremony: '즉위례 정전의 의식',
+    wedding1993: '나루히토 황태자 결혼식',
+    enthronement: '천황 즉위일',
+  }),
+  today: '오늘',
+  previousYear: '이전 해',
+  nextYear: '다음 해',
+  previousYears: '이전 12년',
+  nextYears: '다음 12년',
+  chooseMonth: (current) => `${current}, 월 선택`,
+  chooseYear: (current) => `${current}, 연도 선택`,
+  startDate: '시작일',
+  endDate: '종료일',
+  pickStart: '시작일을 선택하세요',
+  pickEnd: '종료일을 선택하세요',
+  chooseRange: '기간 선택',
+  marked: '일정 있음',
+  rangePreset: (key) =>
+    ({ today: '오늘', yesterday: '어제', last7: '최근 7일', last30: '최근 30일', thisMonth: '이번 달', lastMonth: '지난달' })[key],
   dropFiles: '여기에 파일을 놓으세요',
   chooseFiles: '파일 선택',
   removeFile: (name) => `${name} 제거`,

@@ -214,6 +214,9 @@ function countExports(): number {
 
 /** API 表に載せる型。Props で終わるもの以外に、利用者が手で組み立てる型も載せる。 */
 const EXTRA_INTERFACES = new Set([
+  'CalendarOptions',
+  'DateRange',
+  'DateRangePreset',
   'ConfirmOptions',
   'GassanLabels',
   'ModalGalleryItem',

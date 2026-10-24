@@ -26,6 +26,8 @@ export default {
       'on-accent-muted': '門控中的 primary（G-10）',
       'on-danger': 'danger 按鈕（F-06）',
       danger: '錯誤訊息、必填標記',
+      sunday: '日曆的週日與國定假日（I-16）',
+      saturday: '日曆的週六（I-16）',
       focus: '焦點環（K-07。非文字為 3:1）',
     },
     pass: (min: number): string => `合格（${String(min)}:1 以上）`,

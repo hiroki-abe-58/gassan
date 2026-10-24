@@ -915,6 +915,18 @@
   justify-content: center;
   gap: 8px;
 }
+/* 器いっぱいに広がる見本（大きなカレンダーなど）。デモの台は中央寄せの flex なので、幅を明示する */
+.s-demo-wide {
+  display: grid;
+  gap: 12px;
+  inline-size: 100%;
+  max-inline-size: 46rem;
+}
+.s-demo-note {
+  margin: 0;
+  color: var(--s-ink-2);
+  font-size: 0.9375rem;
+}
 /* 以下はモーダルの中に置くデモ用の部品。gassan のトークンで色を合わせる */
 .s-demo-fieldset {
   margin: 0;
