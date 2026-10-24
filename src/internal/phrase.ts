@@ -162,6 +162,16 @@ function canBreak(a: string, b: string, before: string): boolean {
 }
 
 /**
+ * 数の間の「:」（時刻「9:30」・比「16:9」）か。ICU は「9｜:｜30」と切り、「:」は閉じの記号なので、
+ * 後ろに英数字が来ると折ってよいことになる（「最後の利用 9:｜30」）。数の間の「,」「.」は ICU が 1 語にまとめる。
+ */
+function inNumber(a: string, b: string, before: string): boolean {
+  const chars = [...a];
+  const digitBefore = chars.length > 1 ? (chars.at(-2) ?? '') : before;
+  return /[:：]/u.test(chars.at(-1) ?? '') && DIGIT.test(digitBefore) && DIGIT.test(b.charAt(0));
+}
+
+/**
  * 前の語に付く 1 文字の語（助詞・語気詞・後置の「後・時・中」）。行頭に立たせない
  * （「我的｜文件」にして「我｜的文件」にしない。「删除此文件后｜将无法恢复」）。
  */
@@ -364,7 +374,7 @@ export function splitPhrases(text: string): readonly string[] {
     const prev = ws[i - 1] ?? '';
     const next = ws[i] ?? '';
     const before = lastChar(ws[i - 2] ?? '');
-    if (script === 'ja' ? canBreak(prev, next, before) : canBreakZh(prev, next, ws[i + 1] ?? '')) {
+    if (!inNumber(prev, next, before) && (script === 'ja' ? canBreak(prev, next, before) : canBreakZh(prev, next, ws[i + 1] ?? ''))) {
       groups.push(current);
       current = [next];
     } else {

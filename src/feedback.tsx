@@ -49,6 +49,7 @@ export function Progress({
   ...rest
 }: ProgressProps): ReactNode {
   const { locale } = useLabels();
+  const phrase = usePhrase();
   const labelId = `${useId()}-label`;
   const known = value !== undefined && Number.isFinite(value);
   const clamped = known ? Math.min(Math.max(value, 0), max) : 0;
@@ -60,7 +61,7 @@ export function Progress({
     <div {...domPassthrough(rest, 'Progress')} className={cx('g-progress', className)} data-tone={tone} data-size={size === 'md' ? undefined : size}>
       <div className={hideLabel ? 'g-sr-only' : 'g-progress-head'}>
         <span id={labelId} className="g-progress-label">
-          {label}
+          {phrase(label)}
         </span>
         {known && showValue && !hideLabel ? (
           <span className="g-progress-value" aria-hidden="true">

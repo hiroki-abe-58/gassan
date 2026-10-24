@@ -139,6 +139,27 @@ describe('データの表 / U-26', () => {
     expect(screen.getByRole('status')).toHaveTextContent('選択を解除しました');
   });
 
+  it('選べない行（canSelect）にはチェックボックスを置かず、「すべて選択」の対象からも外す', async () => {
+    const user = userEvent.setup();
+    const onSelectedChange = vi.fn();
+    render(
+      <DataTable
+        label="メンバー"
+        columns={COLUMNS}
+        rows={MEMBERS}
+        getRowId={(member) => member.id}
+        selectable
+        canSelect={(member) => member.id !== 'm1'}
+        onSelectedChange={onSelectedChange}
+      />,
+    );
+    expect(screen.queryByRole('checkbox', { name: '佐藤 花' })).toBeNull();
+    const all = screen.getByRole('checkbox', { name: 'すべて選択' });
+    await user.click(all);
+    expect(onSelectedChange).toHaveBeenLastCalledWith(['m2', 'm3']);
+    expect(all).toBeChecked();
+  });
+
   it('行の端の操作の列は読み上げだけの見出しを持つ', () => {
     render(
       <DataTable
@@ -150,7 +171,20 @@ describe('データの表 / U-26', () => {
       />,
     );
     expect(screen.getByRole('columnheader', { name: '操作' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '佐藤 花 を編集' }).closest('td')).toHaveClass('g-data-table-actions');
+    const button = screen.getByRole('button', { name: '佐藤 花 を編集' });
+    expect(button.closest('td')).toHaveClass('g-data-table-actions');
+    // いくつ並べても 1 行に収め、端にそろえる器に入れる
+    expect(button.parentElement).toHaveClass('g-data-table-row-actions');
+  });
+
+  it('セルは既定で 1 行に出し、wrap の列だけ折り返す（data-wrap）', () => {
+    const columns: DataTableColumn<Member>[] = [
+      { key: 'name', header: '名前', cell: (member) => member.name },
+      { key: 'note', header: 'メモ', cell: (member) => `${member.name} さんのメモ`, wrap: true },
+    ];
+    render(<DataTable label="メンバー" columns={columns} rows={MEMBERS} getRowId={(member) => member.id} />);
+    expect(screen.getByRole('rowheader', { name: '佐藤 花' })).not.toHaveAttribute('data-wrap');
+    expect(screen.getByRole('cell', { name: '佐藤 花 さんのメモ' })).toHaveAttribute('data-wrap', '');
   });
 
   it('行が無いときは既定の文か empty を、読み込み中は骨組みを出して表を aria-busy にする', () => {

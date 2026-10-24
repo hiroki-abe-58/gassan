@@ -56,6 +56,7 @@ export default {
     templatesStatus: 'ข้อผิดพลาดและการปิดปรับปรุง',
     templatesPublic: 'ราคา คำถามที่พบบ่อย และข้อกำหนด',
     templatesApp: 'โครงแอป',
+    templatesAppPages: 'การตั้งค่า สมาชิก และการเรียกเก็บเงิน',
     provider: 'GassanProvider',
     spec: 'สเปกพฤติกรรม',
     verification: 'การตรวจสอบ',

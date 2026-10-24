@@ -56,6 +56,7 @@ export default {
     templatesStatus: 'Errors and maintenance',
     templatesPublic: 'Pricing, FAQ and legal',
     templatesApp: 'App shell',
+    templatesAppPages: 'Settings, members and billing',
     provider: 'GassanProvider',
     spec: 'Behavior specification',
     verification: 'Verification',

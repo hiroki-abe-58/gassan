@@ -167,6 +167,38 @@ export function ErrorSummary({
   );
 }
 
+/**
+ * ボタン 1 つの操作（送り直す・ログアウトさせる・解約する）を走らせ、失敗の文を返す。成功なら null。
+ * error: true は failed（既定の文）にし、投げられた例外の文は見せない（中身は開発者向けにコンソールへ）。P-03。
+ */
+export async function runAction(action: () => SubmitResult | Promise<SubmitResult>, failed: string): Promise<ReactNode> {
+  try {
+    const result = await action();
+    if (result && result.error) return result.error === true ? failed : result.error;
+    return null;
+  } catch (error) {
+    console.error('[gassan] action rejected.', error);
+    return failed;
+  }
+}
+
+/**
+ * 日付を見せる（「2026年4月1日」）。機械が読む値と組にして time 要素に入れる。
+ * 日付だけの文字列（'2026-04-01'）は UTC の 0 時として読み、UTC で書く（時差で前の日にならないように）。
+ */
+export function formatDate(value: Date | string, locale: string, timeZone?: string): { text: string; iso: string } {
+  const dateOnly = typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
+  const date = value instanceof Date ? value : new Date(value);
+  const text = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: dateOnly ? 'UTC' : timeZone }).format(date);
+  return { text, iso: dateOnly ? (value as string) : date.toISOString() };
+}
+
+/** 日時を見せる（「2026/10/23 9:12」）。機械が読む値と組にして time 要素に入れる。時間帯は useTimeZone() で決める。 */
+export function formatDateTime(value: Date | string, locale: string, timeZone?: string): { text: string; iso: string } {
+  const date = value instanceof Date ? value : new Date(value);
+  return { text: new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(date), iso: date.toISOString() };
+}
+
 /** 送信に失敗した理由（サーバーからの文）。読み上げを割り込ませる。 */
 export function FormError({ children }: { children: ReactNode }): ReactNode {
   return children ? (

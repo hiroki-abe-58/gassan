@@ -55,6 +55,7 @@ export default {
     templatesStatus: 'エラーとメンテナンス',
     templatesPublic: '料金・FAQ・規約',
     templatesApp: 'アプリの枠',
+    templatesAppPages: '設定・メンバー・請求',
     provider: 'GassanProvider',
     spec: '振る舞い仕様',
     verification: '検証',

@@ -44,10 +44,12 @@ import { gzipSync } from 'node:zlib';
  * 同日、JS を 80 → 84 KB、CSS を 16 → 18 KB、templates.css を 4 → 5 KB に引き上げた。横から出る面（C-13）・ページの見出しの帯
  * （U-25）・データの表（U-26。並べ替え・行の選択・選んだ行への操作・骨組み）・アプリの枠（P-12）を足したため（JS 約 3.9 KB・
  * CSS 約 0.8 KB・templates.css 約 0.6 KB）。表とアプリの枠は名前つき import でだけ使うので、使わないアプリの JS には載らない。
+ * 同日、JS を 84 → 93 KB に引き上げた。アプリの中のページ（P-13〜P-17。設定・メンバー・料金と請求・はじめの設定・
+ * 招待を受ける）の 5 ページと、その日本語と英語の文言を足したため（JS 約 11 KB）。これも名前つき import でだけ使う。
  */
 const BUDGETS = {
-  'dist/index.js': 84 * 1024,
-  'dist/index.cjs': 84 * 1024,
+  'dist/index.js': 93 * 1024,
+  'dist/index.cjs': 93 * 1024,
   'dist/styles.css': 18 * 1024,
   'dist/templates.css': 5 * 1024,
 };
@@ -215,6 +217,13 @@ const REQUIRED_EXPORTS = [
   'englishTemplateLabels',
   // アプリの枠。P-12。
   'AppShell',
+  // アプリの中のページ。P-13〜P-17。
+  'SettingsPage',
+  'SettingsSection',
+  'MembersPage',
+  'BillingPage',
+  'OnboardingPage',
+  'InviteAcceptPage',
 ];
 
 let failed = false;

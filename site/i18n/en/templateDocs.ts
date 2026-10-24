@@ -100,9 +100,39 @@ export default {
     },
     shell: {
       title: 'App shell',
-      intro: 'When the container is wide, the navigation sits in a sidebar on the left, and the current page is marked with a background color and bold text. Switch to “Phone”, and the navigation folds away and opens in a side panel from “Menu” (Esc or a press outside closes it, and so does pressing a link in the navigation). On the members screen, the “…” on a row opens the details in a side panel.',
+      intro: 'When the container is wide, the navigation sits in a sidebar on the left, and the current page is marked with a background color and bold text. Switch to “Phone”, and the navigation folds away and opens in a side panel from “Menu” (Esc or a press outside closes it, and so does pressing a link in the navigation). From the navigation, you can move on to the examples for members, plan and billing, and settings.',
       variants: { dashboard: 'Home (dashboard)', members: 'Members (data table)' },
     },
     a11yCaption: 'Specification items the app shell satisfies',
+  },
+  appPages: {
+    lead: 'The screens every SaaS has after sign-in: pages for account settings, members and invitations, plan and billing, getting started, and accepting an invitation. Place them inside the app shell and pass only data and handlers, and you get the submit flow, confirmation modals and even announcements of the results.',
+    setup: {
+      title: 'Usage',
+      intro: 'Place the content inside the app shell (AppShell). You pass only data and handlers (saving, inviting, canceling and so on). If a handler fails, return { error }, and that message is announced, interrupting whatever is being read. Sections and actions you don’t pass aren’t shown.',
+      code: "import { AppShell, MembersPage, SettingsPage } from '@genelab/gassan';\n\n<AppShell current=\"/settings\" nav={nav} account={account}>\n  <SettingsPage\n    profile={{ name: user.name, email: user.email, onSubmit: saveProfile }}\n    password={{ onSubmit: changePassword }}\n    sessions={{ items: sessions, onRevoke: revokeSession, onRevokeOthers: revokeOtherSessions }}\n    deleteAccount={{ confirmText: user.email, onDelete: deleteAccount }}\n  />\n</AppShell>\n\n<MembersPage\n  members={members}\n  roles={[{ value: 'admin', label: 'Admin' }, { value: 'editor', label: 'Editor' }]}\n  currentUserId={user.id}\n  onInvite={({ emails, role }) => invite(emails, role)}\n  onRemove={(ids) => removeMembers(ids)}\n/>",
+    },
+    settings: {
+      title: 'Account settings',
+      intro: 'Profile, password, two-factor authentication, signed-in devices and account deletion are laid out in sections with headings. When the container is wide, each section’s heading and description sit in a column on the left. The button that signs out a device carries the device’s name, and the device in use has no such button. Deletion goes through a confirmation modal, and it can’t be confirmed until the specified text (such as the email address) is typed.',
+    },
+    members: {
+      title: 'Members',
+      intro: 'Seats used, filtering by name and email address (hiragana and katakana, and full-width and half-width forms, match each other), the member table and pending invitations. Invitations happen in a modal, where email addresses go in together as tags. Your own row can’t be selected or removed, and its role can’t be changed. Removing someone goes through a confirmation modal.',
+    },
+    billing: {
+      title: 'Plan and billing',
+      intro: 'The current plan and next renewal date, the payment method (only the card’s last 4 digits), usage, and a table of invoices. Usage turns the warning color at 80% and the error color at the limit, and is shown in numbers too. If a payment has failed, a banner at the top of the page says so. Canceling in the example switches the display to the last day the plan can be used.',
+    },
+    onboarding: {
+      title: 'Getting started',
+      intro: 'The steps right after signing up. Progress sits above the card, and when the step changes, focus moves to its heading. The reason you can’t go on is shown above the content and announced. Steps that can be skipped show “Skip for now”. In the example, you can’t go on to the next step until you enter a workspace name.',
+    },
+    invite: {
+      title: 'Accepting an invitation',
+      intro: 'Shows who sent the invitation, to which workspace and with what role, and lets you accept or decline. If you aren’t signed in, it leads to sign-in and account creation; if the invitation has expired, it explains only what to do next. After declining, it switches to that screen and moves focus to its heading.',
+      variants: { pending: 'Invitation', signedOut: 'Not signed in', expired: 'Expired' },
+    },
+    a11yCaption: 'Specification items the in-app page templates satisfy',
   },
 } satisfies typeof ja;

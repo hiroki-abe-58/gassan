@@ -56,6 +56,7 @@ export default {
     templatesStatus: '오류와 점검',
     templatesPublic: '요금·FAQ·약관',
     templatesApp: '앱 셸',
+    templatesAppPages: '설정·멤버·결제',
     provider: 'GassanProvider',
     spec: '동작 명세',
     verification: '검증',

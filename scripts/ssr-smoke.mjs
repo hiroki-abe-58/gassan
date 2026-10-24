@@ -14,6 +14,7 @@ import { renderToString } from 'react-dom/server';
 import {
   Accordion,
   AppShell,
+  BillingPage,
   Breadcrumbs,
   DataTable,
   ChangelogPage,
@@ -22,16 +23,20 @@ import {
   ErrorPage,
   FaqPage,
   GassanProvider,
+  InviteAcceptPage,
   MaintenancePage,
+  MembersPage,
   Menu,
   Modal,
   ModalHost,
+  OnboardingPage,
   PageHeader,
   Pagination,
   PasswordStrength,
   Phrase,
   Popover,
   PricingPage,
+  SettingsPage,
   SignInPage,
   SiteProvider,
   Steps,
@@ -472,6 +477,55 @@ for (const [label, passed] of [
   ['DataTable renders the sorted order and aria-sort on the server', /aria-sort="ascending"/.test(tableHtml) && tableHtml.indexOf('INV-1') < tableHtml.indexOf('INV-2')],
   ['DataTable names the row checkboxes by the row headers on the server', /aria-label="すべて選択"/.test(tableHtml) && /aria-labelledby="[^"]+-row-0"/.test(tableHtml)],
   ['AppShell renders the navigation with the current page and a closed drawer on the server', appHtml.includes('aria-current="page"') && /class="g-app-menu"[^>]*aria-expanded="false"|aria-expanded="false"[^>]*class="g-app-menu"/.test(appHtml)],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// アプリの中のページ（P-13〜P-17）。見ている人の時間帯はサーバーでは分からないので、SiteProvider の timeZone が無ければ
+// 日時は UTC で描く（hydration を終えてから見ている人の時間帯で描き直す。サーバーとブラウザで文字が食い違わない）。
+const settingsHtml = render(
+  h(SettingsPage, {
+    profile: { name: '佐藤 葵', email: 'aoi@example.com', onSubmit: noop },
+    sessions: { items: [{ id: 's1', device: 'MacBook', lastActive: '2026-10-23T00:30:00Z', current: true }], onRevoke: noop },
+  }),
+);
+const membersHtml = render(
+  h(MembersPage, {
+    members: [
+      { id: 'u1', name: '佐藤 葵', email: 'aoi@example.com', role: 'admin' },
+      { id: 'u2', name: '鈴木 蓮', email: 'ren@example.com', role: 'editor' },
+    ],
+    roles: [
+      { value: 'admin', label: '管理者' },
+      { value: 'editor', label: '編集者' },
+    ],
+    currentUserId: 'u1',
+    onRemove: noop,
+  }),
+);
+const billingHtml = render(
+  h(BillingPage, {
+    plan: { name: 'Pro', price: 9000, periodEnd: '2026-11-01' },
+    invoices: [{ id: '1', number: 'INV-1', date: '2026-10-01', amount: 9000, status: 'paid', href: '/invoices/1.pdf' }],
+  }),
+);
+const onboardingHtml = render(
+  h(OnboardingPage, {
+    steps: [
+      { id: 'workspace', title: 'ワークスペースを作る', content: h('p', null, '本文') },
+      { id: 'invite', title: 'メンバーを招待する', content: h('p', null, '本文') },
+    ],
+    onComplete: noop,
+  }),
+);
+const inviteHtml = render(h(InviteAcceptPage, { workspace: 'Mirai Design', inviter: '佐藤 葵', role: '編集者', signedIn: false }));
+for (const [label, passed] of [
+  ['SettingsPage renders the sections and writes times in UTC until hydration on the server', /autocomplete="email"/i.test(settingsHtml) && textOf(settingsHtml).includes('2026/10/23 0:30')],
+  ['MembersPage leaves the current user without a checkbox on the server', (membersHtml.match(/type="checkbox"/g) ?? []).length === 2 && textOf(membersHtml).includes('鈴木 蓮')],
+  ['BillingPage renders the price, the renewal date and the invoices on the server', textOf(billingHtml).includes('月額 ￥9,000') && /datetime="2026-11-01"/i.test(billingHtml) && billingHtml.includes('href="/invoices/1.pdf"')],
+  ['OnboardingPage renders the progress with the current step on the server', onboardingHtml.includes('aria-current="step"') && textOf(onboardingHtml).includes('メンバーを招待する')],
+  ['InviteAcceptPage sends signed-out visitors to sign in or sign up on the server', inviteHtml.includes('href="/login"') && inviteHtml.includes('href="/signup"')],
 ]) {
   if (passed) ok(label);
   else fail(label);

@@ -98,9 +98,39 @@ export default {
     },
     shell: {
       title: 'アプリの枠',
-      intro: '器が広いときは左に案内の帯を置き、いまのページを地の色と太字で示す。「スマートフォン」に切り替えると案内は畳まれ、「メニュー」から横の面で開く（Esc か外を押すと閉じ、案内のリンクを押しても閉じる）。メンバーの画面では、行の「…」から詳細を横の面で開ける。',
+      intro: '器が広いときは左に案内の帯を置き、いまのページを地の色と太字で示す。「スマートフォン」に切り替えると案内は畳まれ、「メニュー」から横の面で開く（Esc か外を押すと閉じ、案内のリンクを押しても閉じる）。案内からは、メンバー・料金と請求・設定の見本へ移れる。',
       variants: { dashboard: 'ホーム（ダッシュボード）', members: 'メンバー（データの表）' },
     },
     a11yCaption: 'アプリの枠が満たす仕様',
+  },
+  appPages: {
+    lead: 'ログインした後の、どの SaaS にもある画面。アカウントの設定・メンバーと招待・料金と請求・はじめの設定・招待を受けるページ。アプリの枠の中に置き、データと処理を渡すだけで、送信の流れ・確かめるモーダル・結果の読み上げまで揃う。',
+    setup: {
+      title: '使い方',
+      intro: '中身はアプリの枠（AppShell）の中に置く。渡すのはデータと処理（保存・招待・解約など）だけで、処理が失敗なら { error } を返すと、その文を割り込ませて読み上げる。渡さなかった節や操作は出さない。',
+      code: "import { AppShell, MembersPage, SettingsPage } from '@genelab/gassan';\n\n<AppShell current=\"/settings\" nav={nav} account={account}>\n  <SettingsPage\n    profile={{ name: user.name, email: user.email, onSubmit: saveProfile }}\n    password={{ onSubmit: changePassword }}\n    sessions={{ items: sessions, onRevoke: revokeSession, onRevokeOthers: revokeOtherSessions }}\n    deleteAccount={{ confirmText: user.email, onDelete: deleteAccount }}\n  />\n</AppShell>\n\n<MembersPage\n  members={members}\n  roles={[{ value: 'admin', label: '管理者' }, { value: 'editor', label: '編集者' }]}\n  currentUserId={user.id}\n  onInvite={({ emails, role }) => invite(emails, role)}\n  onRemove={(ids) => removeMembers(ids)}\n/>",
+    },
+    settings: {
+      title: 'アカウントの設定',
+      intro: 'プロフィール・パスワード・2 段階認証・ログイン中の端末・アカウントの削除を、見出しのある節に分けて並べる。器が広いときは、節の見出しと説明を左の列に置く。端末のログアウトは端末の名前つきのボタンで、いま使っている端末には置かない。削除は確かめるモーダルで、決めた文字（メールアドレスなど）を打つまで押せない。',
+    },
+    members: {
+      title: 'メンバー',
+      intro: '使っている席・名前とメールアドレスでの絞り込み（かなと全角半角を区別しない）・メンバーの表・招待中の一覧。招待はモーダルで、メールアドレスをタグとしてまとめて入れる。自分の行は選べず、外せず、役割も変えられない。外すときは確かめるモーダルを挟む。',
+    },
+    billing: {
+      title: '料金と請求',
+      intro: '今のプランと次の更新日・支払い方法（カードは下 4 桁だけ）・使っている量・請求書の表。量は 8 割で注意、上限で失敗の色になり、数でも示す。支払いに失敗していれば、ページの上の知らせの帯で伝える。見本で解約すると、使える最後の日の表示に変わる。',
+    },
+    onboarding: {
+      title: 'はじめの設定',
+      intro: '登録した直後の手順。カードの上に進み具合を置き、手順が変わると見出しへフォーカスを移す。次へ進めない理由は、中身の上に出して読み上げる。飛ばせる手順には「あとで設定する」を出す。見本では、ワークスペースの名前を入れないと次へ進めない。',
+    },
+    invite: {
+      title: '招待を受ける',
+      intro: '誰が・どのワークスペースに・どの役割で招待したかを示し、受ける / 断るを置く。ログインしていなければログインとアカウントの作成へ、期限切れなら次にすることだけを案内する。断ったら、その画面に切り替えて見出しへフォーカスを移す。',
+      variants: { pending: '招待', signedOut: 'ログインしていない', expired: '期限切れ' },
+    },
+    a11yCaption: 'アプリの中のページのテンプレートが満たす仕様',
   },
 };

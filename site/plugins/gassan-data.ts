@@ -259,6 +259,22 @@ const EXTRA_INTERFACES = new Set([
   'AppNavSection',
   'AppNavItem',
   'AppAccount',
+  // アプリの中のページ（P-13〜P-17）。
+  'SettingsProfile',
+  'SettingsPassword',
+  'SettingsTwoFactor',
+  'SettingsSession',
+  'SettingsSessions',
+  'SettingsDeleteAccount',
+  'WorkspaceMember',
+  'MemberRole',
+  'MemberInvitation',
+  'MemberInviteValues',
+  'BillingPlan',
+  'BillingUsage',
+  'BillingPaymentMethod',
+  'BillingInvoice',
+  'OnboardingStep',
 ]);
 
 /** Props 型 → 既定値を読む関数名。名前から機械的に決まらないものだけ書く。 */

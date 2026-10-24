@@ -16,6 +16,8 @@ export interface AuthLayoutProps extends DataAttributes {
   aside?: ReactNode;
   /** 見出しの ref。画面が切り替わったとき（送信の完了など）に、ここへフォーカスを移す。 */
   headingRef?: Ref<HTMLHeadingElement>;
+  /** カードの見出しの前に置くもの（手順の進み具合など）。 */
+  lead?: ReactNode;
   className?: string;
 }
 
@@ -26,7 +28,7 @@ export interface AuthLayoutProps extends DataAttributes {
  * aside を渡すと、器が広いときだけカードの横に並べる（狭いときは作業を先に出し、紹介は省く）。
  * 器の幅で決めるので、どこに置いても形が崩れない。
  */
-export function AuthLayout({ title, description, children, footer, aside, headingRef, className, ...rest }: AuthLayoutProps): ReactNode {
+export function AuthLayout({ title, description, children, footer, aside, headingRef, lead, className, ...rest }: AuthLayoutProps): ReactNode {
   const phrase = usePhrase();
   return (
     // 器（.g-page）は container query の基準なので、並べ方は内側の枠（.g-auth-frame）に書く。
@@ -38,6 +40,7 @@ export function AuthLayout({ title, description, children, footer, aside, headin
           </header>
           <main className="g-auth-main">
             <div className="g-auth-card">
+              {lead ? <div className="g-auth-lead">{lead}</div> : null}
               <h1 ref={headingRef} className="g-auth-title" tabIndex={-1}>
                 {phrase(title)}
               </h1>

@@ -77,6 +77,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-turn',
   'data-view',
   'data-weekday',
+  'data-wrap',
   'data-g-blocked',
   'data-g-control',
   'data-g-covered',

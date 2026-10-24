@@ -45,6 +45,7 @@ import { TextInputPage } from './pages/components/TextInputPage';
 import { TitlePage } from './pages/components/TitlePage';
 import { Spec } from './pages/reference/Spec';
 import { Verification } from './pages/reference/Verification';
+import { AppPagesTemplatesPage } from './pages/templates/AppPagesTemplatesPage';
 import { AppTemplatesPage } from './pages/templates/AppTemplatesPage';
 import { AuthTemplatesPage } from './pages/templates/AuthTemplatesPage';
 import { PublicTemplatesPage } from './pages/templates/PublicTemplatesPage';
@@ -123,6 +124,7 @@ export const PAGES: readonly PageDef[] = [
   { path: '/templates/status', key: 'templatesStatus', section: 'templates', Component: StatusTemplatesPage },
   { path: '/templates/public', key: 'templatesPublic', section: 'templates', Component: PublicTemplatesPage },
   { path: '/templates/app', key: 'templatesApp', section: 'templates', Component: AppTemplatesPage },
+  { path: '/templates/app-pages', key: 'templatesAppPages', section: 'templates', Component: AppPagesTemplatesPage },
 
   { path: '/spec', key: 'spec', section: 'reference', Component: Spec },
   { path: '/verification', key: 'verification', section: 'reference', Component: Verification },
