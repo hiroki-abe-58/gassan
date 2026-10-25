@@ -9,7 +9,7 @@ Focus trapping, Esc, making the background inert and the top layer are **not imp
 Line breaking for Japanese, Chinese and Korean and accessibility are written down as a specification and verified by tests.
 
 - **Modals** — five kinds; activation gates (buttons that become pressable "once you have read to the end" or "once you have ticked the box", built without `disabled`); title truncation that keeps the accessible name complete; 8 kinds of `CloseReason`, always with a reason when closing is refused; sheets that stop at detents; and four intent-based scrim tokens instead of a hard-coded 60% black
-- **Form controls** — text, password, search, number, verification code, checkbox, radio, segmented control, rating, switch, chips, sliders, select, combobox, a calendar with Japanese public holidays and range selection, a time picker, tags, password strength and file drop. Inside they stay native elements; only the frame and the marks are redrawn, and the color follows the theme's accent. Lists and calendars open in the top layer, so a modal never clips them
+- **Form controls** — text, password, search, number, verification code, checkbox, radio, segmented control, rating, switch, chips, sliders, select, combobox, a calendar with Japanese public holidays and range selection, a time picker, tags, password strength and file drop. Inside they stay native elements; only the frame and the marks are redrawn, and the color follows the theme's accent. Lists and calendars open in the top layer, so a modal never clips them. A `Field` can also put its label inside the input, where it shrinks to the top left on focus or input (`labelPlacement="floating"`)
 - **UI parts** — buttons, badges, avatars, progress, skeletons, cards, stats, empty states, description lists, timelines, banners, tabs, accordions, tooltips, popovers, menus, breadcrumbs, pagination, steps, a page header, a data table (sorting, row selection, bulk actions) and a command palette (⌘K)
 - **Toasts** — a meter shows how long until the message disappears. It pauses under the pointer and focus, and can be swiped away or closed by hand
 - **Page templates** — sign in, sign up, two-step verification, password reset, email verification, sign out, errors for all 40 IANA-registered 4xx / 5xx statuses and for being offline, maintenance, terms and privacy, FAQ, pricing, contact and changelog; an app shell, and settings, members, billing, onboarding and invitation pages inside it
@@ -18,17 +18,17 @@ Line breaking for Japanese, Chinese and Korean and accessibility are written dow
 
 **Documentation site: <https://hiroki-abe-58.github.io/gassan/#/en>**
 — design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, line breaking, motion),
-live demos and the API of every component and form control, the page templates, and the specification of 255 behaviors, laid out like the Material Design 3 guidelines.
+live demos and the API of every component and form control, the page templates, and the specification of 256 behaviors, laid out like the Material Design 3 guidelines.
 The site is available in English, [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) and [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) (switch with the globe button in the top bar).
 It has a light / dark theme and a choice of primary colors; whichever color you pick, its text and fills are derived to meet the WCAG contrast ratios.
 Every table, count and API description on the site is generated at build time from the specification and the type definitions; no number is written by hand.
 
-The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 255 behaviors, a decision matrix and a quality rubric).
+The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 256 behaviors, a decision matrix and a quality rubric).
 Put that file in the context when coding with an AI assistant.
 
 | Document | Contents |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 255 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 256 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | The original requirements broken down, one row each: implemented / achieved by composition / on the roadmap |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | Minimal examples of putting gassan's form controls inside a modal, and notes on wrapping components from other libraries for what gassan does not provide |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | Native `<dialog>` vs Base UI vs React Aria vs Radix (as of 2026-09-29, primary sources only) |

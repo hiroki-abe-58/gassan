@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  useContext,
   useId,
   useRef,
   useState,
@@ -8,7 +9,7 @@ import {
   type TextareaHTMLAttributes,
 } from 'react';
 
-import type { ControlAria } from './fields';
+import { FloatingLabelContext, type ControlAria } from './fields';
 import { clampToStep, mergeRefs, useControllable } from './internal/controllable';
 import { focusInputOnFrame } from './internal/dom';
 import { Icon } from './internal/icons';
@@ -32,11 +33,15 @@ export interface ModalInputProps extends InputHTMLAttributes<HTMLInputElement> {
  * ネイティブの input をそのまま使い、枠だけを描く。ref・onChange・autoComplete など
  * input の属性は全部 input に届く。className だけは枠（外側の div）に付く。
  * type="date" / "time" / "color" も同じ枠に収まる（I-15）。
+ *
+ * 浮くラベルの Field の中では、プレースホルダが無ければ空白 1 文字を持つ。値が空かどうかを
+ * CSS が :placeholder-shown で見るためで、空白は見えない（I-24）。
  */
 export const ModalInput = forwardRef<HTMLInputElement, ModalInputProps>(function ModalInput(
   { start, end, className, ...rest },
   ref,
 ) {
+  const floating = useContext(FloatingLabelContext);
   return (
     <div
       className={className ? `g-input ${className}` : 'g-input'}
@@ -44,7 +49,12 @@ export const ModalInput = forwardRef<HTMLInputElement, ModalInputProps>(function
       onMouseDown={focusInputOnFrame}
     >
       {start != null ? <span className="g-input-adorn">{start}</span> : null}
-      <input {...stripReservedData(rest, 'Modal.Input')} ref={ref} className="g-bare" />
+      <input
+        {...stripReservedData(rest, 'Modal.Input')}
+        placeholder={floating && !rest.placeholder ? ' ' : rest.placeholder}
+        ref={ref}
+        className="g-bare"
+      />
       {end != null ? <span className="g-input-adorn">{end}</span> : null}
     </div>
   );

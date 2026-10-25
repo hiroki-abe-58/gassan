@@ -48,6 +48,7 @@ declare const open: boolean;
 declare const setOpen: (v: boolean) => void;
 declare const name: string, setName: (v: string) => void, nameError: string;
 declare const memo: string, setMemo: (v: string) => void;
+declare const account: string, setAccount: (v: string) => void;
 declare const newsletter: boolean, setNewsletter: (v: boolean) => void;
 declare const KINDS: { value: string; label: string }[];
 declare const SHIPPING: { value: string; label: string }[];

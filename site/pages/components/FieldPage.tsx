@@ -3,6 +3,12 @@ import type { ReactNode } from 'react';
 import type { PageKey, PageProps } from '../../routes';
 import FieldForm from '../../demos/FieldForm';
 import fieldSource from '../../demos/FieldForm.tsx?raw';
+import FloatingModal from '../../demos/FloatingModal';
+import floatingModalSource from '../../demos/FloatingModal.tsx?raw';
+import FloatingSignIn from '../../demos/FloatingSignIn';
+import floatingSignInSource from '../../demos/FloatingSignIn.tsx?raw';
+import FloatingStates from '../../demos/FloatingStates';
+import floatingStatesSource from '../../demos/FloatingStates.tsx?raw';
 import { useLang, useT } from '../../i18n';
 import { to } from '../../router';
 import { ApiTable } from '../../ui/ApiTable';
@@ -36,7 +42,7 @@ export function FieldPage({ rest }: PageProps): ReactNode {
       rest={rest}
       title={nav.pages.field}
       lead={t.lead}
-      ids={['B-08', 'B-09', 'B-13', 'I-01']}
+      ids={['B-08', 'B-09', 'B-13', 'I-01', 'I-24']}
       overview={() => (
         <>
           <Section id="field" title={t.field.title} intro={t.field.intro}>
@@ -48,6 +54,21 @@ export function FieldPage({ rest }: PageProps): ReactNode {
             >
               <FieldForm />
             </Example>
+          </Section>
+
+          <Section id="floating" title={t.floating.title} intro={t.floating.intro}>
+            <Example title={t.floating.signInTitle} description={t.floating.signInDescription} code={floatingSignInSource} demo="floatingSignIn">
+              <FloatingSignIn />
+            </Example>
+            <Example title={t.floating.statesTitle} description={t.floating.statesDescription} code={floatingStatesSource} demo="floatingStates">
+              <FloatingStates />
+            </Example>
+            <Example title={t.floating.modalTitle} description={t.floating.modalDescription} code={floatingModalSource} demo="floatingModal">
+              <FloatingModal />
+            </Example>
+            <Prose>
+              <Paras items={t.floating.notes} />
+            </Prose>
           </Section>
 
           <Section id="parts" title={t.parts.title}>
@@ -81,7 +102,7 @@ export function FieldPage({ rest }: PageProps): ReactNode {
           <ApiTable name="ModalAlertProps" title="Modal.Alert" />
         </>
       )}
-      a11y={() => <SpecTable ids={['B-08', 'B-09', 'B-13', 'I-01', 'I-09', 'C-12', 'K-04', 'D-13']} caption={t.a11yCaption} />}
+      a11y={() => <SpecTable ids={['B-08', 'B-09', 'B-13', 'I-01', 'I-09', 'I-24', 'C-12', 'K-04', 'D-13']} caption={t.a11yCaption} />}
     />
   );
 }

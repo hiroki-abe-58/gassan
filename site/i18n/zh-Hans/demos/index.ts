@@ -20,6 +20,9 @@ import dateForm from './dateForm';
 import fieldForm from './fieldForm';
 import fileForm from './fileForm';
 import filterToolbar from './filterToolbar';
+import floatingModal from './floatingModal';
+import floatingSignIn from './floatingSignIn';
+import floatingStates from './floatingStates';
 import footerButtons from './footerButtons';
 import gateCustom from './gateCustom';
 import imperativeConfirm from './imperativeConfirm';
@@ -70,6 +73,9 @@ export default {
   fieldForm,
   fileForm,
   filterToolbar,
+  floatingModal,
+  floatingSignIn,
+  floatingStates,
   footerButtons,
   gateCustom,
   imperativeConfirm,

@@ -66,11 +66,13 @@ import { gzipSync } from 'node:zlib';
  * 色の選択は入力部品なので Modal 名前空間にも入る（Modal.ColorPicker。時刻の選択と同じ扱い）。
  * 同日、JS を 127 → 130 KB に引き上げた。エラーのページ（P-05）が IANA に登録された 4xx / 5xx の 40 個すべてに見出しと説明を
  * 持つようにしたため（29 個ぶんの日本語と英語の文言。JS 約 3.5 KB）。文言はテンプレートからだけ引くので、使わないアプリの JS には載らない。
+ * 2026-10-25、CSS を 23 → 24 KB に引き上げた。浮くラベル（I-24。ラベルを入力欄に重ね、フォーカスと値で浮かせる規則）を
+ * 足したため（CSS 約 0.4 KB・JS 約 0.2 KB）。浮くかどうかは CSS だけで決めるので、JS はほとんど増えない。
  */
 const BUDGETS = {
   'dist/index.js': 130 * 1024,
   'dist/index.cjs': 130 * 1024,
-  'dist/styles.css': 23 * 1024,
+  'dist/styles.css': 24 * 1024,
   'dist/templates.css': 7 * 1024,
 };
 

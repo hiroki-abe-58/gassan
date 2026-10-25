@@ -62,6 +62,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-inline',
   'data-invalid',
   'data-label',
+  'data-label-placement',
   'data-layout',
   'data-link',
   'data-months',
