@@ -15,8 +15,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MailboxPage, SiteProvider, type MailComposeValues, type MailMessage } from '../src';
 
+// 「今日は時刻、昨日は『昨日』」は、いまの日時で決まる。日時を決めた時刻から始め、実際の時間で進める
+// （止めると時間で進む処理が動かず、テストの中で本物の時計に戻すと、実行した日によって結果が変わる）
 beforeEach(() => {
-  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.useFakeTimers({ toFake: ['Date'], shouldAdvanceTime: true });
   vi.setSystemTime(new Date('2026-10-24T03:00:00Z'));
 });
 afterEach(() => {
@@ -115,7 +117,6 @@ const textOf = (selector: string): string => document.querySelector(selector)?.t
 
 describe('メールのページ / P-20', () => {
   it('P-20 フォルダは名前のある navigation で、いまのフォルダに aria-current を付け、未読の数を名前に含める。狭い器のためのセレクトも同じフォルダを持つ', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onFolderChange = vi.fn();
     render(<Mailbox onFolderChange={onFolderChange} />);
@@ -129,7 +130,6 @@ describe('メールのページ / P-20', () => {
   });
 
   it('P-20 行の名前は「未読 差出人 件名」で、冒頭の文・日時・添付は説明として読む。スターは押した状態を持つボタン', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onStar = vi.fn();
     render(<Mailbox onStar={onStar} />);
@@ -145,7 +145,6 @@ describe('メールのページ / P-20', () => {
   });
 
   it('P-20 行を選ぶと「n件を選択中」とまとめての操作を出し、アーカイブすると選択を解いて結果を読み上げ、フォーカスを「すべて選ぶ」へ戻す', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onArchive = vi.fn();
     render(<Mailbox onArchive={onArchive} />);
@@ -166,7 +165,6 @@ describe('メールのページ / P-20', () => {
   });
 
   it('P-20 選んだメールが未読を含めば「既読にする」、すべて既読なら「未読にする」を出す', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onMarkRead = vi.fn();
     render(<Mailbox onMarkRead={onMarkRead} />);
@@ -180,7 +178,6 @@ describe('メールのページ / P-20', () => {
   });
 
   it('P-20 メールを開くと onOpen を呼び、一覧が隠れたら件名の見出しへ、戻るで一覧のそのメールへフォーカスを移す。読む面は差出人・宛先・日時・本文・添付を出す', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onOpen = vi.fn();
     render(<Mailbox onOpen={onOpen} />);
@@ -207,7 +204,6 @@ describe('メールのページ / P-20', () => {
   });
 
   it('P-20 読む面からアーカイブすると、件名の見出しへフォーカスを移して「メールを選んでください」に戻す', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     render(<Mailbox />);
     await user.click(open('未読 高橋 陽菜 明日のレビュー'));
@@ -218,7 +214,6 @@ describe('メールのページ / P-20', () => {
   });
 
   it('P-20 返信は宛先と「Re: 件名」を入れた書く画面を開き、宛先が無ければ欄へ戻す。送ると onSend に返信の元を添えて渡し、結果を読み上げる', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onSend = vi.fn();
     render(<Mailbox onSend={onSend} />);
@@ -242,7 +237,6 @@ describe('メールのページ / P-20', () => {
   });
 
   it('P-20 絞り込みは差出人・件名・冒頭の文で、当てはまらなければそう言う。選んだ行は見えている行の中だけで数える', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     render(<Mailbox />);
     await user.click(screen.getByRole('checkbox', { name: 'すべて選ぶ' }));

@@ -23,8 +23,10 @@ function thread(messages: readonly ChatMessage[], extra: Partial<Parameters<type
 
 const log = (): HTMLElement => screen.getByRole('log', { name: '佐藤さんとの会話' });
 
+// 日付の区切り（「今日」「昨日」）は、いまの日時で決まる。日時を決めた時刻から始め、実際の時間で進める
+// （止めると時間で進む処理が動かず、テストの中で本物の時計に戻すと、実行した日によって結果が変わる）
 beforeEach(() => {
-  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.useFakeTimers({ toFake: ['Date'], shouldAdvanceTime: true });
   vi.setSystemTime(new Date('2026-10-24T03:00:00Z'));
 });
 afterEach(() => {
@@ -140,7 +142,6 @@ describe('メッセージの列 / E-01 〜 E-04', () => {
 
 describe('入力欄・入力中の印・質問の例 / E-05 〜 E-08', () => {
   it('E-05 Enter で送り、Shift+Enter では送らない。変換中の Enter と空の文は送らない。送ったら欄を空にする', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onSend = vi.fn();
     render(<ChatComposer onSend={onSend} />);
@@ -164,7 +165,6 @@ describe('入力欄・入力中の印・質問の例 / E-05 〜 E-08', () => {
   });
 
   it('E-05 sendOn="mod+enter" では Enter で改行し、Ctrl / ⌘ + Enter で送る', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onSend = vi.fn();
     render(<ChatComposer onSend={onSend} sendOn="mod+enter" />);
@@ -177,7 +177,6 @@ describe('入力欄・入力中の印・質問の例 / E-05 〜 E-08', () => {
   });
 
   it('E-05 タッチが主の端末では Enter で改行し（送るのはボタン）、キーの案内を出さない', async () => {
-    vi.useRealTimers();
     mockMediaQueries('(pointer: coarse)');
     const user = userEvent.setup();
     const onSend = vi.fn();
@@ -192,7 +191,6 @@ describe('入力欄・入力中の印・質問の例 / E-05 〜 E-08', () => {
   });
 
   it('E-06 回答を作っている間は、送信のボタンが「止める」になって onStop を呼び、Enter では送らない', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onSend = vi.fn();
     const onStop = vi.fn();
