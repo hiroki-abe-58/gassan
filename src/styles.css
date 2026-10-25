@@ -894,7 +894,10 @@
     .g-viz-hlabels > span,
     .g-viz-tooltip-value,
     .g-chat-jump,
-    .g-float:has(> .g-input > .g-bare:first-child) > .g-label
+    .g-float:has(> .g-input > .g-bare:first-child) > .g-label,
+    .g-heatmap-column,
+    .g-gantt-months > span,
+    .g-gantt-now-label
   ) wbr { display: none; }
 
   /* --- 3.9 focus ---------------------------------------------------------
@@ -3851,7 +3854,7 @@
 }
 
 /* ===========================================================================
- * 10. charts（Q-01〜Q-12）
+ * 10. charts（Q-01〜Q-20）
  * ---------------------------------------------------------------------------
  * 線と面だけを SVG（viewBox="0 0 100 100" を縦横に伸ばし、線の太さは vector-effect で保つ）で描き、
  * 目盛りの文字・点・棒・当たりの領域・ツールチップは HTML を % の位置に置く。形は大きさを測らずに決まる。
@@ -3910,6 +3913,7 @@
     background: var(--g-viz-color);
   }
   .g-viz-swatch[data-shape="line"] { inline-size: 14px; block-size: 3px; border-radius: 2px; }
+  .g-viz-swatch[data-shape="dot"] { border-radius: 50%; }
 
   /* --- 10.2 frame / axes（Q-10） ---------------------------------------------
    * 縦の目盛りの文字の列は、文字の高さの半分ずつ上下にはみ出させ、均等に並べた文字の真ん中を線にそろえる（目盛りは等間隔）。 */
@@ -3964,6 +3968,15 @@
     margin: 0;
     color: var(--g-fg-muted);
   }
+  /* 描く領域を持たない図（ファネル・ヒートマップ）の「データがありません」は、流れの中に置く */
+  .g-viz-none { margin: 0; padding-block: 24px; color: var(--g-fg-muted); text-align: center; }
+  /* 軸の名前（散布図）。縦の軸の名前は目盛りの列の上に、横の軸の名前は目盛りの下の右端に置く */
+  .g-viz-axis-title { color: var(--g-fg-muted); font-size: 0.75rem; font-weight: 600; }
+  .g-viz-axis-title[data-axis="y"] { grid-column: 1 / -1; }
+  .g-viz-axis-title[data-axis="x"] { grid-column: 2; justify-self: end; }
+  /* 右にも目盛りを持つ枠（パレート図の累積比率） */
+  .g-viz-frame[data-axes="2"] { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .g-viz-y[data-side="end"] { grid-column: 3; text-align: start; }
 
   /* --- 10.3 lines / areas（Q-03） --------------------------------------------
    * 線は左から右へ描き込み、点は線が届く頃に出る（Q-12）。切り抜きは終わったら外す（端の線の太さを切らない）。 */
@@ -4203,7 +4216,416 @@
   }
   .g-gauge-label { color: var(--g-fg-muted); font-size: 0.8125rem; text-align: center; }
 
-  /* --- 10.10 motion（Q-12） ----------------------------------------------------
+  /* --- 10.10 scatter（Q-13） --------------------------------------------------
+   * 点は値の位置を中心にした円。泡は半径を --g-scatter-r で受ける。重なりが見えるよう少し透かし、地の色の縁で分ける。 */
+  .g-scatter-point {
+    position: absolute;
+    inline-size: calc(var(--g-scatter-r, 5px) * 2);
+    block-size: calc(var(--g-scatter-r, 5px) * 2);
+    margin: calc(var(--g-scatter-r, 5px) * -1) 0 0 calc(var(--g-scatter-r, 5px) * -1);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--g-viz-color) 72%, transparent);
+    box-shadow: 0 0 0 1.5px var(--g-viz-bg, var(--g-surface));
+    animation: g-viz-fade var(--g-dur-slow) var(--g-ease-in) backwards;
+    animation-delay: calc(var(--g-viz-x, 0) * var(--g-dur-slow) * 2 / 100);
+  }
+  .g-scatter-point[data-active] { background: var(--g-viz-color); box-shadow: 0 0 0 2px var(--g-viz-bg, var(--g-surface)), 0 0 0 4px var(--g-viz-color); }
+  .g-scatter-point:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 4px; }
+
+  /* --- 10.11 radar（Q-14） ----------------------------------------------------
+   * 輪と軸と多角形は SVG（縦横比を保つ）、軸の名前は HTML を外周の外に置く。名前は使える幅（図の端まで）で折り返す。 */
+  .g-radar-figure {
+    position: relative;
+    direction: ltr;
+    inline-size: min(100%, var(--g-radar-size, 400px));
+    aspect-ratio: 1;
+    margin-inline: auto;
+    touch-action: pan-y;
+  }
+  .g-radar-svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+  :is(.g-radar-ring, .g-radar-spoke) { fill: none; stroke: var(--g-border); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .g-radar-spoke[data-active] { stroke: var(--g-border-strong); stroke-dasharray: 3 3; }
+  .g-radar-area {
+    fill: color-mix(in srgb, var(--g-viz-color) 16%, transparent);
+    stroke: var(--g-viz-color);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+    animation: g-viz-pop calc(var(--g-dur-slow) * 2) var(--g-ease-move) backwards;
+  }
+  .g-radar-ticks > span {
+    position: absolute;
+    inset-inline-start: 50%;
+    translate: 4px -50%;
+    color: var(--g-fg-muted);
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .g-radar-axis {
+    position: absolute;
+    inline-size: max-content;
+    padding: 2px 4px;
+    border-radius: 6px;
+    color: var(--g-fg-muted);
+    font-size: 0.75rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+  .g-radar-axis[data-active] { background: var(--g-hover); color: var(--g-fg); }
+  .g-radar-axis:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 0; }
+
+  /* --- 10.12 heatmap（Q-15） --------------------------------------------------
+   * 行と列の見出しを持つ格子（role="grid"）。行は subgrid で列をそろえる。升の濃さは --g-heat（0〜1）でアクセントを地に混ぜる。
+   * 列の見出しは間引いた分を読み上げにだけ残し、見せる分は升の真ん中に（最後の列は右端に）寄せる。 */
+  .g-heatmap-grid {
+    direction: ltr;
+    display: grid;
+    grid-template-columns: auto repeat(var(--g-heat-columns, 1), minmax(0, 1fr));
+    gap: 3px;
+  }
+  .g-heatmap-row { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: center; }
+  .g-heatmap-column {
+    position: relative;
+    block-size: 16px;
+    color: var(--g-fg-muted);
+    font-size: 0.75rem;
+    line-height: 16px;
+    white-space: nowrap;
+  }
+  .g-heatmap-column > span:not(.g-sr-only) { position: absolute; inset-inline-start: 50%; translate: -50% 0; }
+  .g-heatmap-column:last-child > span:not(.g-sr-only) { inset-inline: auto 0; translate: 0 0; }
+  .g-heatmap-row-head { padding-inline-end: 6px; color: var(--g-fg-muted); font-size: 0.75rem; line-height: 1.3; text-align: end; }
+  :is(.g-heatmap-row-head, .g-heatmap-column)[data-active] { color: var(--g-fg); font-weight: 600; }
+  .g-heatmap-cell {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    min-block-size: 10px;
+    max-block-size: 2.75rem;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--g-viz-color, var(--g-chart-1)) calc(var(--g-heat, 0) * 100%), var(--g-surface));
+  }
+  .g-heatmap-cell:not([data-step]) { background: transparent; box-shadow: inset 0 0 0 1px var(--g-border); }
+  .g-heatmap-cell[data-active] { box-shadow: 0 0 0 2px var(--g-fg); }
+  .g-heatmap-cell:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-heatmap-value { font-size: 0.6875rem; font-variant-numeric: tabular-nums; line-height: 1; }
+  .g-heatmap-cell[data-strong] .g-heatmap-value { color: var(--g-on-accent); }
+  .g-heatmap-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 16px;
+    min-block-size: 20px;
+    color: var(--g-fg-muted);
+    font-size: 0.75rem;
+  }
+  .g-heatmap-scale { display: inline-flex; align-items: center; gap: 3px; }
+  .g-heatmap-scale > span:first-child { margin-inline-end: 4px; }
+  .g-heatmap-scale > span:last-child { margin-inline-start: 4px; }
+  .g-heatmap-swatch {
+    inline-size: 12px;
+    block-size: 12px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--g-viz-color, var(--g-chart-1)) calc(var(--g-heat, 0) * 100%), var(--g-surface));
+  }
+  .g-heatmap-readout { color: var(--g-fg); font-variant-numeric: tabular-nums; }
+
+  /* --- 10.13 waterfall（Q-16） ------------------------------------------------
+   * 増加・減少・合計の色は変数で差し替えられる。浮いた棒は両端を丸め、累計の高さを点線でつなぐ（棒の下に描く）。 */
+  .g-waterfall { --g-viz-increase: var(--g-success); --g-viz-decrease: var(--g-danger); --g-viz-total: var(--g-chart-1); }
+  .g-waterfall .g-viz-bar { border-radius: 3px; }
+  .g-waterfall-connector { position: absolute; border-block-start: 1px dashed var(--g-border-strong); pointer-events: none; }
+
+  /* --- 10.14 pareto（Q-17） ---------------------------------------------------
+   * 累積比率は右の目盛り（0〜100%）。目安の点線を引き、目安に届いた後の棒は薄くする。 */
+  .g-pareto-threshold {
+    position: absolute;
+    inset-inline: 0;
+    border-block-start: 1.5px dashed var(--g-chart-2);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .g-pareto .g-viz-bar[data-muted] { opacity: 0.45; }
+  .g-pareto-note { color: var(--g-fg); font-weight: 600; }
+
+  /* --- 10.15 funnel（Q-18） ---------------------------------------------------
+   * 段ごとに「前の段から」・名前と数・棒・「最初の段の」を縦に積む。棒は最初の段に対する割合の幅で、真ん中に寄せる。 */
+  .g-funnel-steps { display: grid; margin: 0; padding: 0; list-style: none; }
+  .g-funnel-step {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "rate rate" "label value" "bar bar" "share share";
+    column-gap: 12px;
+  }
+  .g-funnel-rate {
+    grid-area: rate;
+    justify-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding-block: 8px 4px;
+    color: var(--g-fg-muted);
+    font-size: 0.75rem;
+  }
+  .g-funnel-arrow { inline-size: 14px; block-size: 14px; }
+  .g-funnel-label { grid-area: label; min-inline-size: 0; font-weight: 600; overflow-wrap: anywhere; }
+  .g-funnel-value { grid-area: value; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .g-funnel-bar {
+    grid-area: bar;
+    justify-self: center;
+    inline-size: max(6px, calc(var(--g-funnel, 0) * 100%));
+    block-size: 26px;
+    margin-block-start: 4px;
+    border-radius: 6px;
+    background: var(--g-viz-color, var(--g-chart-1));
+    animation: g-viz-grow-x calc(var(--g-dur-slow) * 2) var(--g-ease-move) backwards;
+    animation-delay: calc(var(--g-viz-x, 0) * var(--g-dur-slow) / 100);
+  }
+  .g-funnel-share { grid-area: share; margin-block-start: 2px; color: var(--g-fg-muted); font-size: 0.75rem; text-align: center; }
+
+  /* --- 10.16 fishbone（Q-19） -------------------------------------------------
+   * 狭い器（既定）: 特性を先頭に置き、大骨を縦の背骨に枝のように並べる。
+   * 広い器: 大骨を背骨の上と下に振り分け、斜めの骨（SVG の線）を引く。要因の行の高さを --g-fish-row に決め、行の真ん中で骨が通る位置
+   * （--g-fish-x。列の幅に対する 0〜1）を部品が計算して渡すので、文字は骨の手前で右にそろい、小骨（短い横線）が骨に届く。
+   * 背骨の行の高さは 0 にし、頭（特性）はその行からはみ出させて背骨の真ん中に置く。 */
+  .g-fishbone {
+    container: g-fishbone / inline-size;
+    --g-fish-row: 2.5rem;
+    --g-fish-spine: var(--g-fg);
+    --g-fish-bone: color-mix(in srgb, var(--g-fg) 55%, transparent);
+  }
+  .g-fishbone-body { display: grid; gap: 14px; }
+  .g-fishbone-effect { margin: 0; }
+  .g-fishbone-head {
+    display: inline-block;
+    padding: 10px 14px;
+    border: 2px solid var(--g-accent);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--g-accent) 8%, var(--g-surface));
+    font-weight: 700;
+    line-height: 1.45;
+  }
+  /* 縦の背骨は地の色の細い帯で描く（太い縦の border はコールアウトの帯に見えるので使わない。§5-21） */
+  .g-fishbone-bones {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    margin: 0 0 0 18px;
+    padding: 0 0 0 19px;
+    list-style: none;
+  }
+  .g-fishbone-bones::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 3px;
+    border-radius: 2px;
+    background: var(--g-fish-spine);
+  }
+  .g-fishbone-bone { position: relative; display: grid; gap: 6px; }
+  .g-fishbone-bone::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: -16px;
+    inset-block-start: 0.85em;
+    inline-size: 12px;
+    border-block-start: 2px solid var(--g-fish-bone);
+  }
+  .g-fishbone-category {
+    justify-self: start;
+    padding: 3px 10px;
+    border: 1.5px solid var(--g-fish-bone);
+    border-radius: 999px;
+    background: var(--g-surface);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+  .g-fishbone-rib { position: relative; }
+  .g-fishbone-line { display: none; }
+  .g-fishbone-causes { display: grid; gap: 4px; margin: 0; padding-inline-start: 1.25em; font-size: 0.8125rem; }
+  .g-fishbone-subcauses { margin: 2px 0 0; padding-inline-start: 1.25em; color: var(--g-fg-muted); font-size: 0.75rem; list-style: circle; }
+  @container g-fishbone (min-width: 48rem) {
+    .g-fishbone-body {
+      direction: ltr;
+      grid-template-columns: minmax(0, 1fr) clamp(7rem, 22%, 11rem);
+      grid-template-rows: minmax(3.75rem, auto) 0 minmax(3.75rem, auto);
+      gap: 0;
+    }
+    /* 背骨（線は border で引く。強制カラーでも残る）と、頭の手前の矢じり */
+    .g-fishbone-body::before {
+      content: '';
+      grid-column: 1 / -1;
+      grid-row: 2;
+      align-self: center;
+      margin-block-start: -1.5px;
+      border-block-start: 3px solid var(--g-fish-spine);
+    }
+    .g-fishbone-body::after {
+      content: '';
+      grid-column: 1;
+      grid-row: 2;
+      justify-self: end;
+      align-self: center;
+      inline-size: 12px;
+      block-size: 14px;
+      margin-block: -7px;
+      background: var(--g-fish-spine);
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+    .g-fishbone-bones::before { content: none; }
+    .g-fishbone-effect { grid-column: 2; grid-row: 2; display: flex; align-items: center; block-size: 0; padding-inline-start: 4px; }
+    .g-fishbone-head {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      overflow: hidden;
+      inline-size: 100%;
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
+    }
+    .g-fishbone-bones {
+      grid-column: 1;
+      grid-row: 1 / -1;
+      grid-template-columns: repeat(var(--g-fish-columns, 1), minmax(0, 1fr));
+      grid-template-rows: subgrid;
+      gap: 0 12px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+    .g-fishbone-bone { grid-column: var(--g-fish-column, auto); gap: 0; }
+    .g-fishbone-bone::before { content: none; }
+    .g-fishbone-bone[data-side="top"] { grid-row: 1; align-self: end; padding-block-start: 8px; }
+    .g-fishbone-bone[data-side="bottom"] { grid-row: 3; align-self: start; grid-template-areas: "rib" "category"; padding-block-end: 8px; }
+    .g-fishbone-bone[data-side="bottom"] > .g-fishbone-category { grid-area: category; }
+    .g-fishbone-bone[data-side="bottom"] > .g-fishbone-rib { grid-area: rib; }
+    /* 大骨の名前は、骨の端（列の 55%）を真ん中にして置く */
+    .g-fishbone-category { max-inline-size: 80%; margin-inline-start: 55%; translate: -50% 0; text-align: center; }
+    .g-fishbone-line { display: block; position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+    .g-fishbone-line line { stroke: var(--g-fish-bone); stroke-width: 2; vector-effect: non-scaling-stroke; }
+    :is(.g-fishbone-causes, .g-fishbone-subcauses) { display: block; margin: 0; padding: 0; list-style: none; }
+    :is(.g-fishbone-cause-label, .g-fishbone-subcauses > li) {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      block-size: var(--g-fish-row);
+      padding-inline-end: calc((1 - var(--g-fish-x, 1)) * 100% + 18px);
+      text-align: end;
+    }
+    .g-fishbone-subcauses > li { padding-inline-end: calc((1 - var(--g-fish-x, 1)) * 100% + 30px); }
+    .g-fishbone-cause-label::after {
+      content: '';
+      position: absolute;
+      inset-inline-end: calc((1 - var(--g-fish-x, 1)) * 100%);
+      inset-block-start: 50%;
+      inline-size: 14px;
+      border-block-start: 1.5px solid var(--g-fish-bone);
+    }
+    .g-fishbone-text {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+      line-height: 1.3;
+    }
+  }
+
+  /* --- 10.17 gantt（Q-20） ----------------------------------------------------
+   * 名前の列と時間の列の 2 列。見出し・休みの地・タスクの行・今日の線は同じ列の線に乗せる（行は subgrid）。
+   * 休みの地と今日の線は、タスクの行と同じ升に重ねる（地は行より前、今日の線は行より後に描く）。棒は時間の列に対する % で置く。 */
+  .g-gantt-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--g-gantt-name, clamp(6.5rem, 30%, 13rem)) minmax(0, 1fr);
+    font-size: 0.8125rem;
+  }
+  .g-gantt-head {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: end;
+    padding-block-end: 6px;
+    border-block-end: 1px solid var(--g-border);
+    color: var(--g-fg-muted);
+    font-size: 0.75rem;
+  }
+  .g-gantt-corner { padding-inline-end: 8px; font-weight: 600; }
+  .g-gantt-scale { position: relative; direction: ltr; display: grid; gap: 2px; }
+  :is(.g-gantt-months, .g-gantt-ticks) { position: relative; block-size: 16px; line-height: 16px; }
+  .g-gantt-months > span {
+    position: absolute;
+    inset-block: 0;
+    padding-inline-start: 4px;
+    border-inline-start: 1px solid var(--g-border);
+    overflow: hidden;
+    color: var(--g-fg);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .g-gantt-ticks > span { position: absolute; translate: -50% 0; font-variant-numeric: tabular-nums; }
+  .g-gantt-ticks[data-unit="week"] > span { translate: 2px 0; }
+  :is(.g-gantt-off, .g-gantt-now) { position: relative; grid-column: 2; grid-row: 2; direction: ltr; pointer-events: none; }
+  .g-gantt-off > span { position: absolute; inset-block: 0; background: color-mix(in srgb, var(--g-fg) 5%, transparent); }
+  .g-gantt-now > span { position: absolute; inset-block: 0; inline-size: 2px; margin-inline-start: -1px; background: var(--g-danger); }
+  .g-gantt-now-label {
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-start: 4px;
+    color: var(--g-danger);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .g-gantt-now > span[data-edge="end"] .g-gantt-now-label { inset-inline: auto 6px; }
+  .g-gantt-rows { display: grid; grid-column: 1 / -1; grid-row: 2; grid-template-columns: subgrid; margin: 0; padding: 0; list-style: none; }
+  :is(.g-gantt-row, .g-gantt-group) { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
+  .g-gantt-group > .g-gantt-rows { grid-row: auto; }
+  .g-gantt-group-name { grid-column: 1 / -1; padding-block: 10px 4px; border-block-end: 1px solid var(--g-border); font-weight: 700; }
+  .g-gantt-row { min-block-size: 2.25rem; align-items: center; border-block-end: 1px solid color-mix(in srgb, var(--g-border) 60%, transparent); }
+  /* 名前の欄が狭いときは、割合を名前の下へ回す（名前を割合で押し縮めない） */
+  .g-gantt-name { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 6px; min-inline-size: 0; padding-block: 6px; padding-inline-end: 10px; }
+  .g-gantt-name-text { min-inline-size: 0; overflow-wrap: anywhere; }
+  .g-gantt-percent { flex: none; color: var(--g-fg-muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+  .g-gantt-track { position: relative; align-self: stretch; direction: ltr; }
+  .g-gantt-bar {
+    position: absolute;
+    inset-block: 25%;
+    min-inline-size: 3px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--g-viz-color, var(--g-chart-1)) 30%, var(--g-surface));
+    overflow: hidden;
+    transform-origin: left center;
+    animation: g-viz-grow-x calc(var(--g-dur-slow) * 2) var(--g-ease-move) backwards;
+  }
+  .g-gantt-bar::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: calc(var(--g-gantt-progress, 0) * 100%);
+    background: var(--g-viz-color, var(--g-chart-1));
+  }
+  .g-gantt-milestone {
+    position: absolute;
+    inset-block-start: 50%;
+    inline-size: 12px;
+    block-size: 12px;
+    border-radius: 2px;
+    background: var(--g-viz-color, var(--g-chart-1));
+    translate: -50% -50%;
+    rotate: 45deg;
+  }
+
+  /* --- 10.18 motion（Q-12） ----------------------------------------------------
    * 時間は動きの段のトークンから取るので、段が none なら一瞬で終わる。動きを減らす設定では止める（末尾の theme）。 */
   @keyframes g-viz-reveal {
     from { clip-path: inset(-8px 100% -8px -8px); }
@@ -4213,6 +4635,7 @@
   @keyframes g-viz-grow { from { scale: 1 0; } }
   @keyframes g-viz-grow-x { from { scale: 0 1; } }
   @keyframes g-viz-sweep { from { stroke-dasharray: 0 100; } }
+  @keyframes g-viz-pop { from { scale: 0; } }
 }
 
 /* ===========================================================================
@@ -4704,7 +5127,7 @@
 @layer gassan.theme {
   @media (prefers-reduced-motion: reduce) {
     /* 10。グラフの描き込みは飾りなので止める（値ははじめから全部見える） */
-    :is(.g-viz-svg, .g-viz-dot, .g-viz-slot, .g-donut-segment, .g-gauge-fill, .g-bar-list-bar) { animation: none; }
+    :is(.g-viz-svg, .g-viz-dot, .g-viz-slot, .g-donut-segment, .g-gauge-fill, .g-bar-list-bar, .g-scatter-point, .g-radar-area, .g-funnel-bar, .g-gantt-bar) { animation: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     /* 9.25。点が伸びる動きは飾りなので止める（残り時間の線は情報なので残す） */
@@ -4721,7 +5144,13 @@
   @media (forced-colors: active) {
     /* 10。系列の色を残す。Canvas と CanvasText に塗り替えると、棒と面が消えて系列が見分けられない */
     :is(.g-viz-plot, .g-donut-figure, .g-sparkline, .g-gauge-dial, .g-bar-list-bar, .g-viz-swatch) { forced-color-adjust: none; }
-    .g-viz-hit:focus-visible { outline-color: Highlight; }
+    :is(.g-radar-figure, .g-heatmap-cell, .g-heatmap-swatch, .g-funnel-bar, .g-gantt-track, .g-gantt-off, .g-gantt-now) { forced-color-adjust: none; }
+    /* 特性要因図の縦の背骨と矢じりは地の色で描いているので、文字の色で塗り直す */
+    :is(.g-fishbone-bones, .g-fishbone-body)::before,
+    .g-fishbone-body::after { forced-color-adjust: none; background: CanvasText; }
+    :is(.g-viz-hit, .g-scatter-point, .g-radar-axis, .g-heatmap-cell):focus-visible { outline-color: Highlight; }
+    /* 骨は SVG の線なので、強制カラーでも塗り替わらない。文字の色で引く */
+    .g-fishbone-line line { stroke: CanvasText; }
   }
 }
 

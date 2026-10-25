@@ -205,6 +205,36 @@ export interface GassanLabels {
   chartPoint: (x: string, entries: readonly (readonly [string, string])[]) => string;
   /** 小さな推移の読み上げ（最小・最大・最新）。Q-06。 */
   sparkline: (summary: { min: string; max: string; last: string }) => string;
+  /** 散布図の点の名前に系列を添える（「A 社（製造業）」）。Q-13。 */
+  chartGroup: (item: string, group: string) => string;
+  /** ヒートマップの升の名前（行と列）と、色の段の両端の語。Q-15。 */
+  heatmapCell: (row: string, column: string) => string;
+  heatmapLess: string;
+  heatmapMore: string;
+  /** ウォーターフォールの色の意味（凡例）と、点の読み上げの増減・累計。合計の棒は total。Q-16。 */
+  waterfallIncrease: string;
+  waterfallDecrease: string;
+  waterfallChange: string;
+  waterfallRunning: string;
+  /** パレート図の累積比率の線と、目安に届く上位の項目の数（「上位 3 項目で全体の 82%」）。Q-17。 */
+  paretoCumulative: string;
+  paretoVital: (count: number, share: string) => string;
+  /** ファネルの段の割合（最初の段に対して・前の段から）。Q-18。 */
+  funnelOfFirst: (share: string) => string;
+  funnelFromPrevious: (share: string) => string;
+  /** 特性要因図の役割の説明（aria-roledescription）、特性（魚の頭）と要因の一覧の名前。Q-19。 */
+  fishbone: string;
+  fishboneEffect: string;
+  fishboneCauses: string;
+  /** ガントチャートの役割の説明（aria-roledescription）、タスクの列の見出し、期間・マイルストーン・進み具合の読み上げ、今日の線。Q-20。 */
+  gantt: string;
+  ganttTask: string;
+  ganttPeriod: (start: string, end: string, days: number) => string;
+  ganttMilestone: (date: string) => string;
+  ganttProgress: (share: string) => string;
+  /** タスクの行の読み上げ（名前に期間と進み具合を続ける）。 */
+  ganttRow: (task: string, details: readonly string[]) => string;
+  ganttToday: string;
   /** カルーセルとスライドの役割の説明（aria-roledescription）。U-28。 */
   carousel: string;
   slide: string;
@@ -409,6 +439,28 @@ export const japaneseLabels: GassanLabels = {
   noData: 'データがありません',
   chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join('、')}`,
   sparkline: ({ min, max, last }) => `最小 ${min}、最大 ${max}、最新 ${last}`,
+  chartGroup: (item, group) => `${item}（${group}）`,
+  heatmapCell: (row, column) => `${row}・${column}`,
+  heatmapLess: '少ない',
+  heatmapMore: '多い',
+  waterfallIncrease: '増加',
+  waterfallDecrease: '減少',
+  waterfallChange: '増減',
+  waterfallRunning: '累計',
+  paretoCumulative: '累積比率',
+  paretoVital: (count, share) => `上位 ${String(count)} 項目で全体の ${share}`,
+  funnelOfFirst: (share) => `最初の段の ${share}`,
+  funnelFromPrevious: (share) => `前の段から ${share}`,
+  fishbone: '特性要因図',
+  fishboneEffect: '特性',
+  fishboneCauses: '要因',
+  gantt: 'ガントチャート',
+  ganttTask: 'タスク',
+  ganttPeriod: (start, end, days) => `${start}〜${end}（${String(days)}日間）`,
+  ganttMilestone: (date) => `${date}（マイルストーン）`,
+  ganttProgress: (share) => `進み具合 ${share}`,
+  ganttRow: (task, details) => [task, ...details].join('、'),
+  ganttToday: '今日',
   carousel: 'カルーセル',
   slide: 'スライド',
   slideNumber: (n) => `${n}枚目のスライド`,
@@ -602,6 +654,28 @@ export const englishLabels: GassanLabels = {
   noData: 'No data',
   chartPoint: (x, entries) => `${x}: ${entries.map(([name, value]) => `${name} ${value}`).join(', ')}`,
   sparkline: ({ min, max, last }) => `min ${min}, max ${max}, latest ${last}`,
+  chartGroup: (item, group) => `${item} (${group})`,
+  heatmapCell: (row, column) => `${row}, ${column}`,
+  heatmapLess: 'Less',
+  heatmapMore: 'More',
+  waterfallIncrease: 'Increase',
+  waterfallDecrease: 'Decrease',
+  waterfallChange: 'Change',
+  waterfallRunning: 'Running total',
+  paretoCumulative: 'Cumulative share',
+  paretoVital: (count, share) => (count === 1 ? `The top item makes up ${share} of the total` : `The top ${String(count)} items make up ${share} of the total`),
+  funnelOfFirst: (share) => `${share} of the first step`,
+  funnelFromPrevious: (share) => `${share} from the previous step`,
+  fishbone: 'cause-and-effect diagram',
+  fishboneEffect: 'Effect',
+  fishboneCauses: 'Causes',
+  gantt: 'Gantt chart',
+  ganttTask: 'Task',
+  ganttPeriod: (start, end, days) => `${start} – ${end} (${days === 1 ? '1 day' : `${String(days)} days`})`,
+  ganttMilestone: (date) => `${date} (milestone)`,
+  ganttProgress: (share) => `${share} done`,
+  ganttRow: (task, details) => [task, ...details].join(', '),
+  ganttToday: 'Today',
   carousel: 'carousel',
   slide: 'slide',
   slideNumber: (n) => `Slide ${n}`,

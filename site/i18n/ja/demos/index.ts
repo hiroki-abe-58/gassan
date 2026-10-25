@@ -7,9 +7,17 @@ import bookingCalendar from './bookingCalendar';
 import carouselCases from './carouselCases';
 import carouselNews from './carouselNews';
 import chartFeatures from './chartFeatures';
+import chartFishbone from './chartFishbone';
+import chartFunnel from './chartFunnel';
+import chartGantt from './chartGantt';
+import chartHeatmap from './chartHeatmap';
+import chartPareto from './chartPareto';
+import chartRadar from './chartRadar';
 import chartReport from './chartReport';
 import chartRevenue from './chartRevenue';
+import chartScatter from './chartScatter';
 import chartSignups from './chartSignups';
+import chartWaterfall from './chartWaterfall';
 import chartWidgets from './chartWidgets';
 import chatAssistant from './chatAssistant';
 import chatBot from './chatBot';
@@ -75,9 +83,17 @@ export default {
   carouselCases,
   carouselNews,
   chartFeatures,
+  chartFishbone,
+  chartFunnel,
+  chartGantt,
+  chartHeatmap,
+  chartPareto,
+  chartRadar,
   chartReport,
   chartRevenue,
+  chartScatter,
   chartSignups,
+  chartWaterfall,
   chartWidgets,
   chatAssistant,
   chatBot,

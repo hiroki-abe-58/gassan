@@ -52,6 +52,11 @@ import {
   Gauge,
   LineChart,
   Sparkline,
+  ScatterChart,
+  Heatmap,
+  ParetoChart,
+  FishboneDiagram,
+  GanttChart,
   ChangelogPage,
   ContactPage,
   DocumentPage,
@@ -661,6 +666,38 @@ for (const [label, passed] of [
   ['BarChart renders the stacked bars at their final size on the server', /class="g-viz-bar" style="[^"]*width:/.test(barHtml) && barHtml.includes('g-viz-hlabels')],
   ['DonutChart renders the segments, the total and the legend with shares on the server', /class="g-donut-segment"/.test(donutHtml) && donutHtml.includes('75%') && donutHtml.includes('合計')],
   ['Sparkline, BarList and Gauge render their names and values on the server', /role="img" aria-label="売上: 最小 1、最大 3、最新 2"/.test(widgetsHtml) && /aria-label="ページ"/.test(widgetsHtml) && /role="meter"[^>]*aria-valuenow="72"/.test(widgetsHtml)],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// 分析のグラフと図（Q-13〜Q-20）。位置と割合は計算で決まるので、サーバーで描いた時点で点・升・骨・棒が置かれている。
+// ガントは today を渡して、サーバーと端末で今日の線がずれないようにする。
+const analysisHtml = renderToString(
+  h(
+    Fragment,
+    null,
+    h(ScatterChart, { label: '関係', xLabel: '売上', yLabel: '利益率', series: [{ key: 'a', label: 'A', data: [{ label: 'X 社', x: 1, y: 2 }] }] }),
+    h(Heatmap, { label: '利用', rows: ['月'], columns: ['9時', '10時'], values: [[1, 2]] }),
+    h(ParetoChart, { label: '不良', data: [{ label: '傷', value: 8 }, { label: '欠け', value: 2 }] }),
+    h(FishboneDiagram, { label: '要因', effect: '不良', categories: [{ label: '人', causes: ['経験'] }, { label: '機械', causes: ['摩耗'] }] }),
+    h(GanttChart, { label: '予定', tasks: [{ label: '設計', start: '2026-10-05', end: '2026-10-09' }], today: '2026-10-07' }),
+  ),
+);
+for (const [label, passed] of [
+  ['ScatterChart renders each point with its name and values on the server', /aria-label="X 社: 売上 1、利益率 2"/.test(analysisHtml)],
+  [
+    'Heatmap renders a grid with row and column headers and a single tab stop on the server',
+    /role="grid" aria-label="利用"/.test(analysisHtml) && /role="rowheader"/.test(analysisHtml) && (analysisHtml.match(/role="gridcell" tabindex="0"/g) ?? []).length === 1,
+  ],
+  ['ParetoChart writes how many top items reach 80% on the server', analysisHtml.includes('上位 1 項目で全体の 80%')],
+  [
+    'FishboneDiagram and GanttChart render their lists and the today line on the server',
+    analysisHtml.includes('特性: ') &&
+      /class="g-fishbone-bone" data-side="bottom"/.test(analysisHtml) &&
+      analysisHtml.includes('設計、2026年10月5日〜2026年10月9日（5日間）') &&
+      analysisHtml.includes('g-gantt-now-label'),
+  ],
 ]) {
   if (passed) ok(label);
   else fail(label);
