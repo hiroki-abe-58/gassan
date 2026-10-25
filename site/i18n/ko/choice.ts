@@ -1,13 +1,14 @@
 import type ja from '../ja/choice';
 
 export default {
-  lead: 'Checkbox·RadioGroup·Segmented·Rating과, 이전부터 있던 Switch·Chips. 모두 안쪽은 네이티브 input이나 button이며, 그룹의 이름은 Modal.Fieldset의 legend가 갖는다.',
+  lead: 'Checkbox·CheckboxGroup·RadioGroup·Segmented·Rating과, 이전부터 있던 Switch·Chips. 모두 안쪽은 네이티브 input이나 button이며, 그룹의 이름은 Modal.Fieldset의 legend가 갖는다.',
   gallery: {
     title: '견본',
     intro: '체크 표시와 선택된 구획은 테마의 강조색으로 채운다. 오른쪽 위의 테마를 바꾸면 함께 바뀐다.',
     items: {
       checkbox: '체크박스',
       mixed: '일부만 선택',
+      checkboxGroup: '체크박스 묶음',
       radio: '라디오',
       segmented: '세그먼트',
       rating: '평점',
@@ -19,6 +20,10 @@ export default {
       termsNote: '동의하면 다음으로 진행할 수 있습니다',
       all: '모든 알림',
       allNote: '3개 중 1개 선택됨',
+      channelEmail: '이메일',
+      channelEmailNote: '일주일에 한 번 모아서 보냅니다',
+      channelPush: '푸시 알림',
+      channelSms: 'SMS',
       planLabel: '요금제',
       planFree: '무료',
       planFreeNote: '3명까지',

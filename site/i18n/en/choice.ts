@@ -1,13 +1,14 @@
 import type ja from '../ja/choice';
 
 export default {
-  lead: 'Checkbox, RadioGroup, Segmented and Rating, alongside the existing Switch and Chips. Each is a native input or button underneath, and the legend of Modal.Fieldset carries the group’s name.',
+  lead: 'Checkbox, CheckboxGroup, RadioGroup, Segmented and Rating, alongside the existing Switch and Chips. Each is a native input or button underneath, and the legend of Modal.Fieldset carries the group’s name.',
   gallery: {
     title: 'Examples',
     intro: 'Marks and the selected segment are filled with the theme’s accent color. Change the theme at the top right, and they change with it.',
     items: {
       checkbox: 'Checkbox',
       mixed: 'Partially selected',
+      checkboxGroup: 'Checkbox group',
       radio: 'Radio',
       segmented: 'Segmented',
       rating: 'Rating',
@@ -19,6 +20,10 @@ export default {
       termsNote: 'Agree to continue',
       all: 'All notifications',
       allNote: '1 of 3 selected',
+      channelEmail: 'Email',
+      channelEmailNote: 'A weekly digest',
+      channelPush: 'Push notifications',
+      channelSms: 'SMS',
       planLabel: 'Plan',
       planFree: 'Free',
       planFreeNote: 'Up to 3 people',

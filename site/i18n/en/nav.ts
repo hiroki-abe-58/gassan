@@ -60,6 +60,7 @@ export default {
     uiScroll: 'Scrollbars',
     templatesAuth: 'Sign-in and sign-up',
     templatesAuthPatterns: 'Sign-in and sign-up patterns',
+    templatesRegistrationPresets: 'Registration by industry',
     templatesStatus: 'Errors and maintenance',
     templatesPublic: 'Pricing, FAQ and legal',
     templatesApp: 'App shell',

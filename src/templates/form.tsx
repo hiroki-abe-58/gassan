@@ -214,15 +214,17 @@ export function FormError({ children }: { children: ReactNode }): ReactNode {
  */
 export function ConsentField({
   id,
+  name = 'agree',
   checked,
   onCheckedChange,
   error,
   children,
 }: {
   id: string;
+  name?: string;
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
-  error?: string;
+  error?: ReactNode;
   children: ReactNode;
 }): ReactNode {
   const phrase = usePhrase();
@@ -231,7 +233,7 @@ export function ConsentField({
     <div className="g-field" data-invalid={error ? '' : undefined}>
       <ModalCheckbox
         id={id}
-        name="agree"
+        name={name}
         checked={checked}
         onCheckedChange={onCheckedChange}
         aria-invalid={error ? true : undefined}

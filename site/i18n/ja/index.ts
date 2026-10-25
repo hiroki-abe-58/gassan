@@ -44,6 +44,8 @@ import nav from './nav';
 import notes from './notes';
 import provider from './provider';
 import purpose from './purpose';
+import registration from './registration';
+import registrationPresets from './registrationPresets';
 import root from './root';
 import rules from './rules';
 import scrim from './scrim';
@@ -114,6 +116,8 @@ const messages = {
   templateDocs,
   templateSamples,
   authPatterns,
+  registration,
+  registrationPresets,
   provider,
   spec,
   verification,

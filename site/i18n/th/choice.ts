@@ -1,13 +1,14 @@
 import type ja from '../ja/choice';
 
 export default {
-  lead: 'Checkbox, RadioGroup, Segmented, Rating และ Switch กับ Chips ที่มีมาแต่เดิม ทุกตัวข้างในเป็น input หรือ button แบบเนทีฟ ชื่อของกลุ่มอยู่ที่ legend ของ Modal.Fieldset',
+  lead: 'Checkbox, CheckboxGroup, RadioGroup, Segmented, Rating และ Switch กับ Chips ที่มีมาแต่เดิม ทุกตัวข้างในเป็น input หรือ button แบบเนทีฟ ชื่อของกลุ่มอยู่ที่ legend ของ Modal.Fieldset',
   gallery: {
     title: 'ตัวอย่าง',
     intro: 'เครื่องหมายและช่องที่ถูกเลือกระบายด้วยสี accent ของธีม ถ้าเปลี่ยนธีมที่มุมขวาบน สีก็เปลี่ยนตาม',
     items: {
       checkbox: 'Checkbox',
       mixed: 'เลือกไว้บางส่วน',
+      checkboxGroup: 'กลุ่ม Checkbox',
       radio: 'Radio',
       segmented: 'Segmented',
       rating: 'ให้คะแนน',
@@ -19,6 +20,10 @@ export default {
       termsNote: 'ยอมรับแล้วจึงไปต่อได้',
       all: 'การแจ้งเตือนทั้งหมด',
       allNote: 'เลือกอยู่ 1 จาก 3 รายการ',
+      channelEmail: 'อีเมล',
+      channelEmailNote: 'สรุปส่งให้สัปดาห์ละครั้ง',
+      channelPush: 'การแจ้งเตือนแบบพุช',
+      channelSms: 'SMS',
       planLabel: 'แพ็กเกจ',
       planFree: 'ฟรี',
       planFreeNote: 'สูงสุด 3 คน',

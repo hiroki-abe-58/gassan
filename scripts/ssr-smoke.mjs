@@ -24,6 +24,10 @@ import {
   PhoneSignInPage,
   QuickSignUpPage,
   RegistrationWizardPage,
+  RegistrationPresetPage,
+  OccupationField,
+  PurposeField,
+  IdentityMethodField,
   BankAccountFields,
   BirthDateInput,
   EmailInput,
@@ -562,6 +566,35 @@ for (const [label, passed] of [
   ['PasskeyPromptPage renders the benefits and both choices on the server', passkeyHtml.includes('g-auth-benefits') && textOf(passkeyHtml).includes('あとで')],
   ['AccountChooserPage renders a button per remembered account on the server', /class="g-account-choice"/.test(chooserHtml) && textOf(chooserHtml).includes('hana@example.com')],
   ['GuestAccountCard renders the hidden username for password managers on the server', /autocomplete="username"[^>]*value="hana@example.com"|value="hana@example.com"[^>]*autocomplete="username"/i.test(guestHtml)],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// 業種ごとの登録（P-31）と登録の欄（I-33〜I-36）。手順の最初の画面を、自動入力の名前と根拠の説明つきで描き、
+// 欄の部品は選択肢までサーバーで描く（本人確認の方法は、決めた日の分だけ）。
+const presetHtml = render(h(RegistrationPresetPage, { preset: 'bank', onSubmit: noop }));
+const registrationFieldsHtml = render(
+  h(
+    'div',
+    null,
+    h(OccupationField, { value: '', onValueChange: noop }),
+    h(PurposeField, { kind: 'deposit', value: [], onValueChange: noop }),
+    h(IdentityMethodField, { regime: 'aml', value: null, onValueChange: noop, on: new Date(2027, 3, 1) }),
+  ),
+);
+for (const [label, passed] of [
+  [
+    'RegistrationPresetPage renders the first step with the family-name and tel autofill names on the server',
+    /autocomplete="family-name"/i.test(presetHtml) && /autocomplete="tel"/i.test(presetHtml) && headingOf(presetHtml) === 'お客様情報',
+  ],
+  [
+    'Registration fields render the occupation options, the purpose checkboxes and the identity methods of the day on the server',
+    (registrationFieldsHtml.match(/<option /g) ?? []).length === 10 &&
+      (registrationFieldsHtml.match(/type="checkbox"/g) ?? []).length === 7 &&
+      registrationFieldsHtml.includes('value="icSelfie"') &&
+      !registrationFieldsHtml.includes('value="imageSelfie"'),
+  ],
 ]) {
   if (passed) ok(label);
   else fail(label);

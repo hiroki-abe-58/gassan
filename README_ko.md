@@ -18,17 +18,17 @@
 
 **문서 사이트: <https://hiroki-abe-58.github.io/gassan/#/ko>**
 — 설계 원칙(모달이 존재하는 이유, 4층 모델, 5가지 유형, 접근성), 스타일(스크림, 색과 대비, 테마, 크기, 줄바꿈, 모션),
-모든 컴포넌트와 폼 요소의 라이브 데모와 API, 페이지 템플릿, 그리고 275개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
+모든 컴포넌트와 폼 요소의 라이브 데모와 API, 페이지 템플릿, 그리고 282개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
 사이트는 한국어, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [ไทย](https://hiroki-abe-58.github.io/gassan/#/th)로 읽을 수 있다(상단 바의 지구본 버튼으로 전환한다).
 라이트 / 다크 테마와 기본 색상(primary color)을 고를 수 있고, 어떤 색을 고르든 글자와 채움 색이 WCAG 대비율을 충족하도록 도출된다.
 사이트의 모든 표, 개수, API 설명은 빌드 시 사양서와 타입 정의에서 생성되며, 손으로 쓴 숫자는 하나도 없다.
 
-전체 설계는 [`modal.skill.md`](./modal.skill.md)(275개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
+전체 설계는 [`modal.skill.md`](./modal.skill.md)(282개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
 AI 어시스턴트와 함께 코딩할 때는 이 파일을 컨텍스트에 넣는다.
 
 | 문서 | 내용 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 275개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 282개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 원래 요구 사항을 분해해 한 줄씩 정리한 표: 구현됨 / 조합으로 달성 / 로드맵에 있음 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan의 폼 요소를 모달 안에 넣는 최소 예제와, gassan에 없는 컴포넌트를 다른 라이브러리에서 가져와 감쌀 때의 주의점 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 네이티브 `<dialog>` vs Base UI vs React Aria vs Radix(2026-09-29 기준, 1차 자료만 사용) |
@@ -252,7 +252,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Modal.Media` `Modal.Gallery` | 이미지, 동영상, 오디오, 슬라이더 |
 | `Modal.Field` `Modal.Fieldset` | 입력란 하나와 선택지 그룹에 이름, 도움말, 오류를 연결한다 |
 | `Modal.Input` `Modal.PasswordInput` `Modal.SearchInput` `Modal.Textarea` `Modal.NumberField` `Modal.CodeInput` | 텍스트 입력 |
-| `Modal.Checkbox` `Modal.RadioGroup` `Modal.Segmented` `Modal.Rating` `Modal.Switch` `Modal.Chips` | 선택지 |
+| `Modal.Checkbox` `Modal.CheckboxGroup` `Modal.RadioGroup` `Modal.Segmented` `Modal.Rating` `Modal.Switch` `Modal.Chips` | 선택지 |
 | `Modal.Slider` `Modal.RangeSlider` | 슬라이더(손잡이와 채우기는 테마의 색) |
 | `Modal.Select` `Modal.Combobox` `Modal.DatePicker` | 목록이나 달력을 top layer에 띄우는 컴포넌트 |
 | `Modal.FileDrop` | 파일을 놓는 드롭 영역(드롭에도 `accept`를 적용한다) |
@@ -276,6 +276,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `ChatWidget` | 사이트 오른쪽 아래의 챗봇. 둥근 플로팅 버튼에서 모달이 아닌 작은 창을 열고, 오른쪽 패널로 넓힐 수 있다. 스마트폰 폭에서는 화면을 가득 채우는 시트가 된다 |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | 로그인과 계정 페이지(`templates.css`) |
 | `AuthDialog` `EmailFirstPage` `MagicLinkPage` `PhoneSignInPage` `QuickSignUpPage` `RegistrationWizardPage` `PasskeyPromptPage` `AccountChooserPage` `ReauthDialog` `GuestAccountCard` | 로그인과 가입 입구의 여러 형태. 헤더에서 여는 대화상자, 이메일을 먼저 묻는 로그인, 비밀번호 없는 이메일 링크와 SMS 코드, 이메일만으로 하는 임시 가입과 저장하며 진행하는 단계별 본가입, 패스키, 계정 선택, 재인증과 로그인 만료, 비회원 구매 후 계정 만들기 |
+| `RegistrationPresetPage` `REGISTRATION_PRESETS` `OccupationField` `PurposeField` `PepsField` `TaxResidencyField` `UsPersonField` `DeclarationField` `MyNumberField` `CompanyFields` `IdentityMethodField` `GuardianFields` `MarketingConsentField` | 업종별 본가입. 이메일만으로 하는 임시 가입 뒤에, 일본 법령이 거래 전까지 요구하는 단계와 항목을 15개 업종(은행·증권·암호자산·송금·카드·온라인 쇼핑·주류·법인용·매입·온라인 진료·매칭·구인·임대·티켓·휴대전화)별로 구성하고, 왜 묻는지를 근거 법령으로 보여 준다. 미성년자의 보호자 동의, 연령 하한, 본인 확인 방법(시행일에 따라 바뀜)도 업종에 맞춘다. 2026년 10월 기준의 참고이며 법률 자문이 아니다 |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | 오류, 점검, 공개 페이지 |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` | 앱 셸과 그 안의 페이지 |
 | `GassanProvider` | UI 문자열 교체(기본은 일본어, `englishLabels` 동봉)와 줄바꿈 전환(`lineBreak`) |

@@ -7,7 +7,7 @@
 
 import { ModalBody, ModalSection } from './body';
 import { ModalChart } from './chart';
-import { ModalCheckbox, ModalRadioGroup, ModalRating, ModalSegmented } from './choices';
+import { ModalCheckbox, ModalCheckboxGroup, ModalRadioGroup, ModalRating, ModalSegmented } from './choices';
 import { ModalCalendar, ModalDateRangePicker, ModalRangeCalendar } from './calendar';
 import { ModalDatePicker } from './date-picker';
 import { ModalAlert, ModalChips, ModalField, ModalFieldset, ModalSwitch, ModalTable } from './fields';
@@ -60,7 +60,7 @@ export {
   ModalNumberField,
   ModalCodeInput,
 } from './inputs';
-export { ModalCheckbox, ModalRadioGroup, ModalSegmented, ModalRating } from './choices';
+export { ModalCheckbox, ModalCheckboxGroup, ModalRadioGroup, ModalSegmented, ModalRating } from './choices';
 export { ModalSlider, ModalRangeSlider } from './slider';
 export { ModalSelect, ModalCombobox } from './select';
 export { ModalDatePicker } from './date-picker';
@@ -146,6 +146,30 @@ export { AuthDialog } from './templates/auth-dialog';
 export { EmailFirstPage, MagicLinkPage, PhoneSignInPage } from './templates/passwordless';
 export { QuickSignUpPage, RegistrationWizardPage, GuestAccountCard } from './templates/registration';
 export { PasskeyPromptPage, AccountChooserPage, ReauthDialog } from './templates/session';
+export {
+  OccupationField,
+  PurposeField,
+  PepsField,
+  UsPersonField,
+  TaxResidencyField,
+  DeclarationField,
+  MyNumberField,
+  CompanyFields,
+  IdentityMethodField,
+  identityMethods,
+  GuardianFields,
+  MarketingConsentField,
+} from './templates/registration-fields';
+export { RegistrationPresetPage, emptyRegistrationValues } from './templates/registration-preset-page';
+export { REGISTRATION_PRESETS } from './templates/registration-presets';
+export {
+  japaneseRegistrationLabels,
+  englishRegistrationLabels,
+  useRegistrationLabels,
+  REGISTRATION_PRESET_IDS,
+  OCCUPATIONS,
+  PURPOSES,
+} from './templates/registration-labels';
 export { ErrorPage, MaintenancePage } from './templates/status';
 export { SiteLayout } from './templates/site-layout';
 export { DocumentPage, FaqPage, PricingPage, ContactPage, ChangelogPage } from './templates/public';
@@ -172,7 +196,13 @@ export {
   ModalNumberField as NumberField,
   ModalCodeInput as CodeInput,
 } from './inputs';
-export { ModalCheckbox as Checkbox, ModalRadioGroup as RadioGroup, ModalSegmented as Segmented, ModalRating as Rating } from './choices';
+export {
+  ModalCheckbox as Checkbox,
+  ModalCheckboxGroup as CheckboxGroup,
+  ModalRadioGroup as RadioGroup,
+  ModalSegmented as Segmented,
+  ModalRating as Rating,
+} from './choices';
 export { ModalSlider as Slider, ModalRangeSlider as RangeSlider } from './slider';
 export { ModalSelect as Select, ModalCombobox as Combobox } from './select';
 export { ModalDatePicker as DatePicker } from './date-picker';
@@ -250,6 +280,7 @@ export type {
   GroupAria,
   ModalCheckboxProps,
   ChoiceOption,
+  ModalCheckboxGroupProps,
   ModalRadioGroupProps,
   ModalSegmentedProps,
   ModalRatingProps,
@@ -385,6 +416,43 @@ export type { AuthDialogProps, AuthDialogMode } from './templates/auth-dialog';
 export type { EmailFirstPageProps, EmailFirstNext, MagicLinkPageProps, PhoneSignInPageProps } from './templates/passwordless';
 export type { QuickSignUpPageProps, RegistrationWizardPageProps, RegistrationStep, GuestAccountCardProps } from './templates/registration';
 export type { PasskeyPromptPageProps, AccountChooserPageProps, RememberedAccount, ReauthDialogProps } from './templates/session';
+export type {
+  Answer,
+  OccupationFieldProps,
+  PurposeFieldProps,
+  PepsFieldProps,
+  UsPerson,
+  UsPersonFieldProps,
+  TaxResidency,
+  TaxResidencyFieldProps,
+  DeclarationFieldProps,
+  MyNumberFieldProps,
+  CompanyInfo,
+  CompanyFieldsProps,
+  IdentityMethodFieldProps,
+  GuardianConsent,
+  GuardianFieldsProps,
+  MarketingConsentFieldProps,
+} from './templates/registration-fields';
+export type {
+  RegistrationPresetPageProps,
+  RegistrationValues,
+  InvestmentProfile,
+  Employment,
+  Occupancy,
+  EmergencyContact,
+} from './templates/registration-preset-page';
+export type { RegistrationPreset, RegistrationPresetStep, RegistrationFieldKey, LawReference } from './templates/registration-presets';
+export type {
+  RegistrationLabels,
+  RegistrationPresetId,
+  RegistrationStepId,
+  LawId,
+  Occupation,
+  PurposeKind,
+  IdentityMethod,
+  IdentityRegime,
+} from './templates/registration-labels';
 export type { ErrorPageProps, MaintenancePageProps, MaintenanceUpdate } from './templates/status';
 export type { ErrorStatus, TemplateLabels } from './templates/labels';
 export type { SubmitResult } from './templates/form';
@@ -444,6 +512,7 @@ export const Modal = {
   NumberField: ModalNumberField,
   CodeInput: ModalCodeInput,
   Checkbox: ModalCheckbox,
+  CheckboxGroup: ModalCheckboxGroup,
   RadioGroup: ModalRadioGroup,
   Segmented: ModalSegmented,
   Rating: ModalRating,

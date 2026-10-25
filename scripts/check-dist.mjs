@@ -80,12 +80,17 @@ import { gzipSync } from 'node:zlib';
  * メールのリンクとコード・仮登録と本登録の手順・SMS・パスキー・アカウントの選択・本人確認・購入の後のアカウント作成と、日本語と英語の
  * 文言）を足したため（JS 約 9 KB・templates.css 約 0.4 KB）。名前つき import でだけ使うので、Modal だけ・グラフだけの束は変わらない。
  * テンプレートの文言は 1 つの表なので、ほかのテンプレートを使う束には文言のぶん載る（MailboxPage だけの束で 46,021 → 48,771 B）。
+ * 同日、JS を 154 → 181 KB、templates.css を 7 → 8 KB に引き上げた。業種ごとの登録（P-31。15 業種の手順・根拠の法令と出典・確認の画面）と
+ * 欄の部品（I-32〜I-37。チェックボックスの束・職業と取引の目的・届出と表明・番号・本人確認の方法・保護者と広告メールの同意）、その日本語と
+ * 英語の文言を足したため（JS 約 27 KB・templates.css 約 0.2 KB）。増えた分の大半は文言（選択肢と、なぜ聞くかの文。minify して約 50 KB）。
+ * 文言は別の表（RegistrationLabels）にし、出典の URL も素の文字列にしたので、登録の部品を使わないアプリの束には載らない
+ * （minify した束で LineChart だけ 25,614 B・MailboxPage だけ 48,765 B と G と同じ。Modal だけは CheckboxGroup のぶん 43,485 B）。
  */
 const BUDGETS = {
-  'dist/index.js': 154 * 1024,
-  'dist/index.cjs': 154 * 1024,
+  'dist/index.js': 181 * 1024,
+  'dist/index.cjs': 181 * 1024,
   'dist/styles.css': 26 * 1024,
-  'dist/templates.css': 7 * 1024,
+  'dist/templates.css': 8 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -116,6 +121,7 @@ const REQUIRED_EXPORTS = [
   'ModalNumberField',
   'ModalCodeInput',
   'ModalCheckbox',
+  'ModalCheckboxGroup',
   'ModalRadioGroup',
   'ModalSegmented',
   'ModalRating',
@@ -270,6 +276,7 @@ const REQUIRED_EXPORTS = [
   'NumberField',
   'CodeInput',
   'Checkbox',
+  'CheckboxGroup',
   'RadioGroup',
   'Segmented',
   'Rating',
@@ -342,6 +349,28 @@ const REQUIRED_EXPORTS = [
   'PasskeyPromptPage',
   'AccountChooserPage',
   'ReauthDialog',
+  // 登録の欄（I-33〜I-37）と業種ごとの登録（P-31）。
+  'OccupationField',
+  'PurposeField',
+  'PepsField',
+  'UsPersonField',
+  'TaxResidencyField',
+  'DeclarationField',
+  'MyNumberField',
+  'CompanyFields',
+  'IdentityMethodField',
+  'identityMethods',
+  'GuardianFields',
+  'MarketingConsentField',
+  'RegistrationPresetPage',
+  'emptyRegistrationValues',
+  'REGISTRATION_PRESETS',
+  'REGISTRATION_PRESET_IDS',
+  'OCCUPATIONS',
+  'PURPOSES',
+  'japaneseRegistrationLabels',
+  'englishRegistrationLabels',
+  'useRegistrationLabels',
 ];
 
 let failed = false;
