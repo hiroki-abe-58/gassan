@@ -27,8 +27,18 @@ describe('site/i18n / デモのコード', () => {
     title: '「保存」を押す',
     seats: '{0} 席',
     quote: 'It\'s "ok"',
+    folders: ['受信トレイ', "It's"],
+    modes: { auto: '自動' },
     comments: { why: '常時マウントする', multi: '1 行目\n2 行目' },
   };
+
+  it('文言の並びは配列の書き下しに戻し、後ろに付いたメソッドと、入れ子の文言へのドットの参照はそのまま扱う', () => {
+    const source = ['{t.folders.map((name) => <li key={name}>{name}</li>)}', "options={[{ value: 'auto', label: t.modes.auto }]}", 'const head = t.open.slice(0, 1);'].join('\n');
+    expect(fillDemoText(source, texts)).toBe(
+      ["{['受信トレイ', 'It\\'s'].map((name) => <li key={name}>{name}</li>)}", "options={[{ value: 'auto', label: '自動' }]}", "const head = '開く'.slice(0, 1);"].join('\n'),
+    );
+    expect(() => fillDemoText('{t.missing.map((x) => x)}', texts)).toThrow('デモの文言 t.missing.map が無い');
+  });
 
   it('JSX の子・属性・JS の文字列・fmt・コメントを、その言語の文字列に戻す', () => {
     const source = [

@@ -43,6 +43,9 @@ import providerEnglish from './providerEnglish';
 import quickStart from './quickStart';
 import rangeReport from './rangeReport';
 import scrimLevels from './scrimLevels';
+import scrollActivity from './scrollActivity';
+import scrollCustom from './scrollCustom';
+import scrollMonthly from './scrollMonthly';
 import selectForm from './selectForm';
 import sheetDetents from './sheetDetents';
 import sliderForm from './sliderForm';
@@ -96,6 +99,9 @@ export default {
   quickStart,
   rangeReport,
   scrimLevels,
+  scrollActivity,
+  scrollCustom,
+  scrollMonthly,
   selectForm,
   sheetDetents,
   sliderForm,

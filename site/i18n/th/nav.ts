@@ -56,6 +56,7 @@ export default {
     uiCharts: 'กราฟ',
     uiCarousel: 'ภาพหมุนเวียน',
     uiChat: 'แชต',
+    uiScroll: 'แถบสกรอลล์',
     templatesAuth: 'เข้าสู่ระบบและสมัครสมาชิก',
     templatesStatus: 'ข้อผิดพลาดและการปิดปรับปรุง',
     templatesPublic: 'ราคา คำถามที่พบบ่อย และข้อกำหนด',

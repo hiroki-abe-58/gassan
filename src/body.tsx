@@ -13,6 +13,7 @@ import { useEvent } from './internal/use-event';
 import { useGateRegistration } from './gate';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useScrollbars } from './internal/scrollbars';
 import { usePhrase } from './phrase';
 
 export interface ModalBodyProps extends DataAttributes {
@@ -143,35 +144,41 @@ export function ModalBody({
     readGateOrder,
   );
 
+  const bars = useScrollbars(bodyRef);
+
   return (
-    <div
-      {...domPassthrough(rest, 'Modal.Body')}
-      className={className ? `g-body ${className}` : 'g-body'}
-      ref={bodyRef}
-      id={ids.body}
-      // スクロール領域はキーボードでも操作できなければならない。B-02。
-      tabIndex={0}
-      role="group"
-      aria-label={label ?? labels.body}
-      data-at-start={atStart ? '' : undefined}
-      data-at-end={atEnd ? '' : undefined}
-      onScroll={handleScroll}
-    >
-      <div className="g-body-inner" ref={innerRef}>
-        {/* 本文に直に書いた段落やリストの文字列も文節で折る（W-05）。部品の中には潜らない（部品は自分で折る）。 */}
-        {phrase(children)}
-        {readGate ? (
-          <>
-            {/* 交差観測用。視覚にも支援技術にも出さない。 */}
-            <div ref={sentinelRef} className="g-sentinel" aria-hidden="true" />
-            {/* フォーカス到達用。フォーカスされたときだけ可視になる。 */}
-            <span className="g-end-marker" tabIndex={0} onFocus={markRead}>
-              {phrase(labels.endOfContent)}
-            </span>
-          </>
-        ) : null}
+    <>
+      <div
+        {...domPassthrough(rest, 'Modal.Body')}
+        className={className ? `g-body g-scroll-viewport ${className}` : 'g-body g-scroll-viewport'}
+        ref={bodyRef}
+        id={ids.body}
+        // スクロール領域はキーボードでも操作できなければならない。B-02。
+        tabIndex={0}
+        role="group"
+        aria-label={label ?? labels.body}
+        data-at-start={atStart ? '' : undefined}
+        data-at-end={atEnd ? '' : undefined}
+        onScroll={handleScroll}
+      >
+        <div className="g-body-inner" ref={innerRef}>
+          {/* 本文に直に書いた段落やリストの文字列も文節で折る（W-05）。部品の中には潜らない（部品は自分で折る）。 */}
+          {phrase(children)}
+          {readGate ? (
+            <>
+              {/* 交差観測用。視覚にも支援技術にも出さない。 */}
+              <div ref={sentinelRef} className="g-sentinel" aria-hidden="true" />
+              {/* フォーカス到達用。フォーカスされたときだけ可視になる。 */}
+              <span className="g-end-marker" tabIndex={0} onFocus={markRead}>
+                {phrase(labels.endOfContent)}
+              </span>
+            </>
+          ) : null}
+        </div>
       </div>
-    </div>
+      {/* 自前で描くバー（U-35）。パネルの grid で本文と同じ升に重ねる */}
+      {bars}
+    </>
   );
 }
 

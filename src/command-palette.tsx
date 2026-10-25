@@ -6,6 +6,7 @@ import { useControllable } from './internal/controllable';
 import { isComposing, warnDuplicateKeys } from './internal/dom';
 import { firstEnabled, navigate } from './internal/listbox';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useScrollbars } from './internal/scrollbars';
 import { useEvent } from './internal/use-event';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
@@ -270,6 +271,7 @@ function CommandList({
   const phrase = usePhrase();
   const listId = `${useId()}-list`;
   const listRef = useRef<HTMLDivElement>(null);
+  const bars = useScrollbars(listRef);
   const [query, setQuery] = useState('');
   /** 指している項目。絞り込みで並びが変わっても、同じ項目を指し続ける。null なら最初の項目。 */
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -376,7 +378,7 @@ function CommandList({
         />
       </div>
       {/* 押してもフォーカスを検索欄から奪わない */}
-      <div ref={listRef} className="g-command-body" onMouseDown={(event) => event.preventDefault()}>
+      <div ref={listRef} className="g-command-body g-scroll-viewport" onMouseDown={(event) => event.preventDefault()}>
         <div className="g-command-list" role="listbox" id={listId} aria-label={name}>
           {groups.map((group, groupIndex) =>
             group.title === undefined ? (
@@ -393,6 +395,7 @@ function CommandList({
         </div>
         {shown.length === 0 ? <p className="g-command-empty">{empty ?? phrase(labels.commandResults(0))}</p> : null}
       </div>
+      {bars}
       {/* 当てはまった数は、いつも置いてある領域で読み上げる（打つたびに出し入れすると読まれないことがある） */}
       <p className="g-sr-only g-command-status" role="status">
         {needle ? labels.commandResults(shown.length) : ''}

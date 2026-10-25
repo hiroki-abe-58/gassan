@@ -14,6 +14,7 @@ import { dayKeyFormat, daysBetween } from './internal/day-key';
 import { isCoarsePointer, isComposing, motionStill, warnDuplicateKeys } from './internal/dom';
 import { Icon } from './internal/icons';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useScrollbars } from './internal/scrollbars';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
 import { useTimeZone } from './templates/site';
@@ -112,6 +113,7 @@ export function ChatThread({
   const siteZone = useTimeZone();
   const zone = timeZone ?? siteZone;
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bars = useScrollbars(scrollRef);
   const atBottom = useRef(true);
   const [unseen, setUnseen] = useState(0);
   const seen = useRef<{ first?: string; last?: string; count: number; height: number; top: number }>({ count: 0, height: 0, top: 0 });
@@ -220,7 +222,7 @@ export function ChatThread({
 
   return (
     <div {...domPassthrough(rest, 'ChatThread')} className={cx('g-chat', className)}>
-      <div ref={scrollRef} className="g-chat-thread" role="log" aria-label={label} tabIndex={0} onScroll={onScroll}>
+      <div ref={scrollRef} className="g-chat-thread g-scroll-viewport" role="log" aria-label={label} tabIndex={0} onScroll={onScroll}>
         {hasOlder ? (
           <p className="g-chat-older">
             <button
@@ -237,6 +239,7 @@ export function ChatThread({
         ) : null}
         {rows}
       </div>
+      {bars}
       {typing && typing.length > 0 ? <TypingIndicator names={typing.map((author) => author.name)} /> : null}
       {unseen > 0 ? (
         <button

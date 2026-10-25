@@ -6,6 +6,7 @@ import { specItem, type Priority, type SpecItem } from '../data';
 import { SPEC_LANG, useT } from '../i18n';
 import { to } from '../router';
 import { inline, InlineMd } from './Markdown';
+import { TableScroll } from './TableScroll';
 
 /** 追跡表の状態ごとの意味。保証の強い順。値は docs/traceability.md の原文で、表示は i18n の common.status で訳す。 */
 export const STATUS_ORDER = ['実装', '実機', '記述', '未検証', '委譲', '合成', 'ロードマップ'] as const;
@@ -70,7 +71,7 @@ export function SpecTable({ ids, caption }: { ids: readonly string[]; caption: s
   const t = useT();
   const items = ids.map((id) => specItem(id)).filter((item): item is SpecItem => Boolean(item));
   return (
-    <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption}>
+    <TableScroll label={caption}>
       <table className="s-table s-spec-table">
         <caption className="s-sr-only">{caption}</caption>
         <thead>
@@ -106,6 +107,6 @@ export function SpecTable({ ids, caption }: { ids: readonly string[]; caption: s
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }

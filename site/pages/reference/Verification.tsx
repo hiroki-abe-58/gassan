@@ -8,6 +8,7 @@ import { to } from '../../router';
 import { inline, md } from '../../ui/Markdown';
 import { KeyPoint, PageHeader, Prose, Section, Stats } from '../../ui/Page';
 import { STATUS_ORDER, StatusBadge } from '../../ui/Spec';
+import { TableScroll } from '../../ui/TableScroll';
 
 export function Verification(): ReactNode {
   const { nav, verification: t } = useT();
@@ -68,7 +69,7 @@ export function Verification(): ReactNode {
       </Section>
 
       <Section id="device" title={t.device.title} intro={t.device.intro}>
-        <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.device.tableCaption}>
+        <TableScroll label={t.device.tableCaption}>
           <table className="s-table">
             <caption className="s-sr-only">{t.device.tableCaption}</caption>
             <thead>
@@ -95,7 +96,7 @@ export function Verification(): ReactNode {
               </Phrase>
             </tbody>
           </table>
-        </div>
+        </TableScroll>
         <Prose>
           <p>{md(t.device.pending(browserChecks.length))}</p>
         </Prose>

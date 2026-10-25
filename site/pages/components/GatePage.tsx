@@ -15,6 +15,7 @@ import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
 import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
+import { TableScroll } from '../../ui/TableScroll';
 
 export function GatePage({ rest }: PageProps): ReactNode {
   const { nav, gate: t } = useT();
@@ -45,7 +46,7 @@ export function GatePage({ rest }: PageProps): ReactNode {
           </Section>
 
           <Section id="selector" title={t.selector.title}>
-            <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.selector.tableLabel}>
+            <TableScroll label={t.selector.tableLabel}>
               <table className="s-table">
                 <caption className="s-sr-only">{t.selector.tableCaption}</caption>
                 <thead>
@@ -69,7 +70,7 @@ export function GatePage({ rest }: PageProps): ReactNode {
                   </Phrase>
                 </tbody>
               </table>
-            </div>
+            </TableScroll>
             <Prose>
               <Paras items={t.selector.body} />
             </Prose>

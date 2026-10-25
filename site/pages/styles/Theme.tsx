@@ -15,6 +15,7 @@ import { themeFor, useTheme } from '../../theme/store';
 import { CodeBlock } from '../../ui/Code';
 import { md, Paras } from '../../ui/Markdown';
 import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
+import { TableScroll } from '../../ui/TableScroll';
 import { ThemeControls } from '../../ui/ThemePicker';
 
 function Swatch({ color, label }: { color: string; label: string }): ReactNode {
@@ -34,7 +35,7 @@ function Swatch({ color, label }: { color: string; label: string }): ReactNode {
 function ChecksTable({ checks, caption }: { checks: readonly ContrastCheck[]; caption: string }): ReactNode {
   const { common, theme: t } = useT();
   return (
-    <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption}>
+    <TableScroll label={caption}>
       <table className="s-table s-contrast-table">
         <caption className="s-sr-only">{caption}</caption>
         <thead>
@@ -66,7 +67,7 @@ function ChecksTable({ checks, caption }: { checks: readonly ContrastCheck[]; ca
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }
 
@@ -129,7 +130,7 @@ export function Theme(): ReactNode {
       </Section>
 
       <Section id="presets" title={t.presets.title} intro={t.presets.intro}>
-        <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.presets.tableLabel}>
+        <TableScroll label={t.presets.tableLabel}>
           <table className="s-table s-preset-table">
             <caption className="s-sr-only">{t.presets.tableCaption}</caption>
             <thead>
@@ -180,7 +181,7 @@ export function Theme(): ReactNode {
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
         <Prose>
           <Paras items={t.presets.body} />
         </Prose>

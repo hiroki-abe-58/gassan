@@ -199,12 +199,14 @@ describe('データの表 / U-26', () => {
   });
 
   it('器より広いときだけ、横に送る領域に表の名前とフォーカスを与える（B-13）', () => {
-    let notify: () => void = () => undefined;
+    // 表とバー（U-35）がそれぞれ大きさを見張るので、知らせは全員に送る
+    const callbacks: (() => void)[] = [];
+    const notify = (): void => callbacks.forEach((callback) => callback());
     vi.stubGlobal(
       'ResizeObserver',
       class {
         constructor(callback: () => void) {
-          notify = callback;
+          callbacks.push(callback);
         }
         observe(): void {}
         disconnect(): void {}

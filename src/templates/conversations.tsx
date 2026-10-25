@@ -7,6 +7,7 @@ import { ModalSearchInput } from '../inputs';
 import { dayKeyFormat, daysBetween } from '../internal/day-key';
 import { Icon, PathIcon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
+import { ScrollPane } from '../internal/scrollbars';
 import { useLabels } from '../labels';
 import { usePhrase } from '../phrase';
 import { normalizeForMatch } from '../select';
@@ -145,7 +146,7 @@ export function ChatPage({
   return (
     <div {...domPassthrough(rest, 'ChatPage')} className={cx('g-split g-chat-page', className)} data-view={view}>
       <div className="g-split-frame">
-        <div className="g-split-list">
+        <ScrollPane className="g-split-list" viewportClassName="g-split-list-scroll">
           <div className="g-split-list-head">
             <h1 className="g-split-list-title">{title ?? phrase(c.title)}</h1>
           </div>
@@ -215,7 +216,7 @@ export function ChatPage({
             })}
             {groups.length === 0 && needle ? <p className="g-split-empty">{phrase(c.noMatch(query.trim()))}</p> : null}
           </nav>
-        </div>
+        </ScrollPane>
 
         <section className="g-split-detail g-chat-page-main" aria-labelledby={headingId}>
           <header className="g-split-head">
@@ -366,7 +367,7 @@ export function AssistantPage({
     <div {...domPassthrough(rest, 'AssistantPage')} className={cx('g-split g-assistant-page', className)} data-view={history ? view : 'detail'}>
       <div className="g-split-frame">
         {history ? (
-          <div className="g-split-list">
+          <ScrollPane className="g-split-list" viewportClassName="g-split-list-scroll">
             <div className="g-split-list-head">
               <h2 id={historyId} className="g-split-list-title">
                 {phrase(a.history)}
@@ -417,7 +418,7 @@ export function AssistantPage({
                 );
               })}
             </nav>
-          </div>
+          </ScrollPane>
         ) : null}
 
         <section className="g-split-detail g-assistant-main" aria-labelledby={headingId}>
@@ -436,12 +437,12 @@ export function AssistantPage({
             {actions ? <div className="g-split-actions">{actions}</div> : null}
           </header>
           {messages.length === 0 ? (
-            <div className="g-assistant-empty">
+            <ScrollPane className="g-assistant-empty" viewportClassName="g-assistant-empty-scroll">
               <p className="g-assistant-greeting">{phrase(greeting ?? a.greeting)}</p>
               {suggestions && suggestions.length > 0 ? (
                 <ChatSuggestions items={suggestions} onSelect={(item) => (onSuggestion ? onSuggestion(item) : onSend(item.label))} />
               ) : null}
-            </div>
+            </ScrollPane>
           ) : (
             // 会話を移ったら列を置き直す（前の会話との差を新着として読み上げさせない）
             <ChatThread key={currentThreadId} className="g-split-thread" label={a.conversation} messages={messages} currentUserId={currentUserId} />

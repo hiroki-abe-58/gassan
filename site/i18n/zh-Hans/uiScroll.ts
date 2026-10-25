@@ -1,0 +1,80 @@
+import type ja from '../ja/uiScroll';
+
+export default {
+  lead: '自己绘制滚动条的组件。滚动本身仍交给浏览器，只把看得见的滚动条统一成主题的颜色和形状。Windows 上粗粗的轨道、macOS 上叠在内容上方并会自动消失的滚动条、Firefox 的颜色，这些因浏览器和操作系统而异的差别都不会出现。库中会滚动的地方（模态框的正文、下拉选择的列表、聊天的消息列表、横向滚动的表格等），以及本站的整个页面和导航栏，都用同一种滚动条绘制。',
+  basics: {
+    title: '选择显示方式',
+    intro: '默认（自动）只在滚动期间和指针悬停期间显示，停止约 1 秒后消失。也可以选择仅在指针悬停时、仅在滚动时或始终显示。无论哪种方式，内容没有溢出时都不显示。',
+    exampleTitle: '最近操作',
+    exampleDescription: '用上方的切换改变显示方式，试着滚动列表或把指针移到上面。也可以拖动滚动条，或点按轨道一次滚动一屏。',
+  },
+  horizontal: {
+    title: '横向滚动',
+    intro: '用 orientation="horizontal" 绘制横向滚动条，用 "both" 同时绘制纵向和横向的滚动条。在从右往左书写的语言中，横向滚动条从右侧开始。',
+    exampleTitle: '月度销售额',
+    exampleDescription: '横向滚动比容器更宽的表格。传入名称（label）的滚动区域会成为 Tab 键的停留点，也能用方向键滚动。',
+  },
+  custom: {
+    title: '更改粗细和颜色',
+    intro: '外观用自定义属性更改。写在容器上或其外侧（:root 也可以），里面的滚动条都会跟着改变。',
+    exampleTitle: '细、默认、粗、强调色',
+    exampleDescription: '4 个容器分别写了不同的自定义属性。指针悬停时滚动条会变粗，并隐约显示出轨道。',
+  },
+  everywhere: {
+    title: '整个页面与库的内部',
+    intro: '放置一个 PageScrollbar，文档本身的滚动条也会变成自己绘制的滚动条（模态框打开并锁定文档滚动期间不显示）。显示方式按组件的 visibility、GassanProvider 的 scrollbars、<html data-g-scrollbars> 的顺序，离得最近的生效。也可以从本站右上角的“主题”切换。',
+    tableCaption: '用自绘滚动条绘制的地方',
+    head: { part: '组件', area: '滚动的部分' },
+    rows: [
+      { part: 'Modal.Body', area: '模态框的正文' },
+      { part: 'Select / Combobox / Menu / Popover', area: '列表、菜单、弹出框的内容' },
+      { part: 'CommandPalette', area: '候选列表' },
+      { part: 'NotificationCenter', area: '通知列表' },
+      { part: 'ChatThread', area: '消息列表' },
+      { part: 'CodeBlock / Modal.Table / DataTable / Modal.Chart', area: '横向滚动的代码、表格、图表' },
+      { part: 'AppShell / ChatPage / AssistantPage / MailboxPage', area: '导航栏、列表、文件夹、正文' },
+      { part: 'PricingPage', area: '套餐对比表' },
+    ],
+  },
+  modes: {
+    title: '显示方式与显示时机',
+    intro: '无论哪种显示方式，拖动期间和指针位于滚动条上方期间都会保持显示。',
+    tableCaption: '滚动条的显示方式',
+    head: { mode: '显示方式', when: '显示时机' },
+    rows: [
+      { mode: "'auto'（默认）", when: '滚动期间，以及指针位于滚动区域或滚动条上方期间。停止约 1 秒后消失' },
+      { mode: "'hover'", when: '仅在指针位于滚动区域或滚动条上方期间。用按键或触摸滚动时不显示' },
+      { mode: "'scroll'", when: '仅在滚动期间（接近 iOS 的显示方式）' },
+      { mode: "'always'", when: '只要内容溢出就始终显示' },
+    ],
+  },
+  tokens: {
+    title: '自定义属性',
+    intro: '颜色由文字颜色（--g-fg）混合而成，因此会跟随明暗模式和主题。滑块的深浅保证对表面的对比度达到 3:1 以上。',
+    tableCaption: '滚动条的自定义属性',
+    head: { name: '名称', value: '默认值', role: '作用' },
+    rows: [
+      { name: '--g-scrollbar-size', value: '6px', role: '静止时滑块的粗细' },
+      { name: '--g-scrollbar-size-active', value: '10px', role: '指针悬停或拖动时的粗细' },
+      { name: '--g-scrollbar-hit', value: '14px', role: '可点按的宽度（比变粗后的粗细更宽）' },
+      { name: '--g-scrollbar-inset', value: '2px', role: '与滚动区域边缘的间距' },
+      { name: '--g-scrollbar-radius', value: '999px', role: '滑块的圆角' },
+      { name: '--g-scrollbar-thumb', value: '文字颜色 50%', role: '滑块的颜色' },
+      { name: '--g-scrollbar-thumb-active', value: '文字颜色 66%', role: '指针悬停或拖动时滑块的颜色' },
+      { name: '--g-scrollbar-track', value: '文字颜色 7%', role: '指针悬停时出现的轨道的颜色' },
+    ],
+  },
+  access: {
+    title: '读屏、键盘与触摸',
+    intro: '滚动条只是装饰（aria-hidden），滚动的始终是滚动区域本身。因此滚轮、键盘、触摸、惯性、阻断滚动链、恢复滚动位置，都直接沿用浏览器自身的行为。',
+    rows: [
+      '使用键盘时，把焦点移到滚动区域（传入名称后会成为 Tab 键的停留点）或其中可获得焦点的元素上，再用方向键、Page Up / Page Down、Space 滚动。',
+      '在以触摸为主的设备上，滚动条不可点按（沿边缘滑动时不会翻页，而是正常滚动）。滚动期间会显示出来，作为位置的参考。',
+      '在强制颜色模式（Windows 的高对比度）下，滑块用文字颜色填充。打印时不绘制。',
+      '在“减弱动态效果”设置下，显示、隐藏和粗细的变化都不带动画。',
+    ],
+  },
+  codeCaption: '用法',
+  code: "import { GassanProvider, PageScrollbar, ScrollArea } from '@genelab/gassan';\n\n// 整个页面（每个应用放一个）\n<PageScrollbar />\n\n// 组件内部的滚动\n<ScrollArea label=\"最近操作\" style={{ maxBlockSize: 240 }}>\n  <ActivityList />\n</ScrollArea>\n\n// 按子树设置显示方式\n<GassanProvider scrollbars=\"always\">\n  <App />\n</GassanProvider>",
+  a11yCaption: '滚动条的行为',
+} satisfies typeof ja;

@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 
 import { Phrase } from '@genelab/gassan';
 
+import { TableScroll } from './TableScroll';
+
 /**
  * 1 列目を行見出しにした表。横に溢れたらスクロールできる領域（名前つき・フォーカス可）に入れる（B-13 と同じ形）。
  */
@@ -15,7 +17,7 @@ export function DataTable({
   rows: readonly (readonly ReactNode[])[];
 }): ReactNode {
   return (
-    <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption}>
+    <TableScroll label={caption}>
       <table className="s-table">
         <caption className="s-sr-only">{caption}</caption>
         <thead>
@@ -45,6 +47,6 @@ export function DataTable({
           </Phrase>
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }

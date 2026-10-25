@@ -5,6 +5,7 @@ import { Avatar } from '../display';
 import { ModalClose, ModalControls, ModalHeader } from '../header';
 import { Icon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
+import { ScrollPane } from '../internal/scrollbars';
 import { Menu, type MenuEntry } from '../overlay';
 import { usePhrase } from '../phrase';
 import { ModalRoot } from '../root';
@@ -130,13 +131,13 @@ export function AppShell({ nav, current, actions, account, sidebarFooter, childr
         {phrase(labels.common.skipToContent)}
       </a>
       <div className="g-app-frame">
-        <div className="g-app-sidebar">
+        <ScrollPane className="g-app-sidebar" viewportClassName="g-app-sidebar-scroll">
           <div className="g-app-brand">
             <Brand />
           </div>
           <AppNav nav={nav} current={current} label={labels.app.nav} />
           {sidebarFooter ? <div className="g-app-sidebar-footer">{sidebarFooter}</div> : null}
-        </div>
+        </ScrollPane>
         <div className="g-app-body">
           <header className="g-app-topbar">
             <button type="button" className="g-app-menu" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>

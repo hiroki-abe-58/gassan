@@ -1,6 +1,6 @@
 import { useId, type CSSProperties, type ReactNode } from 'react';
 
-import { MOTION_PRESETS, Modal, Phrase, type MotionPreset } from '@genelab/gassan';
+import { MOTION_PRESETS, Modal, Phrase, SCROLLBAR_VISIBILITIES, ScrollArea, type MotionPreset, type ScrollbarVisibility } from '@genelab/gassan';
 
 import { useT } from '../i18n';
 import { CUSTOM_PRESET_ID, PRESETS, TINTS, type Tint } from '../theme/engine';
@@ -44,6 +44,15 @@ export function ThemeControls(): ReactNode {
           value={state.motion}
           onValueChange={(value) => setTheme({ motion: value as MotionPreset })}
           options={MOTION_PRESETS.map((value) => ({ value, label: t.motions[value] }))}
+        />
+      </fieldset>
+
+      <fieldset className="s-theme-group">
+        <legend>{t.scrollbars}</legend>
+        <Modal.Segmented
+          value={state.scrollbars}
+          onValueChange={(value) => setTheme({ scrollbars: value as ScrollbarVisibility })}
+          options={SCROLLBAR_VISIBILITIES.map((value) => ({ value, label: t.scrollbarModes[value] }))}
         />
       </fieldset>
 
@@ -115,26 +124,29 @@ export function ThemePicker(): ReactNode {
       </button>
 
       <div id={panelId} popover="auto" className="s-theme-panel" role="dialog" aria-labelledby={titleId}>
-        <div className="s-theme-head">
-          <h2 id={titleId}>{t.button}</h2>
-          <button
-            type="button"
-            className="s-icon-btn"
-            popoverTarget={panelId}
-            popoverTargetAction="hide"
-            aria-label={t.close}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </button>
-        </div>
-        <ThemeControls />
-        <p className="s-theme-more">
-          <a href={to('/styles/theme')}>
-            <Phrase>{t.more}</Phrase>
-          </a>
-        </p>
+        {/* 背の低い画面では窓の中だけを送る（自前のバー。U-35） */}
+        <ScrollArea className="s-theme-scroll" viewportClassName="s-theme-body">
+          <div className="s-theme-head">
+            <h2 id={titleId}>{t.button}</h2>
+            <button
+              type="button"
+              className="s-icon-btn"
+              popoverTarget={panelId}
+              popoverTargetAction="hide"
+              aria-label={t.close}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </div>
+          <ThemeControls />
+          <p className="s-theme-more">
+            <a href={to('/styles/theme')}>
+              <Phrase>{t.more}</Phrase>
+            </a>
+          </p>
+        </ScrollArea>
       </div>
     </>
   );

@@ -8,6 +8,7 @@ import { ModalField } from '../fields';
 import { ModalInput, ModalSearchInput, ModalTextarea } from '../inputs';
 import { Icon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
+import { ScrollPane } from '../internal/scrollbars';
 import { usePhrase } from '../phrase';
 import { ModalSelect, normalizeForMatch } from '../select';
 import {
@@ -417,7 +418,7 @@ export function PricingPage({
               {phrase(pricing.compare)}
             </h2>
             {/* 器が狭いときは表だけを横に送る。キーボードでも送れるよう、名前のある領域にしてフォーカスを止める */}
-            <div className="g-compare-scroll" role="region" aria-labelledby={compareId} tabIndex={0}>
+            <ScrollPane className="g-compare-frame" viewportClassName="g-compare-scroll" axes={['x']} role="region" aria-labelledby={compareId} tabIndex={0}>
               <table className="g-compare-table">
                 <thead>
                   <tr>
@@ -457,7 +458,7 @@ export function PricingPage({
                   ))}
                 </tbody>
               </table>
-            </div>
+            </ScrollPane>
           </div>
         ) : null}
         {faq && faq.length > 0 ? (

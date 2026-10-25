@@ -24,6 +24,7 @@ import uiBadges from './uiBadges';
 import uiButtons from './uiButtons';
 import uiCarousel from './uiCarousel';
 import uiChat from './uiChat';
+import uiScroll from './uiScroll';
 import uiCharts from './uiCharts';
 import uiCommand from './uiCommand';
 import uiData from './uiData';
@@ -105,6 +106,7 @@ const messages = {
   uiCharts,
   uiCarousel,
   uiChat,
+  uiScroll,
   templates,
   templateDocs,
   templateSamples,

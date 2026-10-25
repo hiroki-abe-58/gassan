@@ -235,14 +235,15 @@
   grid-template-columns: var(--s-nav) minmax(0, 1fr);
 }
 
+/* 案内の帯は ScrollArea（U-35）。器が付いてくる位置と高さ、窓が余白を持つ */
 .s-sidenav {
   position: sticky;
   inset-block-start: var(--s-topbar);
   block-size: calc(100dvh - var(--s-topbar));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 20px 12px 48px;
   border-inline-end: 1px solid var(--s-line);
+}
+.s-sidenav-scroll {
+  padding: 20px 12px 48px;
 }
 .s-nav-group + .s-nav-group {
   margin-block-start: 18px;
@@ -442,7 +443,7 @@
   font-size: 1.0625rem;
 }
 .s-prose > .s-code,
-.s-prose > .s-table-wrap {
+.s-prose > .s-table-scroll {
   margin-block: 16px 20px;
 }
 :is(.s-prose, .s-lead, .s-section-intro, .s-keypoint, .s-guideline-text, .s-card, td, .s-api-doc) :not(pre) > code {
@@ -701,11 +702,12 @@
 /* ---------------------------------------------------------------------------
  * tables
  * -------------------------------------------------------------------------*/
-.s-table-wrap {
+/* 表は TableScroll（ScrollArea。U-35）の窓。余白は器が持つ */
+.s-table-scroll {
   max-inline-size: 100%;
   margin-block: 16px 24px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
+}
+.s-table-wrap {
   border: 1px solid var(--s-line);
   border-radius: var(--s-radius-lg);
   background: var(--s-surface);
@@ -1467,7 +1469,7 @@
   margin-block-start: 32px;
 }
 .s-tabpanel > .s-prose:first-child,
-.s-tabpanel > .s-table-wrap:first-child {
+.s-tabpanel > .s-table-scroll:first-child {
   margin-block-start: 32px;
 }
 
@@ -3079,9 +3081,8 @@
   margin: 0;
   inline-size: min(400px, calc(100vw - 24px));
   max-block-size: calc(100dvh - var(--s-topbar) - 24px);
-  overflow: auto;
-  overscroll-behavior: contain;
-  padding: 12px 20px 20px;
+  overflow: hidden;
+  padding: 0;
   border: 1px solid var(--s-line);
   border-radius: var(--s-radius-lg);
   background: var(--s-surface);
@@ -3265,6 +3266,17 @@
 }
 .s-lang-panel {
   inline-size: min(280px, calc(100vw - 24px));
+}
+/* 窓（ScrollArea。U-35）が余白を持ち、窓の中だけを送る。開いている間だけ grid にして、窓を窓口の高さに収める
+ * （閉じた popover を隠す UA の display: none を上書きしない） */
+.s-theme-panel:popover-open {
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+}
+.s-theme-body {
+  padding: 12px 20px 20px;
+}
+.s-lang-panel .s-theme-body {
   padding: 16px 12px 12px;
 }
 /* サイトの検索（gassan の CommandPalette を開く）。開くキーを添え、狭い画面では虫眼鏡だけにする */
@@ -3715,6 +3727,69 @@
 /* 見本の中の横並びは、ほかの見本と同じく左に寄せる（デモの台の中央寄せを持ち込まない）。 */
 .s-specimen-stage > .s-demo-row {
   justify-content: flex-start;
+}
+
+/* スクロールバーのページ（U-35）の見本。高さの上限は器（.g-scroll）に付ける */
+.s-scroll-demo {
+  display: grid;
+  gap: 12px;
+  inline-size: min(100%, 30rem);
+}
+.s-scroll-box {
+  max-block-size: 15rem;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius-lg);
+  background: var(--s-surface);
+}
+.s-scroll-box-small {
+  max-block-size: 10rem;
+}
+.s-scroll-list {
+  display: grid;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.s-scroll-list > li {
+  display: flex;
+  gap: 12px;
+  padding: 8px 16px;
+}
+.s-scroll-list > li + li {
+  border-block-start: 1px solid var(--s-line);
+}
+.s-scroll-list time {
+  flex: none;
+  color: var(--s-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.s-scroll-table {
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius-lg);
+  background: var(--s-surface);
+}
+.s-scroll-table .s-table th,
+.s-scroll-table .s-table td {
+  white-space: nowrap;
+}
+.s-scroll-looks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: 16px;
+  inline-size: 100%;
+  margin: 0;
+}
+.s-scroll-look {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.s-scroll-look > figcaption {
+  color: var(--s-ink-2);
+  font-size: 0.8125rem;
+  font-weight: 650;
 }
 
 @media (prefers-reduced-motion: reduce) {

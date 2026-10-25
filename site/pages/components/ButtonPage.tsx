@@ -16,6 +16,7 @@ import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
 import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
+import { TableScroll } from '../../ui/TableScroll';
 
 /* -------------------------------------------------------------------------- */
 /* 種類と状態                                                                 */
@@ -225,7 +226,7 @@ export function ButtonPage({ rest }: PageProps): ReactNode {
           </Section>
 
           <Section id="gated" title={t.gated.title} intro={t.gated.intro}>
-            <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.gated.tableCaption}>
+            <TableScroll label={t.gated.tableCaption}>
               <table className="s-table">
                 <caption className="s-sr-only">{t.gated.tableCaption}</caption>
                 <thead>
@@ -247,7 +248,7 @@ export function ButtonPage({ rest }: PageProps): ReactNode {
                   </Phrase>
                 </tbody>
               </table>
-            </div>
+            </TableScroll>
             <Prose>
               <Paras items={t.gated.body} />
             </Prose>

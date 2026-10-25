@@ -107,6 +107,18 @@
     --g-size-xl: 960px;
     --g-sheet-max-block: 92dvh;
 
+    /* --- scrollbar（U-35）-------------------------------------------------------
+     * 自前で描くバー（12 節）。太さは止まっている間と、ポインタを乗せた・掴んだ間の 2 段で、当たりは太い方より広く取る。
+     * つまみの色は文字の色を混ぜて作るので、明暗とテーマに付いてくる（面と 3:1 以上。tokens.test）。 */
+    --g-scrollbar-size: 6px;
+    --g-scrollbar-size-active: 10px;
+    --g-scrollbar-hit: 14px;
+    --g-scrollbar-inset: 2px;
+    --g-scrollbar-radius: 999px;
+    --g-scrollbar-thumb: color-mix(in srgb, var(--g-fg) 50%, transparent);
+    --g-scrollbar-thumb-active: color-mix(in srgb, var(--g-fg) 66%, transparent);
+    --g-scrollbar-track: color-mix(in srgb, var(--g-fg) 7%, transparent);
+
     /* --- motion -----------------------------------------------------------
      * 退出は入場より速く。人は「開く」を待てるが「閉じる」を待てない。
      * ここの値は既定のプリセット（standard）。data-g-motion の 4 段（V-01、下の 1b）は
@@ -411,6 +423,10 @@
   .g-panel > .g-header { grid-row: 1; }
   .g-panel > .g-body   { grid-row: 2; }
   .g-panel > .g-footer { grid-row: 3; }
+  /* 本文のバー（U-35）は本文と同じ升に重ねる（12 節）。本文の列も明示する（行だけ決めた項目は、先に置かれたバーと
+   * 重ならない列を探して、暗黙の 2 列目へ逃げる） */
+  .g-panel > .g-scrollbar { grid-row: 2; grid-column: 1; }
+  .g-panel > .g-body { grid-column: 1; }
 
   /* シートのつまみ（Modal.Handle）を置いたときだけ 4 行にし、つまみを 1 行目に置く。H-09。
    * 行を割り当てないと自動配置で暗黙の 4 行目（フッタの下）に入り、パネルの下端につまみが出る。 */
@@ -418,6 +434,7 @@
   .g-panel > .g-handle { grid-row: 1; }
   .g-panel:has(> .g-handle) > .g-header { grid-row: 2; }
   .g-panel:has(> .g-handle) > .g-body   { grid-row: 3; }
+  .g-panel:has(> .g-handle) > .g-scrollbar { grid-row: 3; }
   .g-panel:has(> .g-handle) > .g-footer { grid-row: 4; }
 
   .g-dialog[data-size="sm"]   { --g-panel-max: var(--g-size-sm); }
@@ -1589,6 +1606,14 @@
   .g-popup:has(> .g-listbox) { max-block-size: min(20rem, var(--g-popup-room, 20rem)); }
   /* popover API の無い環境: 起点の直下に置く。 */
   .g-popup[data-inline] { position: absolute; top: calc(100% + 4px); inset-inline-start: 0; }
+  /* 自前のバーを描くポップアップ（一覧・メニュー・ポップオーバー。U-35）。器は 1 升の grid にして窓とバーを重ね、
+   * スクロールと余白は窓が持つ（器が余白を持つと、バーが縁から余白ぶん内に入る）。開いている間だけ grid にする
+   * （閉じた popover を隠す UA の display: none を、作者の display が上書きしないように） */
+  .g-popup:has(> .g-popup-viewport):is(:popover-open, [data-inline]) { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); }
+  .g-popup:has(> .g-popup-viewport) { overflow: hidden; padding: 0; }
+  .g-popup > :is(.g-popup-viewport, .g-scrollbar) { grid-area: 1 / 1; }
+  .g-popup > .g-popup-viewport { position: relative; min-block-size: 0; overflow: auto; overscroll-behavior: contain; padding: 4px; }
+  .g-popup:has(> .g-popup-viewport > .g-listbox) { max-block-size: min(20rem, var(--g-popup-room, 20rem)); }
 
   .g-listbox { margin: 0; padding: 0; list-style: none; }
   .g-option {
@@ -2987,8 +3012,9 @@
   .g-popup.g-popover {
     inline-size: max-content;
     max-inline-size: min(22rem, calc(100vw - 16px));
-    padding: 14px 16px 16px;
   }
+  /* 余白は窓が持つ（6.4。バーを縁に寄せるため） */
+  .g-popup.g-popover > .g-popup-viewport { padding: 14px 16px 16px; }
   .g-popover:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
   .g-popover-title { margin: 0 0 10px; font-size: 0.9375rem; font-weight: 650; line-height: 1.4; }
   .g-popover-body { font-size: 0.9375rem; line-height: 1.6; }
@@ -3370,7 +3396,10 @@
     --g-panel-max: 40rem;
     padding-block-start: max(min(12dvh, 120px), var(--g-viewport-pad), env(safe-area-inset-top));
   }
-  .g-command-head { padding: 12px 12px 8px; }
+  /* 3 段はパネルの行に明示して置く。候補の一覧のバー（U-35）は一覧と同じ升に重ねる（暗黙の配置だと、先に置かれたバーが一覧を次の行へ押し出す） */
+  .g-command-head { grid-row: 1; padding: 12px 12px 8px; }
+  .g-command-body { grid-row: 2; grid-column: 1; }
+  .g-command-foot { grid-row: 3; }
   .g-command-head .g-input { min-block-size: 48px; font-size: 1.0625rem; }
   .g-command-body { min-block-size: 0; max-block-size: min(26rem, 60dvh); overflow-y: auto; overscroll-behavior: contain; padding: 0 8px 8px; }
   .g-command-list,
@@ -3517,11 +3546,16 @@
    * 地は面に文字の色を 4% 混ぜる。暗い地に置きたいときは、器の上で --g-surface / --g-fg などを差し替える
    * （トークンで色を決めているので、器の中だけ暗いテーマにできる）。コードは折り返さず横へ送る。 */
   .g-codeblock {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     overflow: hidden;
     border-radius: var(--g-radius);
     background: color-mix(in srgb, var(--g-fg) 4%, var(--g-surface));
     color: var(--g-fg);
   }
+  /* 帯は 1 行目、コードは 2 行目。コードの横のバー（U-35）はコードと同じ升に重ねる */
+  .g-codeblock > .g-codeblock-bar { grid-row: 1; }
+  .g-codeblock > :is(.g-codeblock-body, .g-scrollbar) { grid-row: 2; grid-column: 1; }
   .g-codeblock-bar { display: flex; align-items: center; gap: 12px; min-block-size: 40px; padding: 2px 4px 0 16px; }
   .g-codeblock-title { color: var(--g-fg-muted); font: 0.75rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
   .g-codeblock-copy { margin-inline-start: auto; }
@@ -3591,7 +3625,9 @@
   }
   .g-popup.g-popover.g-notify { inline-size: min(24rem, calc(100vw - 16px)); max-inline-size: none; }
   .g-notify-actions { display: flex; justify-content: flex-end; margin-block: -6px 4px; }
-  .g-notify-list { position: relative; display: grid; gap: 2px; max-block-size: min(60dvh, 28rem); margin: 0 -8px; padding: 0; overflow-y: auto; list-style: none; }
+  /* 一覧の窓（U-35）。高さの上限と、項目の地を縁まで広げる負の余白は器が持つ */
+  .g-notify-scroll { max-block-size: min(60dvh, 28rem); margin: 0 -8px; }
+  .g-notify-list { display: grid; align-content: start; gap: 2px; margin: 0; padding: 0; list-style: none; }
   .g-notify-item {
     position: relative;
     display: flex;
@@ -4134,6 +4170,10 @@
     block-size: 100%;
     min-block-size: 0;
   }
+  /* 列と入力中の印は行に明示して置き、列のバー（U-35）は列と同じ升に重ねる（暗黙の配置だと、先に置かれたバーが列を次の行へ押し出す） */
+  .g-chat > .g-chat-thread,
+  .g-chat > .g-scrollbar { grid-row: 1; grid-column: 1; }
+  .g-chat > .g-typing { grid-row: 2; }
   .g-chat-thread {
     position: relative;
     display: flex;
@@ -4514,5 +4554,126 @@
     :is(.g-notify-badge, .g-checklist-item[data-done] .g-checklist-mark) { forced-color-adjust: none; border-color: Highlight; background: Highlight; color: HighlightText; }
     /* 9.30。色の選択の面・帯・見本は色そのものが中身なので、塗ったまま残す */
     :is(.g-color-area, .g-color-hue, .g-color-thumb, .g-color-chip, .g-color-preview, .g-color-swatch > span) { forced-color-adjust: none; }
+  }
+}
+
+/* ===========================================================================
+ * 12. scroll area（U-35）
+ * ---------------------------------------------------------------------------
+ * スクロールはブラウザのまま（ホイール・キー・タッチ・慣性・位置の復元）で、見えるバーだけを自前で描く。
+ * ブラウザと OS でネイティブのバーの太さ・色・出方が違う（Windows の太い溝、macOS の重なって消えるバー、Firefox の色）のを、
+ * テーマの色と形にそろえる。窓（.g-scroll-viewport）のネイティブのバーを隠し、窓と同じ grid の升に重ねたバー（.g-scrollbar）を
+ * 窓の後ろの兄弟に置く。バーは飾り（aria-hidden）で、キーボードと支援技術は窓そのものを送る（B-02）。
+ * つまみの大きさと位置（--g-scrollbar-thumb-size / -offset）、あふれ・スクロール中・ドラッグ中・出し方の data-* は JS が書く。
+ * ======================================================================== */
+
+@layer gassan.core {
+  .g-scroll {
+    position: relative;
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    min-block-size: 0;
+    min-inline-size: 0;
+  }
+  .g-scroll > :is(.g-scroll-viewport, .g-scrollbar) { grid-area: 1 / 1; }
+  /* 窓は position を持つ（横に送る中の読み上げ専用の文字が、器の外へ逃げて文書を広げないように。B-13 / §10-36） */
+  .g-scroll > .g-scroll-viewport { position: relative; min-block-size: 0; overflow: auto; overscroll-behavior: contain; }
+  .g-scroll > .g-scroll-viewport:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+
+  /* ネイティブのバーを隠す（Firefox・Chrome 121 以降は scrollbar-width、Safari は ::-webkit-scrollbar）。
+   * 幅を持たなくなるので、あふれる・あふれないで中身の幅が変わらない（B-05 の目的を、溝の予約なしで満たす） */
+  .g-scroll-viewport { scrollbar-width: none; }
+  .g-scroll-viewport::-webkit-scrollbar { display: none; }
+  :where(html[data-g-page-scrollbar]) { scrollbar-width: none; }
+  :where(html[data-g-page-scrollbar])::-webkit-scrollbar { display: none; }
+
+  .g-scrollbar {
+    --g-scrollbar-now: var(--g-scrollbar-size);
+    position: relative;
+    box-sizing: border-box;
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    user-select: none;
+    transition: opacity var(--g-dur-slow) linear;
+  }
+  .g-scrollbar[data-axis="y"] { justify-self: end; align-self: stretch; inline-size: var(--g-scrollbar-hit); margin-block: var(--g-scrollbar-inset); }
+  .g-scrollbar[data-axis="x"] { align-self: end; justify-self: stretch; block-size: var(--g-scrollbar-hit); margin-inline: var(--g-scrollbar-inset); }
+  /* 縦と横の両方があふれるときは、角でぶつからないよう縦を横の当たりのぶん短くする */
+  .g-scrollbar[data-axis="y"]:has(~ .g-scrollbar[data-axis="x"][data-overflow]) { margin-block-end: var(--g-scrollbar-hit); }
+
+  /* 溝はポインタを乗せた・掴んだ間だけ、うっすら出す */
+  .g-scrollbar::before {
+    content: '';
+    position: absolute;
+    border-radius: var(--g-scrollbar-radius);
+    background: var(--g-scrollbar-track);
+    opacity: 0;
+    transition: opacity var(--g-dur-fast) linear;
+  }
+  .g-scrollbar[data-axis="y"]::before { inset-block: 0; inset-inline-end: var(--g-scrollbar-inset); inline-size: var(--g-scrollbar-size-active); }
+  .g-scrollbar[data-axis="x"]::before { inset-inline: 0; inset-block-end: var(--g-scrollbar-inset); block-size: var(--g-scrollbar-size-active); }
+  .g-scrollbar:is(:hover, [data-dragging])::before { opacity: 1; }
+
+  .g-scrollbar-thumb { position: absolute; border-radius: var(--g-scrollbar-radius); background: var(--g-scrollbar-thumb); }
+  .g-scrollbar[data-axis="y"] > .g-scrollbar-thumb {
+    inset-block-start: var(--g-scrollbar-thumb-offset, 0px);
+    inset-inline-end: var(--g-scrollbar-inset);
+    inline-size: var(--g-scrollbar-now);
+    block-size: var(--g-scrollbar-thumb-size, 0px);
+    transition: inline-size var(--g-dur-fast) var(--g-ease-move), background-color var(--g-dur-fast) linear;
+  }
+  .g-scrollbar[data-axis="x"] > .g-scrollbar-thumb {
+    inset-inline-start: var(--g-scrollbar-thumb-offset, 0px);
+    inset-block-end: var(--g-scrollbar-inset);
+    inline-size: var(--g-scrollbar-thumb-size, 0px);
+    block-size: var(--g-scrollbar-now);
+    transition: block-size var(--g-dur-fast) var(--g-ease-move), background-color var(--g-dur-fast) linear;
+  }
+  .g-scrollbar:is(:hover, [data-dragging]) { --g-scrollbar-now: var(--g-scrollbar-size-active); }
+  .g-scrollbar:is(:hover, [data-dragging]) > .g-scrollbar-thumb { background: var(--g-scrollbar-thumb-active); }
+
+  /* 出す条件。auto（既定）: スクロール中と、窓かバーにポインタがある間 / hover: ポインタがある間 /
+   * scroll: スクロール中 / always: いつも。どの出し方でも、あふれていない窓には出さない。掴んでいる間とバーの上は出したまま */
+  .g-scrollbar[data-overflow]:is([data-visibility="always"], [data-dragging], :hover),
+  .g-scrollbar[data-overflow][data-scrolling]:is([data-visibility="auto"], [data-visibility="scroll"]),
+  .g-scroll-viewport:hover ~ .g-scrollbar[data-overflow]:is([data-visibility="auto"], [data-visibility="hover"]) {
+    opacity: 1;
+    transition-duration: var(--g-dur-fast);
+  }
+  /* 押せるのは、細かく指せるポインタのときだけ。タッチでは端をなぞってもページ送りにせず、ふつうにスクロールさせる */
+  @media (any-pointer: fine) {
+    .g-scrollbar[data-overflow]:is([data-visibility="always"], [data-dragging], :hover),
+    .g-scrollbar[data-overflow][data-scrolling]:is([data-visibility="auto"], [data-visibility="scroll"]),
+    .g-scroll-viewport:hover ~ .g-scrollbar[data-overflow]:is([data-visibility="auto"], [data-visibility="hover"]),
+    .g-page-scrollbar[data-overflow]:is([data-visibility="auto"], [data-visibility="hover"]) { pointer-events: auto; }
+  }
+
+  /* 文書のバーは画面の端に固定する。窓（html）に :hover の兄弟は無いので、隠れている間もバーの上に来たら出す */
+  .g-scrollbar.g-page-scrollbar { position: fixed; inset-block: 0; inset-inline-end: 0; margin-block: var(--g-scrollbar-inset); }
+  /* モーダルが文書のスクロールを止めている間は出さない（2 節のロックと同じ条件） */
+  :where(html):has(dialog.g-dialog:modal) .g-page-scrollbar,
+  :where(html[data-g-locked]) .g-page-scrollbar { display: none; }
+
+  /* 器を差し込めないスクロール（利用側の中身のコード・文字の欄の中）は、ネイティブのバーを細く、つまみの色にそろえる */
+  :where(.g-chat-bubble pre, .g-mail-content pre, .g-scroll-viewport pre, .g-textarea > textarea, .g-composer-input) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--g-scrollbar-thumb) transparent;
+  }
+}
+
+@layer gassan.theme {
+  @media (prefers-reduced-motion: reduce) {
+    /* 12。出し入れと太さの変化は飾りなので止める（あふれと位置は描いたまま） */
+    .g-scrollbar,
+    .g-scrollbar::before,
+    .g-scrollbar-thumb { transition: none; }
+  }
+  @media (forced-colors: active) {
+    /* 12。つまみの地の色は塗り替えで消えるので、文字の色で塗る */
+    .g-scrollbar-thumb { forced-color-adjust: none; background: CanvasText; }
+  }
+  @media print {
+    .g-scrollbar { display: none; }
   }
 }

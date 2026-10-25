@@ -56,6 +56,7 @@ export default {
     uiCharts: '图表',
     uiCarousel: '轮播',
     uiChat: '聊天',
+    uiScroll: '滚动条',
     templatesAuth: '登录与注册',
     templatesStatus: '错误与维护',
     templatesPublic: '价格、常见问题与条款',

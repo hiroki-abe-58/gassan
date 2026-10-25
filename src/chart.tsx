@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { warnOnce } from './internal/dom';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useScrollbars } from './internal/scrollbars';
 import { usePhrase } from './phrase';
 
 export interface ModalChartProps extends DataAttributes {
@@ -61,6 +62,7 @@ export function ModalChart({
   const captionId = `${baseId}-caption`;
   const summaryId = `${baseId}-summary`;
   const visualRef = useRef<HTMLDivElement | null>(null);
+  const bars = useScrollbars(visualRef, { axes: ['x'] });
 
   // aria-hidden の内側にフォーカスできる要素があると、
   // 「フォーカスは当たるのに何も読まれない」場所ができる。開発時に知らせる。
@@ -88,12 +90,12 @@ export function ModalChart({
       <figcaption id={captionId} className="g-chart-caption">
         {phrase(label)}
       </figcaption>
-      <div
-        ref={visualRef}
-        className="g-chart-visual"
-        aria-hidden={visualAccessible ? undefined : true}
-      >
-        {children}
+      {/* 狭いときは図を横に送る窓と、自前のバー（U-35）を重ねる器 */}
+      <div className="g-scroll">
+        <div ref={visualRef} className="g-chart-visual g-scroll-viewport" aria-hidden={visualAccessible ? undefined : true}>
+          {children}
+        </div>
+        {bars}
       </div>
       <p id={summaryId} className="g-chart-summary">
         {phrase(summary)}

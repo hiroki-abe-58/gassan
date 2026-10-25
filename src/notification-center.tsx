@@ -1,9 +1,10 @@
-import { useEffect, useId, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 
 import { Button, IconButton } from './button';
 import { warnDuplicateKeys } from './internal/dom';
 import { PathIcon } from './internal/icons';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useScrollbars } from './internal/scrollbars';
 import { useLabels } from './labels';
 import { Popover } from './overlay';
 import { usePhrase } from './phrase';
@@ -76,6 +77,8 @@ export function NotificationCenter({
   const phrase = usePhrase();
   const base = useId();
   const unread = items.filter((item) => !item.read).length;
+  const listRef = useRef<HTMLUListElement>(null);
+  const bars = useScrollbars(listRef);
 
   const ids = items.map((item) => item.id).join('\u0000');
   useEffect(() => {
@@ -112,56 +115,60 @@ export function NotificationCenter({
       {items.length === 0 ? (
         <p className="g-notify-empty">{phrase(labels.noNotifications)}</p>
       ) : (
-        <ul className="g-notify-list">
-          {items.map((item, index) => {
-            const itemId = `${base}-${String(index)}`;
-            const describedBy = [item.body ? `${itemId}-body` : '', `${itemId}-time`].filter(Boolean).join(' ');
-            const content = (
-              <>
-                {item.icon ? <span className="g-notify-icon">{item.icon}</span> : null}
-                <span className="g-notify-text">
-                  <span className="g-notify-title">
-                    {item.read ? null : (
-                      <span id={`${itemId}-unread`} className="g-sr-only">
-                        {labels.unreadMark}
-                      </span>
-                    )}
-                    <span id={`${itemId}-title`}>{phrase(item.title)}</span>
-                  </span>
-                  {item.body ? (
-                    <span id={`${itemId}-body`} className="g-notify-body">
-                      {phrase(item.body)}
+        // 一覧は窓（自前のバー。U-35）。高さの上限と横のはみ出しは器が持つ
+        <div className="g-scroll g-notify-scroll">
+          <ul ref={listRef} className="g-notify-list g-scroll-viewport">
+            {items.map((item, index) => {
+              const itemId = `${base}-${String(index)}`;
+              const describedBy = [item.body ? `${itemId}-body` : '', `${itemId}-time`].filter(Boolean).join(' ');
+              const content = (
+                <>
+                  {item.icon ? <span className="g-notify-icon">{item.icon}</span> : null}
+                  <span className="g-notify-text">
+                    <span className="g-notify-title">
+                      {item.read ? null : (
+                        <span id={`${itemId}-unread`} className="g-sr-only">
+                          {labels.unreadMark}
+                        </span>
+                      )}
+                      <span id={`${itemId}-title`}>{phrase(item.title)}</span>
                     </span>
-                  ) : null}
-                  {/* 相対の時刻は、サーバーとブラウザで分単位がずれうる */}
-                  <time id={`${itemId}-time`} className="g-notify-time" dateTime={new Date(item.time).toISOString()} suppressHydrationWarning>
-                    {relative(item.time, labels.locale)}
-                  </time>
-                </span>
-              </>
-            );
-            // 名前は「未読 件名」（言葉を別の要素に分け、aria-labelledby で空白を挟んでつなぐ）
-            const common = {
-              className: 'g-notify-item',
-              'aria-labelledby': item.read ? `${itemId}-title` : `${itemId}-unread ${itemId}-title`,
-              'aria-describedby': describedBy,
-              onClick: () => onOpenItem?.(item.id),
-            };
-            return (
-              <li key={item.id} data-unread={item.read ? undefined : ''}>
-                {item.href ? (
-                  <a href={item.href} {...common}>
-                    {content}
-                  </a>
-                ) : (
-                  <button type="button" {...common}>
-                    {content}
-                  </button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                    {item.body ? (
+                      <span id={`${itemId}-body`} className="g-notify-body">
+                        {phrase(item.body)}
+                      </span>
+                    ) : null}
+                    {/* 相対の時刻は、サーバーとブラウザで分単位がずれうる */}
+                    <time id={`${itemId}-time`} className="g-notify-time" dateTime={new Date(item.time).toISOString()} suppressHydrationWarning>
+                      {relative(item.time, labels.locale)}
+                    </time>
+                  </span>
+                </>
+              );
+              // 名前は「未読 件名」（言葉を別の要素に分け、aria-labelledby で空白を挟んでつなぐ）
+              const common = {
+                className: 'g-notify-item',
+                'aria-labelledby': item.read ? `${itemId}-title` : `${itemId}-unread ${itemId}-title`,
+                'aria-describedby': describedBy,
+                onClick: () => onOpenItem?.(item.id),
+              };
+              return (
+                <li key={item.id} data-unread={item.read ? undefined : ''}>
+                  {item.href ? (
+                    <a href={item.href} {...common}>
+                      {content}
+                    </a>
+                  ) : (
+                    <button type="button" {...common}>
+                      {content}
+                    </button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+          {bars}
+        </div>
       )}
       {footer ? <div className="g-notify-footer">{footer}</div> : null}
     </Popover>

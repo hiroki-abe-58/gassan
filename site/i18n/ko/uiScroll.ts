@@ -1,0 +1,80 @@
+import type ja from '../ja/uiScroll';
+
+export default {
+  lead: '스크롤바를 직접 그리는 컴포넌트. 스크롤 자체는 브라우저에 맡긴 채, 눈에 보이는 바만 테마의 색과 모양으로 맞춘다. Windows의 두꺼운 트랙, 내용 위에 겹쳤다가 사라지는 macOS의 바, Firefox의 색처럼 브라우저와 OS마다 다른 점이 드러나지 않는다. 라이브러리 안에서 스크롤되는 곳(모달 본문·셀렉트 목록·채팅 메시지 열·가로로 넘기는 표 등)도, 이 사이트의 페이지 전체와 내비게이션 바도 같은 바로 그린다.',
+  basics: {
+    title: '표시 방식 고르기',
+    intro: '기본(자동)은 스크롤하는 동안과 포인터가 올라가 있는 동안에만 보이고, 멈추고 약 1초 뒤에 사라진다. 포인터를 올렸을 때만·스크롤하는 동안만·항상 중에서도 고를 수 있다. 어느 방식이든 내용이 넘치지 않으면 표시하지 않는다.',
+    exampleTitle: '최근 활동',
+    exampleDescription: '위의 전환 버튼으로 표시 방식을 바꾸고, 목록을 스크롤하거나 포인터를 올려 본다. 바를 잡고 움직이거나, 트랙을 눌러 한 화면씩 넘길 수도 있다.',
+  },
+  horizontal: {
+    title: '가로로 넘기기',
+    intro: 'orientation="horizontal"로 가로 바를, "both"로 세로와 가로 바를 모두 그린다. 오른쪽에서 왼쪽으로 쓰는 언어에서는 가로 바가 오른쪽에서 시작한다.',
+    exampleTitle: '월별 매출',
+    exampleDescription: '컨테이너보다 넓은 표를 가로로 넘긴다. 이름(label)을 넘긴 스크롤 영역은 Tab으로 멈추고, 화살표 키로도 넘길 수 있다.',
+  },
+  custom: {
+    title: '두께와 색 바꾸기',
+    intro: '모양은 커스텀 프로퍼티로 바꾼다. 컨테이너나 그 바깥쪽(:root도 된다)에 쓰면 안쪽의 바가 모두 따른다.',
+    exampleTitle: '얇게·기본·두껍게·강조색',
+    exampleDescription: '4개의 컨테이너에 각각 다른 커스텀 프로퍼티를 썼다. 포인터를 올리면 두꺼워지고, 트랙이 옅게 나타난다.',
+  },
+  everywhere: {
+    title: '페이지 전체와 라이브러리 안',
+    intro: '문서 자체의 바는 PageScrollbar를 하나 두면 직접 그린 바가 된다(모달이 열려 문서의 스크롤을 막고 있는 동안에는 표시하지 않는다). 표시 방식은 컴포넌트의 visibility, GassanProvider의 scrollbars, <html data-g-scrollbars>의 순서로, 가까운 쪽이 적용된다. 이 사이트 오른쪽 위의 “테마”에서도 바꿀 수 있다.',
+    tableCaption: '직접 그린 바를 쓰는 곳',
+    head: { part: '컴포넌트', area: '스크롤되는 곳' },
+    rows: [
+      { part: 'Modal.Body', area: '모달 본문' },
+      { part: 'Select / Combobox / Menu / Popover', area: '목록·메뉴·팝오버의 내용' },
+      { part: 'CommandPalette', area: '후보 목록' },
+      { part: 'NotificationCenter', area: '알림 목록' },
+      { part: 'ChatThread', area: '메시지 열' },
+      { part: 'CodeBlock / Modal.Table / DataTable / Modal.Chart', area: '가로로 넘기는 코드·표·차트' },
+      { part: 'AppShell / ChatPage / AssistantPage / MailboxPage', area: '내비게이션 바·목록·폴더·본문' },
+      { part: 'PricingPage', area: '요금제 비교표' },
+    ],
+  },
+  modes: {
+    title: '표시 방식과 나타나는 때',
+    intro: '어느 방식이든, 잡고 움직이는 동안과 바 위에 포인터가 있는 동안에는 계속 표시한다.',
+    tableCaption: '바의 표시 방식',
+    head: { mode: '표시 방식', when: '나타나는 때' },
+    rows: [
+      { mode: "'auto'(기본)", when: '스크롤하는 동안과, 스크롤 영역이나 바 위에 포인터가 있는 동안. 멈추고 약 1초 뒤에 사라진다' },
+      { mode: "'hover'", when: '스크롤 영역이나 바 위에 포인터가 있는 동안만. 키나 터치로 넘겨도 표시하지 않는다' },
+      { mode: "'scroll'", when: '스크롤하는 동안만(iOS의 표시 방식에 가깝다)' },
+      { mode: "'always'", when: '내용이 넘치는 동안에는 항상' },
+    ],
+  },
+  tokens: {
+    title: '커스텀 프로퍼티',
+    intro: '색은 글자색(--g-fg)을 섞어 만들므로, 명암과 테마를 따라간다. 손잡이는 표면에 대해 3:1 이상이 되는 진하기로 해 두었다.',
+    tableCaption: '스크롤바의 커스텀 프로퍼티',
+    head: { name: '이름', value: '기본값', role: '역할' },
+    rows: [
+      { name: '--g-scrollbar-size', value: '6px', role: '멈춰 있는 동안의 손잡이 두께' },
+      { name: '--g-scrollbar-size-active', value: '10px', role: '포인터를 올리거나 잡고 있는 동안의 두께' },
+      { name: '--g-scrollbar-hit', value: '14px', role: '누를 수 있는 폭(두꺼울 때보다 넓게 잡는다)' },
+      { name: '--g-scrollbar-inset', value: '2px', role: '스크롤 영역 가장자리와의 간격' },
+      { name: '--g-scrollbar-radius', value: '999px', role: '손잡이 모서리의 둥글기' },
+      { name: '--g-scrollbar-thumb', value: '글자색 50%', role: '손잡이 색' },
+      { name: '--g-scrollbar-thumb-active', value: '글자색 66%', role: '포인터를 올리거나 잡고 있는 동안의 손잡이 색' },
+      { name: '--g-scrollbar-track', value: '글자색 7%', role: '포인터를 올린 동안 나타나는 트랙의 색' },
+    ],
+  },
+  access: {
+    title: '스크린 리더와 키보드, 터치',
+    intro: '바는 장식(aria-hidden)이고, 스크롤하는 것은 언제나 스크롤 영역 자체다. 그래서 휠·키·터치·관성·스크롤 연쇄 차단·위치 복원은 브라우저의 동작이 그대로 적용된다.',
+    rows: [
+      '키보드로는 스크롤 영역(이름을 넘기면 Tab으로 멈춘다)이나 그 안의 포커스할 수 있는 요소로 옮긴 뒤, 화살표·Page Up / Page Down·Space로 넘긴다.',
+      '터치가 주된 기기에서는 바를 누를 수 없게 한다(가장자리를 쓸어도 페이지 단위로 넘기지 않고 평소처럼 스크롤된다). 스크롤하는 동안에는 위치를 가늠하는 표시로 나타난다.',
+      '강제 색상 모드(Windows의 고대비)에서는 손잡이를 글자색으로 칠한다. 인쇄할 때는 그리지 않는다.',
+      '“동작 줄이기” 설정에서는 나타나고 사라지는 것과 두께의 변화를 애니메이션 없이 바꾼다.',
+    ],
+  },
+  codeCaption: '사용법',
+  code: "import { GassanProvider, PageScrollbar, ScrollArea } from '@genelab/gassan';\n\n// 페이지 전체(앱에 하나)\n<PageScrollbar />\n\n// 컴포넌트 안의 스크롤\n<ScrollArea label=\"최근 활동\" style={{ maxBlockSize: 240 }}>\n  <ActivityList />\n</ScrollArea>\n\n// 서브트리별 표시 방식\n<GassanProvider scrollbars=\"always\">\n  <App />\n</GassanProvider>",
+  a11yCaption: '스크롤바의 동작',
+} satisfies typeof ja;

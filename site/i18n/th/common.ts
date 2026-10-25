@@ -34,6 +34,8 @@ export default {
     tints: { neutral: 'ไม่มีสี', soft: 'อ่อน', strong: 'เข้ม' },
     motion: 'การเคลื่อนไหว',
     motions: { none: 'ไม่มี', subtle: 'เบา', standard: 'มาตรฐาน', expressive: 'เต็มที่' },
+    scrollbars: 'แถบสกรอลล์',
+    scrollbarModes: { auto: 'อัตโนมัติ', hover: 'ตัวชี้', scroll: 'ขณะสกรอลล์', always: 'เสมอ' },
     primary: 'สี primary',
     presets: {
       default: 'ค่าเริ่มต้น',

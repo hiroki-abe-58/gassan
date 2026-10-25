@@ -1,0 +1,80 @@
+import type ja from '../ja/uiScroll';
+
+export default {
+  lead: '自行繪製捲軸的元件。捲動本身仍交給瀏覽器，只把看得見的捲軸統一成主題的顏色與形狀。Windows 上粗粗的軌道、macOS 上疊在內容上方並會自動消失的捲軸、Firefox 的顏色，這些因瀏覽器與作業系統而異的差別都不會出現。函式庫中會捲動的地方（模態視窗的內文、下拉選單的清單、聊天的訊息列表、橫向捲動的表格等），以及本網站的整個頁面與導覽列，都以同一種捲軸繪製。',
+  basics: {
+    title: '選擇顯示方式',
+    intro: '預設（自動）只在捲動期間與指標停在上方期間顯示，停止約 1 秒後消失。也可以選擇只在指標停在上方時、只在捲動時，或始終顯示。不論哪種方式，內容沒有溢出時都不顯示。',
+    exampleTitle: '最近操作',
+    exampleDescription: '用上方的切換改變顯示方式，試著捲動清單或把指標移到上面。也可以拖曳捲軸，或按一下軌道一次捲動一個畫面。',
+  },
+  horizontal: {
+    title: '橫向捲動',
+    intro: '以 orientation="horizontal" 繪製橫向捲軸，以 "both" 同時繪製縱向與橫向的捲軸。在由右至左書寫的語言中，橫向捲軸從右側開始。',
+    exampleTitle: '每月營收',
+    exampleDescription: '橫向捲動比容器更寬的表格。傳入名稱（label）的捲動區域會成為 Tab 鍵的停留點，也能以方向鍵捲動。',
+  },
+  custom: {
+    title: '變更粗細與顏色',
+    intro: '外觀以自訂屬性變更。寫在容器上或其外側（:root 也可以），裡面的捲軸都會跟著改變。',
+    exampleTitle: '細、預設、粗、強調色',
+    exampleDescription: '4 個容器分別寫了不同的自訂屬性。指標移到上方時捲軸會變粗，並隱約顯示出軌道。',
+  },
+  everywhere: {
+    title: '整個頁面與函式庫的內部',
+    intro: '放置一個 PageScrollbar，文件本身的捲軸也會變成自行繪製的捲軸（模態視窗開啟並鎖定文件捲動期間不顯示）。顯示方式依元件的 visibility、GassanProvider 的 scrollbars、<html data-g-scrollbars> 的順序，以最近的設定為準。也可以從本網站右上角的「主題」切換。',
+    tableCaption: '以自繪捲軸繪製的地方',
+    head: { part: '元件', area: '捲動的部分' },
+    rows: [
+      { part: 'Modal.Body', area: '模態視窗的內文' },
+      { part: 'Select / Combobox / Menu / Popover', area: '清單、選單、彈出框的內容' },
+      { part: 'CommandPalette', area: '候選清單' },
+      { part: 'NotificationCenter', area: '通知清單' },
+      { part: 'ChatThread', area: '訊息列表' },
+      { part: 'CodeBlock / Modal.Table / DataTable / Modal.Chart', area: '橫向捲動的程式碼、表格、圖表' },
+      { part: 'AppShell / ChatPage / AssistantPage / MailboxPage', area: '導覽列、清單、資料夾、內文' },
+      { part: 'PricingPage', area: '方案比較表' },
+    ],
+  },
+  modes: {
+    title: '顯示方式與顯示時機',
+    intro: '不論哪種顯示方式，拖曳期間與指標位於捲軸上方期間都會保持顯示。',
+    tableCaption: '捲軸的顯示方式',
+    head: { mode: '顯示方式', when: '顯示時機' },
+    rows: [
+      { mode: "'auto'（預設）", when: '捲動期間，以及指標位於捲動區域或捲軸上方期間。停止約 1 秒後消失' },
+      { mode: "'hover'", when: '只在指標位於捲動區域或捲軸上方期間。以按鍵或觸控捲動時不顯示' },
+      { mode: "'scroll'", when: '只在捲動期間（接近 iOS 的顯示方式）' },
+      { mode: "'always'", when: '只要內容溢出就始終顯示' },
+    ],
+  },
+  tokens: {
+    title: '自訂屬性',
+    intro: '顏色由文字顏色（--g-fg）混合而成，因此會跟著明暗模式與主題改變。滑塊的深淺確保對表面的對比達到 3:1 以上。',
+    tableCaption: '捲軸的自訂屬性',
+    head: { name: '名稱', value: '預設值', role: '作用' },
+    rows: [
+      { name: '--g-scrollbar-size', value: '6px', role: '靜止時滑塊的粗細' },
+      { name: '--g-scrollbar-size-active', value: '10px', role: '指標停在上方或拖曳時的粗細' },
+      { name: '--g-scrollbar-hit', value: '14px', role: '可按下的寬度（比變粗後的粗細更寬）' },
+      { name: '--g-scrollbar-inset', value: '2px', role: '與捲動區域邊緣的間距' },
+      { name: '--g-scrollbar-radius', value: '999px', role: '滑塊的圓角' },
+      { name: '--g-scrollbar-thumb', value: '文字顏色 50%', role: '滑塊的顏色' },
+      { name: '--g-scrollbar-thumb-active', value: '文字顏色 66%', role: '指標停在上方或拖曳時滑塊的顏色' },
+      { name: '--g-scrollbar-track', value: '文字顏色 7%', role: '指標停在上方時出現的軌道顏色' },
+    ],
+  },
+  access: {
+    title: '朗讀、鍵盤與觸控',
+    intro: '捲軸只是裝飾（aria-hidden），捲動的一律是捲動區域本身。因此滾輪、鍵盤、觸控、慣性、阻斷捲動鏈、還原捲動位置，都直接沿用瀏覽器本身的行為。',
+    rows: [
+      '使用鍵盤時，將焦點移到捲動區域（傳入名稱後會成為 Tab 鍵的停留點）或其中可取得焦點的元素上，再以方向鍵、Page Up / Page Down、Space 捲動。',
+      '在以觸控為主的裝置上，捲軸無法按下（沿著邊緣滑動不會翻頁，而是正常捲動）。捲動期間會顯示出來，作為位置的參考。',
+      '在強制色彩模式（Windows 的高對比）下，滑塊以文字顏色填色。列印時不繪製。',
+      '在「減少動態效果」設定下，顯示、隱藏與粗細的變化都不播放動畫。',
+    ],
+  },
+  codeCaption: '用法',
+  code: "import { GassanProvider, PageScrollbar, ScrollArea } from '@genelab/gassan';\n\n// 整個頁面（每個應用程式放一個）\n<PageScrollbar />\n\n// 元件內部的捲動\n<ScrollArea label=\"最近操作\" style={{ maxBlockSize: 240 }}>\n  <ActivityList />\n</ScrollArea>\n\n// 依子樹設定顯示方式\n<GassanProvider scrollbars=\"always\">\n  <App />\n</GassanProvider>",
+  a11yCaption: '捲軸的行為',
+} satisfies typeof ja;

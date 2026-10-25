@@ -67,7 +67,7 @@ function Listbox({ open, id, labelledBy, options, active, selected, anchorRef, o
   }, [active]);
 
   return (
-    <Popup open={open} anchorRef={anchorRef} onDismiss={onDismiss} onMouseDown={(event) => event.preventDefault()}>
+    <Popup open={open} anchorRef={anchorRef} onDismiss={onDismiss} scrollbars onMouseDown={(event) => event.preventDefault()}>
       <ul ref={listRef} className="g-listbox" role="listbox" id={id} aria-labelledby={labelledBy}>
         {options.map((option, index) => (
           <li

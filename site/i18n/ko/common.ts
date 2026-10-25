@@ -34,6 +34,8 @@ export default {
     tints: { neutral: '무채색', soft: '옅게', strong: '진하게' },
     motion: '움직임',
     motions: { none: '없음', subtle: '절제', standard: '표준', expressive: '풍부' },
+    scrollbars: '스크롤바',
+    scrollbarModes: { auto: '자동', hover: '포인터', scroll: '스크롤 중', always: '항상' },
     primary: '주 색상',
     presets: {
       default: '기본',

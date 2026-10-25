@@ -9,6 +9,7 @@ import { to } from '../../router';
 import { inline, InlineMd, MdTable, md } from '../../ui/Markdown';
 import { PageHeader, Prose, Section } from '../../ui/Page';
 import { PriorityBadge, STATUS_ORDER, StatusBadge, useStatusLabel } from '../../ui/Spec';
+import { TableScroll } from '../../ui/TableScroll';
 
 function EvidenceList({ item }: { item: SpecItem }): ReactNode {
   const t = useT().spec.evidence;
@@ -148,7 +149,7 @@ export function Spec({ rest }: PageProps): ReactNode {
           <h2 id={`cat-${c.letter}`} lang={SPEC_LANG}>
             <span className="s-spec-letter">{c.letter}</span> <Phrase>{c.name}</Phrase>
           </h2>
-          <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.categoryItems(c.name)}>
+          <TableScroll label={t.categoryItems(c.name)}>
             <table className="s-table s-spec-table">
               <caption className="s-sr-only" lang={SPEC_LANG}>
                 {c.name}
@@ -192,7 +193,7 @@ export function Spec({ rest }: PageProps): ReactNode {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
         </section>
       ))}
 

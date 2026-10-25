@@ -2,6 +2,7 @@ import { createContext, createElement, useContext, type ReactNode } from 'react'
 
 import { japaneseHolidayResolver, type HolidayResolver } from './holidays';
 import type { DateRangePresetKey } from './internal/dates';
+import type { ScrollbarVisibility } from './internal/scrollbars';
 import { LineBreakContext, type LineBreakMode } from './phrase';
 import { DEFAULT_BLOCKED_MESSAGE, DEFAULT_UNRESOLVED_GATE_MESSAGE, type MotionPreset } from './types';
 
@@ -560,6 +561,11 @@ export interface GassanProviderProps {
    * 省略すると器を足さず、外側（`<html data-g-motion>` か、外側の Provider）に従う。
    */
   motion?: MotionPreset;
+  /**
+   * スクロールバーの出し方（U-35）。渡すと、中身を `data-g-scrollbars` の器（`display: contents`）で包み、
+   * その枝の ScrollArea と部品の中のバーの既定を差し替える。部品ごとの `visibility` が勝つ。省略すると外側に従う。
+   */
+  scrollbars?: ScrollbarVisibility;
   children: ReactNode;
 }
 
@@ -569,7 +575,7 @@ export interface GassanProviderProps {
  * 英語の Provider の内側に lineBreak だけを指定した Provider を置いても、文言は日本語に戻らない。
  * JSX を使わないのは、このファイルを .ts のまま保つため。
  */
-export function GassanProvider({ labels, lineBreak, motion, children }: GassanProviderProps): ReactNode {
+export function GassanProvider({ labels, lineBreak, motion, scrollbars, children }: GassanProviderProps): ReactNode {
   const outer = useContext(LabelsContext);
   const merged: GassanLabels = labels ? { ...outer, ...labels } : outer;
   const inherited = useContext(LineBreakContext);
@@ -578,8 +584,8 @@ export function GassanProvider({ labels, lineBreak, motion, children }: GassanPr
     { value: lineBreak ?? inherited },
     createElement(LabelsContext.Provider, { value: merged }, children),
   );
-  // 段はカスタムプロパティなので、継承させるための器が要る。レイアウトには参加させない。
-  return motion
-    ? createElement('div', { 'data-g-motion': motion, style: { display: 'contents' } }, provided)
+  // 段とバーの出し方は器の属性から読むので、継承させるための器が要る。レイアウトには参加させない。
+  return motion || scrollbars
+    ? createElement('div', { 'data-g-motion': motion, 'data-g-scrollbars': scrollbars, style: { display: 'contents' } }, provided)
     : provided;
 }

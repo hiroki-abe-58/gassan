@@ -55,6 +55,7 @@ export default {
     uiCharts: 'グラフ',
     uiCarousel: 'カルーセル',
     uiChat: 'チャット',
+    uiScroll: 'スクロールバー',
     templatesAuth: 'ログインと登録',
     templatesStatus: 'エラーとメンテナンス',
     templatesPublic: '料金・FAQ・規約',

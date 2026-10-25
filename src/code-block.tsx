@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 
 import { CopyButton } from './button';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useScrollbars } from './internal/scrollbars';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
 
@@ -34,6 +35,8 @@ export function CodeBlock({ code, children, language, title, copy = true, textLa
   const labels = useLabels();
   const phrase = usePhrase();
   const heading = title ?? language;
+  const bodyRef = useRef<HTMLPreElement>(null);
+  const bars = useScrollbars(bodyRef, { axes: ['x'] });
   return (
     <div {...domPassthrough(rest, 'CodeBlock')} className={cx('g-codeblock', className)}>
       {heading || copy ? (
@@ -42,9 +45,10 @@ export function CodeBlock({ code, children, language, title, copy = true, textLa
           {copy ? <CopyButton value={code} size="sm" label={labels.copyCode} className="g-codeblock-copy" /> : null}
         </div>
       ) : null}
-      <pre className="g-codeblock-body" tabIndex={0} role="group" aria-label={heading ? labels.codeOf(heading) : labels.code} lang={textLang}>
+      <pre ref={bodyRef} className="g-codeblock-body g-scroll-viewport" tabIndex={0} role="group" aria-label={heading ? labels.codeOf(heading) : labels.code} lang={textLang}>
         <code>{children ?? code}</code>
       </pre>
+      {bars}
     </div>
   );
 }
