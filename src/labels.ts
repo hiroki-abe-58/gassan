@@ -239,6 +239,15 @@ export interface GassanLabels {
   sendHint: (mode: 'enter' | 'mod+enter') => string;
   /** 質問の例の並びの名前。E-08。 */
   suggestions: string;
+  /** チャットのウィジェットの起点の名前（開く・閉じる）と、未読の数の言い方。E-09。 */
+  chatOpen: string;
+  chatClose: string;
+  chatUnread: (count: number) => string;
+  /** 小窓と右側の面を切り替えるボタン。E-09。 */
+  chatExpand: string;
+  chatCollapse: string;
+  /** 起点の横のあいさつを消すボタン。E-09。 */
+  chatDismissGreeting: string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -386,6 +395,12 @@ export const japaneseLabels: GassanLabels = {
     names.length === 1 ? `${names[0] ?? ''}さんが入力中` : names.length === 2 ? `${names[0] ?? ''}さんと${names[1] ?? ''}さんが入力中` : `${names.length}人が入力中`,
   sendHint: (mode) => (mode === 'enter' ? 'Enter で送信、Shift+Enter で改行' : 'Ctrl+Enter（Mac は ⌘+Enter）で送信、Enter で改行'),
   suggestions: '質問の例',
+  chatOpen: 'チャットを開く',
+  chatClose: 'チャットを閉じる',
+  chatUnread: (count) => `未読 ${count}件`,
+  chatExpand: '右側に広げる',
+  chatCollapse: '小さくする',
+  chatDismissGreeting: 'あいさつを閉じる',
 };
 
 export const englishLabels: GassanLabels = {
@@ -540,6 +555,12 @@ export const englishLabels: GassanLabels = {
     names.length === 1 ? `${names[0] ?? ''} is typing` : names.length === 2 ? `${names[0] ?? ''} and ${names[1] ?? ''} are typing` : `${names.length} people are typing`,
   sendHint: (mode) => (mode === 'enter' ? 'Enter to send, Shift+Enter for a new line' : 'Ctrl+Enter (⌘+Enter on Mac) to send, Enter for a new line'),
   suggestions: 'Suggestions',
+  chatOpen: 'Open chat',
+  chatClose: 'Close chat',
+  chatUnread: (count) => `${count} unread`,
+  chatExpand: 'Expand to the side',
+  chatCollapse: 'Make smaller',
+  chatDismissGreeting: 'Dismiss greeting',
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);

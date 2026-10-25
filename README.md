@@ -18,17 +18,17 @@ Line breaking for Japanese, Chinese and Korean and accessibility are written dow
 
 **Documentation site: <https://hiroki-abe-58.github.io/gassan/#/en>**
 — design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, line breaking, motion),
-live demos and the API of every component and form control, the page templates, and the specification of 257 behaviors, laid out like the Material Design 3 guidelines.
+live demos and the API of every component and form control, the page templates, and the specification of 258 behaviors, laid out like the Material Design 3 guidelines.
 The site is available in English, [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) and [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) (switch with the globe button in the top bar).
 It has a light / dark theme and a choice of primary colors; whichever color you pick, its text and fills are derived to meet the WCAG contrast ratios.
 Every table, count and API description on the site is generated at build time from the specification and the type definitions; no number is written by hand.
 
-The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 257 behaviors, a decision matrix and a quality rubric).
+The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 258 behaviors, a decision matrix and a quality rubric).
 Put that file in the context when coding with an AI assistant.
 
 | Document | Contents |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 257 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 258 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | The original requirements broken down, one row each: implemented / achieved by composition / on the roadmap |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | Minimal examples of putting gassan's form controls inside a modal, and notes on wrapping components from other libraries for what gassan does not provide |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | Native `<dialog>` vs Base UI vs React Aria vs Radix (as of 2026-09-29, primary sources only) |
@@ -272,6 +272,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `ChatThread` `ChatComposer` `TypingIndicator` `ChatSuggestions` | Chat between people and with an AI. The list stays put while you read further up, Enter while composing Japanese text never sends, and a streamed answer is read aloud once it is fully written |
 | `CodeBlock` `TreeView` `NotificationCenter` `Checklist` | A code block with a copy button, a tree view you move through with the arrow keys and by typing, a notification center opened from a bell, and an onboarding checklist that moves focus to the next step |
 | `ScrollArea` `PageScrollbar` | Scrollbars the library draws itself, so they look the same in every browser and OS (scrolling itself stays native). Scroll areas inside the components — the modal body, lists, chat, tables — use the same bars |
+| `ChatWidget` | A chatbot at the bottom-right of your site. A round launcher opens a small non-modal panel that can expand into a side panel; on phones it becomes a full-screen sheet |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | Sign-in and account pages (`templates.css`) |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | Errors, maintenance and public pages |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` | The app shell and the pages inside it |

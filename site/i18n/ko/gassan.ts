@@ -174,6 +174,12 @@ const labels: GassanLabels = {
     names.length === 1 ? `${names[0] ?? ''} 님이 입력 중` : names.length === 2 ? `${names[0] ?? ''} 님과 ${names[1] ?? ''} 님이 입력 중` : `${names.length}명이 입력 중`,
   sendHint: (mode) => (mode === 'enter' ? 'Enter로 보내기, Shift+Enter로 줄바꿈' : 'Ctrl+Enter(Mac은 ⌘+Enter)로 보내기, Enter로 줄바꿈'),
   suggestions: '질문 예시',
+  chatOpen: '채팅 열기',
+  chatClose: '채팅 닫기',
+  chatUnread: (count) => `읽지 않음 ${count}개`,
+  chatExpand: '오른쪽으로 넓히기',
+  chatCollapse: '작게 하기',
+  chatDismissGreeting: '인사 닫기',
 };
 
 export default labels;

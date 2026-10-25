@@ -25,6 +25,7 @@ import {
   ChatComposer,
   ChatPage,
   ChatThread,
+  ChatWidget,
   Checklist,
   CodeBlock,
   ColorPicker,
@@ -392,6 +393,11 @@ if (/class="g-scroll"[^>]*data-orientation="both"><div class="g-scroll-viewport"
 const pageScrollHtml = renderToString(h(PageScrollbar));
 if (pageScrollHtml === '') ok('PageScrollbar renders nothing on the server (the bar mounts into body on the client)');
 else fail(`PageScrollbar rendered markup on the server: ${pageScrollHtml}`);
+
+// チャットのウィジェット（E-09）。起点とあいさつは画面に固定するので body の末尾へ置き、サーバーでは何も描かない。
+const widgetHtml = renderToString(h(ChatWidget, { title: 'Atlas のアシスタント', greeting: 'こんにちは' }, h(ChatThread, { label: '会話', messages: [], currentUserId: 'me' })));
+if (widgetHtml === '') ok('ChatWidget renders nothing on the server (the launcher mounts into body on the client)');
+else fail(`ChatWidget rendered markup on the server: ${widgetHtml}`);
 
 // ページの部品の 2 段目（U-17〜U-24）と、タグ・パスワードの強さ（I-21 / I-22）。
 // 起点の脇に出る部品は、閉じている間は起点だけを描く（ツールチップの文は説明として DOM に置く）。

@@ -1005,13 +1005,32 @@
   padding: 8px 12px 12px;
   border-block-start: 1px solid var(--s-line);
 }
+/* 何も話していない間の窓（ScrollArea。U-35） */
 .s-chat-empty {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-block-size: 0;
   padding: 20px;
-  overflow-y: auto;
+}
+/* チャットボットの見本（E-09）。起点と小窓はページの右下に出るので、台にはボタンだけを置く */
+.s-chatbot-demo {
+  display: grid;
+  justify-items: center;
+}
+.s-chatbot-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+.s-chatbot-empty > :first-child {
+  margin-block-start: auto;
+}
+.s-chatbot-hello {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-align: center;
 }
 /* 上下の auto の余白で真ん中に置く。収まらなければ余白が 0 になって上から並ぶ（center だと上が切れて戻れない） */
 .s-chat-empty > :first-child {

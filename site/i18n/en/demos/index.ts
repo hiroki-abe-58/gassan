@@ -9,6 +9,7 @@ import chartRevenue from './chartRevenue';
 import chartSignups from './chartSignups';
 import chartWidgets from './chartWidgets';
 import chatAssistant from './chatAssistant';
+import chatBot from './chatBot';
 import chatTeam from './chatTeam';
 import checklistStart from './checklistStart';
 import dashboardSample from './dashboardSample';
@@ -65,6 +66,7 @@ export default {
   chartSignups,
   chartWidgets,
   chatAssistant,
+  chatBot,
   chatTeam,
   checklistStart,
   choiceForm,

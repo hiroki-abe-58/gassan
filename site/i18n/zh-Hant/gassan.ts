@@ -171,6 +171,12 @@ const labels: GassanLabels = {
     names.length === 1 ? `${names[0] ?? ''} 正在輸入` : names.length === 2 ? `${names[0] ?? ''} 和 ${names[1] ?? ''} 正在輸入` : `${names.length} 人正在輸入`,
   sendHint: (mode) => (mode === 'enter' ? '按 Enter 傳送，Shift+Enter 換行' : '按 Ctrl+Enter（Mac 為 ⌘+Enter）傳送，Enter 換行'),
   suggestions: '範例問題',
+  chatOpen: '開啟聊天',
+  chatClose: '關閉聊天',
+  chatUnread: (count) => `${count} 則未讀`,
+  chatExpand: '展開到右側',
+  chatCollapse: '縮小',
+  chatDismissGreeting: '關閉問候',
 };
 
 export default labels;

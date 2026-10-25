@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
-import { ChatComposer, ChatSuggestions, ChatThread, Phrase, type ChatMessage } from '@genelab/gassan';
+import { ChatComposer, ChatSuggestions, ChatThread, Phrase, ScrollArea, type ChatMessage } from '@genelab/gassan';
 import { useDemoText } from '../i18n';
 
 export default function ChatAssistant(): ReactNode {
@@ -46,7 +46,7 @@ export default function ChatAssistant(): ReactNode {
   return (
     <div className="s-chat-demo">
       {messages.length === 0 ? (
-        <div className="s-chat-empty">
+        <ScrollArea viewportClassName="s-chat-empty">
           <p className="s-chat-greeting">
             <Phrase>{t.greeting}</Phrase>
           </p>
@@ -58,7 +58,7 @@ export default function ChatAssistant(): ReactNode {
             ]}
             onSelect={(item) => ask(item.label)}
           />
-        </div>
+        </ScrollArea>
       ) : (
         <ChatThread label={t.label} messages={messages} currentUserId="me" />
       )}
