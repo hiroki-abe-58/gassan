@@ -1,4 +1,4 @@
-import { useEffect, useId, type ReactNode } from 'react';
+import { createContext, useEffect, useId, type ReactNode } from 'react';
 
 import { warnDuplicateKeys } from './internal/dom';
 import { useLabels } from './labels';
@@ -28,6 +28,12 @@ export interface ControlAria {
   'aria-invalid'?: boolean;
   'aria-required'?: boolean;
 }
+
+/**
+ * 浮くラベルの Field の中か。入力部品はこれを見て、空のときだけ「出る」空白のプレースホルダを持つ
+ * （値が空かどうかを CSS の :placeholder-shown で見るため。I-24）。
+ */
+export const FloatingLabelContext = createContext(false);
 
 /** Field と Fieldset が共有する、ヘルプとエラーの id と aria-describedby。 */
 function useMessages(baseId: string, help: ReactNode, error: ReactNode) {
@@ -76,6 +82,11 @@ export interface ModalFieldProps extends DataAttributes {
   required?: boolean;
   /** 「必須」のバッジを出すか。既定 true。false は全部が必須の短いフォーム（ログインなど）向けで、任意の項目にだけ「任意」を出す。 */
   requiredBadge?: boolean;
+  /**
+   * ラベルの置き場所。既定 'top'（入力欄の上）。'floating' は入力欄の枠の中に置き、フォーカスか値があると
+   * 左上へ縮んで退く（I-24）。前に飾りの無い Input / PasswordInput 向けで、ほかの部品では 'top' と同じ形で出す。
+   */
+  labelPlacement?: 'top' | 'floating';
   id?: string;
   className?: string;
 }
@@ -89,6 +100,10 @@ export interface ModalFieldProps extends DataAttributes {
  * エラーに role="alert" は付けない。
  * 入力のたびに読み上げが割り込むと、かえって入力できなくなる。
  * 送信時のまとめは <Modal.Alert> の役目。
+ *
+ * labelPlacement="floating" では、ラベルと入力欄を 1 つの器（.g-float）に入れて重ねる。ラベルが浮くか
+ * 中央に休むかは、入力欄のフォーカスと値から CSS が決める（I-24）。ラベルはいつも本物の <label> で、
+ * 名前と説明の配線は変わらない。
  */
 export function ModalField({
   label,
@@ -97,6 +112,7 @@ export function ModalField({
   error,
   required = false,
   requiredBadge = true,
+  labelPlacement = 'top',
   id,
   className,
   ...rest
@@ -104,23 +120,42 @@ export function ModalField({
   const reactId = useId();
   const fieldId = id ?? `gassan-field-${reactId}`;
   const { describedBy, messages } = useMessages(fieldId, help, error);
+  const floating = labelPlacement === 'floating';
 
-  return (
-    <div
-      {...domPassthrough(rest, 'Modal.Field')}
-      className={className ? `g-field ${className}` : 'g-field'}
-      data-invalid={error ? '' : undefined}
-    >
-      <label className="g-label" htmlFor={fieldId}>
-        <LabelContent label={label} required={required} requiredBadge={requiredBadge} />
-      </label>
-
+  const labelElement = (
+    <label className="g-label" htmlFor={fieldId}>
+      <LabelContent label={label} required={required} requiredBadge={requiredBadge} />
+    </label>
+  );
+  const control = (
+    <FloatingLabelContext.Provider value={floating}>
       {children({
         id: fieldId,
         'aria-describedby': describedBy,
         'aria-invalid': error ? true : undefined,
         'aria-required': required ? true : undefined,
       })}
+    </FloatingLabelContext.Provider>
+  );
+
+  return (
+    <div
+      {...domPassthrough(rest, 'Modal.Field')}
+      className={className ? `g-field ${className}` : 'g-field'}
+      data-invalid={error ? '' : undefined}
+      data-label-placement={floating ? 'floating' : undefined}
+    >
+      {floating ? (
+        <div className="g-float">
+          {labelElement}
+          {control}
+        </div>
+      ) : (
+        <>
+          {labelElement}
+          {control}
+        </>
+      )}
 
       {messages}
     </div>

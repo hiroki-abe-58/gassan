@@ -9,7 +9,7 @@
 日文、中文、韓文的換行與無障礙，都寫進了規格，並以測試驗證。
 
 - **Modal** — 五種類型。啟用閘門（不用 `disabled`，做出「讀到最後」或「勾選之後」才能按的按鈕）。始終保持無障礙名稱（accessible name）完整的標題截斷。8 種 `CloseReason`（拒絕關閉時一定會回傳原因）。依停駐點停靠的底部面板。不再寫死 60% 的黑色、依意圖區分的四個遮罩層（scrim）token
-- **表單元件** — 文字、密碼、搜尋、數字、驗證碼、核取方塊、單選按鈕、分段控制、評分、開關、標籤組（chips）、滑桿、下拉選單、組合框、具備日本國定假日與期間選擇的月曆、時間選擇、標籤、密碼強度、檔案。內部維持原生元素，只重新繪製外框與記號，顏色跟隨主題的強調色。清單與月曆顯示在 top layer，所以不會被 modal 裁切
+- **表單元件** — 文字、密碼、搜尋、數字、驗證碼、核取方塊、單選按鈕、分段控制、評分、開關、標籤組（chips）、滑桿、下拉選單、組合框、具備日本國定假日與期間選擇的月曆、時間選擇、標籤、密碼強度、檔案。內部維持原生元素，只重新繪製外框與記號，顏色跟隨主題的強調色。清單與月曆顯示在 top layer，所以不會被 modal 裁切。`Field` 也可以把標籤放進輸入框裡，聚焦或輸入後縮小並移到左上角（`labelPlacement="floating"`）
 - **UI 元件** — 按鈕、徽章、頭像、進度、骨架屏、卡片、數值摘要、空狀態、名稱與值的清單、時間軸、通知橫幅、頁籤、摺疊面板、工具提示、彈出框、選單、麵包屑、分頁、步驟條、頁面標題列、資料表格（排序、選取列、批次操作）、命令面板（⌘K）
 - **快顯通知** — 以計時條顯示訊息消失前的剩餘時間。指標停在上方或焦點位於其中時會暫停，滑動或手動都能關閉
 - **頁面範本** — 登入、建立帳號、兩步驟驗證、重設密碼、驗證電子郵件、登出、IANA 登記的全部 40 個 4xx / 5xx 與離線時的錯誤、維護、條款與隱私權政策、常見問題、價格、聯絡我們、更新紀錄。以及應用程式外框，和其中的設定、成員、方案與帳單、初始設定、接受邀請頁面
@@ -18,17 +18,17 @@
 
 **文件網站：<https://hiroki-abe-58.github.io/gassan/#/zh-Hant>**
 — 以類似 Material Design 3 指南的形式，整理了設計理念（modal 存在的理由、四層模型、五種類型、無障礙）、樣式（遮罩層、色彩與對比、主題、尺寸、換行、動態效果）、
-每個元件與表單元件可實際操作的示範與 API、頁面範本，以及 255 項行為的規格。
+每個元件與表單元件可實際操作的示範與 API、頁面範本，以及 256 項行為的規格。
 網站提供 [English](https://hiroki-abe-58.github.io/gassan/#/en)、[日本語](https://hiroki-abe-58.github.io/gassan/)、[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)、繁體中文、[한국어](https://hiroki-abe-58.github.io/gassan/#/ko) 與 [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) 版本（用頂端列的地球圖示按鈕切換）。
 網站可切換淺色 / 深色主題與主色；無論選哪個顏色，文字與填色都會經過推算，以符合 WCAG 的對比度要求。
 網站上所有的表格、數量與 API 說明，都是在建置時從規格書與型別定義自動產生，沒有任何手寫的數字。
 
-完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（255 項行為表、決策矩陣、品質評分準則）。
+完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（256 項行為表、決策矩陣、品質評分準則）。
 用 AI 助理寫程式時，請把這個檔案放進上下文（context）。
 
 | 文件 | 內容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 255 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 256 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 將原始需求逐項拆解，每項一列，標示已實作 / 透過組合達成 / 列入路線圖 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | 在 modal 中放入 gassan 表單元件的最小範例，以及從其他函式庫包裝 gassan 沒有的元件時的注意事項 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 原生 `<dialog>`、Base UI、React Aria、Radix 的比較（截至 2026-09-29，僅引用第一手資料） |

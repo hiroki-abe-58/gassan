@@ -871,7 +871,8 @@
     .g-viz-x,
     .g-viz-hlabels > span,
     .g-viz-tooltip-value,
-    .g-chat-jump
+    .g-chat-jump,
+    .g-float:has(> .g-input > .g-bare:first-child) > .g-label
   ) wbr { display: none; }
 
   /* --- 3.9 focus ---------------------------------------------------------
@@ -1386,6 +1387,76 @@
   .g-input-action[aria-pressed="true"] { color: var(--g-accent); }
   .g-input-action:disabled { opacity: 0.4; cursor: not-allowed; }
   .g-input-action:focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
+
+  /* --- 6.1b 浮くラベル（I-24） ---------------------------------------------
+   * Field の labelPlacement="floating"。ラベルを入力欄の枠の中に重ね、フォーカスか値があると左上へ縮んで退く。
+   * 入力の文字はいつも下の段に置くので、ラベルが退くのと同時に、文字とキャレットの場所が空く。
+   *
+   * 浮くか休むかは入力欄そのもの（:focus・:placeholder-shown・:autofill）から決め、JS の状態を持たない。
+   * 利用者が打っても、制御された value が外から変わっても、defaultValue・form.reset()・自動入力・
+   * パスワードマネージャー・IME の変換中でも同じ規則で拾え、サーバーで描いた最初の形からずれない。
+   * 浮いた形を既定にし、「空で、フォーカスも自動入力も無い」ときだけ中央に休ませる。空を判定できない入力
+   * （プレースホルダを持たないもの）は浮いたままになり、文字と重ならない側に倒れる。
+   * 重ねるのは前に飾りの無い .g-input だけ。ほかの部品と :has() を知らないブラウザでは、器は
+   * ラベルを上に置く従来の形（.g-field と同じ間隔）で出る。
+   * 曲線は --g-ease-settle。文字が行き過ぎて戻ると読みにくいので、expressive の段でもバネにしない（V-03）。 */
+  .g-float { display: grid; gap: 6px; position: relative; }
+  .g-float:has(> .g-input > .g-bare:first-child) {
+    --g-float-height: 3.5rem;
+    --g-float-inset: 0.875rem;  /* 枠の内側から、ラベルと文字の頭まで */
+    --g-float-end: 0px;         /* 後ろの飾りのぶん、ラベルを短くする */
+    --g-float-scale: 0.75;
+  }
+  /* 後ろの飾りとボタン（パスワードの表示の切替・単位・コンボボックスの開閉）の上には、ラベルを伸ばさない */
+  .g-float:has(> .g-input > .g-bare:first-child ~ :is(.g-input-adorn, .g-input-action)) { --g-float-end: 2.5rem; }
+  .g-float:has(> .g-input > .g-bare:first-child) > .g-input {
+    min-block-size: var(--g-float-height);
+    padding-inline-start: 0;
+    font-size: 1rem;
+  }
+  /* 文字の行（高さ 1.5rem）は、上の余白（1.5rem）の下にちょうど収める。浮いたラベルの行（上から 0.4375rem、高さ 1.125rem）と重ならない */
+  .g-float:has(> .g-input > .g-bare:first-child) > .g-input > .g-bare {
+    padding-block: 1.5rem 0.375rem;
+    padding-inline: var(--g-float-inset) 8px;
+    line-height: 1.5rem;
+  }
+  /* 休んでいる間は、渡されたプレースホルダも見せない（中央のラベルと重ねない）。強制カラーでも消えるよう opacity で */
+  .g-float:has(> .g-input > .g-bare:first-child) > .g-input > .g-bare:not(:focus)::placeholder { opacity: 0; }
+  .g-float:has(> .g-input > .g-bare:first-child) > .g-label {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: calc(var(--g-float-inset) + 1px);
+    display: block;
+    /* 縮めても置いた幅は変わらないので、縮んだ見た目が枠に収まる長さまで伸ばせる */
+    max-inline-size: calc((100% - 2 * var(--g-float-inset) - var(--g-float-end) - 2px) / var(--g-float-scale));
+    overflow: hidden;
+    color: var(--g-fg-muted);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    pointer-events: none;
+    transform-origin: left top;
+    translate: 0 0.4375rem;
+    scale: var(--g-float-scale);
+    transition:
+      translate var(--g-dur-fast) var(--g-ease-settle),
+      scale var(--g-dur-fast) var(--g-ease-settle),
+      color var(--g-dur-fast) linear;
+  }
+  .g-float:has(> .g-input > .g-bare:first-child) > .g-label:dir(rtl) { transform-origin: right top; }
+  /* 空で、フォーカスも自動入力も無いときだけ、ラベルを中央に休ませる（:is() の中は知らない擬似クラスを無視する） */
+  .g-float:has(> .g-input > .g-bare:first-child:placeholder-shown:not(:is(:focus, :autofill, :-webkit-autofill))) > .g-label {
+    max-inline-size: calc(100% - 2 * var(--g-float-inset) - var(--g-float-end) - 2px);
+    translate: 0 calc((var(--g-float-height) - 1.5rem) / 2);
+    scale: 1;
+  }
+  .g-float:has(> .g-input > .g-bare:first-child) > .g-label .g-label-badge { margin-inline-start: 0.5em; font-size: inherit; }
+  .g-field[data-invalid] > .g-float:has(> .g-input > .g-bare:first-child) > .g-label { color: var(--g-danger); }
+  /* 使えない間は、枠とラベルを一緒に薄くする（枠だけを薄くすると、枠が重なりの層を作り、先に描いたラベルを覆う） */
+  .g-float:has(> .g-input[data-disabled] > .g-bare:first-child) { opacity: 0.55; }
+  .g-float:has(> .g-input > .g-bare:first-child) > .g-input[data-disabled] { opacity: 1; }
 
   /* 検索: ネイティブの × と虫眼鏡は消し、自前の「消す」を値があるときだけ出す。I-05。 */
   .g-search .g-bare::-webkit-search-cancel-button,

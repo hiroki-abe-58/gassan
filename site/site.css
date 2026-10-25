@@ -1097,6 +1097,16 @@
   gap: 16px;
   inline-size: min(100%, 22rem);
 }
+/* 浮くラベルの見本。サインインの欄くらいの幅で、ボタンは左に寄せる */
+.s-float-demo {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  inline-size: min(100%, 24rem);
+}
+.s-float-demo > .g-field {
+  justify-self: stretch;
+}
 .s-color-sample {
   display: grid;
   gap: 8px;

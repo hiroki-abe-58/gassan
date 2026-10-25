@@ -119,6 +119,10 @@ function buildTree(open) {
         h(Modal.Switch, { checked: false, onCheckedChange: noop }, '通知'),
         // 入力部品（I-01〜I-15）。ポップアップは閉じている間は描かないので、サーバーでは起点だけが出る。
         h(Modal.Field, { label: '金額' }, (control) => h(Modal.Input, { ...control, start: '¥', end: '円' })),
+        // 浮くラベル（I-24）。浮くかどうかは CSS が決めるので、サーバーでは器とプレースホルダが出ていればよい
+        h(Modal.Field, { label: 'メールまたは電話番号', labelPlacement: 'floating' }, (control) =>
+          h(Modal.Input, { ...control, defaultValue: 'hana@example.com' }),
+        ),
         h(Modal.PasswordInput, { 'aria-label': 'パスワード' }),
         h(Modal.SearchInput, { 'aria-label': '検索' }),
         h(Modal.Textarea, { 'aria-label': 'メモ', maxLength: 140, defaultValue: 'こんにちは' }),
@@ -206,6 +210,8 @@ const expectations = [
   ['--g-fill-end:40%', 'slider fill'],
   ['class="g-file-input"', 'file input'],
   ['<fieldset', 'fieldset for choice groups'],
+  ['data-label-placement="floating"><div class="g-float"><label class="g-label"', 'floating label wrapped with its input'],
+  ['placeholder=" "', 'blank placeholder that lets CSS see an empty floating field'],
 ];
 
 for (const [needle, label] of expectations) {

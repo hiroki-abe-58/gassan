@@ -38,6 +38,7 @@
 | 日付（カレンダー） | `Modal.DatePicker` | I-13 |
 | 日付・時刻・色（ネイティブ） | `Modal.Input` に `type="date"` / `"time"` / `"color"` | I-15 |
 | ファイル | `Modal.FileDrop` | I-14 |
+| ラベルを欄の中に置く（浮くラベル） | `Modal.Field` の `labelPlacement="floating"` と `Modal.Input` / `Modal.PasswordInput` | I-24 |
 
 ---
 
@@ -190,6 +191,32 @@ Fieldset の外で使うなら `aria-label` を渡す（そのときだけ `role
 ```
 
 ドロップはネイティブの `accept` を通らないので、gassan が同じ規則を当てる。外れたものは `onReject` に渡る（I-14）。
+
+### 2-10. 浮くラベル
+
+ラベルを入力欄の中に置き、フォーカスか値があると左上へ縮めて退かせる形。サインインの欄のように、短い欄を
+縦に並べるときに使う。`Modal.Field` に `labelPlacement="floating"` を渡すだけで、中身と配線は上のラベルと同じ（I-24）。
+
+```tsx
+<Modal.Field label="メールまたは電話番号" labelPlacement="floating" required requiredBadge={false}>
+  {(control) => (
+    <Modal.Input {...control} type="text" autoComplete="username" value={account} onChange={(e) => setAccount(e.target.value)} />
+  )}
+</Modal.Field>
+
+<Modal.Field label="パスワード" labelPlacement="floating" required requiredBadge={false}>
+  {(control) => <Modal.PasswordInput {...control} autoComplete="current-password" />}
+</Modal.Field>
+```
+
+浮くか休むかは、入力欄のフォーカスと値から CSS が決める（`:placeholder-shown` と `:has()`）。JS の状態を持たないので、
+制御・非制御・`defaultValue`・`form.reset()`・自動入力・パスワードマネージャー・IME の変換中・SSR のどれでも、見えている値とずれない。
+空を見分けるため、`Modal.Input` と `Modal.PasswordInput` は浮くラベルの中でだけ、空白 1 文字のプレースホルダを持つ。
+自分のプレースホルダを渡せば、ラベルが退いている間（フォーカスがあって空のとき）だけ見える。
+
+重ねられるのは、前に飾りの無い `Modal.Input` と `Modal.PasswordInput` で、後ろの単位や表示の切替はよい。
+前に記号のある `Modal.Input` や `Modal.Select` などに渡すと、上のラベルの形で出る（重ならない側に倒す）。
+ページの上では、中立の名前（`Field`・`Input`・`PasswordInput`）で同じように書ける。
 
 ---
 
