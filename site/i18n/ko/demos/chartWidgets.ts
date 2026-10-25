@@ -11,7 +11,7 @@ export default {
   plans: '요금제별 워크스페이스',
   free: 'Free',
   pro: 'Pro',
-  business: 'Business',
+  max: 'Max',
   enterprise: 'Enterprise',
   workspaces: '워크스페이스',
   pages: '많이 본 페이지',

@@ -7,5 +7,5 @@ export default {
   month: 'Month',
   free: 'Free',
   pro: 'Pro',
-  business: 'Business',
+  max: 'Max',
 } satisfies typeof ja;

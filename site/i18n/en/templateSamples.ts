@@ -63,13 +63,13 @@ export default {
     mail: 'Write a notice to customers with unpaid invoices',
     mailDescription: 'Polite and short',
     answer:
-      'Last month’s revenue was ¥21.4 million, up 8% from the month before. 60% of the increase came from the annual plan launched in October. 14 workspaces also upgraded from Pro to Business, so the number of seats has grown. On the other hand, the rate of moving from Free to Pro fell by 0.4 percentage points, so there is room to revisit the guidance given during the trial.',
+      'Last month’s revenue was ¥21.4 million, up 8% from the month before. 60% of the increase came from the annual plan launched in October. 14 workspaces also upgraded from Pro to Max, so the number of seats has grown. On the other hand, the rate of moving from Free to Pro fell by 0.4 percentage points, so there is room to revisit the guidance given during the trial.',
     history1: 'Look into the reasons for churn',
     history1Answer:
       'There were 23 cancellations last month, and half of them gave “fewer people are using it” as the reason. Telling customers before they cancel that they can reduce their seats could prevent these.',
     history2: 'Suggest changes to the pricing table',
     history2Answer:
-      'Here’s one option: add a Business plan above Pro, starting at 50 seats. Yearly billing gets 2 months off, and people already on Pro keep their current price.',
+      'Here’s one option: add a Max plan between Pro and Enterprise with 5× the usage limits. Yearly billing gets 2 months off, and people already on Pro keep their current price.',
     history3: 'Draft the onboarding email',
     history3Answer:
       'I set the subject line to “Welcome to Atlas: your first 3 steps”. It walks through creating a project, inviting members and setting up notifications, in that order.',
@@ -157,6 +157,12 @@ export default {
       features: ['Unlimited people', 'Unlimited projects', '100 GB of storage', 'Priority support'],
       cta: 'Choose Pro',
     },
+    max: {
+      name: 'Max',
+      description: 'Pro with higher limits, for teams that use it heavily.',
+      features: ['Everything in Pro', '5× the usage of Pro', '1 TB of storage', 'Highest-priority support'],
+      cta: 'Choose Max',
+    },
     enterprise: {
       name: 'Enterprise',
       description: 'Control and security for large organizations.',
@@ -166,6 +172,7 @@ export default {
     compare: {
       members: 'People',
       storage: 'Storage',
+      usage: 'Usage limit',
       sso: 'SSO (SAML)',
       audit: 'Audit logs',
       support: 'Support',
@@ -173,6 +180,11 @@ export default {
       email: 'Email',
       priority: 'Priority',
       dedicated: 'Dedicated',
+      standard: 'Standard',
+      usage5: '5×',
+      usage25: '25×',
+      custom: 'Custom',
+      highest: 'Highest',
     },
     faq: [
       { q: 'Can I change plans later?', a: 'Yes, at any time. The difference is prorated by the day.' },
