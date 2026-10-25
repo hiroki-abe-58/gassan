@@ -309,6 +309,8 @@ export interface ModalSwitchProps extends DataAttributes {
   children: ReactNode;
   className?: string;
   id?: string;
+  /** 補足の文の id。スイッチの説明として読ませる（名前には混ぜない）。 */
+  'aria-describedby'?: string;
 }
 
 /** role="switch" のトグル。ネイティブ button なので Space / Enter が既に効く。 */
@@ -318,6 +320,7 @@ export function ModalSwitch({
   children,
   className,
   id,
+  'aria-describedby': describedBy,
   ...rest
 }: ModalSwitchProps): ReactNode {
   const phrase = usePhrase();
@@ -328,6 +331,7 @@ export function ModalSwitch({
       id={id}
       role="switch"
       aria-checked={checked}
+      aria-describedby={describedBy}
       className={className ? `g-switch ${className}` : 'g-switch'}
       onClick={() => onCheckedChange(!checked)}
     >

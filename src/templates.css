@@ -446,7 +446,8 @@
   :is(.g-doc-content, .g-doc-intro, .g-change-content) { line-height: 1.85; }
   :is(.g-doc-content, .g-doc-intro, .g-change-content) > * { margin: 0; }
   :is(.g-doc-content, .g-doc-intro, .g-change-content) > * + * { margin-block-start: 0.8em; }
-  :is(.g-doc-content, .g-change-content) :is(ul, ol) { padding-inline-start: 1.4em; }
+  /* 本文の箇条書きの字下げ。詳細度を 0 にして、本文に置いた部品の一覧（送信先の一覧・タイムラインなど）の形を上書きしない */
+  :where(.g-doc-content, .g-change-content) :where(ul, ol) { padding-inline-start: 1.4em; }
   @container (min-width: 960px) {
     .g-doc[data-toc] { grid-template-columns: 15rem minmax(0, 1fr); column-gap: 48px; }
     .g-doc[data-toc] > .g-doc-header { grid-column: 1 / -1; }
@@ -671,13 +672,13 @@
   /* --- T11〜T13 アプリの中のページ（P-13〜P-15） -------------------------------------
    * 設定・メンバー・請求は AppShell の main に置く中身。自分を器にして、置いた所の幅で形を決める。
    * 見出しの帯の下は、知らせの帯・数・表・節を同じ間隔で積む。 */
-  :is(.g-settings, .g-members, .g-billing) {
+  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow) {
     container-type: inline-size;
     display: grid;
     gap: 16px;
     min-inline-size: 0;
   }
-  :is(.g-settings, .g-members, .g-billing) > .g-page-header { margin-block-end: 8px; }
+  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow) > .g-page-header { margin-block-end: 8px; }
   .g-app-subtitle { margin: 0; font-size: 1.125rem; font-weight: 700; line-height: 1.4; }
 
   /* T11 settings（P-13）。節ごとに見出しと説明を左、中身を右に置く（器が狭いときは縦に積む）。節の間は 1px の線、
@@ -1017,12 +1018,88 @@
     .g-mail-folders { display: grid; }
     .g-mail-folder-select { display: none; }
   }
+
+  /* --- T20 注文の最終確認（P-32）と解約の手続き（P-35） --------------------------------
+   * 確認の節は見出しと「変更」を 1 行に、中身をその下に置き、節の間は 1px の線で分ける（枠や地の色で囲まない）。
+   * 金額と確定のボタンは、広い器では右の列に置いてスクロールしても見えるようにする。金額の数字は 1 行に保つ。 */
+  .g-order-review-layout { display: grid; gap: 24px; align-items: start; }
+  .g-order-review-main { display: grid; min-inline-size: 0; }
+  .g-order-section { display: grid; gap: 10px; padding-block: 18px; border-block-start: 1px solid var(--g-border); }
+  .g-order-section:first-child { padding-block-start: 0; border-block-start: 0; }
+  .g-order-section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; }
+  .g-order-items { inline-size: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+  .g-order-items :is(th, td) { padding: 10px 6px; border-block-end: 1px solid var(--g-border); text-align: start; vertical-align: top; }
+  .g-order-items thead th { padding-block-start: 0; color: var(--g-fg-muted); font-size: 0.8125rem; font-weight: 600; }
+  .g-order-items :is(th, td):not(:first-child) { text-align: end; }
+  .g-order-item-name { display: block; font-weight: 600; }
+  .g-order-item-note { display: block; color: var(--g-fg-muted); font-size: 0.8125rem; font-weight: 400; }
+  .g-order-number,
+  .g-order-amounts dd { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* Chrome は nowrap の中でも <wbr> で折るので消す（§10-35） */
+  .g-order-number wbr,
+  .g-order-amounts dd wbr { display: none; }
+  .g-order-address { display: grid; gap: 2px; font-style: normal; line-height: 1.6; }
+  .g-order-text { margin: 0; line-height: 1.7; }
+  .g-order-summary { display: grid; gap: 14px; padding: 18px; border: 1px solid var(--g-border); border-radius: var(--g-radius); background: var(--g-surface); }
+  .g-order-amounts { display: grid; gap: 8px; margin: 0; }
+  .g-order-amounts > div { display: flex; justify-content: space-between; gap: 16px; }
+  .g-order-amounts dd { margin: 0; text-align: end; }
+  .g-order-total { padding-block-start: 10px; border-block-start: 1px solid var(--g-border); font-size: 1.125rem; font-weight: 700; }
+  .g-order-submit { display: grid; gap: 10px; }
+  .g-order-submit-note { margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.6; }
+  @container (min-width: 760px) {
+    .g-order-review-layout { grid-template-columns: minmax(0, 1fr) minmax(16rem, 20rem); }
+    .g-order-summary { position: sticky; inset-block-start: 16px; }
+  }
+
+  /* T20 解約の手続き（P-35）。手順・見出し・中身・ボタンを縦に積み、手順の帯ごと読む幅を 40rem までにする。提案は線で囲んだ項目 */
+  .g-cancel-flow { max-inline-size: 40rem; }
+  .g-cancel-step { display: grid; gap: 14px; }
+  .g-cancel-text { margin: 0; line-height: 1.7; }
+  .g-cancel-offers { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+  .g-cancel-offer { display: grid; justify-items: start; gap: 8px; padding: 16px; border: 1px solid var(--g-border); border-radius: var(--g-radius); }
+  .g-cancel-offer-title { margin: 0; font-size: 1rem; font-weight: 700; }
+  .g-cancel-actions { display: flex; flex-wrap: wrap; gap: 8px 12px; padding-block-start: 4px; }
+
+  /* --- T21 Cookie と外部送信の同意（P-33）と送信先の一覧（P-34） -------------------------
+   * 帯は top layer の popover。画面の下の端（右から左の文書では左下）に、面の色の札として置く。
+   * 種類の説明は小さく控えめに。送信先は項目ごとに線で囲み、狭い器でも横に送らない。 */
+  .g-cookie-consent[popover] {
+    display: grid;
+    gap: 10px;
+    inline-size: min(30rem, calc(100vw - 32px));
+    inset-block: auto 16px;
+    inset-inline: auto 16px;
+    margin: 0;
+    padding: 16px 18px;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius);
+    background: var(--g-surface);
+    color: var(--g-fg);
+    box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.3);
+  }
+  .g-cookie-consent[popover]:not(:popover-open):not([data-inline]) { display: none; }
+  .g-cookie-title { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.4; }
+  .g-cookie-text { margin: 0; font-size: 0.875rem; line-height: 1.7; }
+  .g-cookie-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .g-cookie-categories { display: grid; margin: 0; padding: 0; list-style: none; }
+  .g-cookie-category { display: grid; gap: 4px; padding-block: 12px; border-block-start: 1px solid var(--g-border); }
+  .g-cookie-category:first-child { padding-block-start: 4px; border-block-start: 0; }
+  .g-cookie-category-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .g-cookie-category-name { font-weight: 600; }
+  .g-cookie-always { color: var(--g-fg-muted); font-size: 0.8125rem; }
+  .g-cookie-category-text { margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.6; }
+  .g-transmissions { display: grid; gap: 12px; margin: 0; padding: 0; line-height: 1.6; list-style: none; }
+  .g-transmission { display: grid; gap: 8px; padding: 14px 16px; border: 1px solid var(--g-border); border-radius: var(--g-radius); }
+  .g-transmission-title { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.4; }
+  .g-transmission-service { margin-inline-start: 8px; color: var(--g-fg-muted); font-size: 0.875rem; font-weight: 500; }
+  .g-transmission-links { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; font-size: 0.875rem; }
 }
 
 @layer gassan.theme {
   /* 印刷するときは、外枠と目次を省いて本文だけにする（規約やプライバシーポリシーを紙で残すとき）。 */
   @media print {
-    :is(.g-site-header, .g-site-footer, .g-doc-toc, .g-skip, .g-site-menu, .g-app-sidebar, .g-app-topbar) { display: none; }
+    :is(.g-site-header, .g-site-footer, .g-doc-toc, .g-skip, .g-site-menu, .g-app-sidebar, .g-app-topbar, .g-cookie-consent) { display: none; }
     .g-page { min-block-size: 0; background: none; }
   }
 }

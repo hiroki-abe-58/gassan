@@ -18,17 +18,17 @@ Line breaking for Japanese, Chinese and Korean and accessibility are written dow
 
 **Documentation site: <https://hiroki-abe-58.github.io/gassan/#/en>**
 — design principles (why modals exist, the 4-layer model, the 5 kinds, accessibility), styles (scrim, color and contrast, theme, sizing, line breaking, motion),
-live demos and the API of every component and form control, the page templates, and the specification of 290 behaviors, laid out like the Material Design 3 guidelines.
+live demos and the API of every component and form control, the page templates, and the specification of 294 behaviors, laid out like the Material Design 3 guidelines.
 The site is available in English, [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) and [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) (switch with the globe button in the top bar).
 It has a light / dark theme and a choice of primary colors; whichever color you pick, its text and fills are derived to meet the WCAG contrast ratios.
 Every table, count and API description on the site is generated at build time from the specification and the type definitions; no number is written by hand.
 
-The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 290 behaviors, a decision matrix and a quality rubric).
+The full design lives in [`modal.skill.md`](./modal.skill.md) (a table of 294 behaviors, a decision matrix and a quality rubric).
 Put that file in the context when coding with an AI assistant.
 
 | Document | Contents |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 290 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | Maps each of the 294 behaviors in `modal.skill.md` to the tests and CSS that satisfy it. Verified mechanically by `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | The original requirements broken down, one row each: implemented / achieved by composition / on the roadmap |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | Minimal examples of putting gassan's form controls inside a modal, and notes on wrapping components from other libraries for what gassan does not provide |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | Native `<dialog>` vs Base UI vs React Aria vs Radix (as of 2026-09-29, primary sources only) |
@@ -278,6 +278,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | Sign-in and account pages (`templates.css`) |
 | `AuthDialog` `EmailFirstPage` `MagicLinkPage` `PhoneSignInPage` `QuickSignUpPage` `RegistrationWizardPage` `PasskeyPromptPage` `AccountChooserPage` `ReauthDialog` `GuestAccountCard` | Other ways into sign-in and sign-up: a dialog opened from the header, asking for the email address first, passwordless email links and SMS codes, an email-only provisional sign-up followed by a step-by-step registration that saves as you go, passkeys, an account chooser, re-authentication and expired sessions, and creating an account after a guest checkout |
 | `RegistrationPresetPage` `REGISTRATION_PRESETS` `OccupationField` `PurposeField` `PepsField` `TaxResidencyField` `UsPersonField` `DeclarationField` `MyNumberField` `CompanyFields` `IdentityMethodField` `GuardianFields` `MarketingConsentField` | Registration by industry after an email-only sign-up. Fifteen presets (banking, securities, crypto, money transfer, credit cards, online shops, alcohol, B2B, buyback, online consultations, matching, jobs, rentals, tickets, mobile) lay out the steps and fields Japanese law asks for before a transaction, explain why each is asked with the law behind it, and add parental consent, minimum ages and identity verification methods that switch on the law's effective dates. Guidance as of October 2026, not legal advice |
+| `OrderReviewPage` `CookieConsent` `ExternalTransmissionList` `CancelSubscriptionPage` | Buying and consent: the final order review that Japan's Act on Specified Commercial Transactions (Article 12-6) requires, with each required item in its own headed section; a banner for cookies and data sent to third parties where Allow all and Necessary only carry equal weight, with a dialog to choose each category; the list of recipients the Telecommunications Business Act (Article 27-12) asks you to publish; and a cancellation flow (reason, one offer, confirmation) that always keeps the way out in view. Guidance as of October 2026, not legal advice |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | Errors, maintenance and public pages |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` | The app shell and the pages inside it |
 | `GassanProvider` | Replaces UI strings (Japanese by default; `englishLabels` is bundled) and switches line breaking (`lineBreak`) |

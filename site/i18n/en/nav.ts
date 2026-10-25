@@ -61,6 +61,7 @@ export default {
     templatesAuth: 'Sign-in and sign-up',
     templatesAuthPatterns: 'Sign-in and sign-up patterns',
     templatesRegistrationPresets: 'Registration by industry',
+    templatesCommerce: 'Commerce and consent',
     templatesStatus: 'Errors and maintenance',
     templatesPublic: 'Pricing, FAQ and legal',
     templatesApp: 'App shell',

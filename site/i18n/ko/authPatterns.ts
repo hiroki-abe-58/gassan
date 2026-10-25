@@ -10,12 +10,12 @@ export default {
     rows: [
       {
         service: '일반 웹 서비스·SaaS',
-        pattern: '`AuthDialog`(창)',
+        pattern: '`AuthDialog` (창)',
         why: '지금 보고 있는 페이지를 떠나지 않고 로그인과 가입을 할 수 있고, 끝나면 하던 작업으로 돌아갈 수 있다',
       },
       {
         service: '기업용 SaaS',
-        pattern: '`EmailFirstPage`(이메일 주소 먼저)',
+        pattern: '`EmailFirstPage` (이메일 주소 먼저)',
         why: '회사 도메인을 조직의 ID 제공자(SSO)로 보내고, 로그인과 가입의 입구를 하나로 만들 수 있다',
       },
       {
@@ -25,12 +25,12 @@ export default {
       },
       {
         service: '가끔만 쓰는 서비스',
-        pattern: '`MagicLinkPage`(메일 링크)',
+        pattern: '`MagicLinkPage` (메일 링크)',
         why: '비밀번호를 잊는 사람이 많다. 메일의 링크와 코드로 로그인할 수 있어 재설정하는 수고가 없다',
       },
       {
         service: '스마트폰 중심 서비스',
-        pattern: '`PhoneSignInPage`(SMS)·패스키',
+        pattern: '`PhoneSignInPage` (SMS)·패스키',
         why: '입력할 것을 줄일 수 있다. 코드는 SMS에서 자동으로 들어가고, 두 번째부터는 지문이나 얼굴로 로그인할 수 있다',
       },
       {

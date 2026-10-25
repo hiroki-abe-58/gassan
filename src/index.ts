@@ -178,6 +178,8 @@ export {
   OCCUPATIONS,
   PURPOSES,
 } from './templates/registration-labels';
+export { OrderReviewPage, CancelSubscriptionPage } from './templates/commerce';
+export { CookieConsent, ExternalTransmissionList, CONSENT_CATEGORIES } from './templates/consent';
 export { ErrorPage, MaintenancePage } from './templates/status';
 export { SiteLayout } from './templates/site-layout';
 export { DocumentPage, FaqPage, PricingPage, ContactPage, ChangelogPage } from './templates/public';
@@ -469,6 +471,17 @@ export type {
   IdentityMethod,
   IdentityRegime,
 } from './templates/registration-labels';
+export type {
+  OrderReviewPageProps,
+  OrderItem,
+  OrderAmount,
+  OrderSubscription,
+  OrderReviewSection,
+  CancelSubscriptionPageProps,
+  CancelReason,
+  RetentionOffer,
+} from './templates/commerce';
+export type { CookieConsentProps, CookieConsentValue, ConsentCategory, ExternalTransmissionListProps, ExternalTransmission } from './templates/consent';
 export type { ErrorPageProps, MaintenancePageProps, MaintenanceUpdate } from './templates/status';
 export type { ErrorStatus, TemplateLabels } from './templates/labels';
 export type { SubmitResult } from './templates/form';

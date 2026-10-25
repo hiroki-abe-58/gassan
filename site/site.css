@@ -446,7 +446,11 @@
 .s-prose > .s-table-scroll {
   margin-block: 16px 20px;
 }
-:is(.s-prose, .s-lead, .s-section-intro, .s-keypoint, .s-guideline-text, .s-card, td, .s-api-doc) :not(pre) > code {
+/* 文節でまとめた要素の中のコードと、文の器の直下のコード（文節にまとめられなかった最後のコード）の両方に当てる。
+ * 表は文言の Markdown を描く DataTable のセルだけ（API の表の型と既定値は、地を付けない素のコードのまま） */
+:is(.s-prose, .s-lead, .s-section-intro, .s-keypoint, .s-guideline-text, .s-card, td, .s-api-doc) :not(pre) > code,
+:is(.s-prose, .s-lead, .s-section-intro, .s-keypoint, .s-guideline-text) > code,
+.s-data-table td > code {
   padding: 0.1em 0.35em;
   border-radius: 6px;
   background: var(--s-surface-2);

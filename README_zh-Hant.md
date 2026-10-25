@@ -18,17 +18,17 @@
 
 **文件網站：<https://hiroki-abe-58.github.io/gassan/#/zh-Hant>**
 — 以類似 Material Design 3 指南的形式，整理了設計理念（modal 存在的理由、四層模型、五種類型、無障礙）、樣式（遮罩層、色彩與對比、主題、尺寸、換行、動態效果）、
-每個元件與表單元件可實際操作的示範與 API、頁面範本，以及 290 項行為的規格。
+每個元件與表單元件可實際操作的示範與 API、頁面範本，以及 294 項行為的規格。
 網站提供 [English](https://hiroki-abe-58.github.io/gassan/#/en)、[日本語](https://hiroki-abe-58.github.io/gassan/)、[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)、繁體中文、[한국어](https://hiroki-abe-58.github.io/gassan/#/ko) 與 [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) 版本（用頂端列的地球圖示按鈕切換）。
 網站可切換淺色 / 深色主題與主色；無論選哪個顏色，文字與填色都會經過推算，以符合 WCAG 的對比度要求。
 網站上所有的表格、數量與 API 說明，都是在建置時從規格書與型別定義自動產生，沒有任何手寫的數字。
 
-完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（290 項行為表、決策矩陣、品質評分準則）。
+完整的設計寫在 [`modal.skill.md`](./modal.skill.md)（294 項行為表、決策矩陣、品質評分準則）。
 用 AI 助理寫程式時，請把這個檔案放進上下文（context）。
 
 | 文件 | 內容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 290 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 294 項行為分別由哪些測試、哪些 CSS 滿足的對照表。由 `npm run check:trace` 自動驗證 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 將原始需求逐項拆解，每項一列，標示已實作 / 透過組合達成 / 列入路線圖 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | 在 modal 中放入 gassan 表單元件的最小範例，以及從其他函式庫包裝 gassan 沒有的元件時的注意事項 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 原生 `<dialog>`、Base UI、React Aria、Radix 的比較（截至 2026-09-29，僅引用第一手資料） |
@@ -278,6 +278,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | 登入與帳號相關的頁面（`templates.css`） |
 | `AuthDialog` `EmailFirstPage` `MagicLinkPage` `PhoneSignInPage` `QuickSignUpPage` `RegistrationWizardPage` `PasskeyPromptPage` `AccountChooserPage` `ReauthDialog` `GuestAccountCard` | 登入與註冊入口的多種形式：從頁首開啟的對話框、先詢問電子郵件的登入、免密碼的電子郵件連結與簡訊驗證碼、只填電子郵件的暫時註冊與邊填邊儲存的分步正式註冊、密碼金鑰、帳號選擇、重新驗證與登入逾時、訪客購買後建立帳號 |
 | `RegistrationPresetPage` `REGISTRATION_PRESETS` `OccupationField` `PurposeField` `PepsField` `TaxResidencyField` `UsPersonField` `DeclarationField` `MyNumberField` `CompanyFields` `IdentityMethodField` `GuardianFields` `MarketingConsentField` | 依產業的正式註冊。在只填電子郵件的暫時註冊之後，依 15 個產業（銀行、證券、加密資產、匯款、信用卡、網購、酒類、企業服務、收購、線上看診、交友配對、求職、租屋、票券、手機）組織日本法律在交易前要求的步驟與欄位，並以法律依據說明為何詢問。未成年人的法定代理人同意、年齡下限與身分驗證方式（隨施行日期切換）也依產業設定。為 2026 年 10 月時的參考，並非法律意見 |
+| `OrderReviewPage` `CookieConsent` `ExternalTransmissionList` `CancelSubscriptionPage` | 購買與同意：日本《特定商業交易法》第 12 條之 6 要求的訂單最終確認頁面（每個須顯示的事項各占一個帶標題的小節）；Cookie 與外部傳送的同意橫幅，「全部允許」與「僅允許必要項目」分量相同，並可在視窗中依類別選擇；《電氣通信事業法》第 27 條之 12 要求公布的傳送對象清單；以及依原因、挽留方案（僅一次）、確認的順序進行、始終不隱藏出口的解約流程。為 2026 年 10 月時的參考，並非法律意見 |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | 錯誤、維護與公開頁面 |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` | 應用程式外框及其中的頁面 |
 | `GassanProvider` | 替換 UI 字串（預設為日文，內附 `englishLabels`），並切換換行方式（`lineBreak`） |

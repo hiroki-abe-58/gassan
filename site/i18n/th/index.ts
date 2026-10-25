@@ -6,6 +6,7 @@ import button from './button';
 import chart from './chart';
 import choice from './choice';
 import color from './color';
+import commerce from './commerce';
 import common from './common';
 import datePicker from './datePicker';
 import demos from './demos';
@@ -115,6 +116,7 @@ export default {
   authPatterns,
   registration,
   registrationPresets,
+  commerce,
   provider,
   spec,
   verification,

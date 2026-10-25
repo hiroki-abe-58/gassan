@@ -253,6 +253,29 @@ const EXTRA_INTERFACES = new Set([
   'FaqItem',
   'DocumentSection',
   'ChangelogEntry',
+  // 購入と同意（P-32〜P-35）。
+  'OrderItem',
+  'OrderAmount',
+  'OrderSubscription',
+  'CancelReason',
+  'RetentionOffer',
+  'ExternalTransmission',
+  // 日本の入力（I-25〜I-31）。
+  'JapaneseAddress',
+  'PostalAddress',
+  'PersonName',
+  'BankAccount',
+  // ログインと登録の形（P-21〜P-30）と業種ごとの登録（P-31・I-32〜I-37）。
+  'RegistrationStep',
+  'RememberedAccount',
+  'RegistrationPreset',
+  'RegistrationPresetStep',
+  'LawReference',
+  'RegistrationValues',
+  'TaxResidency',
+  'UsPerson',
+  'CompanyInfo',
+  'GuardianConsent',
   // コマンドパレット（U-27）。
   'CommandItem',
   // データの表（U-26）とアプリの枠（P-12）。

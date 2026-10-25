@@ -61,6 +61,7 @@ export default {
     templatesAuth: 'เข้าสู่ระบบและสมัครสมาชิก',
     templatesAuthPatterns: 'รูปแบบการเข้าสู่ระบบและสมัครสมาชิก',
     templatesRegistrationPresets: 'การลงทะเบียนตามประเภทธุรกิจ',
+    templatesCommerce: 'การซื้อและความยินยอม',
     templatesStatus: 'ข้อผิดพลาดและการปิดปรับปรุง',
     templatesPublic: 'ราคา คำถามที่พบบ่อย และข้อกำหนด',
     templatesApp: 'โครงแอป',
