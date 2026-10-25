@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { ScrollArea, Segmented, type ScrollbarVisibility } from '@genelab/gassan';
+import { Phrase, ScrollArea, Segmented, type ScrollbarVisibility } from '@genelab/gassan';
 import { useDemoText } from '../i18n';
 
 export default function ScrollActivity(): ReactNode {
@@ -26,7 +26,9 @@ export default function ScrollActivity(): ReactNode {
           {t.items.map((item, index) => (
             <li key={item}>
               <time>{`${String(9 + Math.floor(index / 4))}:${String((index % 4) * 15).padStart(2, '0')}`}</time>
-              <span>{item}</span>
+              <span>
+                <Phrase>{item}</Phrase>
+              </span>
             </li>
           ))}
         </ol>
