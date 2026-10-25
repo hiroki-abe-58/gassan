@@ -1,4 +1,4 @@
-import { createContext, useEffect, useId, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useId, useRef, type ReactNode } from 'react';
 
 import { warnDuplicateKeys } from './internal/dom';
 import { useLabels } from './labels';
@@ -59,14 +59,21 @@ function useMessages(baseId: string, help: ReactNode, error: ReactNode) {
   return { describedBy, messages };
 }
 
+/**
+ * 囲む Fieldset の見出しが出した「必須 / 任意」（true / false）。出していなければ null。
+ * 中の Field は、見出しと同じなら繰り返さず、違うとき（必須の住所の中の任意の建物名）だけ出す。
+ */
+const FieldsetRequiredContext = createContext<boolean | null>(null);
+
 /** ラベルの中身。文言と「必須 / 任意」のバッジ（requiredBadge が false なら「任意」だけ）。 */
 function LabelContent({ label, required, requiredBadge }: { label: ReactNode; required: boolean; requiredBadge: boolean }): ReactNode {
   const labels = useLabels();
   const phrase = usePhrase();
+  const group = useContext(FieldsetRequiredContext);
   return (
     <>
       <span className="g-label-text">{phrase(label)}</span>
-      {required && !requiredBadge ? null : (
+      {(required && !requiredBadge) || group === required ? null : (
         <span className="g-label-badge" data-required={required ? '' : undefined}>
           {required ? labels.required : labels.optional}
         </span>
@@ -200,6 +207,7 @@ export function ModalFieldset({
 }: ModalFieldsetProps): ReactNode {
   const reactId = useId();
   const { describedBy, messages } = useMessages(id ?? `gassan-fieldset-${reactId}`, help, error);
+  const outer = useContext(FieldsetRequiredContext);
   return (
     <fieldset
       {...domPassthrough(rest, 'Modal.Fieldset')}
@@ -211,7 +219,8 @@ export function ModalFieldset({
       <legend className="g-label">
         <LabelContent label={label} required={required} requiredBadge={requiredBadge} />
       </legend>
-      {children}
+      {/* 見出しが「必須 / 任意」を出したら、中の Field はそれを繰り返さない（見出しが出さないなら外の束に従う） */}
+      <FieldsetRequiredContext.Provider value={required && !requiredBadge ? outer : required}>{children}</FieldsetRequiredContext.Provider>
       {messages}
     </fieldset>
   );

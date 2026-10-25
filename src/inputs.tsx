@@ -13,6 +13,7 @@ import { FloatingLabelContext, type ControlAria } from './fields';
 import { clampToStep, mergeRefs, useControllable } from './internal/controllable';
 import { focusInputOnFrame } from './internal/dom';
 import { Icon } from './internal/icons';
+import { setNativeValue, withNormalize } from './internal/normalize';
 import { domPassthrough, stripReservedData, type DataAttributes } from './internal/passthrough';
 import { useLabels } from './labels';
 
@@ -25,6 +26,13 @@ export interface ModalInputProps extends InputHTMLAttributes<HTMLInputElement> {
   start?: ReactNode;
   /** 入力欄の後ろに置くもの（「円」「kg」、ボタン）。 */
   end?: ReactNode;
+  /**
+   * 打った文字をそろえる関数（toHalfWidth・toKatakana・formatPostalCode・normalizePhone など）。I-25。
+   * IME の変換中は触らず、1 文字ごとの入力・確定・貼り付け・自動入力のたびに当て、入力位置を保つ。
+   * 利用側の onChange は、そろえた後の値を受け取る。打ち途中の文字列に当てても崩れない関数を渡す
+   * （前後の空白を落とすような処理は送信のときに）。maxLength とは併せない（貼り付けが先に切られる）。
+   */
+  normalize?: (value: string) => string;
 }
 
 /**
@@ -38,7 +46,7 @@ export interface ModalInputProps extends InputHTMLAttributes<HTMLInputElement> {
  * CSS が :placeholder-shown で見るためで、空白は見えない（I-24）。
  */
 export const ModalInput = forwardRef<HTMLInputElement, ModalInputProps>(function ModalInput(
-  { start, end, className, ...rest },
+  { start, end, normalize, className, ...rest },
   ref,
 ) {
   const floating = useContext(FloatingLabelContext);
@@ -51,6 +59,7 @@ export const ModalInput = forwardRef<HTMLInputElement, ModalInputProps>(function
       {start != null ? <span className="g-input-adorn">{start}</span> : null}
       <input
         {...stripReservedData(rest, 'Modal.Input')}
+        {...withNormalize(normalize, { onChange: rest.onChange, onCompositionEnd: rest.onCompositionEnd })}
         placeholder={floating && !rest.placeholder ? ' ' : rest.placeholder}
         ref={ref}
         className="g-bare"
@@ -102,15 +111,6 @@ export const ModalPasswordInput = forwardRef<HTMLInputElement, ModalPasswordInpu
 /* -------------------------------------------------------------------------- */
 
 export type ModalSearchInputProps = Omit<ModalInputProps, 'type' | 'start' | 'end'>;
-
-/**
- * 値を React の外から書き換え、input イベントを起こす。
- * 制御・非制御のどちらで使われていても、利用側の onChange がいつもどおり呼ばれる。
- */
-function setNativeValue(input: HTMLInputElement, value: string): void {
-  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(input, value);
-  input.dispatchEvent(new Event('input', { bubbles: true }));
-}
 
 /**
  * 検索欄。I-05。

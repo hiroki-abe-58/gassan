@@ -32,6 +32,7 @@ import uiFeedback from './uiFeedback';
 import uiLayout from './uiLayout';
 import uiNavigation from './uiNavigation';
 import uiOverlays from './uiOverlays';
+import japaneseInput from './japaneseInput';
 import kinds from './kinds';
 import layers from './layers';
 import layout from './layout';
@@ -90,6 +91,7 @@ const messages = {
   slider,
   datePicker,
   fileDrop,
+  japaneseInput,
   media,
   chart,
   sheet,

@@ -18,17 +18,17 @@ focus trap, Esc, การทำให้พื้นหลังเป็น in
 
 **เว็บไซต์เอกสาร: <https://hiroki-abe-58.github.io/gassan/#/th>**
 — แนวคิดการออกแบบ (โมดอลมีไว้ทำไม, โมเดล 4 เลเยอร์, 5 ประเภท, การเข้าถึง), สไตล์ (scrim, สีและคอนทราสต์, ธีม, ขนาด, การตัดบรรทัด, โมชัน),
-เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์และส่วนประกอบฟอร์ม เทมเพลตหน้าเว็บ และสเปกของพฤติกรรม 258 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
+เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์และส่วนประกอบฟอร์ม เทมเพลตหน้าเว็บ และสเปกของพฤติกรรม 265 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
 เว็บไซต์มีให้อ่านเป็นภาษาไทย, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant) และ [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) (สลับภาษาได้ด้วยปุ่มรูปลูกโลกที่แถบด้านบน)
 มีธีมสว่าง / มืด และเลือกสีหลัก (primary color) ได้ ไม่ว่าจะเลือกสีไหน สีตัวอักษรและสีพื้นจะถูกคำนวณให้ผ่านอัตราส่วนคอนทราสต์ของ WCAG
 ตาราง จำนวน และคำอธิบาย API ทั้งหมดบนเว็บไซต์สร้างขึ้นตอน build จากสเปกและ type definition ไม่มีตัวเลขไหนที่เขียนด้วยมือ
 
-การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 258 รายการ, decision matrix และเกณฑ์คุณภาพ)
+การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 265 รายการ, decision matrix และเกณฑ์คุณภาพ)
 เวลาเขียนโค้ดกับผู้ช่วย AI ให้ใส่ไฟล์นี้ไว้ใน context
 
 | เอกสาร | เนื้อหา |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 258 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 265 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | แตกข้อกำหนดตั้งต้นออกเป็นบรรทัดละข้อ: implement แล้ว / ทำได้ด้วยการประกอบ (composition) / อยู่ในโรดแมป |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | ตัวอย่างขั้นต่ำของการใส่ส่วนประกอบอินพุตของ gassan ลงในโมดอล และข้อควรระวังเมื่อห่อคอมโพเนนต์จากไลบรารีอื่นมาใช้แทนส่วนที่ gassan ไม่มี |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | `<dialog>` แบบเนทีฟ vs Base UI vs React Aria vs Radix (ณ วันที่ 2026-09-29 ใช้เฉพาะแหล่งข้อมูลปฐมภูมิ) |
@@ -262,6 +262,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `ModalHost` `useModals` | Imperative API (`await confirm()`) |
 | `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` `Modal.ColorPicker` | ปฏิทินที่มีวันหยุดนักขัตฤกษ์ของญี่ปุ่นและเลือกเป็นช่วงได้ รวมถึงตัวเลือกเวลาและตัวเลือกสีที่วาดตามธีม |
 | `Modal.TagInput` `Modal.PasswordStrength` | แท็ก (รองรับการวางและ IME) และความแข็งแรงของรหัสผ่านใหม่ |
+| `Modal.NativeSelect` `Modal.EmailInput` `AddressFields` `NameFields` `BirthDateInput` `BankAccountFields` | ช่องกรอกแบบญี่ปุ่น ปรับอักขระเต็มความกว้างและครึ่งความกว้าง ขีดกลาง และคานะให้เป็นแบบเดียวกันที่ฝั่งรับ (`normalize` ของ `Input` และฟังก์ชันอย่าง `toHalfWidth`) เติมที่อยู่จากรหัสไปรษณีย์ และเติมฟุริงานะจากคำอ่านก่อนแปลงด้วย IME มี select แบบเนทีฟที่เบราว์เซอร์กรอกอัตโนมัติได้ คำแนะนำเมื่อพิมพ์โดเมนอีเมลผิด วันเกิดพร้อมศักราชญี่ปุ่น และบัญชีธนาคารที่แปลงสัญลักษณ์และหมายเลขของ Japan Post Bank เป็นข้อมูลการโอน |
 | `toast` `ToastHost` | โทสต์ที่มีแถบบอกเวลาที่เหลือ |
 | `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | ปุ่มและเครื่องหมายสำหรับใช้บนหน้าเว็บ (นอกโมดอล) |
 | `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | ภาชนะ, ตัวเลข, ความคืบหน้า และการแจ้งเตือน |

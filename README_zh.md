@@ -18,17 +18,17 @@
 
 **文档站点：<https://hiroki-abe-58.github.io/gassan/#/zh-Hans>**
 — 以类似 Material Design 3 指南的形式，阅读设计理念（模态框存在的理由、四层模型、五种类型、无障碍）、
-样式（遮罩层、颜色与对比度、主题、尺寸、换行、动效）、所有组件与表单部件的可运行示例与 API、页面模板，以及 258 项行为规范。
+样式（遮罩层、颜色与对比度、主题、尺寸、换行、动效）、所有组件与表单部件的可运行示例与 API、页面模板，以及 265 项行为规范。
 站点提供简体中文、[English](https://hiroki-abe-58.github.io/gassan/#/en)、[日本語](https://hiroki-abe-58.github.io/gassan/)、[繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant)、[한국어](https://hiroki-abe-58.github.io/gassan/#/ko) 和 [ไทย](https://hiroki-abe-58.github.io/gassan/#/th) 版本（用顶栏的地球图标切换）。
 站点还支持切换浅色 / 深色显示和主色。无论选择哪种颜色，文字与填充色都会被推导为满足 WCAG 对比度要求的颜色。
 站点上的表格、数量和 API 说明全部在构建时从规范文档和类型定义生成，没有任何手写的数字。
 
-完整设计见 [`modal.skill.md`](./modal.skill.md)（258 项行为表、决策矩阵、质量评分标准）。
+完整设计见 [`modal.skill.md`](./modal.skill.md)（265 项行为表、决策矩阵、质量评分标准）。
 使用 AI 编程时，请把这个文件放进上下文。
 
 | 文档 | 内容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 258 项行为分别由哪些测试、哪些 CSS 满足的对照表。由 `npm run check:trace` 机器校验 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` 的 265 项行为分别由哪些测试、哪些 CSS 满足的对照表。由 `npm run check:trace` 机器校验 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 拆解原始需求，逐行标明“已实现 / 通过组合实现 / 在路线图中”的审计表 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | 在模态框中放置 gassan 表单部件的最小示例，以及用其他库的组件补足 gassan 没有的部件时需要注意的地方 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 原生 `<dialog>` / Base UI / React Aria / Radix 的比较（截至 2026-09-29，仅引用一手资料） |
@@ -262,6 +262,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `ModalHost` `useModals` | 命令式 API（`await confirm()`） |
 | `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` `Modal.ColorPicker` | 带日本节假日和区间选择的日历，以及按主题绘制的时间选择和颜色选择 |
 | `Modal.TagInput` `Modal.PasswordStrength` | 标签（支持粘贴和输入法）与新密码的强度 |
+| `Modal.NativeSelect` `Modal.EmailInput` `AddressFields` `NameFields` `BirthDateInput` `BankAccountFields` | 日本表单输入。在接收端统一全角与半角、连字符和假名（`Input` 的 `normalize` 以及 `toHalfWidth` 等函数），根据邮政编码填入地址，根据输入法转换前的读音填入注音假名。支持浏览器自动填充的原生 select、邮箱域名拼错时的建议、附带日本年号的出生日期，以及把邮储银行的记号与号码换算为转账信息的银行账户 |
 | `toast` `ToastHost` | 带剩余时间计时条的轻提示 |
 | `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | 在页面上（模态框之外）使用的按钮和标记 |
 | `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 容器、数值、进度与通知 |

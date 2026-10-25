@@ -1,0 +1,20 @@
+export default {
+  postalCode: '郵便番号',
+  postalCodeHelp: '〒・全角・ハイフンの有無を問わず「123-4567」に',
+  phone: '電話番号',
+  phoneHelp: '数字だけにそろえる（+81 は 0 に）',
+  kana: 'フリガナ',
+  kanaHelp: 'ひらがな・半角カナはカタカナに',
+  company: '会社名',
+  companyHelp: '英数字は半角に、半角カナは全角に',
+  invoice: '登録番号（インボイス）',
+  invoiceHelp: '数字から打っても T を補う',
+  legacy: '全角が要る仕組みへ送る住所',
+  legacyHelp: '英数字も空白も全角に',
+  comments: {
+    postalCode: '打つたびにそろえる（IME の変換中は触らない）。onChange はそろえた後の値を受け取る',
+    phone: '値は数字だけ（区切りは市外局番の表が要るので付けない）',
+    legacy: '「全角で入力してください」と言う代わりに、受け取った側で全角にする',
+    received: 'アプリが受け取る値',
+  },
+};

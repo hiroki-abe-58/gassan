@@ -21,6 +21,8 @@ import {
   ModalTextarea,
 } from './inputs';
 import { ModalPasswordStrength } from './password-strength';
+import { ModalNativeSelect } from './native-select';
+import { ModalEmailInput } from './email-input';
 import { ModalCombobox, ModalSelect } from './select';
 import { ModalRangeSlider, ModalSlider } from './slider';
 import { ModalTagInput } from './tag-input';
@@ -67,6 +69,46 @@ export { ModalTimePicker } from './time-picker';
 export { ModalColorPicker } from './color-picker';
 export { ModalTagInput } from './tag-input';
 export { ModalPasswordStrength } from './password-strength';
+export { ModalNativeSelect } from './native-select';
+export { ModalEmailInput } from './email-input';
+/*
+ * 日本の入力の束（住所・名前・生年月日・口座）は、名前つき export だけにする（Modal 名前空間に入れない）。
+ * 入れると Modal だけを使うアプリの束に、住所の検索や口座の変換まで載る（minify した束で約 7 KB）。モーダルの中でも同じ部品を使える。
+ */
+export { NameFields } from './name-fields';
+export { AddressFields } from './address-fields';
+export { BirthDateInput } from './birth-date-input';
+export { BankAccountFields } from './bank-account-fields';
+export {
+  toHalfWidth,
+  toFullWidth,
+  normalizeText,
+  normalizeAddress,
+  toKatakana,
+  toHiragana,
+  isKana,
+  toZenginKana,
+  digitsOf,
+  formatPostalCode,
+  isPostalCode,
+  normalizePhone,
+  isPhoneNumber,
+  isMobilePhone,
+  isCorporateNumber,
+  normalizeInvoiceNumber,
+  isInvoiceNumber,
+  isMyNumber,
+  YUCHO_BANK_CODE,
+  yuchoToBranch,
+  COMMON_EMAIL_DOMAINS,
+  CARRIER_EMAIL_DOMAINS,
+  normalizeEmail,
+  suggestEmail,
+  isCarrierEmail,
+  ageOn,
+  japaneseEra,
+  PREFECTURES,
+} from './japanese';
 export { toast, ToastHost, resetToasts } from './toast';
 export { ModalFileDrop } from './file-drop';
 export { ModalChart } from './chart';
@@ -135,6 +177,8 @@ export { ModalTimePicker as TimePicker } from './time-picker';
 export { ModalColorPicker as ColorPicker } from './color-picker';
 export { ModalTagInput as TagInput } from './tag-input';
 export { ModalPasswordStrength as PasswordStrength } from './password-strength';
+export { ModalNativeSelect as NativeSelect } from './native-select';
+export { ModalEmailInput as EmailInput } from './email-input';
 export { ModalFileDrop as FileDrop } from './file-drop';
 export { ModalChart as Chart } from './chart';
 export { ModalHandle } from './sheet';
@@ -214,6 +258,13 @@ export type { ModalTimePickerProps } from './time-picker';
 export type { ModalColorPickerProps, ColorSwatch } from './color-picker';
 export type { ModalTagInputProps } from './tag-input';
 export type { ModalPasswordStrengthProps, PasswordRule, PasswordScore } from './password-strength';
+export type { ModalNativeSelectProps } from './native-select';
+export type { ModalEmailInputProps } from './email-input';
+export type { NameFieldsProps, PersonName } from './name-fields';
+export type { AddressFieldsProps, JapaneseAddress, PostalAddress } from './address-fields';
+export type { BirthDateInputProps } from './birth-date-input';
+export type { BankAccountFieldsProps, BankAccount, BankAccountType } from './bank-account-fields';
+export type { YuchoTransferAccount } from './japanese';
 export type {
   ToastAction,
   ToastHostProps,
@@ -399,6 +450,8 @@ export const Modal = {
   ColorPicker: ModalColorPicker,
   TagInput: ModalTagInput,
   PasswordStrength: ModalPasswordStrength,
+  NativeSelect: ModalNativeSelect,
+  EmailInput: ModalEmailInput,
   FileDrop: ModalFileDrop,
   Chips: ModalChips,
   Switch: ModalSwitch,

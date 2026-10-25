@@ -248,6 +248,42 @@ export interface GassanLabels {
   chatCollapse: string;
   /** 起点の横のあいさつを消すボタン。E-09。 */
   chatDismissGreeting: string;
+  /** 郵便番号と住所の欄の名前。I-27。 */
+  postalCode: string;
+  prefecture: string;
+  addressCity: string;
+  addressLine1: string;
+  addressLine2: string;
+  /** 郵便番号から住所を探している間・入れた後・見つからない・失敗・候補が複数のときの知らせ。I-27。 */
+  addressSearching: string;
+  addressFilled: (address: string) => string;
+  addressNotFound: string;
+  addressLookupFailed: string;
+  addressCandidates: string;
+  /** 姓と名、フリガナ（カタカナかひらがなか）の欄の名前。I-28。 */
+  familyName: string;
+  givenName: string;
+  nameKana: (part: 'family' | 'given', script: 'katakana' | 'hiragana') => string;
+  /** 生年月日の年・月・日の選択の名前、和暦を添えた年、満年齢。I-29。 */
+  birthYear: string;
+  birthMonth: string;
+  birthDay: string;
+  withEra: (year: string, era: string) => string;
+  age: (years: number) => string;
+  /** メールアドレスの打ち間違いの候補とそれに直すボタン、携帯会社のメールへの注意（sender は送り主）。I-30。 */
+  emailSuggestion: (email: string) => string;
+  emailSuggestionApply: string;
+  emailCarrierNotice: (sender: string | undefined) => string;
+  /** 銀行口座の欄の名前と預金種目、ゆうちょ銀行の記号・番号と振込用の店名・口座番号。I-31。 */
+  bank: string;
+  bankBranch: string;
+  accountType: string;
+  accountTypeName: (type: 'ordinary' | 'checking' | 'savings') => string;
+  accountNumber: string;
+  accountHolder: string;
+  yuchoSymbol: string;
+  yuchoNumber: string;
+  yuchoTransfer: (branch: string, type: string, number: string) => string;
 }
 
 export const japaneseLabels: GassanLabels = {
@@ -401,6 +437,39 @@ export const japaneseLabels: GassanLabels = {
   chatExpand: '右側に広げる',
   chatCollapse: '小さくする',
   chatDismissGreeting: 'あいさつを閉じる',
+  postalCode: '郵便番号',
+  prefecture: '都道府県',
+  addressCity: '市区町村',
+  addressLine1: '町名・番地',
+  addressLine2: '建物名・部屋番号',
+  addressSearching: '住所を探しています…',
+  addressFilled: (address) => `${address} を入力しました。続けて番地を入力してください。`,
+  addressNotFound: 'この郵便番号の住所は見つかりませんでした。住所を入力してください。',
+  addressLookupFailed: '住所を自動で入力できませんでした。住所を入力してください。',
+  addressCandidates: 'この郵便番号には住所が複数あります。選んでください。',
+  familyName: '姓',
+  givenName: '名',
+  nameKana: (part, script) => (script === 'hiragana' ? (part === 'family' ? 'せい' : 'めい') : part === 'family' ? 'セイ' : 'メイ'),
+  birthYear: '年',
+  birthMonth: '月',
+  birthDay: '日',
+  withEra: (year, era) => `${year}（${era}）`,
+  age: (years) => `満 ${years} 歳`,
+  emailSuggestion: (email) => `もしかして ${email} ですか？`,
+  emailSuggestionApply: 'これに直す',
+  emailCarrierNotice: (sender) =>
+    sender
+      ? `携帯会社のメールは、迷惑メールの設定で届かないことがあります。「${sender}」からのメールを受け取れるようにしてください。`
+      : '携帯会社のメールは、迷惑メールの設定で届かないことがあります。受け取りの設定を確かめてください。',
+  bank: '金融機関',
+  bankBranch: '支店',
+  accountType: '預金種目',
+  accountTypeName: (type) => ({ ordinary: '普通', checking: '当座', savings: '貯蓄' })[type],
+  accountNumber: '口座番号',
+  accountHolder: '口座名義（カナ）',
+  yuchoSymbol: '記号',
+  yuchoNumber: '番号',
+  yuchoTransfer: (branch, type, number) => `振込用の店名・口座番号: ${branch}・${type}・${number}`,
 };
 
 export const englishLabels: GassanLabels = {
@@ -561,6 +630,39 @@ export const englishLabels: GassanLabels = {
   chatExpand: 'Expand to the side',
   chatCollapse: 'Make smaller',
   chatDismissGreeting: 'Dismiss greeting',
+  postalCode: 'Postal code',
+  prefecture: 'Prefecture',
+  addressCity: 'City',
+  addressLine1: 'Street address',
+  addressLine2: 'Building and room',
+  addressSearching: 'Looking up the address…',
+  addressFilled: (address) => `Filled in ${address}. Continue with the street address.`,
+  addressNotFound: 'No address found for this postal code. Please enter your address.',
+  addressLookupFailed: "Couldn't fill in the address automatically. Please enter your address.",
+  addressCandidates: 'This postal code covers several areas. Choose one.',
+  familyName: 'Family name',
+  givenName: 'Given name',
+  nameKana: (part) => (part === 'family' ? 'Family name (kana)' : 'Given name (kana)'),
+  birthYear: 'Year',
+  birthMonth: 'Month',
+  birthDay: 'Day',
+  withEra: (year, era) => `${year} (${era})`,
+  age: (years) => `Age ${years}`,
+  emailSuggestion: (email) => `Did you mean ${email}?`,
+  emailSuggestionApply: 'Use this',
+  emailCarrierNotice: (sender) =>
+    sender
+      ? `Mobile carrier mailboxes may block our email as spam. Please allow mail from ${sender}.`
+      : 'Mobile carrier mailboxes may block our email as spam. Please check your filter settings.',
+  bank: 'Bank',
+  bankBranch: 'Branch',
+  accountType: 'Account type',
+  accountTypeName: (type) => ({ ordinary: 'Ordinary', checking: 'Checking', savings: 'Savings' })[type],
+  accountNumber: 'Account number',
+  accountHolder: 'Account holder (kana)',
+  yuchoSymbol: 'Symbol',
+  yuchoNumber: 'Number',
+  yuchoTransfer: (branch, type, number) => `For transfers: branch ${branch}, ${type}, account ${number}`,
 };
 
 const LabelsContext = createContext<GassanLabels>(japaneseLabels);
