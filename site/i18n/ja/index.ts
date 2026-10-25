@@ -3,6 +3,7 @@
  * 1 ページ 1 ファイル。キーはページの節の id（Section の id）に揃えると、ページと文言を行き来しやすい。
  */
 import accessibility from './accessibility';
+import authPatterns from './authPatterns';
 import body from './body';
 import button from './button';
 import chart from './chart';
@@ -112,6 +113,7 @@ const messages = {
   templates,
   templateDocs,
   templateSamples,
+  authPatterns,
   provider,
   spec,
   verification,

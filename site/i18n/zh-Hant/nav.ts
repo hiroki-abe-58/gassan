@@ -59,6 +59,7 @@ export default {
     uiChat: '聊天',
     uiScroll: '捲軸',
     templatesAuth: '登入與註冊',
+    templatesAuthPatterns: '登入與註冊的模式',
     templatesStatus: '錯誤與維護',
     templatesPublic: '價格、常見問題與條款',
     templatesApp: '應用程式外框',

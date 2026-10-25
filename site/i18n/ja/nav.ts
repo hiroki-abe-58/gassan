@@ -58,6 +58,7 @@ export default {
     uiChat: 'チャット',
     uiScroll: 'スクロールバー',
     templatesAuth: 'ログインと登録',
+    templatesAuthPatterns: 'ログインと登録の形',
     templatesStatus: 'エラーとメンテナンス',
     templatesPublic: '料金・FAQ・規約',
     templatesApp: 'アプリの枠',

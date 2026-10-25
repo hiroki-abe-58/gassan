@@ -1,37 +1,29 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { Button } from '../button';
 import { ModalCheckbox } from '../choices';
-import { Divider } from '../display';
 import { ModalAlert, ModalField } from '../fields';
-import { ModalCodeInput, ModalInput, ModalPasswordInput } from '../inputs';
+import { ModalCodeInput, ModalPasswordInput } from '../inputs';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { ModalPasswordStrength } from '../password-strength';
 import { usePhrase } from '../phrase';
 import {
-  ConsentField,
-  EMAIL_INPUT,
-  ErrorSummary,
-  FormError,
-  looksLikeEmail,
-  useCooldown,
-  useTemplateForm,
-  type FormErrors,
-  type SubmitResult,
-} from './form';
+  EmailForm,
+  Resend,
+  SignInForm,
+  SignUpForm,
+  switchLine,
+  useFocusOnChange,
+  type AuthProvider,
+  type PasskeyHandler,
+  type SignInValues,
+  type SignUpValues,
+} from './auth-parts';
+import { ErrorSummary, FormError, useTemplateForm, type FormErrors, type SubmitResult } from './form';
 import { AuthLayout } from './layouts';
 import { SiteButtonLink, SiteLink, useSite } from './site';
 
-/** 外部の ID でのログイン（Google・GitHub・SAML など）。 */
-export interface AuthProvider {
-  /** 識別子（'google'）。 */
-  id: string;
-  /** 表示名（「Google」）。ボタンは「Google で続ける」になる。 */
-  name: string;
-  /** 印（飾り。aria-hidden にして渡す）。 */
-  icon?: ReactNode;
-  onClick: () => void;
-}
+export type { AuthProvider, PasskeyHandler, SignInValues, SignUpValues } from './auth-parts';
 
 /** テンプレートの props の共通部分。見出しと説明は既定の文言を上書きできる。 */
 interface PageText extends DataAttributes {
@@ -42,62 +34,9 @@ interface PageText extends DataAttributes {
   className?: string;
 }
 
-/** 外部の ID のボタンと「または」の区切り。 */
-function ProviderButtons({ providers }: { providers: readonly AuthProvider[] | undefined }): ReactNode {
-  const { labels } = useSite();
-  if (!providers || providers.length === 0) return null;
-  return (
-    <>
-      <div className="g-auth-providers">
-        {providers.map((provider) => (
-          <Button key={provider.id} block iconStart={provider.icon} onClick={provider.onClick}>
-            {labels.common.continueWith(provider.name)}
-          </Button>
-        ))}
-      </div>
-      <Divider label={labels.common.or} />
-    </>
-  );
-}
-
-/** 「アカウントをお持ちでない方は アカウントを作る」の 1 行。lead が無ければリンクだけ。 */
-function SwitchLine({ lead, href, label }: { lead?: string; href: string; label: string }): ReactNode {
-  const phrase = usePhrase();
-  const link = <SiteLink href={href}>{phrase(label)}</SiteLink>;
-  return lead ? (
-    <>
-      {phrase(lead)} {link}
-    </>
-  ) : (
-    link
-  );
-}
-
-/** 行き先があるときだけ、カードの下の 1 行を作る。 */
-const switchLine = (lead: string | undefined, href: string | undefined, label: string): ReactNode =>
-  href ? <SwitchLine lead={lead} href={href} label={label} /> : undefined;
-
-/** 画面が切り替わったら（key が変わって真になったら）見出しへフォーカスを移す。読み上げに切り替わりを伝えるため。 */
-function useFocusOnChange(key: boolean) {
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const previous = useRef(key);
-  useEffect(() => {
-    if (previous.current === key) return;
-    previous.current = key;
-    if (key) headingRef.current?.focus();
-  }, [key]);
-  return headingRef;
-}
-
 /* -------------------------------------------------------------------------- */
 /* SignInPage                                                                  */
 /* -------------------------------------------------------------------------- */
-
-export interface SignInValues {
-  email: string;
-  password: string;
-  remember: boolean;
-}
 
 export interface SignInPageProps extends PageText {
   /** 送信したとき。失敗なら { error: true }（既定の文）か { error: '文' } を返す。入力は消さない。 */
@@ -108,6 +47,8 @@ export interface SignInPageProps extends PageText {
   defaultEmail?: string;
   /** フォームの上に出す知らせ（「パスワードを変えました。新しいパスワードでログインしてください」など）。 */
   notice?: ReactNode;
+  /** パスキーでログインする（P-27）。渡すと「パスキーでログイン」を出し、メールの欄からもパスキーを選べるようにする。 */
+  onPasskey?: PasskeyHandler;
 }
 
 /**
@@ -122,6 +63,7 @@ export function SignInPage({
   remember = true,
   defaultEmail = '',
   notice,
+  onPasskey,
   title,
   description,
   aside,
@@ -129,20 +71,8 @@ export function SignInPage({
   ...rest
 }: SignInPageProps): ReactNode {
   const { labels, links } = useSite();
+  const phrase = usePhrase();
   const { common, signIn } = labels;
-  const form = useTemplateForm<SignInValues>({
-    initial: { email: defaultEmail, password: '', remember: false },
-    validate: ({ email, password }) => {
-      const errors: FormErrors<SignInValues> = {};
-      if (!email.trim()) errors.email = common.requiredField(common.email);
-      else if (!looksLikeEmail(email)) errors.email = common.invalidEmail;
-      if (!password) errors.password = common.requiredField(common.password);
-      return errors;
-    },
-    onSubmit,
-    submitFailed: common.submitFailed,
-    defaultError: signIn.failed,
-  });
   return (
     <AuthLayout
       {...domPassthrough(rest, 'SignInPage')}
@@ -153,51 +83,20 @@ export function SignInPage({
       footer={switchLine(signIn.noAccount, links.signUp, common.signUp)}
     >
       {notice ? <ModalAlert tone="info">{notice}</ModalAlert> : null}
-      <ProviderButtons providers={providers} />
-      <form className="g-auth-form" noValidate onSubmit={form.handleSubmit}>
-        <ErrorSummary title={common.errorSummary} items={form.summary} summaryRef={form.summaryRef} />
-        <FormError>{form.formError}</FormError>
-        <ModalField id={form.idOf('email')} label={common.email} required requiredBadge={false} error={form.errors.email}>
-          {(control) => (
-            <ModalInput
-              {...control}
-              {...EMAIL_INPUT}
-              name="email"
-              autoComplete="username"
-              value={form.values.email}
-              onChange={(event) => form.set('email', event.target.value)}
-            />
-          )}
-        </ModalField>
-        <ModalField id={form.idOf('password')} label={common.password} required requiredBadge={false} error={form.errors.password}>
-          {(control) => (
-            <ModalPasswordInput
-              {...control}
-              name="password"
-              autoComplete="current-password"
-              value={form.values.password}
-              onChange={(event) => form.set('password', event.target.value)}
-            />
-          )}
-        </ModalField>
-        {remember || links.forgotPassword ? (
-          <div className="g-auth-row">
-            {remember ? (
-              <ModalCheckbox name="remember" checked={form.values.remember} onCheckedChange={(checked) => form.set('remember', checked)}>
-                {signIn.remember}
-              </ModalCheckbox>
-            ) : null}
-            {links.forgotPassword ? (
-              <SiteLink href={links.forgotPassword} className="g-auth-link">
-                {signIn.forgot}
-              </SiteLink>
-            ) : null}
-          </div>
-        ) : null}
-        <Button type="submit" variant="primary" block loading={form.pending}>
-          {signIn.submit}
-        </Button>
-      </form>
+      <SignInForm
+        onSubmit={onSubmit}
+        providers={providers}
+        onPasskey={onPasskey}
+        remember={remember}
+        defaultEmail={defaultEmail}
+        forgot={
+          links.forgotPassword ? (
+            <SiteLink href={links.forgotPassword} className="g-auth-link">
+              {phrase(signIn.forgot)}
+            </SiteLink>
+          ) : null
+        }
+      />
     </AuthLayout>
   );
 }
@@ -205,13 +104,6 @@ export function SignInPage({
 /* -------------------------------------------------------------------------- */
 /* SignUpPage                                                                  */
 /* -------------------------------------------------------------------------- */
-
-export interface SignUpValues {
-  name: string;
-  email: string;
-  password: string;
-  agree: boolean;
-}
 
 export interface SignUpPageProps extends PageText {
   onSubmit: (values: SignUpValues) => SubmitResult | Promise<SubmitResult>;
@@ -222,13 +114,15 @@ export interface SignUpPageProps extends PageText {
   consent?: boolean;
   /** パスワードの最短の長さ。既定 8。 */
   passwordMinLength?: number;
+  /** 確認のメールの送り主（「example.com」）。携帯会社のメールへの注意に入れる（I-30）。 */
+  sender?: string;
 }
 
 /**
  * アカウントの作成。P-02。
  *
- * 名前（autocomplete="name"）・メールアドレス（email）・パスワード（new-password。強さと条件を説明として結ぶ）・
- * 規約への同意。パスワードは打ちながら強さが分かり、送信するまでは責めない。
+ * 名前（autocomplete="name"）・メールアドレス（email。打ち間違いの候補と携帯会社のメールへの注意）・
+ * パスワード（new-password。強さと条件を説明として結ぶ）・規約への同意。パスワードは打ちながら強さが分かり、送信するまでは責めない。
  */
 export function SignUpPage({
   onSubmit,
@@ -236,6 +130,7 @@ export function SignUpPage({
   nameField = true,
   consent = true,
   passwordMinLength = 8,
+  sender,
   title,
   description,
   aside,
@@ -243,26 +138,7 @@ export function SignUpPage({
   ...rest
 }: SignUpPageProps): ReactNode {
   const { labels, links } = useSite();
-  const phrase = usePhrase();
   const { common, signUp } = labels;
-  const form = useTemplateForm<SignUpValues>({
-    initial: { name: '', email: '', password: '', agree: false },
-    validate: ({ name, email, password, agree }) => {
-      const errors: FormErrors<SignUpValues> = {};
-      if (nameField && !name.trim()) errors.name = common.requiredField(common.name);
-      if (!email.trim()) errors.email = common.requiredField(common.email);
-      else if (!looksLikeEmail(email)) errors.email = common.invalidEmail;
-      if (!password) errors.password = common.requiredField(common.password);
-      else if ([...password].length < passwordMinLength) errors.password = common.passwordTooShort(passwordMinLength);
-      if (consent && !agree) errors.agree = signUp.agreeRequired;
-      return errors;
-    },
-    onSubmit,
-    submitFailed: common.submitFailed,
-  });
-  const strengthId = `${form.idOf('password')}-strength`;
-  const docLink = (href: string | undefined, label: string): ReactNode => (href ? <SiteLink href={href}>{phrase(label)}</SiteLink> : phrase(label));
-
   return (
     <AuthLayout
       {...domPassthrough(rest, 'SignUpPage')}
@@ -272,53 +148,14 @@ export function SignUpPage({
       aside={aside}
       footer={switchLine(signUp.hasAccount, links.signIn, common.signIn)}
     >
-      <ProviderButtons providers={providers} />
-      <form className="g-auth-form" noValidate onSubmit={form.handleSubmit}>
-        <ErrorSummary title={common.errorSummary} items={form.summary} summaryRef={form.summaryRef} />
-        <FormError>{form.formError}</FormError>
-        {nameField ? (
-          <ModalField id={form.idOf('name')} label={common.name} required requiredBadge={false} error={form.errors.name}>
-            {(control) => (
-              <ModalInput {...control} name="name" autoComplete="name" value={form.values.name} onChange={(event) => form.set('name', event.target.value)} />
-            )}
-          </ModalField>
-        ) : null}
-        <ModalField id={form.idOf('email')} label={common.email} required requiredBadge={false} error={form.errors.email}>
-          {(control) => (
-            <ModalInput
-              {...control}
-              {...EMAIL_INPUT}
-              name="email"
-              autoComplete="email"
-              value={form.values.email}
-              onChange={(event) => form.set('email', event.target.value)}
-            />
-          )}
-        </ModalField>
-        <ModalField id={form.idOf('password')} label={common.password} required requiredBadge={false} error={form.errors.password}>
-          {(control) => (
-            <>
-              <ModalPasswordInput
-                {...control}
-                aria-describedby={[control['aria-describedby'], strengthId].filter(Boolean).join(' ')}
-                name="password"
-                autoComplete="new-password"
-                value={form.values.password}
-                onChange={(event) => form.set('password', event.target.value)}
-              />
-              <ModalPasswordStrength id={strengthId} value={form.values.password} minLength={passwordMinLength} />
-            </>
-          )}
-        </ModalField>
-        {consent ? (
-          <ConsentField id={form.idOf('agree')} checked={form.values.agree} onCheckedChange={(checked) => form.set('agree', checked)} error={form.errors.agree}>
-            {signUp.agree(docLink(links.terms, common.terms), docLink(links.privacy, common.privacy))}
-          </ConsentField>
-        ) : null}
-        <Button type="submit" variant="primary" block loading={form.pending}>
-          {signUp.submit}
-        </Button>
-      </form>
+      <SignUpForm
+        onSubmit={onSubmit}
+        providers={providers}
+        nameField={nameField}
+        consent={consent}
+        passwordMinLength={passwordMinLength}
+        sender={sender}
+      />
     </AuthLayout>
   );
 }
@@ -335,51 +172,6 @@ export interface ForgotPasswordPageProps extends PageText {
 }
 
 /**
- * 送った後の画面の、送り直すボタンと待ち時間。画面に来た時点で 1 通送ってあるので、最初から待たせる。
- * 待つ間のボタンは aria-disabled（フォーカスは止まり、待ち時間を説明として読む）。待ち時間は 1 秒ごとに
- * 変わるので読み上げの領域に入れず、送り直した結果だけを role="status" で伝える。
- */
-function Resend({ onResend, resendAfter }: { onResend: () => SubmitResult | Promise<SubmitResult>; resendAfter: number }): ReactNode {
-  const { labels } = useSite();
-  const phrase = usePhrase();
-  const waitId = `${useId()}-wait`;
-  const { remaining, start } = useCooldown(resendAfter, true);
-  const [status, setStatus] = useState('');
-  const waiting = remaining > 0;
-  return (
-    <div className="g-auth-resend">
-      <Button
-        block
-        aria-disabled={waiting || undefined}
-        aria-describedby={waiting ? waitId : undefined}
-        onAction={async () => {
-          setStatus('');
-          try {
-            const result = await onResend();
-            if (result && result.error) {
-              setStatus(typeof result.error === 'string' ? result.error : labels.common.submitFailed);
-              return;
-            }
-          } catch (error) {
-            console.error('[gassan] onResend rejected.', error);
-            setStatus(labels.common.submitFailed);
-            return;
-          }
-          setStatus(labels.common.resent);
-          start();
-        }}
-      >
-        {labels.common.resend}
-      </Button>
-      <div className="g-auth-hint">
-        <p role="status">{status ? phrase(status) : null}</p>
-        {waiting ? <p id={waitId}>{phrase(labels.common.resendIn(remaining))}</p> : null}
-      </div>
-    </div>
-  );
-}
-
-/**
  * パスワードの再設定のメールを送る。P-04。
  *
  * 送ったら「メールを確認してください」に切り替え、見出しへフォーカスを移す。登録されていないアドレスでも
@@ -390,16 +182,6 @@ export function ForgotPasswordPage({ onSubmit, resendAfter = 60, title, descript
   const { common, forgotPassword } = labels;
   const [sentTo, setSentTo] = useState<string | null>(null);
   const headingRef = useFocusOnChange(sentTo !== null);
-  const form = useTemplateForm<{ email: string }>({
-    initial: { email: '' },
-    validate: ({ email }) => {
-      if (!email.trim()) return { email: common.requiredField(common.email) };
-      return looksLikeEmail(email) ? {} : { email: common.invalidEmail };
-    },
-    onSubmit,
-    onSuccess: ({ email }) => setSentTo(email.trim()),
-    submitFailed: common.submitFailed,
-  });
   const back = switchLine(undefined, links.signIn, common.backToSignIn);
   const data = domPassthrough(rest, 'ForgotPasswordPage');
 
@@ -427,25 +209,7 @@ export function ForgotPasswordPage({ onSubmit, resendAfter = 60, title, descript
       aside={aside}
       footer={back}
     >
-      <form className="g-auth-form" noValidate onSubmit={form.handleSubmit}>
-        <ErrorSummary title={common.errorSummary} items={form.summary} summaryRef={form.summaryRef} />
-        <FormError>{form.formError}</FormError>
-        <ModalField id={form.idOf('email')} label={common.email} required requiredBadge={false} error={form.errors.email}>
-          {(control) => (
-            <ModalInput
-              {...control}
-              {...EMAIL_INPUT}
-              name="email"
-              autoComplete="email"
-              value={form.values.email}
-              onChange={(event) => form.set('email', event.target.value)}
-            />
-          )}
-        </ModalField>
-        <Button type="submit" variant="primary" block loading={form.pending}>
-          {forgotPassword.submit}
-        </Button>
-      </form>
+      <EmailForm onSubmit={onSubmit} onSent={setSentTo} submit={forgotPassword.submit} />
     </AuthLayout>
   );
 }

@@ -37,7 +37,7 @@ import { fmt, useDemoText, useT } from '../i18n';
 import { go, preview, wait } from './shared';
 
 /** ログインしている人のメールアドレス（メンバーの表のデモの 1 人目）。 */
-const USER_EMAIL = 'aoi@example.com';
+export const USER_EMAIL = 'aoi@example.com';
 
 /** アプリの枠の見本の案内の印（飾り）。 */
 const ICON_PATHS = {
@@ -539,8 +539,9 @@ export type AppPreviewName = keyof typeof APP_PAGES;
 
 /**
  * アプリの枠（P-12）に入れた見本。案内はほかの見本へつないであるので、ホーム・メンバー・請求・設定を行き来できる。
+ * children を渡すと、page の中身の代わりに置く（案内で今いる所は page のまま。ログインし直す窓の見本が使う）。
  */
-export function AtlasApp({ page }: { page: AppPreviewName }): ReactNode {
+export function AtlasApp({ page, children }: { page: AppPreviewName; children?: ReactNode }): ReactNode {
   const { templateSamples: s } = useT();
   const app = s.app;
   const Content = APP_PAGES[page];
@@ -606,7 +607,7 @@ export function AtlasApp({ page }: { page: AppPreviewName }): ReactNode {
       }}
       sidebarFooter={<Progress label={app.seats} value={6} max={10} valueText={(value, max) => fmt(app.seatsValue, String(value), String(max))} />}
     >
-      <Content />
+      {children ?? <Content />}
       {/* 上の帯の虫眼鏡か ⌘K / Ctrl+K で開く */}
       <CommandPalette items={commands} open={searchOpen} onOpenChange={setSearchOpen} placeholder={app.searchPlaceholder} />
     </AppShell>

@@ -12,9 +12,18 @@ import { Fragment, createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 
 import {
+  AccountChooserPage,
   Accordion,
   AddressFields,
   AppShell,
+  AuthDialog,
+  EmailFirstPage,
+  GuestAccountCard,
+  MagicLinkPage,
+  PasskeyPromptPage,
+  PhoneSignInPage,
+  QuickSignUpPage,
+  RegistrationWizardPage,
   BankAccountFields,
   BirthDateInput,
   EmailInput,
@@ -527,6 +536,32 @@ for (const [label, passed] of [
   ['ContactPage renders the form with autofill attributes on the server', /autocomplete="email"/i.test(contactHtml)],
   ['ChangelogPage renders the entries with their dates on the server', changelogHtml.includes('1.2.0') && /datetime="2026-10-01"/i.test(changelogHtml)],
   ['SiteLayout renders the skip link and a collapsed menu button on the server', pricingHtml.includes('g-skip') && pricingHtml.includes('aria-expanded="false"')],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// ログインと登録の形を変えたもの（P-21〜P-30）。窓は閉じた dialog を、ページは最初の画面（メールアドレス・番号・最初の手順）を
+// 自動入力の名前つきで描く。購入の後のカードは、パスワード管理ソフトに渡す隠した username の欄を描く。
+const authDialogHtml = render(h(AuthDialog, { open: false, onOpenChange: noop, onSignIn: noop, onSignUp: noop }));
+const emailFirstHtml = render(h(EmailFirstPage, { onContinue: () => ({ next: 'password' }), onSignIn: noop }));
+const magicLinkHtml = render(h(MagicLinkPage, { onSend: noop, onCode: noop }));
+const phoneHtml = render(h(PhoneSignInPage, { onSend: noop, onVerify: noop }));
+const quickHtml = render(h(QuickSignUpPage, { onSubmit: noop }));
+const wizardHtml = render(h(RegistrationWizardPage, { steps: [{ id: 'profile', title: 'お客様情報', content: h('p', null, '欄') }, { id: 'job', title: 'ご職業', content: null }], onSubmit: noop }));
+const passkeyHtml = render(h(PasskeyPromptPage, { onCreate: noop, onLater: noop }));
+const chooserHtml = render(h(AccountChooserPage, { accounts: [{ id: 'a', name: '山田 花子', email: 'hana@example.com' }], onChoose: noop, onUseAnother: noop }));
+const guestHtml = render(h(GuestAccountCard, { email: 'hana@example.com', onCreate: noop }));
+for (const [label, passed] of [
+  ['AuthDialog renders a closed dialog on the server', /<dialog[^>]*class="[^"]*g-auth-dialog/.test(authDialogHtml) && !/<dialog[^>]*\sopen/.test(authDialogHtml)],
+  ['EmailFirstPage renders the email step with the username autofill name on the server', /autocomplete="username"/i.test(emailFirstHtml) && textOf(emailFirstHtml).includes('ログインまたは登録')],
+  ['MagicLinkPage renders the email step on the server', /type="email"/.test(magicLinkHtml) && textOf(magicLinkHtml).includes('メールでログイン')],
+  ['PhoneSignInPage renders a tel field with the tel autofill name on the server', /type="tel"/.test(phoneHtml) && /autocomplete="tel"/i.test(phoneHtml)],
+  ['QuickSignUpPage renders the email and the consent on the server', /type="checkbox"/.test(quickHtml) && /autocomplete="email"/i.test(quickHtml)],
+  ['RegistrationWizardPage renders the progress and the first step on the server', /aria-current="step"/.test(wizardHtml) && headingOf(wizardHtml) === 'お客様情報'],
+  ['PasskeyPromptPage renders the benefits and both choices on the server', passkeyHtml.includes('g-auth-benefits') && textOf(passkeyHtml).includes('あとで')],
+  ['AccountChooserPage renders a button per remembered account on the server', /class="g-account-choice"/.test(chooserHtml) && textOf(chooserHtml).includes('hana@example.com')],
+  ['GuestAccountCard renders the hidden username for password managers on the server', /autocomplete="username"[^>]*value="hana@example.com"|value="hana@example.com"[^>]*autocomplete="username"/i.test(guestHtml)],
 ]) {
   if (passed) ok(label);
   else fail(label);

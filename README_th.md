@@ -18,17 +18,17 @@ focus trap, Esc, การทำให้พื้นหลังเป็น in
 
 **เว็บไซต์เอกสาร: <https://hiroki-abe-58.github.io/gassan/#/th>**
 — แนวคิดการออกแบบ (โมดอลมีไว้ทำไม, โมเดล 4 เลเยอร์, 5 ประเภท, การเข้าถึง), สไตล์ (scrim, สีและคอนทราสต์, ธีม, ขนาด, การตัดบรรทัด, โมชัน),
-เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์และส่วนประกอบฟอร์ม เทมเพลตหน้าเว็บ และสเปกของพฤติกรรม 265 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
+เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์และส่วนประกอบฟอร์ม เทมเพลตหน้าเว็บ และสเปกของพฤติกรรม 275 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
 เว็บไซต์มีให้อ่านเป็นภาษาไทย, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant) และ [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) (สลับภาษาได้ด้วยปุ่มรูปลูกโลกที่แถบด้านบน)
 มีธีมสว่าง / มืด และเลือกสีหลัก (primary color) ได้ ไม่ว่าจะเลือกสีไหน สีตัวอักษรและสีพื้นจะถูกคำนวณให้ผ่านอัตราส่วนคอนทราสต์ของ WCAG
 ตาราง จำนวน และคำอธิบาย API ทั้งหมดบนเว็บไซต์สร้างขึ้นตอน build จากสเปกและ type definition ไม่มีตัวเลขไหนที่เขียนด้วยมือ
 
-การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 265 รายการ, decision matrix และเกณฑ์คุณภาพ)
+การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 275 รายการ, decision matrix และเกณฑ์คุณภาพ)
 เวลาเขียนโค้ดกับผู้ช่วย AI ให้ใส่ไฟล์นี้ไว้ใน context
 
 | เอกสาร | เนื้อหา |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 265 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 275 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | แตกข้อกำหนดตั้งต้นออกเป็นบรรทัดละข้อ: implement แล้ว / ทำได้ด้วยการประกอบ (composition) / อยู่ในโรดแมป |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | ตัวอย่างขั้นต่ำของการใส่ส่วนประกอบอินพุตของ gassan ลงในโมดอล และข้อควรระวังเมื่อห่อคอมโพเนนต์จากไลบรารีอื่นมาใช้แทนส่วนที่ gassan ไม่มี |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | `<dialog>` แบบเนทีฟ vs Base UI vs React Aria vs Radix (ณ วันที่ 2026-09-29 ใช้เฉพาะแหล่งข้อมูลปฐมภูมิ) |
@@ -275,6 +275,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `ScrollArea` `PageScrollbar` | แถบสกรอลล์ที่วาดเอง ให้หน้าตาเหมือนกันทุกเบราว์เซอร์และระบบปฏิบัติการ (การสกรอลล์ยังเป็นของเบราว์เซอร์) การสกรอลล์ภายในคอมโพเนนต์ เช่น เนื้อหาโมดัล รายการ แชต และตาราง ก็ใช้แถบเดียวกัน |
 | `ChatWidget` | แชตบอตที่มุมขวาล่างของเว็บไซต์ ปุ่มลอยทรงกลมเปิดหน้าต่างเล็กที่ไม่ใช่โมดัล และขยายเป็นแผงด้านขวาได้ บนจอโทรศัพท์จะเป็น sheet เต็มหน้าจอ |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | หน้าเข้าสู่ระบบและหน้าบัญชี (`templates.css`) |
+| `AuthDialog` `EmailFirstPage` `MagicLinkPage` `PhoneSignInPage` `QuickSignUpPage` `RegistrationWizardPage` `PasskeyPromptPage` `AccountChooserPage` `ReauthDialog` `GuestAccountCard` | ทางเข้าสู่ระบบและสมัครสมาชิกแบบอื่น ๆ: หน้าต่างที่เปิดจากส่วนหัว, การถามอีเมลก่อน, ลิงก์ทางอีเมลและรหัสทาง SMS ที่ไม่ต้องใช้รหัสผ่าน, การสมัครเบื้องต้นด้วยอีเมลอย่างเดียวตามด้วยขั้นตอนลงทะเบียนที่บันทึกไปทีละขั้น, พาสคีย์, การเลือกบัญชี, การยืนยันตัวตนอีกครั้งและการเข้าสู่ระบบที่หมดอายุ, และการสร้างบัญชีหลังซื้อแบบผู้เยี่ยมชม |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | หน้าข้อผิดพลาด, การปิดปรับปรุง และหน้าสาธารณะ |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` | โครงแอปและหน้าที่อยู่ข้างใน |
 | `GassanProvider` | แทนที่ข้อความ UI (ค่าเริ่มต้นเป็นภาษาญี่ปุ่น มี `englishLabels` มาให้ด้วย) และสลับการตัดบรรทัด (`lineBreak`) |

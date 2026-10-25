@@ -1353,6 +1353,21 @@
   font-size: 0.9375rem;
 }
 
+/* ログインと登録の形の見本で、窓の後ろに置くページの中身 */
+.s-preview-hero {
+  display: grid;
+  /* 列の最小幅を 0 に（既定の auto だと、1 文節の長い見出しが列を押し広げて、狭い画面で横にはみ出す） */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  max-inline-size: 40rem;
+}
+.s-preview-hero > .g-page-header {
+  margin-block-end: 0;
+}
+.s-preview-hero > .g-btn {
+  justify-self: start;
+}
+
 /* トーストの「元に戻す」のデモ。下書きの行 */
 .s-draft-list {
   display: grid;
