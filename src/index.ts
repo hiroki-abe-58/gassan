@@ -131,6 +131,14 @@ export { PageHeader } from './page-header';
 export { DataTable } from './data-table';
 export { CommandPalette } from './command-palette';
 export { LineChart, BarChart, DonutChart, Sparkline, BarList, Gauge } from './charts';
+export { ScatterChart } from './scatter-chart';
+export { RadarChart } from './radar-chart';
+export { Heatmap } from './heatmap';
+export { WaterfallChart } from './waterfall-chart';
+export { ParetoChart } from './pareto-chart';
+export { FunnelChart } from './funnel-chart';
+export { FishboneDiagram } from './fishbone-diagram';
+export { GanttChart } from './gantt-chart';
 export { Carousel } from './carousel';
 export { ChatThread, ChatComposer, TypingIndicator, ChatSuggestions } from './chat';
 export { ChatWidget } from './chat-widget';
@@ -350,6 +358,14 @@ export type {
   LineChartProps,
   SparklineProps,
 } from './charts';
+export type { ScatterChartProps, ScatterPoint, ScatterSeries } from './scatter-chart';
+export type { RadarChartProps } from './radar-chart';
+export type { HeatmapProps } from './heatmap';
+export type { WaterfallChartProps, WaterfallDatum } from './waterfall-chart';
+export type { ParetoChartProps, ParetoDatum } from './pareto-chart';
+export type { FunnelChartProps, FunnelStep } from './funnel-chart';
+export type { FishboneDiagramProps, FishboneCategory, FishboneCause } from './fishbone-diagram';
+export type { GanttChartProps, GanttTask } from './gantt-chart';
 export type { CarouselItem, CarouselProps } from './carousel';
 export type {
   ChatAuthor,

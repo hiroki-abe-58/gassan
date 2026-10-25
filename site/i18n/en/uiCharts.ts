@@ -1,7 +1,7 @@
 import type ja from '../ja/uiCharts';
 
 export default {
-  lead: 'Charts that draw numbers such as revenue over time, sign-ups by plan and usage rates straight from the data. They are drawn in SVG and HTML without adding any dependencies, and you can step through the points with the keyboard and have their values read out. Colors follow the theme.',
+  lead: 'Charts that draw numbers such as revenue over time, sign-ups by plan and usage rates straight from the data, plus charts for analysis such as scatter plots, heatmaps, Pareto charts, cause-and-effect diagrams and Gantt charts. They are drawn in SVG and HTML without adding any dependencies, and you can step through the points with the keyboard and have their values read out. Colors follow the theme.',
   line: {
     title: 'Line and area',
     intro: 'For numbers that change over time. Series can be shown and hidden from the legend. Hover over a point or move to it with the keyboard, and the values for that month appear together.',
@@ -22,6 +22,54 @@ export default {
     exampleTitle: 'Dashboard cards',
     exampleDescription: 'Hover over a donut segment or its legend entry, and its value and share appear in the middle. The meter has its value read out through role="meter".',
   },
+  scatter: {
+    title: 'Scatter and bubble',
+    intro: 'For the relationship between two amounts. Points can be stepped through with the keyboard in order of their horizontal value, and each one reads out its name and its horizontal and vertical values. Pass sizeLabel to draw a third amount as the area of a bubble.',
+    exampleTitle: 'Adoption and satisfaction by feature',
+    exampleDescription: 'The bubble area is the number of users. Hiding a series from the legend does not change the scale of the bubbles.',
+  },
+  radar: {
+    title: 'Radar',
+    intro: 'For comparing ratings on several aspects as a shape. Use 3 to 8 axes. Step through the axis names with the keyboard, and the value of each series on that aspect is read out.',
+    exampleTitle: 'Our product against a competitor',
+    exampleDescription: 'max={5} sets the outer ring to 5, so the rings mark 1 to 5.',
+  },
+  heatmap: {
+    title: 'Heatmap',
+    intro: 'For an amount determined by two items, such as day of the week and hour. It is a table with row and column headers: move between cells with the arrow keys, and the headers and the value are read out.',
+    exampleTitle: 'Usage by day and hour',
+    exampleDescription: 'Colors come in 5 steps. The day, hour and value of the cell you point at appear below. showValues writes the values in the cells.',
+  },
+  waterfall: {
+    title: 'Waterfall',
+    intro: 'Shows what went up or down, and by how much, between an opening and a closing figure. Change bars float from the previous running total, and total bars stand on zero.',
+    exampleTitle: 'MRR movement',
+    exampleDescription: 'The colors for increase, decrease and total are also shown in the legend, and what is read out states the numbers, as in “New: Change +¥640,000, Running total ¥5,460,000”.',
+  },
+  pareto: {
+    title: 'Pareto chart',
+    intro: 'Shows which items make up most of the whole. Bars are sorted from largest, and the cumulative share is drawn as a line on the right-hand scale (0–100%). The number of top items that reach 80% is written below the chart.',
+    exampleTitle: 'Support requests by type',
+    exampleDescription: 'Mark “Other” with other to keep it at the end. Bars after the threshold is reached are drawn lighter.',
+  },
+  funnel: {
+    title: 'Funnel',
+    intro: 'For the number at each step toward signing up or buying. Each step lists, in text, its share of the first step and the share that came through from the previous step.',
+    exampleTitle: 'Path to a paid plan',
+    exampleDescription: 'It is a numbered list. The bars, as wide as each step’s share of the first step, are decoration.',
+  },
+  fishbone: {
+    title: 'Cause-and-effect (fishbone) diagram',
+    intro: 'Lays out the possible causes of a problem (the effect) as main bones, small bones and their branches. Used in quality analysis and retrospectives. It is a nested list, read from the effect to the causes.',
+    exampleTitle: 'Causes of assembly defects',
+    exampleDescription: 'In a wide container the main bones go above and below the spine with slanted bones; in a narrow one they stack vertically. Causes show up to two lines, and the full text stays for screen readers.',
+  },
+  gantt: {
+    title: 'Gantt chart',
+    intro: 'Lays out the periods and progress of tasks along a date axis. It is a list of tasks, and each row is read out as one sentence with its period, number of days and progress.',
+    exampleTitle: 'Schedule for the new billing screen',
+    exampleDescription: 'Weekends and public holidays are shaded, and a line marks today. group makes sections and milestone makes milestones (diamonds).',
+  },
   choose: {
     title: 'Choosing a chart',
     intro: 'Choose by what you want to show. When in doubt, use bars. Length can be read more accurately than angle or area.',
@@ -35,11 +83,19 @@ export default {
       { chart: 'Sparkline', when: 'A trend to go alongside a table or card', avoid: 'When values need to be read precisely' },
       { chart: 'BarList', when: 'Rankings (most viewed pages, traffic sources)', avoid: 'Changes over time' },
       { chart: 'Gauge', when: 'A single amount with an upper limit (usage rate, goal completion)', avoid: 'Amounts with no upper limit' },
+      { chart: 'ScatterChart', when: 'The relationship between two amounts (adoption and satisfaction, price and sales)', avoid: 'Changes over time (use a line chart)' },
+      { chart: 'RadarChart', when: 'Comparing ratings on 3 to 8 aspects (products, skills)', avoid: 'Comparing exact values (use bars)' },
+      { chart: 'Heatmap', when: 'An amount set by two items (day × hour, month × region)', avoid: 'When small differences in value must be read' },
+      { chart: 'WaterfallChart', when: 'The breakdown of changes from an opening to a closing figure (MRR, profit and loss)', avoid: 'Comparing items that have no change' },
+      { chart: 'ParetoChart', when: 'Finding the items that make up most of the whole (defects, request types)', avoid: 'Items whose order has meaning (such as time)' },
+      { chart: 'FunnelChart', when: 'Numbers that shrink step by step (toward sign-up or purchase)', avoid: 'Items with no set order' },
+      { chart: 'FishboneDiagram', when: 'Listing the causes of a problem (quality analysis, retrospectives)', avoid: 'When numbers need comparing' },
+      { chart: 'GanttChart', when: 'Task periods, overlaps and progress (a development schedule)', avoid: 'Numbers without a period' },
     ],
   },
   access: {
     title: 'Screen readers and keyboard',
-    intro: 'A chart has a name (label) and a sentence on its main trend (description). Only one point is a Tab stop. Move to a neighboring point with the arrow keys, and the item and the value of each series are read out together. The tooltip only shows the same values on screen, so it is not read out.',
+    intro: 'A chart has a name (label) and a sentence on its main trend (description). Only one point is a Tab stop. Move to a neighboring point with the arrow keys, and the item and the value of each series are read out together. The tooltip only shows the same values on screen, so it is not read out. Funnels, cause-and-effect diagrams and Gantt charts are lists, so they can be read through without any extra keyboard interaction.',
     tableCaption: 'Chart keyboard interaction',
     head: { key: 'Key', action: 'Action' },
     rows: [
@@ -48,6 +104,9 @@ export default {
       { key: '← / ↑', action: 'Previous point' },
       { key: 'Home / End', action: 'First / last point' },
       { key: 'Enter / Space (legend)', action: 'Hides or brings back the series. The last one left is not hidden' },
+      { key: '↑ ↓ ← → (heatmap)', action: 'The cell above, below, left or right. Stops at the edges' },
+      { key: 'Home / End (heatmap)', action: 'First / last cell in the row' },
+      { key: 'Ctrl + Home / End (heatmap)', action: 'First / last cell in the table' },
     ],
   },
   colors: {

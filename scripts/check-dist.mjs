@@ -85,11 +85,15 @@ import { gzipSync } from 'node:zlib';
  * 英語の文言を足したため（JS 約 27 KB・templates.css 約 0.2 KB）。増えた分の大半は文言（選択肢と、なぜ聞くかの文。minify して約 50 KB）。
  * 文言は別の表（RegistrationLabels）にし、出典の URL も素の文字列にしたので、登録の部品を使わないアプリの束には載らない
  * （minify した束で LineChart だけ 25,614 B・MailboxPage だけ 48,765 B と G と同じ。Modal だけは CheckboxGroup のぶん 43,485 B）。
+ * 同日、JS を 181 → 190 KB、styles.css を 26 → 29 KB に引き上げた。分析のグラフと図（Q-13〜Q-20。散布図・レーダー・ヒートマップ・
+ * ウォーターフォール・パレート図・ファネル・特性要因図・ガントチャート）と、その文言を足したため（JS 約 9 KB・styles.css 約 2.7 KB）。
+ * 図はどれも名前つき import なので、使わないアプリの束には載らない。GassanLabels に足した図の語（22）のぶん、どの束も約 0.37 KB 増える
+ * （minify した束で Modal だけ 43,852 B・LineChart だけ 26,018 B・MailboxPage だけ 49,132 B）。
  */
 const BUDGETS = {
-  'dist/index.js': 181 * 1024,
-  'dist/index.cjs': 181 * 1024,
-  'dist/styles.css': 26 * 1024,
+  'dist/index.js': 190 * 1024,
+  'dist/index.cjs': 190 * 1024,
+  'dist/styles.css': 29 * 1024,
   'dist/templates.css': 8 * 1024,
 };
 
@@ -213,6 +217,15 @@ const REQUIRED_EXPORTS = [
   'Sparkline',
   'BarList',
   'Gauge',
+  // 分析のグラフと図。Q-13〜Q-20。
+  'ScatterChart',
+  'RadarChart',
+  'Heatmap',
+  'WaterfallChart',
+  'ParetoChart',
+  'FunnelChart',
+  'FishboneDiagram',
+  'GanttChart',
   // カルーセル。U-28 / U-29。
   'Carousel',
   // 会話。E-01〜E-08。

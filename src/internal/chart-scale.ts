@@ -85,13 +85,16 @@ export function pointAt(index: number, count: number, band: boolean): number {
 /** 全角の幅で描かれる文字（漢字・かな・ハングル・全角の記号）。 */
 const WIDE = /[ᄀ-ᇿ⺀-〿぀-ヿ㄀-ㇿ㐀-䶿一-鿿가-힯豈-﫿＀-｠￠-￦]/u;
 
+/** 幅を持たない文字（前の字に重なる結合文字。タイ文字の母音と声調の記号など）。 */
+const ZERO_WIDTH = /[\p{Mn}\p{Me}]/u;
+
 /**
- * 文字の幅の見積もり（px）。全角は 1em、そのほかは 0.62em（ラテン文字は Linux の字幅の広いフォントに合わせて多めに見る）。
+ * 文字の幅の見積もり（px）。全角は 1em、結合文字は 0、そのほかは 0.62em（ラテン文字は Linux の字幅の広いフォントに合わせて多めに見る）。
  * 測らずに決めるので、サーバーと jsdom とブラウザで同じ結果になる。目盛りの文字を間引く本数にだけ使う。
  */
 export function estimateTextWidth(text: string, fontSize: number): number {
   let em = 0;
-  for (const char of text) em += WIDE.test(char) ? 1 : 0.62;
+  for (const char of text) em += ZERO_WIDTH.test(char) ? 0 : WIDE.test(char) ? 1 : 0.62;
   return em * fontSize;
 }
 

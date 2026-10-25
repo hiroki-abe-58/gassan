@@ -277,10 +277,18 @@ const EXTRA_INTERFACES = new Set([
   'BillingPaymentMethod',
   'BillingInvoice',
   'OnboardingStep',
-  // グラフ（Q-01〜Q-12）。
+  // グラフ（Q-01〜Q-12）と分析の図（Q-13〜Q-20）。
   'ChartSeries',
   'DonutDatum',
   'BarListItem',
+  'ScatterPoint',
+  'ScatterSeries',
+  'WaterfallDatum',
+  'ParetoDatum',
+  'FunnelStep',
+  'FishboneCategory',
+  'FishboneCause',
+  'GanttTask',
   // カルーセル（U-28）。
   'CarouselItem',
   // 会話（E-01〜E-08）。

@@ -1,23 +1,35 @@
-import {
-  useId,
-  useRef,
-  useState,
-  type CSSProperties,
-  type KeyboardEvent as ReactKeyboardEvent,
-  type PointerEvent as ReactPointerEvent,
-  type ReactNode,
-} from 'react';
+import { useId, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 
 import type { StatusTone } from './display';
-import { ModalTable } from './fields';
+import {
+  BandHits,
+  ChartData,
+  Description,
+  Grid,
+  Legend,
+  Tooltip,
+  XAxis,
+  YAxis,
+  bandPointer,
+  besideStyle,
+  colorStyle,
+  cx,
+  isNumber,
+  lastIndexWhere,
+  seriesColor,
+  toNumber,
+  useFormats,
+  usePercent,
+  useRoving,
+  useShell,
+  useVisibleSeries,
+} from './internal/chart-parts';
 import {
   arcLengths,
   areaPath,
-  estimateTextWidth,
   linearPath,
   monotonePath,
   niceTicks,
-  placeAxisLabels,
   pointAt,
   segmentsOf,
   toLeft,
@@ -29,8 +41,6 @@ import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { useWidth } from './internal/use-width';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
-
-const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
 /*
  * グラフ。Q-01〜Q-12。
@@ -94,279 +104,6 @@ export interface CartesianChartProps extends ChartBaseProps {
   xLabel?: string;
 }
 
-const toNumber = (value: ChartValue): number | null => {
-  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
-  if (typeof value === 'string' && value.trim() !== '') {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-  return null;
-};
-
-const isNumber = (value: number | null): value is number => value !== null;
-
-/** 条件に合う最後の位置（ES2023 の findLastIndex の代わり。型の lib は ES2022 まで）。 */
-function lastIndexWhere<T>(items: readonly T[], match: (item: T) => boolean): number {
-  for (let index = items.length - 1; index >= 0; index -= 1) {
-    const item = items[index];
-    if (item !== undefined && match(item)) return index;
-  }
-  return -1;
-}
-
-/** 系列の色。渡した順の位置で決めるので、凡例で隠しても他の系列の色は変わらない。 */
-const seriesColor = (series: ChartSeries, index: number): string =>
-  series.color ?? `var(--g-chart-${String((index % 8) + 1)})`;
-
-const colorStyle = (color: string): CSSProperties => ({ '--g-viz-color': color }) as CSSProperties;
-
-function makeFormat(locale: string, format: ChartFormat | undefined, base: Intl.NumberFormatOptions): (value: number) => string {
-  if (typeof format === 'function') return format;
-  const intl = new Intl.NumberFormat(locale, { ...base, ...format });
-  return (value) => intl.format(value);
-}
-
-function useFormats(valueFormat: ChartFormat | undefined, axisFormat?: ChartFormat): { value: (v: number) => string; axis: (v: number) => string } {
-  const { locale } = useLabels();
-  const value = makeFormat(locale, valueFormat, {});
-  // 関数の書式は短くできないので、目盛りにもそのまま使う
-  const axis =
-    axisFormat === undefined && typeof valueFormat === 'function'
-      ? value
-      : makeFormat(locale, axisFormat ?? valueFormat, { notation: 'compact', maximumFractionDigits: 1 });
-  return { value, axis };
-}
-
-/** 凡例で隠した系列。最後の 1 つは隠さない（何も描かれないグラフにしない）。Q-11。 */
-function useVisibleSeries(series: readonly ChartSeries[]): {
-  visible: readonly ChartSeries[];
-  hidden: ReadonlySet<string>;
-  toggle: (key: string) => void;
-} {
-  const [hidden, setHidden] = useState<ReadonlySet<string>>(() => new Set());
-  const toggle = (key: string): void => {
-    setHidden((current) => {
-      const next = new Set(current);
-      if (next.has(key)) next.delete(key);
-      else if (series.filter((s) => !next.has(s.key)).length > 1) next.add(key);
-      return next;
-    });
-  };
-  const visible = series.filter((s) => !hidden.has(s.key));
-  return { visible: visible.length > 0 ? visible : series.slice(0, 1), hidden, toggle };
-}
-
-/**
- * 点をたどるキー操作（Q-02）。点は 1 つだけが Tab で止まり（ロービング）、矢印・Home・End で移る。
- * フォーカスのある点とポインタの乗った点を分けて持ち、フォーカスを優先して示す。
- */
-function useRoving(count: number): {
-  active: number | null;
-  setHovered: (index: number | null) => void;
-  hitProps: (index: number) => {
-    ref: (node: HTMLElement | null) => void;
-    tabIndex: number;
-    onFocus: () => void;
-    onBlur: () => void;
-    onKeyDown: (event: ReactKeyboardEvent) => void;
-  };
-} {
-  const refs = useRef<(HTMLElement | null)[]>([]);
-  const [tabStop, setTabStop] = useState(0);
-  const [focused, setFocused] = useState<number | null>(null);
-  const [hovered, setHovered] = useState<number | null>(null);
-  const stop = Math.min(tabStop, Math.max(0, count - 1));
-  const go = (index: number): void => {
-    const next = Math.min(Math.max(index, 0), count - 1);
-    setTabStop(next);
-    refs.current[next]?.focus();
-  };
-  const onKeyDown = (event: ReactKeyboardEvent, index: number): void => {
-    const step = ({ ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 } as Record<string, number>)[event.key];
-    if (step !== undefined) go(index + step);
-    else if (event.key === 'Home') go(0);
-    else if (event.key === 'End') go(count - 1);
-    else return;
-    event.preventDefault();
-  };
-  const at = (index: number | null): number | null => (index === null || index >= count ? null : index);
-  return {
-    active: at(focused) ?? at(hovered),
-    setHovered,
-    hitProps: (index) => ({
-      ref: (node) => {
-        refs.current[index] = node;
-      },
-      tabIndex: index === stop ? 0 : -1,
-      onFocus: () => {
-        setFocused(index);
-        setTabStop(index);
-      },
-      onBlur: () => setFocused((current) => (current === index ? null : current)),
-      onKeyDown: (event) => onKeyDown(event, index),
-    }),
-  };
-}
-
-/** 凡例。系列が 2 つ以上なら押して出し入れするボタン（aria-pressed）、1 つなら印と名前だけ。Q-11。 */
-function Legend({
-  series,
-  hidden,
-  onToggle,
-  shape,
-}: {
-  series: readonly ChartSeries[];
-  hidden: ReadonlySet<string>;
-  onToggle: (key: string) => void;
-  shape: 'line' | 'square';
-}): ReactNode {
-  const labels = useLabels();
-  const phrase = usePhrase();
-  const interactive = series.length > 1;
-  return (
-    <ul className="g-viz-legend" aria-label={labels.legend}>
-      {series.map((s, index) => {
-        const swatch = <span className="g-viz-swatch" data-shape={shape} aria-hidden="true" />;
-        return (
-          <li key={s.key} style={colorStyle(seriesColor(s, index))}>
-            {interactive ? (
-              <button type="button" className="g-viz-legend-item" aria-pressed={!hidden.has(s.key)} onClick={() => onToggle(s.key)}>
-                {swatch}
-                {phrase(s.label)}
-              </button>
-            ) : (
-              <span className="g-viz-legend-item">
-                {swatch}
-                {phrase(s.label)}
-              </span>
-            )}
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-interface TooltipRow {
-  key: string;
-  label: string;
-  value: string;
-  color: string;
-}
-
-/** ツールチップ。同じ値は点の名前で読み上げるので、飾り（aria-hidden）にする。Q-02。 */
-function Tooltip({ title, rows, style }: { title: string; rows: readonly TooltipRow[]; style: CSSProperties }): ReactNode {
-  return (
-    <div className="g-viz-tooltip" style={style} aria-hidden="true">
-      <div className="g-viz-tooltip-title">{title}</div>
-      <ul>
-        {rows.map((row) => (
-          <li key={row.key} style={colorStyle(row.color)}>
-            <span className="g-viz-swatch" />
-            <span className="g-viz-tooltip-label">{row.label}</span>
-            <span className="g-viz-tooltip-value">{row.value}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-/** 点の横の位置から、ツールチップを右に出すか左に出すか。 */
-const besideStyle = (at: number): CSSProperties =>
-  at <= 55 ? { left: `calc(${String(at)}% + 12px)` } : { right: `calc(${String(100 - at)}% + 12px)` };
-
-/** 元データの表（「元データを表示」で開く）。Q-01。 */
-function ChartData({ label, head, rows }: { label: string; head: readonly string[]; rows: readonly (readonly string[])[] }): ReactNode {
-  const labels = useLabels();
-  return (
-    <details className="g-chart-data">
-      <summary>{labels.chartData}</summary>
-      <ModalTable label={labels.chartTable(label)}>
-        <table>
-          <thead>
-            <tr>
-              {head.map((cell, column) => (
-                <th key={`h-${String(column)}`} scope="col">
-                  {cell}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, rowIndex) => (
-              <tr key={`r-${String(rowIndex)}`}>
-                {row.map((cell, column) =>
-                  column === 0 ? (
-                    <th key={`c-${String(column)}`} scope="row">
-                      {cell}
-                    </th>
-                  ) : (
-                    <td key={`c-${String(column)}`}>{cell}</td>
-                  ),
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </ModalTable>
-    </details>
-  );
-}
-
-/**
- * 縦の目盛りの文字。目盛りは等間隔なので、上下に文字の高さの半分はみ出した列に均等に並べると線にそろう。
- * 上から大きい順に置く（column-reverse で並びを逆にしない。§5 の決まり）。
- */
-function YAxis({ ticks, format }: { ticks: readonly number[]; format: (value: number) => string }): ReactNode {
-  return (
-    <div className="g-viz-y" aria-hidden="true">
-      {[...ticks].reverse().map((tick) => (
-        <span key={tick}>{format(tick)}</span>
-      ))}
-    </div>
-  );
-}
-
-function Grid({ ticks, domain, horizontal }: { ticks: readonly number[]; domain: readonly [number, number]; horizontal?: boolean }): ReactNode {
-  return (
-    <div className="g-viz-grid" aria-hidden="true" data-axis={horizontal ? 'x' : undefined}>
-      {ticks.map((tick) => (
-        <span
-          key={tick}
-          style={horizontal ? { left: `${String(toLeft(tick, domain))}%` } : { top: `${String(toTop(tick, domain))}%` }}
-          data-zero={tick === 0 ? '' : undefined}
-        />
-      ))}
-    </div>
-  );
-}
-
-/**
- * 横の目盛りの文字（Q-10）。いちばん長い文字が隣と重ならない本数おきに出し、器からはみ出す文字は端へ寄せる
- * （線のグラフでは最初と最後の点が端にあるので、端の文字は内側へ寄る）。
- */
-function XAxis({ texts, positions, width }: { texts: readonly string[]; positions: readonly number[]; width: number }): ReactNode {
-  const labels = placeAxisLabels(
-    texts.map((text) => estimateTextWidth(text, 12)),
-    positions,
-    width,
-  );
-  return (
-    <div className="g-viz-x" aria-hidden="true">
-      {labels.map(({ index, edge }) => (
-        <span
-          key={`x-${String(index)}`}
-          style={{ left: edge === 'start' ? '0%' : edge === 'end' ? '100%' : `${String(positions[index] ?? 0)}%` }}
-          data-edge={edge}
-        >
-          {texts[index]}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 /** 積み上げ。系列ごとに、下の系列までの合計（base）と自分を足した値（top）を返す。欠けた値は 0 として積む。 */
 function stackValues(values: readonly (readonly (number | null)[])[], length: number): { tops: (number | null)[][]; bases: number[][] } {
   const sums = new Array<number>(length).fill(0);
@@ -383,43 +120,6 @@ function stackValues(values: readonly (readonly (number | null)[])[], length: nu
     );
   }
   return { tops, bases };
-}
-
-interface ChartShell {
-  labels: ReturnType<typeof useLabels>;
-  descriptionId: string | undefined;
-  groupProps: {
-    role: 'group';
-    'aria-roledescription': string;
-    'aria-label': string;
-    'aria-describedby': string | undefined;
-  };
-}
-
-function useShell(label: string, description: ReactNode): ChartShell {
-  const labels = useLabels();
-  const descriptionId = `${useId()}-description`;
-  const described = description !== undefined && description !== null && description !== false;
-  return {
-    labels,
-    descriptionId: described ? descriptionId : undefined,
-    groupProps: {
-      role: 'group',
-      'aria-roledescription': labels.chart,
-      'aria-label': label,
-      'aria-describedby': described ? descriptionId : undefined,
-    },
-  };
-}
-
-function Description({ id, children }: { id: string | undefined; children: ReactNode }): ReactNode {
-  const phrase = usePhrase();
-  if (!id) return null;
-  return (
-    <p id={id} className="g-viz-description">
-      {phrase(children)}
-    </p>
-  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -780,33 +480,8 @@ export function BarChart({
       />
     ) : null;
 
-  const onPointer = (event: ReactPointerEvent<HTMLDivElement>): void => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const size = horizontal ? rect.height : rect.width;
-    if (size <= 0 || count === 0) return;
-    const ratio = horizontal ? (event.clientY - rect.top) / size : (event.clientX - rect.left) / size;
-    roving.setHovered(Math.min(count - 1, Math.max(0, Math.floor(ratio * count))));
-  };
-
-  const hits = (
-    <div className="g-viz-hits">
-      {data.map((_, index) => (
-        <div
-          key={`h-${String(index)}`}
-          role="img"
-          aria-label={pointLabel(index)}
-          className="g-viz-hit"
-          style={
-            horizontal
-              ? { top: `${String((index / count) * 100)}%`, height: `${String(100 / count)}%` }
-              : { left: `${String((index / count) * 100)}%`, width: `${String(100 / count)}%` }
-          }
-          data-active={index === active ? '' : undefined}
-          {...roving.hitProps(index)}
-        />
-      ))}
-    </div>
-  );
+  const onPointer = bandPointer(count, roving, horizontal);
+  const hits = <BandHits count={count} roving={roving} labelOf={pointLabel} horizontal={horizontal} />;
 
   return (
     <div {...domPassthrough(rest, 'BarChart')} {...groupProps} className={cx('g-viz g-bar-chart', className)} data-layout={horizontal ? 'horizontal' : undefined}>
@@ -924,7 +599,7 @@ export function DonutChart({
   const { labels, descriptionId, groupProps } = useShell(label, description);
   const phrase = usePhrase();
   const formats = useFormats(valueFormat);
-  const share = new Intl.NumberFormat(labels.locale, { style: 'percent', maximumFractionDigits: 1 });
+  const percent = usePercent();
   const [active, setActive] = useState<number | null>(null);
   const total = data.reduce((sum, datum) => sum + Math.max(0, datum.value), 0);
   const donut = variant === 'donut';
@@ -976,7 +651,7 @@ export function DonutChart({
                 <>
                   <span className="g-donut-value">{formats.value(focus.value)}</span>
                   <span className="g-donut-caption">
-                    {focus.label}・{share.format(ratioOf(focus))}
+                    {focus.label}・{percent(ratioOf(focus))}
                   </span>
                 </>
               ) : (
@@ -1003,7 +678,7 @@ export function DonutChart({
                 <span className="g-viz-swatch" aria-hidden="true" />
                 <span className="g-donut-name">{phrase(arc.datum.label)}</span>
                 <span className="g-donut-amount">{formats.value(arc.datum.value)}</span>
-                <span className="g-donut-share">{share.format(ratioOf(arc.datum))}</span>
+                <span className="g-donut-share">{percent(ratioOf(arc.datum))}</span>
               </li>
             ))}
           </ul>
@@ -1014,7 +689,7 @@ export function DonutChart({
         <ChartData
           label={label}
           head={[labels.chartCategory, labels.chartValue, labels.chartShare]}
-          rows={data.map((datum) => [datum.label, formats.value(datum.value), share.format(ratioOf(datum))])}
+          rows={data.map((datum) => [datum.label, formats.value(datum.value), percent(ratioOf(datum))])}
         />
       ) : null}
     </div>

@@ -67,6 +67,8 @@ describe('グラフの目盛りと線の形 / Q-03 Q-10', () => {
 
   it('Q-10 横の目盛りの文字は、いちばん長い文字が隣と重ならない本数おきに出し、線のグラフでは端の文字を内側へ寄せる', () => {
     expect(estimateTextWidth('ダッシュボード', 12)).toBe(84);
+    // 幅を持たない結合文字（タイ文字の母音と声調の記号）は数えない。「เข้าสู่ระบบ」は 11 字のうち 3 字が結合文字
+    expect(estimateTextWidth('เข้าสู่ระบบ', 12)).toBeCloseTo(8 * 0.62 * 12, 5);
     expect(labelStride([20, 84, 30], 40)).toBe(3);
     expect(labelStride([20], 40)).toBe(1);
     // 端の文字は器の内側へ寄せ、寄せた後に重なる間の文字は落とす（最後の文字は残す）
@@ -403,9 +405,21 @@ describe('グラフの色と動き / Q-09 Q-12', () => {
     expect(css).toMatch(/\.g-viz-svg\s*\{[^}]*animation:\s*g-viz-reveal calc\(var\(--g-dur-slow\) \* 3\)/);
     expect(css).toMatch(/\.g-viz-slot\s*\{[^}]*animation:\s*g-viz-grow calc\(var\(--g-dur-slow\) \* 2\)/);
     const reduced = [...css.matchAll(/@media \(prefers-reduced-motion: reduce\)\s*\{([\s\S]*?)\n {2}\}/g)].map((m) => m[1] ?? '').join('\n');
-    for (const part of ['.g-viz-svg', '.g-viz-dot', '.g-viz-slot', '.g-donut-segment', '.g-gauge-fill', '.g-bar-list-bar']) {
-      expect(reduced).toContain(part);
+    // 動きを止める規則（:is(…) { animation: none; }）の選択子
+    const stopped = [...reduced.matchAll(/:is\(([^)]*)\)\s*\{\s*animation:\s*none;/g)].flatMap((m) => (m[1] ?? '').split(',').map((s) => s.trim()));
+    for (const part of [
+      '.g-viz-svg',
+      '.g-viz-dot',
+      '.g-viz-slot',
+      '.g-donut-segment',
+      '.g-gauge-fill',
+      '.g-bar-list-bar',
+      '.g-scatter-point',
+      '.g-radar-area',
+      '.g-funnel-bar',
+      '.g-gantt-bar',
+    ]) {
+      expect(stopped).toContain(part);
     }
-    expect(reduced).toMatch(/\.g-bar-list-bar\)\s*\{\s*animation:\s*none;/);
   });
 });

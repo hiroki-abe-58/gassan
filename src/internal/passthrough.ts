@@ -84,6 +84,13 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-weekday',
   'data-wrap',
   'data-zero',
+  // 分析のグラフと図（Q-13〜Q-20）
+  'data-axes',
+  'data-milestone',
+  'data-muted',
+  'data-step',
+  'data-strong',
+  'data-unit',
   'data-g-blocked',
   'data-g-control',
   'data-g-covered',
