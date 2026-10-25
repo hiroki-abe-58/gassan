@@ -178,6 +178,12 @@ const labels: GassanLabels = {
     names.length === 1 ? `${names[0] ?? ''} กำลังพิมพ์` : names.length === 2 ? `${names[0] ?? ''} และ ${names[1] ?? ''} กำลังพิมพ์` : `${names.length} คนกำลังพิมพ์`,
   sendHint: (mode) => (mode === 'enter' ? 'กด Enter เพื่อส่ง, Shift+Enter เพื่อขึ้นบรรทัดใหม่' : 'กด Ctrl+Enter (Mac ใช้ ⌘+Enter) เพื่อส่ง, Enter เพื่อขึ้นบรรทัดใหม่'),
   suggestions: 'ตัวอย่างคำถาม',
+  chatOpen: 'เปิดแชต',
+  chatClose: 'ปิดแชต',
+  chatUnread: (count) => `ยังไม่ได้อ่าน ${count} รายการ`,
+  chatExpand: 'ขยายไปทางขวา',
+  chatCollapse: 'ย่อให้เล็กลง',
+  chatDismissGreeting: 'ปิดคำทักทาย',
 };
 
 export default labels;

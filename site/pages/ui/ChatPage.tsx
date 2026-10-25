@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import type { PageProps } from '../../routes';
 import ChatAssistant from '../../demos/ChatAssistant';
 import chatAssistantSource from '../../demos/ChatAssistant.tsx?raw';
+import ChatBot from '../../demos/ChatBot';
+import chatBotSource from '../../demos/ChatBot.tsx?raw';
 import ChatTeam from '../../demos/ChatTeam';
 import chatTeamSource from '../../demos/ChatTeam.tsx?raw';
 import { useT } from '../../i18n';
@@ -14,7 +16,7 @@ import { Example } from '../../ui/Example';
 import { Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 
-const IDS = ['E-01', 'E-02', 'E-03', 'E-04', 'E-05', 'E-06', 'E-07', 'E-08'];
+const IDS = ['E-01', 'E-02', 'E-03', 'E-04', 'E-05', 'E-06', 'E-07', 'E-08', 'E-09'];
 
 export function UiChatPage({ rest }: PageProps): ReactNode {
   const { nav, uiChat: t } = useT();
@@ -40,6 +42,13 @@ export function UiChatPage({ rest }: PageProps): ReactNode {
             </Example>
           </Section>
 
+          <Section id="widget" title={t.widget.title} intro={t.widget.intro}>
+            <Example title={t.widget.exampleTitle} description={t.widget.exampleDescription} code={chatBotSource} demo="chatBot">
+              <ChatBot />
+            </Example>
+            <DataTable caption={t.widget.tableCaption} head={[t.widget.head.when, t.widget.head.then]} rows={t.widget.rows.map((row) => [row.when, row.then])} />
+          </Section>
+
           <Section id="behavior" title={t.behavior.title} intro={t.behavior.intro}>
             <DataTable caption={t.behavior.tableCaption} head={[t.behavior.head.when, t.behavior.head.then]} rows={t.behavior.rows.map((row) => [row.when, row.then])} />
           </Section>
@@ -62,6 +71,7 @@ export function UiChatPage({ rest }: PageProps): ReactNode {
           <ApiTable name="TypingIndicatorProps" title="TypingIndicator" />
           <ApiTable name="ChatSuggestionsProps" title="ChatSuggestions" />
           <ApiTable name="ChatSuggestion" />
+          <ApiTable name="ChatWidgetProps" title="ChatWidget" />
         </>
       )}
       a11y={() => <SpecTable ids={IDS} caption={t.a11yCaption} />}

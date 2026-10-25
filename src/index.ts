@@ -91,6 +91,7 @@ export { CommandPalette } from './command-palette';
 export { LineChart, BarChart, DonutChart, Sparkline, BarList, Gauge } from './charts';
 export { Carousel } from './carousel';
 export { ChatThread, ChatComposer, TypingIndicator, ChatSuggestions } from './chat';
+export { ChatWidget } from './chat-widget';
 export { ScrollArea, PageScrollbar, SCROLLBAR_VISIBILITIES } from './scroll-area';
 
 /* ------------------------------------------------------------------ templates */
@@ -273,6 +274,7 @@ export type {
   ChatThreadProps,
   TypingIndicatorProps,
 } from './chat';
+export type { ChatWidgetProps } from './chat-widget';
 export type { ScrollAreaProps, PageScrollbarProps, ScrollbarVisibility } from './scroll-area';
 export type { AccordionItem, AccordionProps } from './disclosure';
 export type { TooltipProps, PopoverProps, MenuItem, MenuSeparator, MenuGroup, MenuEntry, MenuProps, ContextMenuProps } from './overlay';

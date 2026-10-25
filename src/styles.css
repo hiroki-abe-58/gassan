@@ -119,6 +119,10 @@
     --g-scrollbar-thumb-active: color-mix(in srgb, var(--g-fg) 66%, transparent);
     --g-scrollbar-track: color-mix(in srgb, var(--g-fg) 7%, transparent);
 
+    /* --- chat widget（E-09）-----------------------------------------------------
+     * 右下の起点と小窓の、画面の端からの間（11.7）。トーストや「上へ戻る」と重なるときにずらす。 */
+    --g-chatbot-offset: 24px;
+
     /* --- motion -----------------------------------------------------------
      * 退出は入場より速く。人は「開く」を待てるが「閉じる」を待てない。
      * ここの値は既定のプリセット（standard）。data-g-motion の 4 段（V-01、下の 1b）は
@@ -4409,6 +4413,137 @@
   .g-suggestion-label { font-weight: 600; }
   .g-suggestion-description { color: var(--g-fg-muted); font-size: 0.8125rem; }
 
+  /* --- 11.7 チャットのウィジェット（E-09） ------------------------------------------------
+   * 起点は画面の右下（右から左の言語と side="start" では左下）に固定した丸いボタン。小窓は起点の上に、角から広がって出る
+   * （モーダルではない。top layer の popover="manual"）。右側の面と狭い画面のシートは Modal（C-13 / M-01）。
+   * 中身（ChatThread と入力欄）は窓の高さいっぱいに広がり、列だけが送られる。端からの間は --g-chatbot-offset で変える */
+  .g-chatbot { display: contents; }
+  .g-chatbot-launcher {
+    position: fixed;
+    inset-block-end: max(var(--g-chatbot-offset), env(safe-area-inset-bottom));
+    inset-inline-end: max(var(--g-chatbot-offset), env(safe-area-inset-right));
+    display: grid;
+    place-items: center;
+    inline-size: 56px;
+    block-size: 56px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--g-accent);
+    color: var(--g-on-accent);
+    box-shadow: var(--g-shadow);
+    cursor: pointer;
+    transition: scale var(--g-dur-fast) var(--g-ease-move), background-color var(--g-dur-fast) linear;
+  }
+  .g-chatbot[data-side="start"] :is(.g-chatbot-launcher, .g-chatbot-greeting, .g-chatbot-panel) {
+    inset-inline-end: auto;
+    inset-inline-start: max(var(--g-chatbot-offset), env(safe-area-inset-left));
+  }
+  .g-chatbot-launcher > svg { inline-size: 26px; block-size: 26px; }
+  .g-chatbot-launcher:hover { background: color-mix(in srgb, var(--g-accent) 88%, var(--g-fg)); }
+  .g-chatbot-launcher:active { scale: var(--g-press-scale); }
+  .g-chatbot-launcher:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 3px; }
+  .g-chatbot-badge {
+    position: absolute;
+    inset-block-start: -2px;
+    inset-inline-end: -2px;
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    min-inline-size: 22px;
+    block-size: 22px;
+    padding-inline: 5px;
+    border: 2px solid var(--g-surface);
+    border-radius: 999px;
+    background: var(--g-danger);
+    color: var(--g-on-danger);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .g-chatbot-greeting {
+    position: fixed;
+    inset-block-end: calc(max(var(--g-chatbot-offset), env(safe-area-inset-bottom)) + 56px + 12px);
+    inset-inline-end: max(var(--g-chatbot-offset), env(safe-area-inset-right));
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+    box-sizing: border-box;
+    max-inline-size: min(18rem, calc(100vw - 2 * var(--g-chatbot-offset)));
+    padding: 4px 4px 4px 14px;
+    border: 1px solid var(--g-border);
+    border-radius: 16px 16px 4px 16px;
+    background: var(--g-surface);
+    color: var(--g-fg);
+    box-shadow: var(--g-shadow);
+    animation: g-chatbot-rise var(--g-dur-in) var(--g-ease-in) backwards;
+  }
+  .g-chatbot[data-side="start"] .g-chatbot-greeting { border-radius: 16px 16px 16px 4px; }
+  .g-chatbot-greeting-open {
+    flex: 1;
+    min-inline-size: 0;
+    padding: 8px 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    text-align: start;
+    cursor: pointer;
+  }
+  .g-chatbot-greeting-open:focus-visible { border-radius: 6px; outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-chatbot-panel {
+    position: fixed;
+    inset: auto;
+    inset-block-end: calc(max(var(--g-chatbot-offset), env(safe-area-inset-bottom)) + 56px + 16px);
+    inset-inline-end: max(var(--g-chatbot-offset), env(safe-area-inset-right));
+    box-sizing: border-box;
+    inline-size: min(25rem, calc(100vw - 2 * var(--g-chatbot-offset)));
+    block-size: min(40rem, calc(100dvh - 56px - 3 * var(--g-chatbot-offset)));
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius);
+    background: var(--g-surface);
+    color: var(--g-fg);
+    box-shadow: var(--g-shadow);
+    color-scheme: var(--g-color-scheme);
+    /* 起点の側の角から広がって出る（V-04） */
+    transform-origin: 100% 100%;
+    opacity: 1;
+    scale: 1;
+    transition: opacity var(--g-dur-in) var(--g-ease-in), scale var(--g-dur-in) var(--g-ease-in);
+  }
+  .g-chatbot-panel:dir(rtl),
+  .g-chatbot[data-side="start"] .g-chatbot-panel { transform-origin: 0 100%; }
+  .g-chatbot[data-side="start"] .g-chatbot-panel:dir(rtl) { transform-origin: 100% 100%; }
+  /* 開いている間だけ grid にする（閉じた popover を隠す UA の display: none を上書きしない） */
+  .g-chatbot-panel:is(:popover-open, [data-inline]) { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+  @starting-style {
+    .g-chatbot-panel:popover-open { opacity: 0; scale: 0.94; }
+  }
+  .g-chatbot-panel[data-exiting] {
+    opacity: 0;
+    scale: 0.96;
+    pointer-events: none;
+    transition-duration: var(--g-dur-out);
+    transition-timing-function: var(--g-ease-out);
+  }
+  .g-chatbot-panel:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-chatbot-head { display: flex; align-items: flex-start; gap: 8px; padding: 10px 8px 10px 16px; border-block-end: 1px solid var(--g-border); }
+  .g-chatbot-heading { display: grid; flex: 1; gap: 2px; min-inline-size: 0; padding-block: 6px 2px; }
+  .g-chatbot-title { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.4; }
+  .g-chatbot-description { margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; line-height: 1.5; }
+  .g-chatbot-actions { display: flex; flex: none; align-items: center; gap: 2px; }
+  /* 中身は列（1 行目。送られる）と入力欄（2 行目）。右側の面とシートでは、パネルの本文の行に置く */
+  .g-chatbot-body { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-block-size: 0; min-inline-size: 0; }
+  .g-panel > .g-chatbot-body { grid-row: 2; grid-column: 1; }
+  .g-chatbot-body > .g-composer { padding: 8px 12px 12px; }
+
+  @keyframes g-chatbot-rise { from { opacity: 0; translate: 0 var(--g-motion-distance); } }
   @keyframes g-chat-caret { to { visibility: hidden; } }
   @keyframes g-typing {
     0%, 60%, 100% { opacity: 0.35; translate: 0 0; }
@@ -4538,12 +4673,19 @@
     /* 11。入力中の点とカーソルの点滅は飾りなので止める（入力中であることは言葉で伝えている） */
     .g-typing-dots > span,
     .g-chat-caret { animation: none; }
+    /* 11.7。小窓とあいさつは、広がらず・せり上がらずにその場で出す */
+    .g-chatbot-greeting { animation: none; }
+    :is(.g-chatbot-panel, .g-chatbot-launcher) { transition: none; }
+  }
+  @media print {
+    .g-chatbot { display: none; }
   }
   @media (forced-colors: active) {
     /* 11。吹き出しの地の色は消えるので枠を出す。送信と新着のボタンは Highlight で残す */
     .g-chat-bubble { border: 1px solid CanvasText; }
     .g-chat-message[data-variant="assistant"] .g-chat-bubble { border: 0; }
-    :is(.g-chat-jump, .g-composer-send) { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+    :is(.g-chat-jump, .g-composer-send, .g-chatbot-launcher) { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+    :is(.g-chatbot-badge, .g-chatbot-greeting) { border-color: CanvasText; }
     .g-composer-field { border-color: CanvasText; }
     /* 9.27。選んだ項目の地の色は消えるので、選んだ色で示す */
     .g-tree-item[aria-selected="true"] > .g-tree-row { forced-color-adjust: none; background: SelectedItem; color: SelectedItemText; }

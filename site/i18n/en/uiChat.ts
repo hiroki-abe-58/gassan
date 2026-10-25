@@ -14,6 +14,22 @@ export default {
     exampleTitle: 'AI assistant',
     exampleDescription: 'Press a suggestion, and the answer streams in as it is written. While it is being written, the send button becomes “Stop”. The answer is read out once it has been fully written.',
   },
+  widget: {
+    title: 'A chatbot in the bottom-right corner of the site',
+    intro: 'ChatWidget places a round launcher button in the bottom-right corner of the screen, and pressing it opens a small window in the bottom-right. The small window is not modal, so you can chat while reading the page. A button in the header bar expands it into a side panel on the right (modal), and at phone widths it becomes a full-screen sheet. Inside, it uses the ChatThread and ChatComposer above as they are.',
+    exampleTitle: 'AI assistant chatbot',
+    exampleDescription: 'Press the button, and the launcher and a greeting appear in the bottom-right corner of this page. Press the launcher and choose a suggestion, and the answer streams in as it is written. “Expand to the side” and “Make smaller” are on the right of the header bar.',
+    tableCaption: 'How the chatbot opens and closes',
+    head: { when: 'When', then: 'What happens' },
+    rows: [
+      { when: 'The launcher is pressed', then: 'The small window opens in the bottom-right, and focus moves to the message input. The launcher’s name becomes “Close chat”' },
+      { when: 'There are unread messages', then: 'Shows a count badge on the launcher, and its name becomes “Open chat 3 unread” (the badge is decoration)' },
+      { when: 'Esc or “Close chat” is pressed', then: 'Closes, and returns focus to the launcher (it does not close when a list or menu inside has already handled Esc, or on Esc during IME composition)' },
+      { when: '“Expand to the side” is pressed', then: 'Moves to a side panel on the right (modal). The page behind can no longer be used, and closing returns to the launcher' },
+      { when: 'At phone widths', then: 'Becomes a full-screen sheet (in a small window, the message input and the on-screen keyboard would overlap)' },
+      { when: 'With a greeting', then: 'Shown beside the launcher only while the chat is closed. Pressing it opens the chat, and × dismisses it (it does not interrupt the screen reader)' },
+    ],
+  },
   behavior: {
     title: 'Rules that let you keep reading',
     intro: 'A chat keeps growing while you are in the middle of reading it. To protect the reader’s place and what gets read out, it behaves as follows.',
