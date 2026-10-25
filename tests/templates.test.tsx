@@ -719,6 +719,19 @@ describe('templates.css / P-01', () => {
     expect(sheet).toMatch(/@container \(min-width: 960px\)/);
     expect(sheet).not.toMatch(/@media[^{]*width/);
   });
+
+  it('部品の CSS が形を決めている class 名に、テンプレートは別の形を書かない（名前がぶつかると、両方の形が混ざって崩れる）', () => {
+    const components = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    // 規則の対象がその class 1 つだけのもの（属性と疑似クラスは付いてよい。子孫や組み合わせの中で使うのは別）
+    const own = (css: string): Set<string> =>
+      new Set(
+        [...css.matchAll(/([^{}]+)\{/g)].flatMap((match) =>
+          (match[1] ?? '').split(',').flatMap((part) => /^\s*\.(g-[a-z0-9-]+)(?:\[[^\]]*\]|::?[a-z-]+(?:\([^)]*\))?)*\s*$/.exec(part)?.[1] ?? []),
+        ),
+      );
+    const theirs = own(components);
+    expect([...own(sheet)].filter((name) => theirs.has(name))).toEqual([]);
+  });
 });
 
 describe('エラーとメンテナンス / P-05 / P-06', () => {

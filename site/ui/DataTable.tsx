@@ -18,7 +18,7 @@ export function DataTable({
 }): ReactNode {
   return (
     <TableScroll label={caption}>
-      <table className="s-table">
+      <table className="s-table s-data-table">
         <caption className="s-sr-only">{caption}</caption>
         <thead>
           <tr>

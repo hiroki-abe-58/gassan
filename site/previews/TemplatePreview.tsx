@@ -26,6 +26,7 @@ import {
 import { useT } from '../i18n';
 import { AtlasApp, InviteSample, OnboardingSample } from './AppPreviews';
 import { AuthPatternPreview } from './AuthPreviews';
+import { CommercePreview } from './CommercePreviews';
 import { RegistrationPresetPreview } from './RegistrationPreviews';
 import { go, preview, wait } from './shared';
 
@@ -79,6 +80,10 @@ export const PREVIEWS = [
   'industry-rental',
   'industry-ticket',
   'industry-telecom',
+  'order-review',
+  'cookie-consent',
+  'external-transmission',
+  'cancel-subscription',
   'error-400',
   'error-401',
   'error-402',
@@ -436,6 +441,11 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
       case 'industry-ticket':
       case 'industry-telecom':
         return <RegistrationPresetPreview preset={name.slice('industry-'.length) as RegistrationPresetId} />;
+      case 'order-review':
+      case 'cookie-consent':
+      case 'external-transmission':
+      case 'cancel-subscription':
+        return <CommercePreview name={name} />;
       case 'invite':
         return <InviteSample variant="pending" />;
       case 'invite-signed-out':

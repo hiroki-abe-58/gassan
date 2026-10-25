@@ -61,6 +61,7 @@ export default {
     templatesAuth: '登录与注册',
     templatesAuthPatterns: '登录与注册的模式',
     templatesRegistrationPresets: '按行业注册',
+    templatesCommerce: '购买与同意',
     templatesStatus: '错误与维护',
     templatesPublic: '价格、常见问题与条款',
     templatesApp: '应用外框',

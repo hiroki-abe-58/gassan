@@ -547,6 +547,102 @@ export interface TemplateLabels {
     replyPrefix: string;
     forwardPrefix: string;
   };
+  /**
+   * 注文の最終確認（OrderReviewPage）。P-32。見出しは特商法 12 条の 6 の表示事項（分量・代金・支払の時期と方法・
+   * 引渡しの時期・申込みの期間・申込みの撤回と解除）にそろえる。description は「まだ注文は確定していない」ことを伝える。
+   */
+  orderReview: {
+    title: string;
+    description: string;
+    items: string;
+    product: string;
+    quantity: string;
+    /** 数量と単位（「2 点」）。 */
+    quantityOf: (count: number, unit: string) => string;
+    /** 単位の既定（「点」）。 */
+    unit: string;
+    /** 単価の読み上げと見た目（「単価 ￥1,200」）。 */
+    unitPrice: (price: string) => string;
+    lineTotal: string;
+    address: string;
+    delivery: string;
+    payment: string;
+    method: string;
+    timing: string;
+    offerPeriod: string;
+    subscription: string;
+    interval: string;
+    pricePerDelivery: string;
+    minimumCount: string;
+    minimumCountOf: (count: number) => string;
+    noMinimum: string;
+    howToCancel: string;
+    cancellation: string;
+    summary: string;
+    subtotal: string;
+    shipping: string;
+    free: string;
+    total: string;
+    edit: string;
+    /** 「変更」の名前（「お届け先を変更」）。 */
+    editFor: (section: string) => string;
+    submit: string;
+    submitNote: string;
+    consentRequired: string;
+  };
+  /** Cookie と外部送信の同意（CookieConsent）。P-33。categories と descriptions は種類ごとの名前と説明。 */
+  cookieConsent: {
+    title: string;
+    description: string;
+    policy: string;
+    acceptAll: string;
+    rejectAll: string;
+    customize: string;
+    settingsTitle: string;
+    settingsDescription: string;
+    save: string;
+    alwaysOn: string;
+    categories: { necessary: string; functional: string; analytics: string; marketing: string };
+    descriptions: { necessary: string; functional: string; analytics: string; marketing: string };
+  };
+  /** 外部送信の公表（ExternalTransmissionList）。P-34。 */
+  externalTransmission: {
+    label: string;
+    information: string;
+    purpose: string;
+    category: string;
+    /** 送信先のプライバシーポリシーと、送信を止めるページへのリンクの名前（送信先の名前を入れる）。 */
+    policyFor: (recipient: string) => string;
+    optOutFor: (recipient: string) => string;
+  };
+  /** 解約の手続き（CancelSubscriptionPage）。P-35。 */
+  cancelSubscription: {
+    title: string;
+    description: (plan: string) => string;
+    steps: string;
+    stepReason: string;
+    stepOffer: string;
+    stepConfirm: string;
+    reasonTitle: string;
+    reasonDescription: string;
+    comment: string;
+    next: string;
+    back: string;
+    offerTitle: string;
+    offerDescription: string;
+    continueCancel: string;
+    confirmTitle: string;
+    /** 使える最後の日（「2026年11月1日 までは今のプランのまま使えます」）。 */
+    until: (date: string) => string;
+    afterEnd: string;
+    export: string;
+    confirm: string;
+    keep: string;
+    doneTitle: string;
+    doneDescription: (date: string) => string;
+    keptTitle: string;
+    keptDescription: string;
+  };
 }
 
 /** 「A と B に同意します」のような、リンクを挟む文を組み立てる。 */
@@ -1132,6 +1228,94 @@ export const japaneseTemplateLabels: TemplateLabels = {
     replyPrefix: 'Re: ',
     forwardPrefix: 'Fwd: ',
   },
+  orderReview: {
+    title: 'ご注文内容の確認',
+    description: 'まだ注文は確定していません。内容を確かめて「注文を確定する」を押してください。',
+    items: 'ご注文の商品',
+    product: '商品',
+    quantity: '数量',
+    quantityOf: (count, unit) => (unit ? `${String(count)} ${unit}` : String(count)),
+    unit: '点',
+    unitPrice: (price) => `単価 ${price}`,
+    lineTotal: '金額（税込）',
+    address: 'お届け先',
+    delivery: 'お届けの方法と時期',
+    payment: 'お支払いの方法と時期',
+    method: '方法',
+    timing: '時期',
+    offerPeriod: 'お申し込みの期間',
+    subscription: '定期購入の条件',
+    interval: 'お届けの間隔',
+    pricePerDelivery: '各回の代金（税込）',
+    minimumCount: 'お約束の回数',
+    minimumCountOf: (count) => `${String(count)} 回以上`,
+    noMinimum: 'なし（いつでも解約できます）',
+    howToCancel: '解約の方法',
+    cancellation: '返品・キャンセル',
+    summary: 'お支払い金額',
+    subtotal: '小計',
+    shipping: '送料',
+    free: '無料',
+    total: '合計（税込）',
+    edit: '変更',
+    editFor: (section) => `${section}を変更`,
+    submit: '注文を確定する',
+    submitNote: '「注文を確定する」を押すと、注文が確定します。',
+    consentRequired: '注文の前に、同意の欄にチェックを入れてください',
+  },
+  cookieConsent: {
+    title: 'Cookie と外部への送信',
+    description: 'サイトの改善と広告のために、閲覧の情報を外部の事業者へ送ることがあります。必要なものだけにすることもできます。',
+    policy: '送信先の一覧',
+    acceptAll: 'すべて許可する',
+    rejectAll: '必要なものだけ',
+    customize: '設定を選ぶ',
+    settingsTitle: 'Cookie と外部送信の設定',
+    settingsDescription: '種類ごとに、許可するかを選べます。あとからいつでも変えられます。',
+    save: '選んだ設定を保存',
+    alwaysOn: '常に有効',
+    categories: { necessary: '必要なもの', functional: '機能', analytics: '分析', marketing: '広告' },
+    descriptions: {
+      necessary: 'ログインの状態や、この設定を覚えておくために使います。止めるとサイトが動かないため、常に有効です。',
+      functional: '言語や表示の好みを覚えて、次に来たときに使います。',
+      analytics: 'どのページがよく見られているかを集計して、サイトの改善に使います。',
+      marketing: 'ほかのサイトでの広告を、関心に合わせて出すために使います。',
+    },
+  },
+  externalTransmission: {
+    label: '外部へ送る情報と送信先',
+    information: '送る情報',
+    purpose: '使う目的',
+    category: '種類',
+    policyFor: (recipient) => `${recipient} のプライバシーポリシー`,
+    optOutFor: (recipient) => `${recipient} への送信を止める`,
+  },
+  cancelSubscription: {
+    title: '解約の手続き',
+    description: (plan) => `${plan} を解約します。最後に確かめてから解約するので、途中でやめられます。`,
+    steps: '解約の手順',
+    stepReason: '理由',
+    stepOffer: 'ご提案',
+    stepConfirm: '確認',
+    reasonTitle: '解約の理由を教えてください',
+    reasonDescription: '答えなくても解約できます。サービスの改善に使います。',
+    comment: 'ほかに伝えたいこと',
+    next: '次へ',
+    back: '戻る',
+    offerTitle: '解約の前に、こんな方法もあります',
+    offerDescription: '合わなければ、そのまま解約に進めます。',
+    continueCancel: '解約に進む',
+    confirmTitle: '解約しますか',
+    until: (date) => `${date} までは今のプランのまま使えます。`,
+    afterEnd: 'その後は、有料の機能が使えなくなります。',
+    export: 'データを書き出す',
+    confirm: '解約する',
+    keep: '解約しない',
+    doneTitle: '解約しました',
+    doneDescription: (date) => `${date} までは今のプランのまま使えます。確認のメールを送りました。`,
+    keptTitle: 'ご提案を受け付けました',
+    keptDescription: '解約はしていません。今のプランのまま使えます。',
+  },
 };
 
 export const englishTemplateLabels: TemplateLabels = {
@@ -1713,5 +1897,93 @@ export const englishTemplateLabels: TemplateLabels = {
     sent: 'Message sent',
     replyPrefix: 'Re: ',
     forwardPrefix: 'Fwd: ',
+  },
+  orderReview: {
+    title: 'Review your order',
+    description: 'Your order is not placed yet. Check the details, then select “Place order”.',
+    items: 'Items',
+    product: 'Item',
+    quantity: 'Quantity',
+    quantityOf: (count, unit) => (unit ? `${String(count)} ${unit}` : String(count)),
+    unit: '',
+    unitPrice: (price) => `${price} each`,
+    lineTotal: 'Amount (incl. tax)',
+    address: 'Delivery address',
+    delivery: 'Delivery method and timing',
+    payment: 'Payment method and timing',
+    method: 'Method',
+    timing: 'Timing',
+    offerPeriod: 'Offer period',
+    subscription: 'Subscription terms',
+    interval: 'Delivery interval',
+    pricePerDelivery: 'Price per delivery (incl. tax)',
+    minimumCount: 'Minimum number of deliveries',
+    minimumCountOf: (count) => (count === 1 ? '1 delivery' : `${String(count)} deliveries`),
+    noMinimum: 'None (cancel any time)',
+    howToCancel: 'How to cancel',
+    cancellation: 'Returns and cancellations',
+    summary: 'Order total',
+    subtotal: 'Subtotal',
+    shipping: 'Shipping',
+    free: 'Free',
+    total: 'Total (incl. tax)',
+    edit: 'Change',
+    editFor: (section) => `Change ${section.toLowerCase()}`,
+    submit: 'Place order',
+    submitNote: 'Selecting “Place order” places your order.',
+    consentRequired: 'Check the box to agree before placing your order',
+  },
+  cookieConsent: {
+    title: 'Cookies and data sent to third parties',
+    description: 'To improve the site and show ads, we may send information about your visit to other companies. You can allow only what is necessary.',
+    policy: 'List of recipients',
+    acceptAll: 'Allow all',
+    rejectAll: 'Necessary only',
+    customize: 'Choose settings',
+    settingsTitle: 'Cookie and data-sharing settings',
+    settingsDescription: 'Choose which kinds to allow. You can change this at any time.',
+    save: 'Save my choices',
+    alwaysOn: 'Always on',
+    categories: { necessary: 'Necessary', functional: 'Functional', analytics: 'Analytics', marketing: 'Advertising' },
+    descriptions: {
+      necessary: 'Keeps you signed in and remembers these settings. The site does not work without them, so they are always on.',
+      functional: 'Remembers your language and display preferences for your next visit.',
+      analytics: 'Counts which pages are viewed most, to improve the site.',
+      marketing: 'Shows ads on other sites based on your interests.',
+    },
+  },
+  externalTransmission: {
+    label: 'Information sent to third parties',
+    information: 'Information sent',
+    purpose: 'Purpose',
+    category: 'Kind',
+    policyFor: (recipient) => `${recipient} privacy policy`,
+    optOutFor: (recipient) => `Stop sending to ${recipient}`,
+  },
+  cancelSubscription: {
+    title: 'Cancel your subscription',
+    description: (plan) => `You are canceling ${plan}. You can stop at any point; nothing is canceled until you confirm at the end.`,
+    steps: 'Cancellation steps',
+    stepReason: 'Reason',
+    stepOffer: 'Options',
+    stepConfirm: 'Confirm',
+    reasonTitle: 'Why are you canceling?',
+    reasonDescription: 'Answering is optional. We use it to improve the service.',
+    comment: 'Anything else you would like to tell us',
+    next: 'Next',
+    back: 'Back',
+    offerTitle: 'Before you cancel, these might help',
+    offerDescription: 'If none of them fit, you can go on to cancel.',
+    continueCancel: 'Continue to cancel',
+    confirmTitle: 'Cancel your subscription?',
+    until: (date) => `You can keep using your current plan until ${date}.`,
+    afterEnd: 'After that, paid features will no longer be available.',
+    export: 'Export your data',
+    confirm: 'Cancel subscription',
+    keep: 'Keep subscription',
+    doneTitle: 'Your subscription is canceled',
+    doneDescription: (date) => `You can keep using your current plan until ${date}. We have sent you a confirmation email.`,
+    keptTitle: 'Your choice is saved',
+    keptDescription: 'Your subscription has not been canceled. You can keep using your current plan.',
   },
 };

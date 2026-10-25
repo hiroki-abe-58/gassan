@@ -253,6 +253,13 @@ const EXTRA_INTERFACES = new Set([
   'FaqItem',
   'DocumentSection',
   'ChangelogEntry',
+  // 購入と同意（P-32〜P-35）。
+  'OrderItem',
+  'OrderAmount',
+  'OrderSubscription',
+  'CancelReason',
+  'RetentionOffer',
+  'ExternalTransmission',
   // コマンドパレット（U-27）。
   'CommandItem',
   // データの表（U-26）とアプリの枠（P-12）。

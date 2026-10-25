@@ -17,8 +17,10 @@ import {
   AddressFields,
   AppShell,
   AuthDialog,
+  CookieConsent,
   EmailFirstPage,
   GuestAccountCard,
+  OrderReviewPage,
   MagicLinkPage,
   PasskeyPromptPage,
   PhoneSignInPage,
@@ -599,6 +601,38 @@ for (const [label, passed] of [
       (registrationFieldsHtml.match(/type="checkbox"/g) ?? []).length === 7 &&
       registrationFieldsHtml.includes('value="icSelfie"') &&
       !registrationFieldsHtml.includes('value="imageSelfie"'),
+  ],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// 購入と同意（P-32〜P-35）。最終確認画面は表示事項の節と確定のボタンをサーバーで描く。同意の帯は popover の属性のまま描き
+// （top layer に出すのは描いた後）、2 つの選び方を同じ形で並べる。
+const commerceHtml = render(
+  h(
+    'div',
+    null,
+    h(OrderReviewPage, {
+      items: [{ name: 'コーヒー豆', quantity: 2, price: 1200 }],
+      shippingFee: 0,
+      shippingAddress: ['佐藤 花'],
+      delivery: { method: '宅配便', timing: '2〜4 日' },
+      payment: { method: 'カード', timing: 'ご注文のとき' },
+      cancellationPolicy: '未開封なら 8 日以内に返品できます。',
+      onSubmit: noop,
+    }),
+    h(CookieConsent, { value: null, onChange: noop }),
+  ),
+);
+for (const [label, passed] of [
+  [
+    'OrderReviewPage renders the required sections, the free shipping and the place-order button on the server',
+    textOf(commerceHtml).includes('返品・キャンセル') && textOf(commerceHtml).includes('無料') && textOf(commerceHtml).includes('注文を確定する'),
+  ],
+  [
+    'CookieConsent renders the banner as a manual popover with the two choices on the server',
+    /popover="manual"/.test(commerceHtml) && textOf(commerceHtml).includes('すべて許可する') && textOf(commerceHtml).includes('必要なものだけ'),
   ],
 ]) {
   if (passed) ok(label);

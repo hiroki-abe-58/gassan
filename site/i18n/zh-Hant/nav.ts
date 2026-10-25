@@ -61,6 +61,7 @@ export default {
     templatesAuth: '登入與註冊',
     templatesAuthPatterns: '登入與註冊的模式',
     templatesRegistrationPresets: '各產業的註冊',
+    templatesCommerce: '購買與同意',
     templatesStatus: '錯誤與維護',
     templatesPublic: '價格、常見問題與條款',
     templatesApp: '應用程式外框',

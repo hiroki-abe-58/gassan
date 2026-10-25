@@ -60,6 +60,7 @@ export default {
     templatesAuth: 'ログインと登録',
     templatesAuthPatterns: 'ログインと登録の形',
     templatesRegistrationPresets: '業種ごとの登録',
+    templatesCommerce: '購入と同意',
     templatesStatus: 'エラーとメンテナンス',
     templatesPublic: '料金・FAQ・規約',
     templatesApp: 'アプリの枠',

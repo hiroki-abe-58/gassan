@@ -89,10 +89,15 @@ import { gzipSync } from 'node:zlib';
  * ウォーターフォール・パレート図・ファネル・特性要因図・ガントチャート）と、その文言を足したため（JS 約 9 KB・styles.css 約 2.7 KB）。
  * 図はどれも名前つき import なので、使わないアプリの束には載らない。GassanLabels に足した図の語（22）のぶん、どの束も約 0.37 KB 増える
  * （minify した束で Modal だけ 43,852 B・LineChart だけ 26,018 B・MailboxPage だけ 49,132 B）。
+ * 同日、JS を 190 → 197 KB に引き上げた。購入と同意のテンプレート（P-32〜P-35。注文の最終確認・Cookie と外部送信の同意・
+ * 送信先の一覧・解約の手続き）と、その日本語と英語の文言を足したため（JS 約 7 KB）。名前つき import でだけ使うので、グラフだけの
+ * 束は変わらず、Modal だけの束は ModalSwitch に足した aria-describedby のぶんだけ増える。テンプレートの文言は 1 つの表なので、
+ * ほかのテンプレートを使う束には文言のぶん載る（minify した束で Modal だけ 43,852 → 43,859 B・LineChart だけ 26,017 B・
+ * MailboxPage だけ 49,132 → 51,634 B）。
  */
 const BUDGETS = {
-  'dist/index.js': 190 * 1024,
-  'dist/index.cjs': 190 * 1024,
+  'dist/index.js': 197 * 1024,
+  'dist/index.cjs': 197 * 1024,
   'dist/styles.css': 29 * 1024,
   'dist/templates.css': 8 * 1024,
 };
@@ -384,6 +389,12 @@ const REQUIRED_EXPORTS = [
   'japaneseRegistrationLabels',
   'englishRegistrationLabels',
   'useRegistrationLabels',
+  // 購入と同意（P-32〜P-35）。
+  'OrderReviewPage',
+  'CancelSubscriptionPage',
+  'CookieConsent',
+  'ExternalTransmissionList',
+  'CONSENT_CATEGORIES',
 ];
 
 let failed = false;
