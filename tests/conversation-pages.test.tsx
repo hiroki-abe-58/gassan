@@ -16,8 +16,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AssistantPage, ChatPage, SiteProvider, type AssistantThread, type ChatConversation, type ChatMessage } from '../src';
 
+// 一覧の日時と日付の区切りは、いまの日時で決まる。日時を決めた時刻から始め、実際の時間で進める
+// （止めると時間で進む処理が動かず、テストの中で本物の時計に戻すと、実行した日によって結果が変わる）
 beforeEach(() => {
-  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.useFakeTimers({ toFake: ['Date'], shouldAdvanceTime: true });
   vi.setSystemTime(new Date('2026-10-24T03:00:00Z'));
 });
 afterEach(() => {
@@ -99,7 +101,6 @@ describe('チャットのページ / P-18', () => {
   });
 
   it('P-18 会話を選ぶと onConversationChange を呼び、一覧が隠れたら会話の見出しへ、戻るで一覧のいまの会話へフォーカスを移す', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<Chat onChange={onChange} />);
@@ -122,7 +123,6 @@ describe('チャットのページ / P-18', () => {
   });
 
   it('P-18 広い器（一覧が描かれたまま）では、選んでもフォーカスを一覧に残す', async () => {
-    vi.useRealTimers();
     vi.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue([new DOMRect(0, 0, 100, 40)] as unknown as DOMRectList);
     const user = userEvent.setup();
     render(<Chat />);
@@ -132,7 +132,6 @@ describe('チャットのページ / P-18', () => {
   });
 
   it('P-18 会話を移るとメッセージの列を置き直し、書きかけは会話ごとに残す', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onSend = vi.fn();
     render(<Chat onSend={onSend} />);
@@ -153,7 +152,6 @@ describe('チャットのページ / P-18', () => {
   });
 
   it('P-18 絞り込みは名前と最後のメッセージで、かなと全角半角を区別しない。当てはまらなければそう言う', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     render(<Chat />);
     const search = screen.getByRole('searchbox', { name: '会話を探す' });
@@ -177,7 +175,6 @@ const BOT = { id: 'bot', name: 'アシスタント', role: 'assistant' as const 
 
 describe('AI アシスタントのページ / P-19', () => {
   it('P-19 何も話していなければ問いかけと質問の例を出し、押すとその文を送る（onSuggestion を渡せばそちらを呼ぶ）。注意書きを添え、null で消す', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onSend = vi.fn();
     const { rerender } = render(
@@ -214,7 +211,6 @@ describe('AI アシスタントのページ / P-19', () => {
   });
 
   it('P-19 話し始めたら会話の列を出し、回答を作っている間は送信のボタンが「止める」になって onStop を呼ぶ', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const onStop = vi.fn();
     render(
@@ -257,7 +253,6 @@ describe('AI アシスタントのページ / P-19', () => {
     ]);
     expect(within(history).getByRole('button', { name: '先月の売上のまとめ' })).toHaveAttribute('aria-current', 'true');
 
-    vi.useRealTimers();
     const user = userEvent.setup();
     await user.click(within(history).getByRole('button', { name: '解約の理由' }));
     expect(onThreadChange).toHaveBeenCalledWith('t2');
@@ -266,7 +261,6 @@ describe('AI アシスタントのページ / P-19', () => {
   });
 
   it('P-19 狭い器では「履歴を見る」で一覧へ移っていまの会話へ、閉じると見出しへフォーカスを移す。履歴が無ければ一覧も切り替えのボタンも出さない', async () => {
-    vi.useRealTimers();
     const user = userEvent.setup();
     const { rerender } = render(
       <Site>

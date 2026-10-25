@@ -286,8 +286,9 @@ if (!base) {
     console.error('site/dist が無い。先に npm run site:build を走らせる。');
     process.exit(2);
   }
+  // npx を通すと kill が当たるのは npm だけで、その子の vite preview が残り続ける。node で vite を直に起動する
   children.push(
-    spawn('npx', ['vite', 'preview', '--config', 'vite.site.config.ts', '--port', String(PREVIEW_PORT), '--strictPort'], {
+    spawn(process.execPath, [join('node_modules', 'vite', 'bin', 'vite.js'), 'preview', '--config', 'vite.site.config.ts', '--port', String(PREVIEW_PORT), '--strictPort'], {
       stdio: 'ignore',
     }),
   );
