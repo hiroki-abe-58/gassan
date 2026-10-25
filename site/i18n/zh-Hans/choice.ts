@@ -1,13 +1,14 @@
 import type ja from '../ja/choice';
 
 export default {
-  lead: 'Checkbox、RadioGroup、Segmented、Rating，以及原有的 Switch、Chips。里面都是原生的 input 或 button，选项组的名称由 Modal.Fieldset 的 legend 承担。',
+  lead: 'Checkbox、CheckboxGroup、RadioGroup、Segmented、Rating，以及原有的 Switch、Chips。里面都是原生的 input 或 button，选项组的名称由 Modal.Fieldset 的 legend 承担。',
   gallery: {
     title: '示例',
     intro: '标记和选中的分段用主题的强调色填充。切换右上角的主题，颜色会一起改变。',
     items: {
       checkbox: '复选框',
       mixed: '部分选中',
+      checkboxGroup: '复选框组',
       radio: '单选按钮',
       segmented: '分段控件',
       rating: '评分',
@@ -19,6 +20,10 @@ export default {
       termsNote: '同意后即可继续',
       all: '全部通知',
       allNote: '已选择 3 项中的 1 项',
+      channelEmail: '电子邮件',
+      channelEmailNote: '每周汇总发送一次',
+      channelPush: '推送通知',
+      channelSms: '短信',
       planLabel: '套餐',
       planFree: '免费',
       planFreeNote: '最多 3 人',

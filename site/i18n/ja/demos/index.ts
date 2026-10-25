@@ -49,6 +49,11 @@ import projectSettings from './projectSettings';
 import providerEnglish from './providerEnglish';
 import quickStart from './quickStart';
 import rangeReport from './rangeReport';
+import registrationDeclarations from './registrationDeclarations';
+import registrationGuardian from './registrationGuardian';
+import registrationIdentity from './registrationIdentity';
+import registrationNumbers from './registrationNumbers';
+import registrationWork from './registrationWork';
 import scrimLevels from './scrimLevels';
 import scrollActivity from './scrollActivity';
 import scrollCustom from './scrollCustom';
@@ -112,6 +117,11 @@ export default {
   providerEnglish,
   quickStart,
   rangeReport,
+  registrationDeclarations,
+  registrationGuardian,
+  registrationIdentity,
+  registrationNumbers,
+  registrationWork,
   scrimLevels,
   scrollActivity,
   scrollCustom,

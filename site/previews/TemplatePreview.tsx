@@ -20,11 +20,13 @@ import {
   toast,
   type ChangelogTag,
   type ErrorStatus,
+  type RegistrationPresetId,
 } from '@genelab/gassan';
 
 import { useT } from '../i18n';
 import { AtlasApp, InviteSample, OnboardingSample } from './AppPreviews';
 import { AuthPatternPreview } from './AuthPreviews';
+import { RegistrationPresetPreview } from './RegistrationPreviews';
 import { go, preview, wait } from './shared';
 
 /** 見本の製品のロゴ。名前は文字で添える（ロゴの読み上げ名が製品の名前になる）。 */
@@ -62,6 +64,21 @@ export const PREVIEWS = [
   'reauth',
   'session-expired',
   'guest-account',
+  'industry-bank',
+  'industry-securities',
+  'industry-crypto',
+  'industry-wallet',
+  'industry-card',
+  'industry-ec',
+  'industry-liquor',
+  'industry-b2b',
+  'industry-reuse',
+  'industry-healthcare',
+  'industry-matching',
+  'industry-recruiting',
+  'industry-rental',
+  'industry-ticket',
+  'industry-telecom',
   'error-400',
   'error-401',
   'error-402',
@@ -138,7 +155,7 @@ function errorStatus(name: string): ErrorStatus | number {
  * 送信は少し待ってから本物らしく応える（パスワードは「gassan」、確認コードは「123456」で通る）。
  */
 export function TemplatePreview({ name }: { name: string }): ReactNode {
-  const { templates, templateSamples: s, authPatterns } = useT();
+  const { templates, registration, templateSamples: s, authPatterns } = useT();
   const links = {
     home: preview('pricing'),
     signIn: preview('sign-in'),
@@ -403,6 +420,22 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
       case 'session-expired':
       case 'guest-account':
         return <AuthPatternPreview name={name} />;
+      case 'industry-bank':
+      case 'industry-securities':
+      case 'industry-crypto':
+      case 'industry-wallet':
+      case 'industry-card':
+      case 'industry-ec':
+      case 'industry-liquor':
+      case 'industry-b2b':
+      case 'industry-reuse':
+      case 'industry-healthcare':
+      case 'industry-matching':
+      case 'industry-recruiting':
+      case 'industry-rental':
+      case 'industry-ticket':
+      case 'industry-telecom':
+        return <RegistrationPresetPreview preset={name.slice('industry-'.length) as RegistrationPresetId} />;
       case 'invite':
         return <InviteSample variant="pending" />;
       case 'invite-signed-out':
@@ -431,7 +464,16 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
   })();
 
   return (
-    <SiteProvider name={s.brand} logo={<AtlasLogo name={s.brand} />} links={links} nav={nav} footer={footer} labels={templates} copyright={s.copyright}>
+    <SiteProvider
+      name={s.brand}
+      logo={<AtlasLogo name={s.brand} />}
+      links={links}
+      nav={nav}
+      footer={footer}
+      labels={templates}
+      registrationLabels={registration}
+      copyright={s.copyright}
+    >
       {page}
     </SiteProvider>
   );

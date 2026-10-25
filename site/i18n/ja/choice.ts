@@ -1,11 +1,12 @@
 export default {
-  lead: 'Checkbox・RadioGroup・Segmented・Rating と、以前からある Switch・Chips。どれも中身はネイティブの input か button で、束の名前は Modal.Fieldset の legend が持つ。',
+  lead: 'Checkbox・CheckboxGroup・RadioGroup・Segmented・Rating と、以前からある Switch・Chips。どれも中身はネイティブの input か button で、束の名前は Modal.Fieldset の legend が持つ。',
   gallery: {
     title: '見本',
     intro: '印と、選んだ区画はテーマのアクセント色で塗る。右上のテーマを変えると一緒に変わる。',
     items: {
       checkbox: 'チェックボックス',
       mixed: '一部だけ選択',
+      checkboxGroup: 'チェックボックスの束',
       radio: 'ラジオ',
       segmented: 'セグメント',
       rating: '評価',
@@ -17,6 +18,10 @@ export default {
       termsNote: '同意すると次へ進める',
       all: 'すべての通知',
       allNote: '3 件中 1 件を選択中',
+      channelEmail: 'メール',
+      channelEmailNote: '週に 1 回まとめて届く',
+      channelPush: 'プッシュ通知',
+      channelSms: 'SMS',
       planLabel: 'プラン',
       planFree: '無料',
       planFreeNote: '3 人まで',

@@ -881,6 +881,7 @@
     .g-file-name,
     .g-time-option,
     .g-badge,
+    .g-label-badge,
     .g-kbd,
     .g-tab,
     .g-menu-shortcut,
@@ -1089,7 +1090,8 @@
     font-weight: 600;
   }
   .g-label-text { min-inline-size: 0; }
-  .g-label-badge { font-size: 0.75rem; font-weight: 500; color: var(--g-fg-muted); }
+  /* 印は縮めず 1 語のまま置く（長い問いの legend で「必｜須」と折れた。折り返すのはラベルの文の側） */
+  .g-label-badge { flex-shrink: 0; white-space: nowrap; font-size: 0.75rem; font-weight: 500; color: var(--g-fg-muted); }
   .g-label-badge[data-required] { color: var(--g-danger); }
   .g-help  { margin: 0; font-size: 0.8125rem; color: var(--g-fg-muted); }
   .g-error { margin: 0; font-size: 0.8125rem; font-weight: 600; color: var(--g-danger); }

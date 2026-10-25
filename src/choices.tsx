@@ -15,11 +15,9 @@ export interface GroupAria {
   'aria-labelledby'?: string;
 }
 
-/** 名前が渡されたときだけ radiogroup にする。Fieldset の中で名前の無い役割を重ねない。 */
-function groupRole({ 'aria-label': label, 'aria-labelledby': labelledBy }: GroupAria) {
-  return label || labelledBy
-    ? { role: 'radiogroup', 'aria-label': label, 'aria-labelledby': labelledBy }
-    : {};
+/** 名前が渡されたときだけ役割（radiogroup / group）を付ける。Fieldset の中で名前の無い役割を重ねない。 */
+function groupRole({ 'aria-label': label, 'aria-labelledby': labelledBy }: GroupAria, role: 'radiogroup' | 'group' = 'radiogroup') {
+  return label || labelledBy ? { role, 'aria-label': label, 'aria-labelledby': labelledBy } : {};
 }
 
 function useWarnDuplicateValues(component: string, options: readonly { value: string }[]): void {
@@ -206,6 +204,88 @@ export function ModalRadioGroup({
                   aria-describedby={option.description ? descriptionId : undefined}
                   onChange={() => setSelected(option.value)}
                 />
+              </span>
+              <span className="g-choice-text">{phrase(option.label)}</span>
+            </label>
+            <ChoiceDescription id={descriptionId}>{option.description}</ChoiceDescription>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* CheckboxGroup                                                              */
+/* -------------------------------------------------------------------------- */
+
+export interface ModalCheckboxGroupProps extends GroupAria, DataAttributes {
+  options: readonly ChoiceOption[];
+  value?: readonly string[];
+  defaultValue?: readonly string[];
+  /** 選んだ値の並び。並びは options の順（押した順ではない）。 */
+  onValueChange?: (value: string[]) => void;
+  /** 省略すると自動で付く。フォームで送るなら渡す（同じ name で値ごとに送られる）。 */
+  name?: string;
+  disabled?: boolean;
+  /** 既定は縦並び。短い選択肢を横に並べるなら 'horizontal'。 */
+  orientation?: 'vertical' | 'horizontal';
+  className?: string;
+}
+
+/**
+ * チェックボックスの束（いくつでも選べる選択肢）。I-32。
+ *
+ * ネイティブの checkbox を同じ name で並べ、選んだ値を配列で渡す（Space で切り替え、Tab で 1 つずつ止まる）。
+ * 名前は Modal.Fieldset の legend か aria-label で付ける（aria-label のときは role="group"）。
+ * 「1 つ以上選んでください」は束の決まりなので、各チェックボックスの required ではなく、Fieldset の error で伝える。
+ */
+export function ModalCheckboxGroup({
+  options,
+  value,
+  defaultValue = [],
+  onValueChange,
+  name,
+  disabled = false,
+  orientation = 'vertical',
+  className,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  ...rest
+}: ModalCheckboxGroupProps): ReactNode {
+  const phrase = usePhrase();
+  const autoName = useId();
+  const [selected, setSelected] = useControllable<readonly string[]>(value, defaultValue, (next) => onValueChange?.([...next]));
+  useWarnDuplicateValues('Modal.CheckboxGroup', options);
+  const toggle = (target: string, on: boolean): void => {
+    setSelected(options.filter((option) => (option.value === target ? on : selected.includes(option.value))).map((option) => option.value));
+  };
+
+  return (
+    <div
+      {...domPassthrough(rest, 'Modal.CheckboxGroup')}
+      {...groupRole({ 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy }, 'group')}
+      className={className ? `g-choices ${className}` : 'g-choices'}
+      data-orientation={orientation}
+    >
+      {options.map((option, index) => {
+        const descriptionId = `${autoName}-${String(index)}-desc`;
+        const off = disabled || option.disabled;
+        return (
+          <div key={option.value} className="g-choice" data-disabled={off ? '' : undefined}>
+            <label className="g-choice-main">
+              <span className="g-choice-mark">
+                <input
+                  type="checkbox"
+                  className="g-check"
+                  name={name ?? autoName}
+                  value={option.value}
+                  checked={selected.includes(option.value)}
+                  disabled={off}
+                  aria-describedby={option.description ? descriptionId : undefined}
+                  onChange={(event) => toggle(option.value, event.target.checked)}
+                />
+                <Icon name="check" className="g-check-icon" />
               </span>
               <span className="g-choice-text">{phrase(option.label)}</span>
             </label>

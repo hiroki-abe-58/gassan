@@ -741,6 +741,15 @@
 .s-table tbody th {
   font-weight: 650;
 }
+/* 業種ごとの登録の表: 根拠の法令のリンクを 1 行ずつ並べる */
+.s-law-list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-inline-size: 14em;
+}
 .s-spec-table tbody th {
   white-space: nowrap;
 }

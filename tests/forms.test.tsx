@@ -289,6 +289,50 @@ describe('選択肢の束 / I-09', () => {
     expect(screen.getByRole('radio', { name: 'Pro' })).toBeChecked();
   });
 
+  it('チェックボックスの束は同じ name で並び、選んだ値を options の順の配列で渡す。補足は説明になる', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    function Purposes() {
+      const [value, setValue] = useState<string[]>([]);
+      return (
+        <Modal.Fieldset label="取引を行う目的" required>
+          <Modal.CheckboxGroup
+            value={value}
+            onValueChange={(next) => {
+              setValue(next);
+              onValueChange(next);
+            }}
+            options={[
+              { value: 'living', label: '生計費の決済' },
+              { value: 'savings', label: '貯蓄・資産運用', description: '投資信託・株式など' },
+              { value: 'salary', label: '給与・年金の受け取り' },
+            ]}
+          />
+        </Modal.Fieldset>
+      );
+    }
+    render(<Purposes />);
+    const group = screen.getByRole('group', { name: /取引を行う目的/ });
+    const boxes = within(group).getAllByRole('checkbox');
+    expect(new Set(boxes.map((box) => box.getAttribute('name'))).size).toBe(1);
+    expect(boxes[1]).toHaveAccessibleName('貯蓄・資産運用');
+    expect(boxes[1]).toHaveAccessibleDescription('投資信託・株式など');
+    // 押した順ではなく options の順で渡す
+    await user.click(screen.getByRole('checkbox', { name: '給与・年金の受け取り' }));
+    await user.click(screen.getByRole('checkbox', { name: '生計費の決済' }));
+    expect(onValueChange).toHaveBeenLastCalledWith(['living', 'salary']);
+    await user.click(screen.getByRole('checkbox', { name: '生計費の決済' }));
+    expect(onValueChange).toHaveBeenLastCalledWith(['salary']);
+    expect(screen.getByRole('checkbox', { name: '給与・年金の受け取り' })).toBeChecked();
+  });
+
+  it('チェックボックスの束は aria-label を渡したときだけ group の役割で名前を持つ', () => {
+    const { rerender } = render(<Modal.CheckboxGroup aria-label="関心のある分野" options={[{ value: 'a', label: 'A' }]} />);
+    expect(screen.getByRole('group', { name: '関心のある分野' })).toBeInTheDocument();
+    rerender(<Modal.CheckboxGroup options={[{ value: 'a', label: 'A' }]} />);
+    expect(screen.queryByRole('group')).toBeNull();
+  });
+
   it('名前を渡さなければ radiogroup の役割を重ねない（Fieldset の中で名前の無い束を作らない）', () => {
     render(<Modal.Segmented options={[{ value: 'a', label: 'A' }]} />);
     expect(screen.queryByRole('radiogroup')).toBeNull();

@@ -161,6 +161,10 @@ const CASES: Array<{ name: string; render: () => void }> = [
   { name: 'Modal.CodeInput', render: () => inRoot(<Modal.CodeInput aria-label="c" data-testid={TID} />) },
   { name: 'Modal.Checkbox', render: () => inRoot(<Modal.Checkbox data-testid={TID}>c</Modal.Checkbox>) },
   {
+    name: 'Modal.CheckboxGroup',
+    render: () => inRoot(<Modal.CheckboxGroup options={[{ value: 'a', label: 'A' }]} data-testid={TID} />),
+  },
+  {
     name: 'Modal.RadioGroup',
     render: () => inRoot(<Modal.RadioGroup options={[{ value: 'a', label: 'A' }]} data-testid={TID} />),
   },
@@ -256,6 +260,7 @@ describe('data-* の受け渡し（D-11）', () => {
   it('Modal.NumberField は data-* をホスト要素へ渡す', () => sweep('Modal.NumberField'));
   it('Modal.CodeInput は data-* をホスト要素へ渡す', () => sweep('Modal.CodeInput'));
   it('Modal.Checkbox は data-* をホスト要素へ渡す', () => sweep('Modal.Checkbox'));
+  it('Modal.CheckboxGroup は data-* をホスト要素へ渡す', () => sweep('Modal.CheckboxGroup'));
   it('Modal.RadioGroup は data-* をホスト要素へ渡す', () => sweep('Modal.RadioGroup'));
   it('Modal.Segmented は data-* をホスト要素へ渡す', () => sweep('Modal.Segmented'));
   it('Modal.Rating は data-* をホスト要素へ渡す', () => sweep('Modal.Rating'));

@@ -4,6 +4,7 @@ import { ButtonBody } from '../internal/button-body';
 import { useLabels } from '../labels';
 import { usePhrase } from '../phrase';
 import { englishTemplateLabels, japaneseTemplateLabels, type TemplateLabels } from './labels';
+import type { RegistrationLabels } from './registration-labels';
 
 /**
  * テンプレートが描くリンクの props。Next.js の Link などを linkComponent に渡せる形。
@@ -60,6 +61,8 @@ export interface SiteProviderProps {
   linkComponent?: ComponentType<SiteLinkProps>;
   /** テンプレートの文言。既定は GassanProvider の言語（labels.locale が ja で始まれば日本語、ほかは英語）。 */
   labels?: TemplateLabels;
+  /** 業種ごとの登録（P-31）とその欄の文言。既定は labels と同じ選び方。 */
+  registrationLabels?: RegistrationLabels;
   /** フッタの著作権の表記（「© 2026 Genelab Inc.」）。 */
   copyright?: ReactNode;
   /** 公開ページ（SiteLayout）のヘッダの案内（料金・よくある質問など）。 */

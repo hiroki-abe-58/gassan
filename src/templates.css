@@ -227,6 +227,30 @@
     .g-wizard-summary > div { grid-template-columns: minmax(0, 1fr); gap: 0; }
   }
 
+  /* --- T2c 業種ごとの登録（P-31）と、その欄（I-33〜I-37） ------------------------------
+   * 手順の中の欄の束は、欄の間を見出しとの間より広くとる。二つ並べる欄は、器が狭いと縦に積む。
+   * 根拠や注意の文は、控えめな地で示し、左の太い線で囲まない（§5）。 */
+  .g-registration-step { display: grid; gap: 22px; }
+  .g-registration-group { display: grid; gap: 14px; }
+  .g-registration-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; }
+  .g-registration-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); gap: 12px; }
+  .g-registration-rows { display: grid; gap: 12px; justify-items: start; }
+  .g-registration-rows > .g-fieldset { justify-self: stretch; }
+  .g-registration-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: end; gap: 6px 12px; }
+  .g-registration-row > legend { grid-column: 1 / -1; }
+  .g-registration-details { color: var(--g-fg-muted); font-size: 0.875rem; }
+  .g-registration-details > summary { display: inline-flex; align-items: center; min-block-size: var(--g-tap); border-radius: 4px; cursor: pointer; }
+  .g-registration-details > summary:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-registration-details > p { margin: 0; line-height: 1.7; }
+  .g-registration-note { margin: 0; padding: 10px 12px; border-radius: var(--g-radius-control); background: var(--g-hover); font-size: 0.9375rem; line-height: 1.6; }
+  .g-registration-found { margin: -6px 0 0; color: var(--g-fg-muted); font-size: 0.875rem; }
+  .g-registration-verify { display: grid; gap: 8px; justify-items: start; }
+  @container (max-width: 480px) {
+    .g-registration-pair,
+    .g-registration-row { grid-template-columns: minmax(0, 1fr); }
+    .g-registration-row > .g-iconbtn { justify-self: end; }
+  }
+
   /* --- T3 status（P-05 / P-06） -----------------------------------------------
    * 何が起きたか・なぜか・次に何ができるかを、中央に縦に並べる。 */
   .g-status {

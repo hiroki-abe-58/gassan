@@ -45,6 +45,14 @@ export const BANK_SAMPLES: readonly SelectOption[] = [
   { value: '9900', label: 'ゆうちょ銀行', keywords: ['ゆうちょ', '9900'] },
 ];
 
+/**
+ * 法人番号から引く会社名（見本）。7000012050002 は国税庁自身の法人番号（国税庁のサイトのヘッダに載っている）。
+ * 実際のアプリでは、国税庁の法人番号システム Web-API を自分のサーバーから呼ぶ。
+ */
+export const COMPANY_SAMPLES: Readonly<Record<string, string>> = {
+  '7000012050002': '国税庁',
+};
+
 /** 支店（見本。どの金融機関でも同じものを出す）。 */
 export const BRANCH_SAMPLES: readonly SelectOption[] = [
   { value: '100', label: '東京営業部', keywords: ['とうきょう', '100'] },

@@ -117,6 +117,16 @@ describe('styles / text inputs (I-03)', () => {
   });
 });
 
+describe('styles / labels (I-09)', () => {
+  it('「必須 / 任意」の印は縮めず 1 語のまま置き、長いラベルの方を折り返す', () => {
+    // 実測（Chrome、幅 320px）: 長い問いの legend（外国 PEPs）で、印が 1 字幅まで縮んで「必｜須」と折れた。
+    // ラベルの文は min-inline-size: 0 で縮むので、印の側を flex-shrink: 0 と nowrap で守る
+    const badge = /(^|\n)\s*\.g-label-badge\s*\{([^}]*)\}/.exec(rules)?.[2] ?? '';
+    expect(badge).toMatch(/(^|[;\s])flex-shrink:\s*0;/);
+    expect(badge).toMatch(/(^|[;\s])white-space:\s*nowrap;/);
+  });
+});
+
 describe('styles / scroll containers (B-13)', () => {
   it('横に送る器は position を持つ（中の読み上げ専用の文字が器の外を基準に置かれ、文書を横に広げない）', () => {
     // 実測（Chrome 155、幅 320px）: 表の器に position が無く、操作の列の読み上げ専用の見出しがアプリの枠を基準に

@@ -38,7 +38,7 @@ export function ChoicePage({ rest }: PageProps): ReactNode {
       rest={rest}
       title={nav.pages.choice}
       lead={t.lead}
-      ids={['I-09', 'B-08']}
+      ids={['I-09', 'I-32', 'B-08']}
       overview={() => (
         <>
           <Section id="gallery" title={t.gallery.title} intro={t.gallery.intro}>
@@ -59,6 +59,20 @@ export function ChoicePage({ rest }: PageProps): ReactNode {
                     <Modal.Checkbox indeterminate description={samples.allNote}>
                       {samples.all}
                     </Modal.Checkbox>
+                  ),
+                },
+                {
+                  label: items.checkboxGroup,
+                  render: (id) => (
+                    <Modal.CheckboxGroup
+                      aria-labelledby={id}
+                      defaultValue={['email']}
+                      options={[
+                        { value: 'email', label: samples.channelEmail, description: samples.channelEmailNote },
+                        { value: 'push', label: samples.channelPush },
+                        { value: 'sms', label: samples.channelSms },
+                      ]}
+                    />
                   ),
                 },
                 {
@@ -121,6 +135,7 @@ export function ChoicePage({ rest }: PageProps): ReactNode {
       api={() => (
         <>
           <ApiTable name="ModalCheckboxProps" title="Modal.Checkbox" />
+          <ApiTable name="ModalCheckboxGroupProps" title="Modal.CheckboxGroup" />
           <ApiTable name="ModalRadioGroupProps" title="Modal.RadioGroup" />
           <ApiTable name="ChoiceOption" />
           <ApiTable name="ModalSegmentedProps" title="Modal.Segmented" />
@@ -131,7 +146,7 @@ export function ChoicePage({ rest }: PageProps): ReactNode {
           <ApiTable name="ChipOption" />
         </>
       )}
-      a11y={() => <SpecTable ids={['I-01', 'I-09', 'B-08', 'K-04']} caption={t.a11yCaption} />}
+      a11y={() => <SpecTable ids={['I-01', 'I-09', 'I-32', 'B-08', 'K-04']} caption={t.a11yCaption} />}
     />
   );
 }

@@ -1,13 +1,14 @@
 import type ja from '../ja/choice';
 
 export default {
-  lead: 'Checkbox、RadioGroup、Segmented、Rating，以及既有的 Switch、Chips。每一個的內部都是原生的 input 或 button，群組的名稱由 Modal.Fieldset 的 legend 提供。',
+  lead: 'Checkbox、CheckboxGroup、RadioGroup、Segmented、Rating，以及既有的 Switch、Chips。每一個的內部都是原生的 input 或 button，群組的名稱由 Modal.Fieldset 的 legend 提供。',
   gallery: {
     title: '範例',
     intro: '勾選記號與選中的區段，以主題的強調色填色。變更右上角的主題，會一起改變。',
     items: {
       checkbox: '核取方塊',
       mixed: '部分選取',
+      checkboxGroup: '核取方塊群組',
       radio: '單選按鈕',
       segmented: '分段控制項',
       rating: '評分',
@@ -19,6 +20,10 @@ export default {
       termsNote: '同意後即可繼續',
       all: '所有通知',
       allNote: '已選取 3 項中的 1 項',
+      channelEmail: '電子郵件',
+      channelEmailNote: '每週彙整寄送一次',
+      channelPush: '推播通知',
+      channelSms: '簡訊',
       planLabel: '方案',
       planFree: '免費',
       planFreeNote: '最多 3 人',
