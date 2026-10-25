@@ -23,6 +23,7 @@ import { ChoicePage } from './pages/components/ChoicePage';
 import { DatePickerPage } from './pages/components/DatePickerPage';
 import { FieldPage } from './pages/components/FieldPage';
 import { FileDropPage } from './pages/components/FileDropPage';
+import { JapaneseInputPage } from './pages/components/JapaneseInputPage';
 import { FooterPage } from './pages/components/FooterPage';
 import { GatePage } from './pages/components/GatePage';
 import { HeaderPage } from './pages/components/HeaderPage';
@@ -131,6 +132,7 @@ export const PAGES: readonly PageDef[] = [
   { path: '/components/slider', key: 'slider', section: 'forms', Component: SliderPage },
   { path: '/components/date-picker', key: 'datePicker', section: 'forms', Component: DatePickerPage },
   { path: '/components/file-drop', key: 'fileDrop', section: 'forms', Component: FileDropPage },
+  { path: '/components/japanese-input', key: 'japaneseInput', section: 'forms', Component: JapaneseInputPage },
 
   { path: '/templates/auth', key: 'templatesAuth', section: 'templates', Component: AuthTemplatesPage },
   { path: '/templates/status', key: 'templatesStatus', section: 'templates', Component: StatusTemplatesPage },

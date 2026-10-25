@@ -27,6 +27,12 @@ import floatingStates from './floatingStates';
 import footerButtons from './footerButtons';
 import gateCustom from './gateCustom';
 import imperativeConfirm from './imperativeConfirm';
+import japaneseAddress from './japaneseAddress';
+import japaneseBank from './japaneseBank';
+import japaneseBirthDate from './japaneseBirthDate';
+import japaneseEmail from './japaneseEmail';
+import japaneseName from './japaneseName';
+import japaneseNormalize from './japaneseNormalize';
 import kindConfirm from './kindConfirm';
 import kindConsent from './kindConsent';
 import kindFlow from './kindFlow';
@@ -84,6 +90,12 @@ export default {
   footerButtons,
   gateCustom,
   imperativeConfirm,
+  japaneseAddress,
+  japaneseBank,
+  japaneseBirthDate,
+  japaneseEmail,
+  japaneseName,
+  japaneseNormalize,
   kindConfirm,
   kindConsent,
   kindFlow,

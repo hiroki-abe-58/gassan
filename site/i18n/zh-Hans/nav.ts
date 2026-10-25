@@ -40,6 +40,7 @@ export default {
     slider: '滑块',
     datePicker: '日期、时间与颜色',
     fileDrop: '文件',
+    japaneseInput: '日本表单输入',
     media: 'Media 与 Gallery',
     chart: 'Modal.Chart',
     sheet: '底部面板与 Handle',

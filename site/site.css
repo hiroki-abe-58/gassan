@@ -895,6 +895,32 @@
   color: var(--s-ink-2);
   font-size: 0.9375rem;
 }
+/* 日本の入力の見本。欄は器の幅に合わせて 1〜3 列、受け取った値は折り返して全部見せる */
+.s-jp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: 16px;
+}
+/* 郵便番号の見本は 1 つずつ折らない（「000-」と「0000」に分かれない） */
+.s-jp-codes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  margin: -8px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--s-ink-2);
+  font-size: 0.9375rem;
+}
+.s-jp-codes > li { white-space: nowrap; }
+.s-jp-values {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--s-surface-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 /* UI 部品のページの見本 */
 .s-dashboard {
   display: grid;

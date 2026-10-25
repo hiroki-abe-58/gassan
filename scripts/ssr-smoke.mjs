@@ -13,7 +13,12 @@ import { renderToString } from 'react-dom/server';
 
 import {
   Accordion,
+  AddressFields,
   AppShell,
+  BankAccountFields,
+  BirthDateInput,
+  EmailInput,
+  NameFields,
   AssistantPage,
   BillingPage,
   Breadcrumbs,
@@ -398,6 +403,39 @@ else fail(`PageScrollbar rendered markup on the server: ${pageScrollHtml}`);
 const widgetHtml = renderToString(h(ChatWidget, { title: 'Atlas のアシスタント', greeting: 'こんにちは' }, h(ChatThread, { label: '会話', messages: [], currentUserId: 'me' })));
 if (widgetHtml === '') ok('ChatWidget renders nothing on the server (the launcher mounts into body on the client)');
 else fail(`ChatWidget rendered markup on the server: ${widgetHtml}`);
+
+// 日本の入力（I-25〜I-31）。住所・名前・生年月日・メール・口座の束は、サーバーでも欄・自動入力の名前・初めの値を描く。
+const japaneseHtml = renderToString(
+  h(
+    Fragment,
+    null,
+    h(AddressFields, { label: '住所', defaultValue: { postalCode: '100-0001', prefecture: '東京都' } }),
+    h(NameFields, { label: 'お名前', defaultValue: { familyName: '山田' } }),
+    h(BirthDateInput, { label: '生年月日', defaultValue: '1990-01-15' }),
+    h(EmailInput, { 'aria-label': 'メール', defaultValue: 'taro@docomo.ne.jp' }),
+    h(BankAccountFields, {
+      label: '口座',
+      banks: [{ value: '9900', label: 'ゆうちょ銀行' }],
+      branches: [],
+      defaultValue: { bankCode: '9900', yuchoSymbol: '10180', yuchoNumber: '12345671' },
+    }),
+  ),
+);
+// 属性の名前は React の版で大小が変わる（autoComplete）ので、大小を問わずに見る。文は文節の <wbr> で区切られる
+const japaneseExpected = [
+  /autocomplete="postal-code"/i,
+  /value="100-0001"/,
+  /<option value="東京都" selected="">/,
+  /autocomplete="family-name"/i,
+  /value="山田"/,
+  /autocomplete="bday-year"/i,
+  /<option value="1990" selected="">1990年（平成2年）<\/option>/,
+  /携帯会社の/,
+  /〇一八（018）/,
+];
+const japaneseMissing = japaneseExpected.filter((pattern) => !pattern.test(japaneseHtml));
+if (japaneseMissing.length === 0) ok('Japanese inputs render their fields, autocomplete tokens and initial values on the server');
+else fail(`Japanese inputs on the server are missing ${japaneseMissing.join(' / ')}`);
 
 // ページの部品の 2 段目（U-17〜U-24）と、タグ・パスワードの強さ（I-21 / I-22）。
 // 起点の脇に出る部品は、閉じている間は起点だけを描く（ツールチップの文は説明として DOM に置く）。

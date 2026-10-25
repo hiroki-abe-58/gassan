@@ -2321,6 +2321,61 @@
   }
   .g-time-ok:active { scale: var(--g-press-scale); }
   .g-time-ok:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+
+  /* --- 6.13 日本の入力（I-26〜I-31） ------------------------------------------
+   * ネイティブの select（I-26）は Input と同じ枠に入れ、矢印を消して Select と同じ印を余白の内側に重ねる（§10-30）。
+   * 印は押下を通す（pointer-events: none）。select は枠いっぱいに広がるので、どこを押しても開く。
+   * 住所・名前・生年月日・口座は Fieldset の中に Field を並べる。郵便番号・都道府県・番号の欄は値が短いので幅を絞る。 */
+  .g-native-select { position: relative; cursor: pointer; }
+  .g-native-select > .g-bare {
+    appearance: none;
+    padding-inline-end: 34px;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+  .g-native-select > .g-bare:disabled { cursor: not-allowed; }
+  /* 一覧はブラウザが描く。面の色で描かせ、空の値（placeholder）を選んでいる閉じた箱は薄く */
+  .g-native-select > .g-bare > option { background: var(--g-surface); color: var(--g-fg); }
+  .g-native-select > .g-bare:has(> option[value=""]:checked) { color: var(--g-fg-muted); }
+  .g-native-select > .g-select-icon {
+    position: absolute;
+    inset-inline-end: 10px;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    pointer-events: none;
+  }
+
+  /* 読み上げに知らせる文（住所の検索の結果・満年齢・振込用の口座・メールの候補）は、空でも置いておく
+   * （知らせる文は、前から木にある場所に入れないと読まれない）。空の間は流れから外し、grid の行間を作らない。 */
+  .g-live:empty,
+  .g-email-suggest:has(> .g-live:empty) { position: absolute; }
+  .g-email-suggest { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; }
+
+  .g-name-grid,
+  .g-bank-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  /* 欄が多い束は、欄の間を見出しとの間より広く */
+  .g-address,
+  .g-bank { row-gap: 14px; }
+  .g-address > legend,
+  .g-bank > legend { margin-block-end: -8px; }
+  .g-bank-transfer { margin-block-start: -8px; }
+  .g-address-postal > .g-input,
+  .g-address-prefecture > .g-input,
+  .g-bank-number > .g-input { max-inline-size: 14rem; }
+  .g-address-candidates { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* 生年月日: 年は和暦を添えるので広く。器が狭いと、年を 1 行目に、月と日を 2 行目に */
+  .g-birthdate { container: g-birthdate / inline-size; }
+  .g-birthdate-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+    max-inline-size: 30rem;
+  }
+  @container g-birthdate (max-width: 20rem) {
+    .g-birthdate-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .g-birthdate-row > :first-child { grid-column: 1 / -1; }
+  }
 }
 
 /* ===========================================================================

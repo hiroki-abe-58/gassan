@@ -16,6 +16,7 @@ import { firstEnabled, navigate } from './internal/listbox';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
 import { Popup } from './internal/popup';
 import { useTypeahead } from './internal/typeahead';
+import { toHiragana } from './japanese';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
 
@@ -23,6 +24,8 @@ export interface SelectOption {
   value: string;
   /** 表示と文字送り・絞り込みに使う。文字列に限るのは、打った文字と突き合わせるため。 */
   label: string;
+  /** 絞り込みで label のほかに当てる語（読みがな・略称・コード）。Combobox が使う。 */
+  keywords?: readonly string[];
   disabled?: boolean;
 }
 
@@ -268,16 +271,14 @@ export function ModalSelect({
  * カタカナ・ひらがなの違いを無視する（「とうきょう」で「トウキョウ」に当たる）。
  */
 export function normalizeForMatch(text: string): string {
-  return text
-    .normalize('NFKC')
-    .toLocaleLowerCase()
-    .replace(/[ァ-ヶ]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0x60));
+  return toHiragana(text.normalize('NFKC').toLocaleLowerCase());
 }
 
-/** 打った文字列を含む候補。空なら全部。 */
+/** 打った文字列を label か keywords のどれかに含む候補。空なら全部。 */
 function filterOptions(options: readonly SelectOption[], text: string): readonly SelectOption[] {
   const needle = normalizeForMatch(text.trim());
-  return needle ? options.filter((option) => normalizeForMatch(option.label).includes(needle)) : options;
+  if (!needle) return options;
+  return options.filter((option) => [option.label, ...(option.keywords ?? [])].some((word) => normalizeForMatch(word).includes(needle)));
 }
 
 export interface ModalComboboxProps extends ControlAria, DataAttributes {

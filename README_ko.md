@@ -18,17 +18,17 @@
 
 **문서 사이트: <https://hiroki-abe-58.github.io/gassan/#/ko>**
 — 설계 원칙(모달이 존재하는 이유, 4층 모델, 5가지 유형, 접근성), 스타일(스크림, 색과 대비, 테마, 크기, 줄바꿈, 모션),
-모든 컴포넌트와 폼 요소의 라이브 데모와 API, 페이지 템플릿, 그리고 258개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
+모든 컴포넌트와 폼 요소의 라이브 데모와 API, 페이지 템플릿, 그리고 265개 동작의 사양을 Material Design 3 가이드라인처럼 정리했다.
 사이트는 한국어, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant), [ไทย](https://hiroki-abe-58.github.io/gassan/#/th)로 읽을 수 있다(상단 바의 지구본 버튼으로 전환한다).
 라이트 / 다크 테마와 기본 색상(primary color)을 고를 수 있고, 어떤 색을 고르든 글자와 채움 색이 WCAG 대비율을 충족하도록 도출된다.
 사이트의 모든 표, 개수, API 설명은 빌드 시 사양서와 타입 정의에서 생성되며, 손으로 쓴 숫자는 하나도 없다.
 
-전체 설계는 [`modal.skill.md`](./modal.skill.md)(258개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
+전체 설계는 [`modal.skill.md`](./modal.skill.md)(265개 항목의 동작 표, 의사결정 매트릭스, 품질 루브릭)에 있다.
 AI 어시스턴트와 함께 코딩할 때는 이 파일을 컨텍스트에 넣는다.
 
 | 문서 | 내용 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 258개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md`의 265개 동작 각각을 그것을 충족하는 테스트와 CSS에 대응시킨 표. `npm run check:trace`가 기계적으로 검증한다 |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 원래 요구 사항을 분해해 한 줄씩 정리한 표: 구현됨 / 조합으로 달성 / 로드맵에 있음 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan의 폼 요소를 모달 안에 넣는 최소 예제와, gassan에 없는 컴포넌트를 다른 라이브러리에서 가져와 감쌀 때의 주의점 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | 네이티브 `<dialog>` vs Base UI vs React Aria vs Radix(2026-09-29 기준, 1차 자료만 사용) |
@@ -262,6 +262,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `ModalHost` `useModals` | 명령형 API(`await confirm()`) |
 | `Modal.Calendar` `Modal.RangeCalendar` `Modal.DateRangePicker` `Modal.TimePicker` `Modal.ColorPicker` | 일본 공휴일과 기간 선택을 갖춘 달력, 테마로 그리는 시간 선택과 색 선택 |
 | `Modal.TagInput` `Modal.PasswordStrength` | 태그(붙여넣기와 IME 대응)와 새 비밀번호의 강도 |
+| `Modal.NativeSelect` `Modal.EmailInput` `AddressFields` `NameFields` `BirthDateInput` `BankAccountFields` | 일본 폼 입력. 전각·반각, 하이픈, 가나를 받는 쪽에서 맞춘다(`Input`의 `normalize`와 `toHalfWidth` 등의 함수). 우편번호로 주소를, IME 변환 전의 읽기로 후리가나를 채운다. 브라우저 자동 입력이 되는 네이티브 select, 메일 도메인을 잘못 쳤을 때의 후보, 일본 연호를 곁들인 생년월일, 유초 은행의 기호·번호를 이체용으로 바꾸는 계좌 |
 | `toast` `ToastHost` | 남은 시간 미터가 달린 토스트 |
 | `Button` `ButtonLink` `IconButton` `CopyButton` `Badge` `Avatar` `AvatarGroup` `Kbd` `Divider` | 페이지 위(모달 밖)에서 쓰는 버튼과 표시 |
 | `Card` `Stat` `EmptyState` `DescriptionList` `Timeline` `Progress` `Spinner` `Skeleton` `Banner` | 컨테이너, 숫자, 진행 상황, 알림 |

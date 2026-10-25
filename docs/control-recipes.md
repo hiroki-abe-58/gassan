@@ -39,6 +39,13 @@
 | 日付・時刻・色（ネイティブ） | `Modal.Input` に `type="date"` / `"time"` / `"color"` | I-15 |
 | ファイル | `Modal.FileDrop` | I-14 |
 | ラベルを欄の中に置く（浮くラベル） | `Modal.Field` の `labelPlacement="floating"` と `Modal.Input` / `Modal.PasswordInput` | I-24 |
+| 全角半角・ハイフン・かなを受け取った側でそろえる | `Modal.Input` の `normalize`（`toHalfWidth` / `normalizeText` / `toKatakana` / `formatPostalCode` / `normalizePhone` など） | I-25 |
+| 自動入力が効くドロップダウン（都道府県・国・生年月日） | `Modal.NativeSelect` | I-26 |
+| 日本の住所（郵便番号から住所を入れる） | `AddressFields`（`lookup` を渡す） | I-27 |
+| 姓名とフリガナ | `NameFields` | I-28 |
+| 生年月日（和暦と満年齢） | `BirthDateInput` | I-29 |
+| メールアドレス（打ち間違いの候補・携帯会社のメール） | `Modal.EmailInput` | I-30 |
+| 振込先の口座（ゆうちょ銀行の記号・番号） | `BankAccountFields` | I-31 |
 
 ---
 

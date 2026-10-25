@@ -189,6 +189,8 @@ const CASES: Array<{ name: string; render: () => void }> = [
   { name: 'Modal.TagInput', render: () => inRoot(<Modal.TagInput aria-label="t" data-testid={TID} />) },
   { name: 'Modal.PasswordStrength', render: () => inRoot(<Modal.PasswordStrength value="" data-testid={TID} />) },
   { name: 'Modal.FileDrop', render: () => inRoot(<Modal.FileDrop aria-label="f" data-testid={TID} />) },
+  { name: 'Modal.NativeSelect', render: () => inRoot(<Modal.NativeSelect aria-label="n" options={[]} data-testid={TID} />) },
+  { name: 'Modal.EmailInput', render: () => inRoot(<Modal.EmailInput aria-label="e" data-testid={TID} />) },
   {
     name: 'Modal.Chart',
     render: () =>
@@ -270,6 +272,8 @@ describe('data-* の受け渡し（D-11）', () => {
   it('Modal.TagInput は data-* をホスト要素へ渡す', () => sweep('Modal.TagInput'));
   it('Modal.PasswordStrength は data-* をホスト要素へ渡す', () => sweep('Modal.PasswordStrength'));
   it('Modal.FileDrop は data-* をホスト要素へ渡す', () => sweep('Modal.FileDrop'));
+  it('Modal.NativeSelect は data-* を select へ渡す', () => sweep('Modal.NativeSelect'));
+  it('Modal.EmailInput は data-* を input へ渡す', () => sweep('Modal.EmailInput'));
 
   it('Modal.Gate は要素を描かないので受け渡しの対象外', () => {
     inRoot(<Modal.Gate name="g" satisfied reason="r" />);

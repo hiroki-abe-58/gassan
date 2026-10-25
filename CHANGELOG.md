@@ -9,6 +9,28 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
 
 ## [Unreleased]
 
+### 追加（日本の入力）
+
+日本のフォームで人が離れる理由を、入力の部品の側で消す。全角と半角・ハイフンの有無・ひらがなとカタカナは、打った人に直させずに受け取った側でそろえる（「全角で入力してください」と言わない）。郵便番号から住所、変換前の読みからフリガナのように分かることは先に入れ、打った値とブラウザの自動入力が入れた値は上書きしない。仕様書は v1.34（I-25〜I-31。258 → 265 項目）。
+
+- **入力の揺れをそろえる（I-25）:** `Input` に `normalize` を足した。IME の変換中は触らず、1 文字ごとの入力・確定・貼り付け・自動入力のたびにそろえ、入力位置を保つ。`onChange` はそろえた後の値を受け取る（制御・非制御のどちらでも）。そろえる関数 `toHalfWidth` `toFullWidth` `normalizeText` `normalizeAddress` `toKatakana` `toHiragana` `toZenginKana`（全銀の口座名義） `digitsOf` `formatPostalCode`（「123-4567」） `normalizePhone`（数字だけ。+81 は 0 に） `normalizeInvoiceNumber`（T を補う） `normalizeEmail`、見分ける関数 `isPostalCode` `isPhoneNumber` `isMobilePhone` `isCorporateNumber`（検査用数字まで） `isInvoiceNumber` `isMyNumber`（検査用数字まで） `isKana` `isCarrierEmail`、ほかに `suggestEmail` `yuchoToBranch` `ageOn` `japaneseEra` と、`PREFECTURES` `COMMON_EMAIL_DOMAINS` `CARRIER_EMAIL_DOMAINS` `YUCHO_BANK_CODE`。どれも打ち途中の文字列に当てても崩れない純粋な関数で、サーバーの側の検証にも使える。
+- **`NativeSelect`（I-26）:** ネイティブの select を `Input` と同じ枠に入れた。ブラウザの自動入力とスマートフォンのピッカーが効く（一覧まで描く `Select` には自動入力が届かない）。矢印は `Select` と同じ印。
+- **`AddressFields`（I-27）:** 郵便番号・都道府県・市区町村・町名番地・建物名を、`autocomplete` の名前で並べる（`autoCompleteSection` で届け先と請求先を分ける）。7 桁がそろうと利用側の `lookup` を引き、空の欄と前に自動で入れたままの欄だけを埋める。郵便番号を直すと町域だけを差し替え、後ろに打った番地は残す。候補が複数ならボタンで選ぶ。結果は欄の下に出して `role="status"` で知らせ、エラーにせず、フォーカスは動かさない。ライブラリは住所のデータを持たず、どこにも送らない。
+- **`NameFields`（I-28）:** 姓・名（family-name / given-name）とフリガナ（カタカナ・ひらがな・出さない）。名前を IME で打つと、変換前の読みをフリガナに入れる。フリガナを自分で直したら、空にするまで触らない。
+- **`BirthDateInput`（I-29）:** 年・月・日のネイティブの select（bday-year / bday-month / bday-day）。年は新しい順で和暦を添え（改元の年は両方）、無い日付になったら日を空に戻し、そろうと満年齢を出す。値は `YYYY-MM-DD`。
+- **`EmailInput`（I-30）:** 全角や IME のまま打った「。」「ー」を直し、欄を離れたときに、よく使われるドメインの打ち間違いに「もしかして 〜 ですか？」と候補を出す（勝手には直さない）。携帯会社のメールには、迷惑メールの設定で確認のメールが届かないことへの注意を、欄の説明として出す。
+- **`BankAccountFields`（I-31）:** 金融機関と支店をかなやコードでも探せる候補の一覧にし（データは利用側が渡す）、口座番号は数字だけ 7 桁、名義は全角カタカナにそろえる。ゆうちょ銀行は通帳の記号・番号から振込用の店名・種目・口座番号を作る。
+- **束の部品は名前つき export だけ:** `AddressFields` `NameFields` `BirthDateInput` `BankAccountFields` は `Modal` 名前空間に入れない（`Modal` だけを使うアプリの束に、住所の検索や口座の変換まで載せないため。モーダルの中でも同じ部品を使える）。`NativeSelect` と `EmailInput` は入力部品なので `Modal.NativeSelect` `Modal.EmailInput` にもある。新しい部品は、使わないアプリの束から外れる（`@__PURE__` の注釈と、表を初めて使うときに作る形にした）。
+- **`Fieldset`:** 見出しが「必須 / 任意」を出したら、中の `Field` は同じなら繰り返さず、違うとき（必須の住所の中の任意の建物名）だけ出す（`aria-required` は欄ごとに残す）。
+- **`Combobox`:** 候補の `keywords`（読みがな・略称・コード）にも当てる。
+- `GassanLabels` に住所・名前・生年月日・メール・口座の文言を足した（日本語と英語。**型の破壊的変更**: 自前の `GassanLabels` を組んでいる場合は足すこと）。
+- `tests/japanese.test.ts`（26 件）・`tests/japanese-inputs.test.tsx`（27 件）・`Combobox` の `keywords` に 1 件・`data-*` の受け渡しに 2 件。SSR の検査に 1 項目。公開 API は 181 → 217。JS の予算を 134 → 145 KB、CSS を 25 → 26 KB に引き上げた。
+- ドキュメントサイト: 「フォーム」に「日本の入力」のページ（そろえる関数の実演・住所・名前・生年月日・メール・口座の見本、欄ごとの選び方の表、関数の例と結果の表、住所の検索のつなぎ方）。6 言語。
+
+### 修正（公開 API の一覧）
+
+- `check-dist` の公開 API の一覧に `ScrollArea` `PageScrollbar` `SCROLLBAR_VISIBILITIES` `ChatWidget` を足した。#35・#36 では文書の数（180・181）だけを上げ、一覧に足していなかった。
+
 ### 追加（サイトの右下のチャットボット）
 
 サービスに AI のチャットボットやサポートの窓口を組み込む `ChatWidget` を足した。仕様書は v1.33（E-09。257 → 258 項目）。

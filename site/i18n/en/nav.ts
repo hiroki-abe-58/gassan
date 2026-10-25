@@ -40,6 +40,7 @@ export default {
     slider: 'Slider',
     datePicker: 'Date, time and color',
     fileDrop: 'Files',
+    japaneseInput: 'Japanese inputs',
     media: 'Media and Gallery',
     chart: 'Modal.Chart',
     sheet: 'Sheets and Handle',

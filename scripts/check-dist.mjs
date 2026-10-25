@@ -71,11 +71,16 @@ import { gzipSync } from 'node:zlib';
  * 同日、JS を 130 → 134 KB、CSS を 24 → 25 KB に引き上げた。スクロールバー（U-35。ScrollArea・PageScrollbar と、ライブラリの中の
  * スクロールする所すべてに付けた自前のバー）を足したため（JS 約 3 KB・CSS 約 1 KB）。モーダルの本文と一覧も同じバーで描くので、
  * Modal だけを使う束にも載る（minify した束で 38,901 → 40,475 B）。
+ * 2026-10-26、JS を 134 → 145 KB、CSS を 25 → 26 KB に引き上げた。日本の入力（I-25〜I-31。揺れをそろえる関数・ネイティブの select・
+ * メール・住所・姓名・生年月日・口座の束と、日本語と英語の文言）を足したため（JS 約 11 KB・CSS 約 0.3 KB）。住所・姓名・生年月日・口座の束は
+ * 名前つき export だけにして Modal 名前空間に入れず、forwardRef と先頭で作る値には @__PURE__ の注釈を付けたので、使わないアプリの JS には
+ * 載らない（minify した束で、LineChart だけの束に関数と表が無いことを確かめた）。NativeSelect と EmailInput は入力部品なので
+ * Modal 名前空間に入れた（Modal だけを使う束は 40,475 → 43,330 B）。
  */
 const BUDGETS = {
-  'dist/index.js': 134 * 1024,
-  'dist/index.cjs': 134 * 1024,
-  'dist/styles.css': 25 * 1024,
+  'dist/index.js': 145 * 1024,
+  'dist/index.cjs': 145 * 1024,
+  'dist/styles.css': 26 * 1024,
   'dist/templates.css': 7 * 1024,
 };
 
@@ -210,6 +215,47 @@ const REQUIRED_EXPORTS = [
   'TreeView',
   'NotificationCenter',
   'Checklist',
+  // スクロールバー。U-35。
+  'ScrollArea',
+  'PageScrollbar',
+  'SCROLLBAR_VISIBILITIES',
+  // チャットのウィジェット。E-09。
+  'ChatWidget',
+  // 日本の入力。I-25〜I-31。束（住所・姓名・生年月日・口座）は Modal 名前空間に入れないので、中立の名前だけ。
+  'ModalNativeSelect',
+  'ModalEmailInput',
+  'NameFields',
+  'AddressFields',
+  'BirthDateInput',
+  'BankAccountFields',
+  'toHalfWidth',
+  'toFullWidth',
+  'normalizeText',
+  'normalizeAddress',
+  'toKatakana',
+  'toHiragana',
+  'isKana',
+  'toZenginKana',
+  'digitsOf',
+  'formatPostalCode',
+  'isPostalCode',
+  'normalizePhone',
+  'isPhoneNumber',
+  'isMobilePhone',
+  'isCorporateNumber',
+  'normalizeInvoiceNumber',
+  'isInvoiceNumber',
+  'isMyNumber',
+  'YUCHO_BANK_CODE',
+  'yuchoToBranch',
+  'COMMON_EMAIL_DOMAINS',
+  'CARRIER_EMAIL_DOMAINS',
+  'normalizeEmail',
+  'suggestEmail',
+  'isCarrierEmail',
+  'ageOn',
+  'japaneseEra',
+  'PREFECTURES',
   // フォーム部品の中立の名前（ModalInput などと同じもの）。
   'Field',
   'Fieldset',
@@ -235,6 +281,8 @@ const REQUIRED_EXPORTS = [
   'ColorPicker',
   'TagInput',
   'PasswordStrength',
+  'NativeSelect',
+  'EmailInput',
   'FileDrop',
   'Chips',
   'Switch',

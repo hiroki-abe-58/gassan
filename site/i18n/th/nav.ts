@@ -40,6 +40,7 @@ export default {
     slider: 'แถบเลื่อน',
     datePicker: 'วันที่ เวลา และสี',
     fileDrop: 'ไฟล์',
+    japaneseInput: 'ช่องกรอกแบบญี่ปุ่น',
     media: 'Media และ Gallery',
     chart: 'Modal.Chart',
     sheet: 'Sheet และ Handle',

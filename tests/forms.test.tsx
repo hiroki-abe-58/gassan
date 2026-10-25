@@ -472,6 +472,21 @@ describe('コンボボックス / I-12', () => {
     expect(normalizeForMatch('トウキョウ')).toBe(normalizeForMatch('とうきょう'));
   });
 
+  it('候補の keywords（読みがな・コード）にも当てる', async () => {
+    const user = userEvent.setup();
+    const banks = [
+      { value: '0005', label: '三菱UFJ銀行', keywords: ['みつびしゆーえふじぇい', '0005'] },
+      { value: '0009', label: '三井住友銀行', keywords: ['みついすみとも', '0009'] },
+    ];
+    render(<Modal.Combobox aria-label="金融機関" options={banks} />);
+    const input = screen.getByRole('combobox', { name: '金融機関' });
+    await user.type(input, 'ミツイ');
+    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual(['三井住友銀行']);
+    await user.clear(input);
+    await user.type(input, '０００５');
+    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual(['三菱UFJ銀行']);
+  });
+
   it('一覧にない文字列は値にせず、離れると選んでいた名前に戻す', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();

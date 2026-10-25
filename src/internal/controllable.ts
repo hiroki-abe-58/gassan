@@ -1,4 +1,4 @@
-import { useState, type MutableRefObject, type Ref } from 'react';
+import { useLayoutEffect, useRef, useState, type MutableRefObject, type Ref } from 'react';
 
 /**
  * 制御（value を渡す）と非制御（defaultValue だけ渡す）の両方を受ける値。I-01。
@@ -19,6 +19,28 @@ export function useControllable<T>(
     onChange?.(next);
   };
   return [current, set];
+}
+
+/**
+ * 欄の束（住所・名前・口座）の値を、変わった欄だけ（patch）で更新する useControllable。
+ * 最新の値を ref にも持ち、同じ描画の間に続けて来た変更（IME の確定と、値をそろえ直した入力など）も
+ * 前の変更を消さずに重ねる。ref は描画の後で、渡された value（制御）か内側の値に合わせ直す。
+ */
+export function usePatchable<T extends object>(
+  value: T | undefined,
+  defaultValue: T,
+  onChange: ((next: T) => void) | undefined,
+): [T, (patch: Partial<T>) => void, MutableRefObject<T>] {
+  const [current, setCurrent] = useControllable(value, defaultValue, onChange);
+  const latest = useRef(current);
+  useLayoutEffect(() => {
+    latest.current = current;
+  });
+  const update = (patch: Partial<T>): void => {
+    latest.current = { ...latest.current, ...patch };
+    setCurrent(latest.current);
+  };
+  return [current, update, latest];
 }
 
 /**
