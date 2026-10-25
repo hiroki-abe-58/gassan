@@ -1,0 +1,80 @@
+import type ja from '../ja/uiScroll';
+
+export default {
+  lead: 'A component that draws its own scrollbars. Scrolling itself is still left to the browser; only the bar you see is matched to the theme’s colors and shape. Differences between browsers and operating systems, such as the wide track on Windows, the overlay bars on macOS that fade away and Firefox’s own colors, no longer show up. The places that scroll inside the library (modal bodies, select lists, chat threads, tables that scroll sideways and so on), as well as this site’s page and navigation sidebar, are all drawn with the same bar.',
+  basics: {
+    title: 'Choose when the bar shows',
+    intro: 'By default (auto), the bar shows only while you scroll and while the pointer is over it, and it fades about 1 second after scrolling stops. You can also choose only while the pointer is over it, only while scrolling, or always. Whichever you choose, it does not show unless the content overflows.',
+    exampleTitle: 'Recent activity',
+    exampleDescription: 'Change when the bar shows with the switch above, then scroll the list or move the pointer over it. You can also drag the bar, or press the track to move by one screen.',
+  },
+  horizontal: {
+    title: 'Scrolling sideways',
+    intro: 'orientation="horizontal" draws a horizontal bar, and "both" draws both a vertical and a horizontal one. In right-to-left languages, the horizontal bar starts from the right.',
+    exampleTitle: 'Monthly revenue',
+    exampleDescription: 'A table wider than its container scrolls sideways. A viewport given a name (label) is a Tab stop, and the arrow keys scroll it too.',
+  },
+  custom: {
+    title: 'Changing thickness and color',
+    intro: 'Change the look with custom properties. Set them on the container or anywhere outside it (even :root), and every bar inside follows.',
+    exampleTitle: 'Thin, default, thick and accent color',
+    exampleDescription: 'Each of the 4 containers sets different custom properties. Move the pointer over one, and the bar gets thicker and a faint track appears.',
+  },
+  everywhere: {
+    title: 'The whole page and inside the library',
+    intro: 'Place a single PageScrollbar, and the document’s own bar becomes a custom-drawn one too (it does not show while an open modal has locked the document’s scrolling). For when bars show, the nearest setting wins, in this order: the component’s visibility, GassanProvider’s scrollbars, then <html data-g-scrollbars>. You can also switch it from “Theme” at the top right of this site.',
+    tableCaption: 'Where the custom bars are drawn',
+    head: { part: 'Component', area: 'What scrolls' },
+    rows: [
+      { part: 'Modal.Body', area: 'The modal’s body' },
+      { part: 'Select / Combobox / Menu / Popover', area: 'The contents of lists, menus and popovers' },
+      { part: 'CommandPalette', area: 'The list of results' },
+      { part: 'NotificationCenter', area: 'The list of notifications' },
+      { part: 'ChatThread', area: 'The column of messages' },
+      { part: 'CodeBlock / Modal.Table / DataTable / Modal.Chart', area: 'Code, tables and charts that scroll sideways' },
+      { part: 'AppShell / ChatPage / AssistantPage / MailboxPage', area: 'The navigation sidebar, lists, folders and content' },
+      { part: 'PricingPage', area: 'The plan comparison table' },
+    ],
+  },
+  modes: {
+    title: 'Modes and when the bar shows',
+    intro: 'In every mode, the bar stays visible while it is being dragged and while the pointer is over it.',
+    tableCaption: 'Scrollbar visibility',
+    head: { mode: 'Mode', when: 'When it shows' },
+    rows: [
+      { mode: "'auto' (default)", when: 'While scrolling, and while the pointer is over the viewport or the bar. Fades about 1 second after scrolling stops' },
+      { mode: "'hover'", when: 'Only while the pointer is over the viewport or the bar. Does not show when scrolling with the keyboard or touch' },
+      { mode: "'scroll'", when: 'Only while scrolling (close to how iOS shows it)' },
+      { mode: "'always'", when: 'At all times, as long as the content overflows' },
+    ],
+  },
+  tokens: {
+    title: 'Custom properties',
+    intro: 'The colors are made by mixing in the text color (--g-fg), so they follow light and dark mode and the theme. The thumb is dark enough to reach 3:1 or more against the surface.',
+    tableCaption: 'Scrollbar custom properties',
+    head: { name: 'Name', value: 'Default', role: 'Purpose' },
+    rows: [
+      { name: '--g-scrollbar-size', value: '6px', role: 'Thumb thickness at rest' },
+      { name: '--g-scrollbar-size-active', value: '10px', role: 'Thickness while hovered or dragged' },
+      { name: '--g-scrollbar-hit', value: '14px', role: 'Width of the area you can press (wider than the thicker size)' },
+      { name: '--g-scrollbar-inset', value: '2px', role: 'Gap from the edge of the viewport' },
+      { name: '--g-scrollbar-radius', value: '999px', role: 'Corner radius of the thumb' },
+      { name: '--g-scrollbar-thumb', value: 'Text color at 50%', role: 'Thumb color' },
+      { name: '--g-scrollbar-thumb-active', value: 'Text color at 66%', role: 'Thumb color while hovered or dragged' },
+      { name: '--g-scrollbar-track', value: 'Text color at 7%', role: 'Color of the track that appears on hover' },
+    ],
+  },
+  access: {
+    title: 'Screen readers, keyboard and touch',
+    intro: 'The bar is decoration (aria-hidden), and what scrolls is always the viewport itself. So the wheel, keys, touch, momentum, blocking scroll chaining and restoring the scroll position all work exactly as the browser provides them.',
+    rows: [
+      'With a keyboard, move to the viewport (it is a Tab stop once given a name) or to something focusable inside it, then scroll with the arrow keys, Page Up / Page Down or Space.',
+      'On devices where touch is the main input, the bar cannot be pressed (swiping along the edge scrolls normally instead of paging). While you scroll, it shows as a guide to your position.',
+      'In forced colors mode (Windows high contrast), the thumb is painted in the text color. It is not drawn when printing.',
+      'Under the “Reduce Motion” setting, the bar appears, disappears and changes thickness without animation.',
+    ],
+  },
+  codeCaption: 'Usage',
+  code: "import { GassanProvider, PageScrollbar, ScrollArea } from '@genelab/gassan';\n\n// The whole page (one per app)\n<PageScrollbar />\n\n// Scrolling inside a component\n<ScrollArea label=\"Recent activity\" style={{ maxBlockSize: 240 }}>\n  <ActivityList />\n</ScrollArea>\n\n// Visibility for a subtree\n<GassanProvider scrollbars=\"always\">\n  <App />\n</GassanProvider>",
+  a11yCaption: 'How the scrollbars behave',
+} satisfies typeof ja;

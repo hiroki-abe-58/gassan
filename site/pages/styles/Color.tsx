@@ -9,6 +9,7 @@ import { useT } from '../../i18n';
 import { CodeBlock } from '../../ui/Code';
 import { md, Paras } from '../../ui/Markdown';
 import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
+import { TableScroll } from '../../ui/TableScroll';
 
 function Swatch({ value }: { value: string }): ReactNode {
   return <span className="s-swatch" style={{ '--s-swatch': value } as CSSProperties} aria-hidden="true" />;
@@ -26,7 +27,7 @@ function ContrastTable({ scheme }: { scheme: 'light' | 'dark' }): ReactNode {
   };
   const caption = t.tableCaption[scheme];
   return (
-    <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption}>
+    <TableScroll label={caption}>
       <table className="s-table s-contrast-table" data-scheme={scheme}>
         <caption>
           <Phrase>{caption}</Phrase>
@@ -72,7 +73,7 @@ function ContrastTable({ scheme }: { scheme: 'light' | 'dark' }): ReactNode {
           })}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }
 
@@ -91,7 +92,7 @@ export function Color(): ReactNode {
 
       {surface ? (
         <Section id="tokens" title={t.tokens.title} intro={t.tokens.intro}>
-          <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.tokens.tableCaption}>
+          <TableScroll label={t.tokens.tableCaption}>
             <table className="s-table s-token-table">
               <caption className="s-sr-only">{t.tokens.tableCaption}</caption>
               <thead>
@@ -127,7 +128,7 @@ export function Color(): ReactNode {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
         </Section>
       ) : null}
 

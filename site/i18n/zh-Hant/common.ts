@@ -34,6 +34,8 @@ export default {
     tints: { neutral: '無彩色', soft: '淡', strong: '濃' },
     motion: '動態',
     motions: { none: '無', subtle: '克制', standard: '標準', expressive: '豐富' },
+    scrollbars: '捲軸',
+    scrollbarModes: { auto: '自動', hover: '懸停', scroll: '捲動時', always: '始終' },
     primary: '主色',
     presets: {
       default: '預設',

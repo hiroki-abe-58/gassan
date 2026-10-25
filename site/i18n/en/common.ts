@@ -36,6 +36,8 @@ export default {
     tints: { neutral: 'Neutral', soft: 'Soft', strong: 'Strong' },
     motion: 'Motion',
     motions: { none: 'None', subtle: 'Subtle', standard: 'Standard', expressive: 'Expressive' },
+    scrollbars: 'Scrollbars',
+    scrollbarModes: { auto: 'Auto', hover: 'Hover', scroll: 'Scrolling', always: 'Always' },
     primary: 'Primary color',
     presets: {
       default: 'Default',

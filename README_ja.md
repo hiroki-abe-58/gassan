@@ -18,17 +18,17 @@
 
 **ドキュメントサイト: <https://hiroki-abe-58.github.io/gassan/>**
 — 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・テーマ・寸法・折り返し・モーション）、
-全コンポーネントとフォーム部品の動くデモと API、ページのテンプレート、256項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
+全コンポーネントとフォーム部品の動くデモと API、ページのテンプレート、257項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
 サイトは日本語・[English](https://hiroki-abe-58.github.io/gassan/#/en)・[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)・[繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant)・[한국어](https://hiroki-abe-58.github.io/gassan/#/ko)・[ไทย](https://hiroki-abe-58.github.io/gassan/#/th) で読める（トップバーの地球の印で切り替える）。
 ライト・ダークの表示とプライマリカラーも切り替えられる。どの色を選んでも、文字と塗りが WCAG のコントラスト比を満たすように色を導いている。
 表・件数・API の説明はすべて仕様書と型定義からビルド時に生成していて、手で書いた数値は無い。
 
-設計の全文は [`modal.skill.md`](./modal.skill.md)（256項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
+設計の全文は [`modal.skill.md`](./modal.skill.md)（257項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
 AI コーディング時はそのファイルをコンテキストに入れる。
 
 | 文書 | 内容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の256項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の257項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 元の要件を分解し、「実装済み / 合成で対応 / ロードマップ」を1行ずつ示した監査表 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan の入力部品をモーダルに載せる最小例と、gassan に無い部品をほかのライブラリから包むときの注意 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | native `<dialog>` / Base UI / React Aria / Radix の比較（2026-09-29 時点、一次資料のみ） |
@@ -270,6 +270,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `Carousel` | 指でも、前へ・次へ・点でも送れるカルーセル。自動再生は止めるボタンを先頭に置き、ポインタやフォーカスが乗ると止まる |
 | `ChatThread` `ChatComposer` `TypingIndicator` `ChatSuggestions` | 人どうしのチャットと AI との対話。上を読んでいる間は位置を動かさず、日本語の変換中の Enter では送らず、流しながら書く回答は書き終えてから読み上げる |
 | `CodeBlock` `TreeView` `NotificationCenter` `Checklist` | 写すボタンつきのコードの塊、矢印キーと打った文字で動くツリー、鈴から開く通知の一覧、手順を終えると次の手順へフォーカスを移すはじめのチェックリスト |
+| `ScrollArea` `PageScrollbar` | 自前で描くスクロールバー。ブラウザと OS で違う形をテーマにそろえる（スクロールそのものはブラウザのまま）。モーダルの本文・一覧・チャット・表など、部品の中のスクロールも同じバー |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | ログインとアカウントのページ（`templates.css`） |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | エラー・メンテナンス・公開ページ |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` | アプリの枠と、その中のページ |

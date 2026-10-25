@@ -253,7 +253,8 @@ describe('メールのページ / P-20', () => {
     const sheet = readFileSync(resolve(process.cwd(), 'src/templates.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
     expect(sheet).toMatch(/\.g-mail-folders\s*\{[^}]*display:\s*none/);
     const shown = sheet.search(/\.g-mail-folders\s*\{[^}]*display:\s*none/);
-    const wide = sheet.search(/@container \(min-width: 900px\)\s*\{\s*\.g-mail-folders\s*\{\s*display:\s*flex;\s*\}\s*\.g-mail-folder-select\s*\{\s*display:\s*none;/);
+    // フォルダの並びは器（自前のバーを重ねる grid。U-35）ごと出し入れする
+    const wide = sheet.search(/@container \(min-width: 900px\)\s*\{\s*\.g-mail-folders\s*\{\s*display:\s*grid;\s*\}\s*\.g-mail-folder-select\s*\{\s*display:\s*none;/);
     expect(wide).toBeGreaterThan(shown);
     render(<Mailbox />);
     expect(screen.getByTestId('mail')).toHaveClass('g-split', 'g-mail-page');

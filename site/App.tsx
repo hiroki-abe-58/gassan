@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
-import { CommandPalette, GassanProvider, Modal, ModalHost, Phrase, ToastHost, type CommandItem } from '@genelab/gassan';
+import { CommandPalette, GassanProvider, Modal, ModalHost, PageScrollbar, Phrase, ScrollArea, ToastHost, type CommandItem } from '@genelab/gassan';
 
 import { data } from './data';
 import { DEFAULT_LANG, loadLang, useI18n } from './i18n';
@@ -137,6 +137,7 @@ export function App(): ReactNode {
         <TemplatePreview name={previewName} />
         <ModalHost />
         <ToastHost position={toastPosition} />
+        <PageScrollbar />
       </GassanProvider>
     );
   }
@@ -203,9 +204,12 @@ export function App(): ReactNode {
         </header>
 
         <div className="s-layout">
-          <nav className="s-sidenav" aria-label={t.common.siteNav}>
-            <NavList current={page.path} />
-          </nav>
+          {/* 案内の帯のスクロールバーも自前で描く（U-35。ページ全体は PageScrollbar） */}
+          <ScrollArea className="s-sidenav" viewportClassName="s-sidenav-scroll">
+            <nav aria-label={t.common.siteNav}>
+              <NavList current={page.path} />
+            </nav>
+          </ScrollArea>
 
           <main id="main" ref={mainRef} tabIndex={-1} className="s-main" data-page={page.path}>
             {lang !== DEFAULT_LANG ? (
@@ -296,6 +300,7 @@ export function App(): ReactNode {
 
         <ModalHost />
         <ToastHost position={toastPosition} />
+        <PageScrollbar />
       </div>
     </GassanProvider>
   );

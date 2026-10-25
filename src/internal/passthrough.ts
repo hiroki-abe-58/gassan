@@ -95,6 +95,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-on',
   'data-orientation',
   'data-outside',
+  'data-overflow',
   'data-own',
   'data-pass',
   'data-paused',
@@ -104,6 +105,7 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-position',
   'data-required',
   'data-scrim',
+  'data-scrolling',
   'data-side',
   'data-size',
   'data-slot',
@@ -113,6 +115,8 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
   'data-done',
   'data-unread',
   'data-variant',
+  'data-visibility',
+  'data-g-page-scrollbar',
 ]);
 
 /**
@@ -120,8 +124,9 @@ export const RESERVED_DATA: ReadonlySet<string> = new Set([
  * 例: `data-g-no-swipe` を付けた要素の上ではスワイプを始めない。
  * `data-g-motion` は動きの段（V-01）。`<html>` にも、モーダル 1 枚（`<Modal.Root data-g-motion>`）にも置ける。
  * GassanProvider の motion も同じ属性を器に書くが、その器は消費者の props を受けないので衝突しない。
+ * `data-g-scrollbars` はスクロールバーの出し方（U-35）。`<html>` か、包む要素に置く。GassanProvider の scrollbars も同じ。
  */
-export const CONSUMER_DATA: readonly string[] = ['data-g-no-swipe', 'data-g-motion'];
+export const CONSUMER_DATA: readonly string[] = ['data-g-no-swipe', 'data-g-motion', 'data-g-scrollbars'];
 
 /**
  * 各コンポーネントの props に混ぜる、data-* の受け口。

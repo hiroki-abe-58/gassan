@@ -1,8 +1,9 @@
-import { createContext, useEffect, useId, type ReactNode } from 'react';
+import { createContext, useEffect, useId, useRef, type ReactNode } from 'react';
 
 import { warnDuplicateKeys } from './internal/dom';
 import { useLabels } from './labels';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useScrollbars } from './internal/scrollbars';
 import { usePhrase } from './phrase';
 
 /* -------------------------------------------------------------------------- */
@@ -351,16 +352,23 @@ export function ModalTable({
   ...rest
 }: ModalTableProps): ReactNode {
   const phrase = usePhrase();
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const bars = useScrollbars(wrapRef, { axes: ['x'] });
   return (
-    <div
-      {...domPassthrough(rest, 'Modal.Table')}
-      className={className ? `g-table-wrap ${className}` : 'g-table-wrap'}
-      role="group"
-      tabIndex={0}
-      aria-label={label}
-    >
-      {/* セルの文字列にも効かせる。<table> は素の HTML 要素なので、中まで潜って変換できる */}
-      {phrase(children)}
+    // 横に送る窓（利用側の className と data-* は今までどおり窓に付ける）と、自前のバー（U-35）を重ねる器
+    <div className="g-scroll">
+      <div
+        {...domPassthrough(rest, 'Modal.Table')}
+        ref={wrapRef}
+        className={className ? `g-table-wrap g-scroll-viewport ${className}` : 'g-table-wrap g-scroll-viewport'}
+        role="group"
+        tabIndex={0}
+        aria-label={label}
+      >
+        {/* セルの文字列にも効かせる。<table> は素の HTML 要素なので、中まで潜って変換できる */}
+        {phrase(children)}
+      </div>
+      {bars}
     </div>
   );
 }

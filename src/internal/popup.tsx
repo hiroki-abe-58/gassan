@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode, type RefObject } from 'react';
 
+import { useScrollbars } from './scrollbars';
 import { useEvent } from './use-event';
 
 /** 起点との隙間と、画面端に残す余白（px）。 */
@@ -76,6 +77,11 @@ export interface PopupProps extends Omit<HTMLAttributes<HTMLDivElement>, 'popove
   anchorRef: RefObject<HTMLElement | null>;
   /** 外を押されたとき。起点の内側を押したときは呼ばない（起点側が開閉を決める）。 */
   onDismiss: () => void;
+  /**
+   * 中身をスクロールする窓（.g-popup-viewport）に入れ、自前のバーを描く（U-35）。一覧・メニュー・ポップオーバーが使う。
+   * 器は 1 升の grid になり、余白は窓が持つ。
+   */
+  scrollbars?: boolean;
   children: ReactNode;
 }
 
@@ -95,11 +101,12 @@ export interface PopupProps extends Omit<HTMLAttributes<HTMLDivElement>, 'popove
  *
  * popover API の無い環境（jsdom・古いブラウザ）では、起点の直下に absolute で置く。
  */
-export function Popup({ open, anchorRef, onDismiss, children, className, side, align, matchWidth, point, ...attributes }: PopupProps): ReactNode {
+export function Popup({ open, anchorRef, onDismiss, scrollbars = false, children, className, side, align, matchWidth, point, ...attributes }: PopupProps): ReactNode {
   // 置き方の指定は、effect の中から最新の値を読む（依存に入れて置き直しの登録をやり直さない）。
   const placement = useRef<PlaceOptions>({});
   placement.current = { side, align, matchWidth, point };
   const ref = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const inTopLayer = useRef(false);
   const dismiss = useEvent(onDismiss);
   const [present, setPresent] = useState(open);
@@ -171,11 +178,23 @@ export function Popup({ open, anchorRef, onDismiss, children, className, side, a
     if (open && popup && anchor && inTopLayer.current) placePopup(anchor, popup, placement.current);
   });
 
+  const bars = useScrollbars(viewportRef);
+
   if (!present) return null;
   return (
     // 内部の部品だけが使う（役割やキー操作を足す）。利用者の props は通らないので濾過しない。
     <div {...attributes} ref={ref} popover="manual" className={className ? `g-popup ${className}` : 'g-popup'}>
-      {children}
+      {scrollbars ? (
+        <>
+          {/* 窓は役割を持たない（メニューの項目の持ち主は、器の role="menu" のまま） */}
+          <div ref={viewportRef} className="g-popup-viewport g-scroll-viewport" role="presentation">
+            {children}
+          </div>
+          {bars}
+        </>
+      ) : (
+        children
+      )}
     </div>
   );
 }

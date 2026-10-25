@@ -5,6 +5,7 @@ import { Phrase } from '@genelab/gassan';
 import { data } from '../data';
 import { useT } from '../i18n';
 import { InlineMd, md } from './Markdown';
+import { TableScroll } from './TableScroll';
 
 /**
  * 型定義から抜き出した props の表。
@@ -32,7 +33,7 @@ export function ApiTable({ name, title }: { name: string; title?: string }): Rea
           <InlineMd text={def.doc} />
         </p>
       ) : null}
-      <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.propsOf(name)}>
+      <TableScroll label={t.propsOf(name)}>
         <table className="s-table s-api-table">
           <caption className="s-sr-only">{t.propsOf(name)}</caption>
           <thead>
@@ -59,7 +60,7 @@ export function ApiTable({ name, title }: { name: string; title?: string }): Rea
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       {passthrough || inherited.length > 0 ? (
         <ul className="s-api-notes">
           {passthrough ? (

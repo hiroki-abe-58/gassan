@@ -10,6 +10,7 @@ import { CodeBlock } from '../../ui/Code';
 import { md, Paras } from '../../ui/Markdown';
 import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
+import { TableScroll } from '../../ui/TableScroll';
 
 type Point = readonly [x: number, y: number];
 
@@ -263,7 +264,7 @@ export function Motion(): ReactNode {
       </Section>
 
       <Section id="tokens" title={t.tokens.title} intro={md(t.tokens.intro)}>
-        <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.tokens.tableCaption}>
+        <TableScroll label={t.tokens.tableCaption}>
           <table className="s-table s-motion-table">
             <caption className="s-sr-only">{t.tokens.tableCaption}</caption>
             <thead>
@@ -295,7 +296,7 @@ export function Motion(): ReactNode {
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       </Section>
 
       <Section id="durations" title={t.durations.title} intro={t.durations.intro}>

@@ -445,19 +445,17 @@
    * 上の帯は付いてこさせない（z-index を使わないので、後ろの要素が上に描かれる）。左の帯は本文と重ならないので付いてくる。 */
   .g-app { position: relative; }
   .g-app-frame { display: grid; grid-template-columns: minmax(0, 1fr); min-block-size: 100dvh; }
+  /* 案内の帯は器（高さと付いてくる位置）と窓（中の並びと余白）に分け、窓に自前のバーを重ねる（U-35） */
   .g-app-sidebar {
     display: none;
     position: sticky;
     inset-block-start: 0;
     box-sizing: border-box;
     block-size: 100dvh;
-    flex-direction: column;
-    gap: 20px;
-    overflow-y: auto;
-    padding: 12px 12px 16px;
     border-inline-end: 1px solid var(--g-border);
     background: var(--g-surface);
   }
+  .g-app-sidebar-scroll { display: flex; flex-direction: column; gap: 20px; padding: 12px 12px 16px; }
   .g-app-brand { padding-inline: 8px; }
   .g-app-sidebar-footer { margin-block-start: auto; }
   .g-app-nav { display: grid; gap: 18px; }
@@ -542,7 +540,7 @@
   }
   @container (min-width: 960px) {
     .g-app-frame { grid-template-columns: 15rem minmax(0, 1fr); }
-    .g-app-sidebar { display: flex; }
+    .g-app-sidebar { display: grid; }
     :is(.g-app-menu, .g-app-topbar-brand) { display: none; }
   }
   /* 横の面（狭い器）の中の案内。面の上下の余白はパネルが持つ */
@@ -666,16 +664,9 @@
     border-radius: var(--g-radius);
     background: var(--g-surface);
   }
-  .g-split-list {
-    position: relative;
-    display: flex;
-    flex: none;
-    flex-direction: column;
-    inline-size: 100%;
-    min-block-size: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
+  /* 一覧は器（幅と出し入れ）と窓（中の並び）に分け、窓に自前のバーを重ねる（U-35） */
+  .g-split-list { flex: none; inline-size: 100%; min-block-size: 0; }
+  .g-split-list-scroll { display: flex; flex-direction: column; }
   .g-split-detail {
     display: grid;
     flex: 1;
@@ -784,34 +775,18 @@
 
   /* T18 assistant（P-19）。何も話していなければ、問いかけと質問の例を真ん中に置く（収まらなければ上から並ぶ）。 */
   .g-assistant-item { overflow-wrap: anywhere; }
-  .g-assistant-empty {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-block-size: 0;
-    padding: 20px 16px;
-    overflow-y: auto;
-  }
-  .g-assistant-empty > :first-child { margin-block-start: auto; }
-  .g-assistant-empty > :last-child { margin-block-end: auto; }
+  .g-assistant-empty { min-block-size: 0; }
+  .g-assistant-empty-scroll { display: flex; flex-direction: column; gap: 16px; padding: 20px 16px; }
+  .g-assistant-empty-scroll > :first-child { margin-block-start: auto; }
+  .g-assistant-empty-scroll > :last-child { margin-block-end: auto; }
   .g-assistant-greeting { margin: 0; font-size: 1.375rem; font-weight: 700; line-height: 1.4; text-align: center; }
-  .g-assistant-empty > .g-suggestions { inline-size: min(100%, 48rem); margin-inline: auto; }
+  .g-assistant-empty-scroll > .g-suggestions { inline-size: min(100%, 48rem); margin-inline: auto; }
   .g-assistant-note { margin: 0; padding-inline: 12px; color: var(--g-fg-muted); font-size: 0.75rem; line-height: 1.5; }
 
   /* T19 mail（P-20）。器が広ければフォルダ（12rem）・一覧・読む面の 3 列。それより狭ければフォルダは一覧の上のセレクトにする。
    * 読んでいないメールは差出人と件名を太字にし、頭に点を置く（読み上げには「未読」の言葉を足している）。 */
-  .g-mail-folders {
-    position: relative;
-    display: none;
-    flex: none;
-    flex-direction: column;
-    gap: 4px;
-    inline-size: 12rem;
-    padding: 12px 8px;
-    overflow-y: auto;
-    border-inline-end: 1px solid var(--g-border);
-  }
+  .g-mail-folders { display: none; flex: none; inline-size: 12rem; border-inline-end: 1px solid var(--g-border); }
+  .g-mail-folders-scroll { display: flex; flex-direction: column; gap: 4px; padding: 12px 8px; }
   .g-mail-folder-icon { display: grid; flex: none; inline-size: 18px; block-size: 18px; color: var(--g-fg-muted); }
   .g-mail-folder-icon > svg { inline-size: 100%; block-size: 100%; }
   .g-mail-folder-label { flex: 1; min-inline-size: 0; }
@@ -888,7 +863,8 @@
   :is(.g-mail-star, .g-mail-star-toggle)[aria-pressed="true"] { color: var(--g-warning); }
   :is(.g-mail-star, .g-mail-star-toggle)[aria-pressed="true"] path { fill: currentColor; }
   :is(.g-mail-item, .g-mail-star):focus-visible { outline: 2px solid var(--g-focus); outline-offset: -2px; }
-  .g-mail-body { position: relative; display: grid; align-content: start; gap: 20px; min-block-size: 0; padding: 20px 20px 32px; overflow-y: auto; }
+  .g-mail-body { min-block-size: 0; }
+  .g-mail-body-scroll { display: grid; align-content: start; gap: 20px; padding: 20px 20px 32px; }
   .g-mail-meta { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 12px; }
   .g-mail-meta-avatar { display: grid; flex: none; }
   .g-mail-meta-text { display: grid; flex: 1 1 14rem; gap: 2px; min-inline-size: 0; }
@@ -916,7 +892,7 @@
   .g-mail-attachment-size { color: var(--g-fg-muted); font-variant-numeric: tabular-nums; }
   /* 器の幅で決める形は、各部品の規則より後に書く（@container は詳細度を足さないので） */
   @container (min-width: 900px) {
-    .g-mail-folders { display: flex; }
+    .g-mail-folders { display: grid; }
     .g-mail-folder-select { display: none; }
   }
 }

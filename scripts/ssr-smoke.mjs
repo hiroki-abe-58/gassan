@@ -49,11 +49,13 @@ import {
   NotificationCenter,
   OnboardingPage,
   PageHeader,
+  PageScrollbar,
   Pagination,
   PasswordStrength,
   Phrase,
   Popover,
   PricingPage,
+  ScrollArea,
   SettingsPage,
   SignInPage,
   SiteProvider,
@@ -201,7 +203,7 @@ const expectations = [
   ['aria-describedby=', 'description wiring'],
   ['data-placement="center"', 'placement resolved without matchMedia'],
   ['class="g-chart"', 'chart figure'],
-  ['class="g-chart-visual" aria-hidden="true"', 'chart visual hidden by default'],
+  ['class="g-chart-visual g-scroll-viewport" aria-hidden="true"', 'chart visual hidden by default (a viewport with the custom scrollbar)'],
   ['<details class="g-chart-data">', 'chart data disclosure'],
   ['class="g-select-trigger" role="combobox"', 'select trigger'],
   ['aria-autocomplete="list"', 'combobox input'],
@@ -380,6 +382,16 @@ else fail(`TimePicker did not render 9:05 PM on the server: ${englishTime}`);
 const toastHtml = renderToString(h(ToastHost));
 if (toastHtml === '') ok('ToastHost renders nothing on the server (the region mounts on the client)');
 else fail(`ToastHost rendered markup on the server: ${toastHtml}`);
+
+// スクロールバー（U-35）。窓と、飾りのバーをサーバーでも描く（大きさとあふれは描いた後に JS が書く）。
+// 文書のバーは body の末尾へ置くので、サーバーでは何も描かない。
+const scrollHtml = renderToString(h(ScrollArea, { label: '最近の操作', orientation: 'both' }, h('p', null, '本文')));
+if (/class="g-scroll"[^>]*data-orientation="both"><div class="g-scroll-viewport" role="group" aria-label="最近の操作" tabindex="0">/.test(scrollHtml) && (scrollHtml.match(/class="g-scrollbar" data-axis="[xy]" aria-hidden="true"/g) ?? []).length === 2 && !scrollHtml.includes('data-overflow')) {
+  ok('ScrollArea renders the viewport and both decorative bars on the server');
+} else fail(`ScrollArea markup on the server: ${scrollHtml}`);
+const pageScrollHtml = renderToString(h(PageScrollbar));
+if (pageScrollHtml === '') ok('PageScrollbar renders nothing on the server (the bar mounts into body on the client)');
+else fail(`PageScrollbar rendered markup on the server: ${pageScrollHtml}`);
 
 // ページの部品の 2 段目（U-17〜U-24）と、タグ・パスワードの強さ（I-21 / I-22）。
 // 起点の脇に出る部品は、閉じている間は起点だけを描く（ツールチップの文は説明として DOM に置く）。
@@ -620,7 +632,7 @@ const appPartsHtml = renderToString(
   ),
 );
 if (
-  /<pre[^>]*class="g-codeblock-body"[^>]*tabindex="0"[^>]*aria-label="curl のコード"/.test(appPartsHtml) &&
+  /<pre[^>]*class="g-codeblock-body g-scroll-viewport"[^>]*tabindex="0"[^>]*aria-label="curl のコード"/.test(appPartsHtml) &&
   /aria-label="コードをコピー"/.test(appPartsHtml) &&
   /role="tree"[^>]*aria-label="ファイル"/.test(appPartsHtml) &&
   /aria-level="2"[^>]*aria-selected="true" tabindex="0"/.test(appPartsHtml) &&

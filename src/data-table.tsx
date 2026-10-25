@@ -6,6 +6,7 @@ import { useControllable } from './internal/controllable';
 import { warnDuplicateKeys } from './internal/dom';
 import { Icon } from './internal/icons';
 import { domPassthrough, type DataAttributes } from './internal/passthrough';
+import { useScrollbars } from './internal/scrollbars';
 import { SelectBox } from './internal/select-box';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
@@ -113,6 +114,7 @@ export function DataTable<T>({
   const base = useId();
   const captionId = `${base}-caption`;
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bars = useScrollbars(scrollRef, { axes: ['x'] });
   const [overflowing, setOverflowing] = useState(false);
   const [announcement, setAnnouncement] = useState('');
   const [sortState, setSortState] = useState<DataTableSort | null>(defaultSort);
@@ -293,41 +295,45 @@ export function DataTable<T>({
           </Button>
         </div>
       ) : null}
-      <div
-        ref={scrollRef}
-        className="g-data-table-scroll"
-        role={overflowing ? 'region' : undefined}
-        aria-labelledby={overflowing ? captionId : undefined}
-        tabIndex={overflowing ? 0 : undefined}
-      >
-        <table aria-busy={loading || undefined}>
-          <caption id={captionId} className="g-sr-only">
-            {label}
-          </caption>
-          <thead>
-            <tr>
-              {selectable ? (
-                <th scope="col" className="g-data-table-select">
-                  <span className="g-sr-only">{labels.selectRows}</span>
-                  <SelectBox
-                    className="g-data-table-check"
-                    checked={allSelected}
-                    indeterminate={someSelected}
-                    onChange={toggleAll}
-                    label={labels.selectAll}
-                  />
-                </th>
-              ) : null}
-              {columns.map(headerCell)}
-              {rowActions ? (
-                <th scope="col" className="g-data-table-actions">
-                  <span className="g-sr-only">{labels.rowActions}</span>
-                </th>
-              ) : null}
-            </tr>
-          </thead>
-          <tbody>{body}</tbody>
-        </table>
+      {/* 横に送る窓と、自前のバー（U-35）を重ねる器 */}
+      <div className="g-scroll">
+        <div
+          ref={scrollRef}
+          className="g-data-table-scroll g-scroll-viewport"
+          role={overflowing ? 'region' : undefined}
+          aria-labelledby={overflowing ? captionId : undefined}
+          tabIndex={overflowing ? 0 : undefined}
+        >
+          <table aria-busy={loading || undefined}>
+            <caption id={captionId} className="g-sr-only">
+              {label}
+            </caption>
+            <thead>
+              <tr>
+                {selectable ? (
+                  <th scope="col" className="g-data-table-select">
+                    <span className="g-sr-only">{labels.selectRows}</span>
+                    <SelectBox
+                      className="g-data-table-check"
+                      checked={allSelected}
+                      indeterminate={someSelected}
+                      onChange={toggleAll}
+                      label={labels.selectAll}
+                    />
+                  </th>
+                ) : null}
+                {columns.map(headerCell)}
+                {rowActions ? (
+                  <th scope="col" className="g-data-table-actions">
+                    <span className="g-sr-only">{labels.rowActions}</span>
+                  </th>
+                ) : null}
+              </tr>
+            </thead>
+            <tbody>{body}</tbody>
+          </table>
+        </div>
+        {bars}
       </div>
       {/* 並べ替えと選んだ数は、目に見える文とは別に、いつも置いてある領域で読み上げる（出し入れする要素では読まれないことがある） */}
       <p className="g-sr-only" role="status">

@@ -291,6 +291,7 @@ export function Popover({
         open={isOpen}
         anchorRef={anchorRef}
         onDismiss={() => close(false)}
+        scrollbars
         className={className ? `g-popover ${className}` : 'g-popover'}
         side={side}
         align={align}
@@ -518,6 +519,7 @@ function MenuPopup({ open, id, items, anchorRef, point, side, align, landing, tr
       anchorRef={anchorRef}
       point={point}
       onDismiss={() => onClose(false)}
+      scrollbars
       className={className ? `g-menu ${className}` : 'g-menu'}
       side={side}
       align={align}

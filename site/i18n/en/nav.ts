@@ -56,6 +56,7 @@ export default {
     uiCharts: 'Charts',
     uiCarousel: 'Carousel',
     uiChat: 'Chat',
+    uiScroll: 'Scrollbars',
     templatesAuth: 'Sign-in and sign-up',
     templatesStatus: 'Errors and maintenance',
     templatesPublic: 'Pricing, FAQ and legal',

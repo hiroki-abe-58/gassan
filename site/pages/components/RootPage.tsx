@@ -14,6 +14,7 @@ import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
 import { KeyPoint, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
+import { TableScroll } from '../../ui/TableScroll';
 
 const REASONS: readonly CloseReason[] = [
   'esc',
@@ -44,7 +45,7 @@ export function RootPage({ rest }: PageProps): ReactNode {
           </Section>
 
           <Section id="reasons" title={t.reasons.title} intro={t.reasons.intro}>
-            <div className="s-table-wrap" role="group" tabIndex={0} aria-label={t.reasons.tableLabel}>
+            <TableScroll label={t.reasons.tableLabel}>
               <table className="s-table">
                 <caption className="s-sr-only">{t.reasons.tableCaption}</caption>
                 <thead>
@@ -68,7 +69,7 @@ export function RootPage({ rest }: PageProps): ReactNode {
                   </Phrase>
                 </tbody>
               </table>
-            </div>
+            </TableScroll>
           </Section>
 
           <Section id="guard" title={t.guard.title} intro={t.guard.intro}>

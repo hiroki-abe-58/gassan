@@ -11,6 +11,7 @@ import { Example } from '../../ui/Example';
 import { md, Paras } from '../../ui/Markdown';
 import { KeyPoint, PageHeader, Prose, Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
+import { TableScroll } from '../../ui/TableScroll';
 
 /**
  * 言語ごとの見本。見本そのものが言語の例なので、サイトの言語では訳さない（サイトが英語でも中国語の見本は中国語）。
@@ -291,7 +292,7 @@ export function LineBreak(): ReactNode {
       </Section>
 
       <Section id="languages" title={tt.languages.title} intro={tt.languages.intro}>
-        <div className="s-table-wrap" role="group" tabIndex={0} aria-label={tt.languages.caption}>
+        <TableScroll label={tt.languages.caption}>
           <table className="s-table s-lang-table">
             <caption className="s-sr-only">{tt.languages.caption}</caption>
             <thead>
@@ -315,7 +316,7 @@ export function LineBreak(): ReactNode {
               </Phrase>
             </tbody>
           </table>
-        </div>
+        </TableScroll>
         <Prose>
           <p>{md(tt.languages.note)}</p>
         </Prose>
@@ -357,7 +358,7 @@ export function LineBreak(): ReactNode {
         <Prose>
           <Paras items={tt.name.body} />
         </Prose>
-        <div className="s-table-wrap" role="group" tabIndex={0} aria-label={tt.name.tableLabel}>
+        <TableScroll label={tt.name.tableLabel}>
           <table className="s-table">
             <caption className="s-sr-only">{tt.name.caption}</caption>
             <thead>
@@ -381,7 +382,7 @@ export function LineBreak(): ReactNode {
               </Phrase>
             </tbody>
           </table>
-        </div>
+        </TableScroll>
         <KeyPoint>{tt.name.callout}</KeyPoint>
       </Section>
 

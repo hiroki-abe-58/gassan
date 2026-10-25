@@ -68,11 +68,14 @@ import { gzipSync } from 'node:zlib';
  * 持つようにしたため（29 個ぶんの日本語と英語の文言。JS 約 3.5 KB）。文言はテンプレートからだけ引くので、使わないアプリの JS には載らない。
  * 2026-10-25、CSS を 23 → 24 KB に引き上げた。浮くラベル（I-24。ラベルを入力欄に重ね、フォーカスと値で浮かせる規則）を
  * 足したため（CSS 約 0.4 KB・JS 約 0.2 KB）。浮くかどうかは CSS だけで決めるので、JS はほとんど増えない。
+ * 同日、JS を 130 → 134 KB、CSS を 24 → 25 KB に引き上げた。スクロールバー（U-35。ScrollArea・PageScrollbar と、ライブラリの中の
+ * スクロールする所すべてに付けた自前のバー）を足したため（JS 約 3 KB・CSS 約 1 KB）。モーダルの本文と一覧も同じバーで描くので、
+ * Modal だけを使う束にも載る（minify した束で 38,901 → 40,475 B）。
  */
 const BUDGETS = {
-  'dist/index.js': 130 * 1024,
-  'dist/index.cjs': 130 * 1024,
-  'dist/styles.css': 24 * 1024,
+  'dist/index.js': 134 * 1024,
+  'dist/index.cjs': 134 * 1024,
+  'dist/styles.css': 25 * 1024,
   'dist/templates.css': 7 * 1024,
 };
 

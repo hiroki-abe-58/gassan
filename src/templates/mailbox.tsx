@@ -10,6 +10,7 @@ import { ModalInput, ModalSearchInput, ModalTextarea } from '../inputs';
 import { dayKeyFormat, daysBetween } from '../internal/day-key';
 import { Icon, PathIcon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
+import { ScrollPane } from '../internal/scrollbars';
 import { SelectBox } from '../internal/select-box';
 import { useLabels } from '../labels';
 import { usePhrase } from '../phrase';
@@ -229,7 +230,7 @@ export function MailboxPage({
   return (
     <div {...domPassthrough(rest, 'MailboxPage')} className={cx('g-split g-mail-page', className)} data-view={view}>
       <div className="g-split-frame">
-        <nav className="g-mail-folders" aria-label={m.folders}>
+        <ScrollPane as="nav" className="g-mail-folders" viewportClassName="g-mail-folders-scroll" aria-label={m.folders}>
           <ul className="g-split-items">
             {folders.map((item, index) => {
               const folderId = `${base}-folder-${String(index)}`;
@@ -260,9 +261,9 @@ export function MailboxPage({
               );
             })}
           </ul>
-        </nav>
+        </ScrollPane>
 
-        <div className="g-split-list g-mail-list">
+        <ScrollPane className="g-split-list g-mail-list" viewportClassName="g-split-list-scroll">
           <div className="g-split-list-head">
             <h1 className="g-split-list-title">{title ?? phrase(m.title)}</h1>
             {onSend ? (
@@ -394,7 +395,7 @@ export function MailboxPage({
             })}
           </ul>
           {shown.length === 0 ? <p className="g-split-empty">{phrase(needle ? m.noMatch(query.trim()) : m.empty)}</p> : null}
-        </div>
+        </ScrollPane>
 
         <section className="g-split-detail g-mail-reader" aria-labelledby={headingId}>
           <header className="g-split-head">
@@ -438,7 +439,7 @@ export function MailboxPage({
             ) : null}
           </header>
           {message ? (
-            <div className="g-mail-body">
+            <ScrollPane className="g-mail-body" viewportClassName="g-mail-body-scroll">
               <div className="g-mail-meta">
                 <span className="g-mail-meta-avatar" aria-hidden="true">
                   <Avatar name={nameOf(message.from)} />
@@ -479,7 +480,7 @@ export function MailboxPage({
                   ))}
                 </ul>
               ) : null}
-            </div>
+            </ScrollPane>
           ) : null}
         </section>
       </div>

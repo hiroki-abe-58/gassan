@@ -6,6 +6,7 @@ import { repoFile } from '../data';
 import { SPEC_LANG, useT } from '../i18n';
 import { to } from '../router';
 import { CodeBlock } from './Code';
+import { TableScroll } from './TableScroll';
 
 /**
  * 仕様書の Markdown をそのまま描くための、最小の描画器。
@@ -163,7 +164,7 @@ export function MdTable({
 }): ReactNode {
   const t = useT();
   return (
-    <div className="s-table-wrap" role="group" tabIndex={0} aria-label={caption ?? t.common.table}>
+    <TableScroll label={caption ?? t.common.table}>
       <table className="s-table">
         {caption ? <caption className="s-sr-only">{caption}</caption> : null}
         <thead lang={SPEC_LANG}>
@@ -189,7 +190,7 @@ export function MdTable({
           </Phrase>
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }
 

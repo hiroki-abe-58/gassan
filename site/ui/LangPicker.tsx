@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 
+import { ScrollArea } from '@genelab/gassan';
+
 import { LANGS, LANG_NAMES, useLang, useT } from '../i18n';
 import { to, useRoute } from '../router';
 
@@ -44,24 +46,26 @@ export function LangPicker(): ReactNode {
         role="dialog"
         aria-labelledby={titleId}
       >
-        <h2 id={titleId} className="s-lang-title">
-          {t.title}
-        </h2>
-        <ul className="s-lang-list">
-          {LANGS.map((lang) => (
-            <li key={lang}>
-              <a
-                className="s-lang-option"
-                href={to(path, lang)}
-                hrefLang={lang}
-                lang={lang}
-                aria-current={lang === current ? 'true' : undefined}
-              >
-                {LANG_NAMES[lang]}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <ScrollArea className="s-theme-scroll" viewportClassName="s-theme-body">
+          <h2 id={titleId} className="s-lang-title">
+            {t.title}
+          </h2>
+          <ul className="s-lang-list">
+            {LANGS.map((lang) => (
+              <li key={lang}>
+                <a
+                  className="s-lang-option"
+                  href={to(path, lang)}
+                  hrefLang={lang}
+                  lang={lang}
+                  aria-current={lang === current ? 'true' : undefined}
+                >
+                  {LANG_NAMES[lang]}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </ScrollArea>
       </div>
     </>
   );

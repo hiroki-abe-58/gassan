@@ -14,12 +14,14 @@
  *   options={[{ value: 'a', label: t.optionA }]}       → options={[{ value: 'a', label: 'デザイン' }]}
  *   help={fmt(t.seats, String(seats))}                  → help={`${String(seats)} 席`}（文言は '{0} 席'）
  *   // t:leaveGuard                                     → // 書きかけなら引き止める。…（comments.leaveGuard）
+ *   {t.items.map((item) => <li>{item}</li>)}            → {['受信トレイ', '下書き'].map((item) => <li>{item}</li>)}
+ *   t.answer.slice(0, shown)                            → '先月の売上は…'.slice(0, shown)（文言の後ろのメソッドは残す）
  */
 
 export interface DemoText {
   /** コードのコメント。`// t:key` と `{/* t:key *\/}` が、ここの文に置き換わる。 */
   comments?: Record<string, string>;
-  [key: string]: string | Record<string, string> | undefined;
+  [key: string]: string | readonly string[] | Record<string, string> | undefined;
 }
 
 /** `{0}` `{1}` … を引数で埋める。デモの中で、数を含む文言を組み立てるのに使う。 */
@@ -27,13 +29,39 @@ export function fmt(template: string, ...args: readonly string[]): string {
   return template.replace(/\{(\d+)\}/g, (whole, index: string) => args[Number(index)] ?? whole);
 }
 
+const valueAt = (texts: DemoText, path: string): unknown =>
+  path.split('.').reduce<unknown>((node, key) => (node as Record<string, unknown> | undefined)?.[key], texts);
+
 function lookup(texts: DemoText, path: string): string {
-  const value = path.split('.').reduce<unknown>((node, key) => (node as Record<string, unknown> | undefined)?.[key], texts);
+  const value = valueAt(texts, path);
   if (typeof value !== 'string') throw new Error(`デモの文言 t.${path} が無い`);
   return value;
 }
 
+/** 参照が文言（文字列）そのものなら、その文字列。並び・メソッドの付いた参照・無い参照は null。 */
+function stringAt(texts: DemoText, path: string): string | null {
+  const value = valueAt(texts, path);
+  return typeof value === 'string' ? value : null;
+}
+
 const quote = (text: string): string => `'${text.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+
+/**
+ * `t.a.b.c` の参照を、文言（文字列か文字列の並び）に届くところまでたどる。残り（`.map` `.slice` などのメソッド）は
+ * コードとして残す。文言に届かなければ投げる（参照の書き間違いを、表示する前に見つける）。
+ */
+function resolveRef(texts: DemoText, path: string): { code: string; rest: string } {
+  const keys = path.split('.');
+  let node: unknown = texts;
+  for (let i = 0; i < keys.length; i += 1) {
+    node = (node as Record<string, unknown> | undefined)?.[keys[i] as string];
+    const rest = keys.slice(i + 1).map((key) => `.${key}`).join('');
+    if (typeof node === 'string') return { code: quote(node), rest };
+    if (Array.isArray(node) && node.every((item) => typeof item === 'string')) return { code: `[${node.map((item: string) => quote(item)).join(', ')}]`, rest };
+    if (node === null || typeof node !== 'object') break;
+  }
+  throw new Error(`デモの文言 t.${path} が無い`);
+}
 
 /** 呼び出しの引数を、括弧の深さを見ながら区切る（`String(Math.max(0, n))` の中のカンマで割らない）。 */
 function splitArgs(source: string): string[] {
@@ -109,14 +137,20 @@ export function fillDemoText(code: string, texts: DemoText): string {
     texts,
     hold,
   )
-    .replace(/=\{t\.([\w.]+)\}/g, (_, path: string) => {
-      const text = lookup(texts, path);
+    // 属性と中身に文言だけを置いた所は、文字列のまま書く。並びやメソッドの付いた参照は、後の置き換えに任せる
+    .replace(/=\{t\.([\w.]+)\}/g, (whole, path: string) => {
+      const text = stringAt(texts, path);
+      if (text === null) return whole;
       return hold(/["\n]/.test(text) ? `={${quote(text)}}` : `="${text}"`);
     })
-    .replace(/\{t\.([\w.]+)\}/g, (_, path: string) => {
-      const text = lookup(texts, path);
+    .replace(/\{t\.([\w.]+)\}/g, (whole, path: string) => {
+      const text = stringAt(texts, path);
+      if (text === null) return whole;
       return hold(/[{}<>\n]/.test(text) ? `{${quote(text)}}` : text);
     })
-    .replace(/\bt\.([\w.]+)/g, (_, path: string) => hold(quote(lookup(texts, path))));
+    .replace(/\bt\.([\w.]+)/g, (_, path: string) => {
+      const { code: text, rest } = resolveRef(texts, path);
+      return `${hold(text)}${rest}`;
+    });
   return held.replace(/(\d+)/g, (_, index: string) => parts[Number(index)] ?? '');
 }
