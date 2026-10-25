@@ -11,6 +11,7 @@ import {
 import type { StatusTone } from './display';
 import { ModalTable } from './fields';
 import {
+  arcLengths,
   areaPath,
   estimateTextWidth,
   linearPath,
@@ -930,10 +931,11 @@ export function DonutChart({
   const radius = donut ? 40 : 25;
   const thickness = donut ? 20 : 50;
   const gap = donut && data.filter((datum) => datum.value > 0).length > 1 ? 0.8 : 0;
+  const lengths = arcLengths(data.map((datum) => datum.value), gap);
 
   let start = 0;
   const arcs = data.map((datum, index) => {
-    const length = total > 0 ? (Math.max(0, datum.value) / total) * 100 : 0;
+    const length = lengths[index] ?? 0;
     const arc = { datum, index, start, length, color: datum.color ?? `var(--g-chart-${String((index % 8) + 1)})` };
     start += length;
     return arc;

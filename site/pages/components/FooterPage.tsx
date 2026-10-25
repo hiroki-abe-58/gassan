@@ -18,6 +18,8 @@ export function FooterPage({ rest }: PageProps): ReactNode {
     { label: t.danger.mockCancel, variant: 'tertiary' },
     { label: t.danger.mockDelete, variant: 'danger' },
   ] as const;
+  // 悪い例は、開いた直後に破壊的なボタンへフォーカスが当たっている形
+  const dangerFocused = [dangerButtons[0], { ...dangerButtons[1], focused: true }] as const;
   return (
     <ComponentPage
       path="/components/footer"
@@ -61,9 +63,7 @@ export function FooterPage({ rest }: PageProps): ReactNode {
                 tone="dont"
                 visual={
                   <MockScreen>
-                    <MockPanel title={t.danger.mockTitle} lines={1} width={70} buttons={dangerButtons}>
-                      <span className="s-mock-focusring" data-on="danger" />
-                    </MockPanel>
+                    <MockPanel title={t.danger.mockTitle} lines={1} width={70} buttons={dangerFocused} />
                   </MockScreen>
                 }
               >

@@ -217,6 +217,34 @@ export function areaPath(top: readonly Point[], base: readonly Point[], smooth: 
   return `${line}${closing}Z`;
 }
 
+/** 区切りが隙間を除いても見える最小の長さ（円周を 100 とした値。直径 160px のドーナツで約 6px）。 */
+const MIN_ARC = 1.5;
+
+/**
+ * ドーナツの区切りの長さ（円周を 100 とした値）。Q-05。
+ *
+ * 割合のままだと、隙間（gap）より小さい区切りが円から消える（凡例にはあるのに円に無い）。
+ * 0 より大きい値は隙間を除いても MIN_ARC だけは見えるように底上げし、その分を残りの区切りから比で引く。
+ * 引いた結果、底を割った区切りも底上げに回す。底上げしきれないほど区切りが多いときは割合のまま描く。
+ * 凡例と読み上げの割合は、いつも元の値のまま。
+ */
+export function arcLengths(values: readonly number[], gap: number): number[] {
+  const total = values.reduce((sum, value) => sum + Math.max(0, value), 0);
+  const shares = values.map((value) => (total > 0 ? (Math.max(0, value) / total) * 100 : 0));
+  const floor = gap + MIN_ARC;
+  const lifted = new Set<number>();
+  let lengths = shares;
+  for (;;) {
+    const low = lengths.flatMap((length, index) => (length > 0 && length < floor && !lifted.has(index) ? [index] : []));
+    if (low.length === 0) return lengths;
+    low.forEach((index) => lifted.add(index));
+    const free = 100 - lifted.size * floor;
+    const rest = shares.reduce((sum, share, index) => (lifted.has(index) ? sum : sum + share), 0);
+    if (free <= 0 || rest <= 0) return shares;
+    lengths = shares.map((share, index) => (lifted.has(index) ? floor : (share * free) / rest));
+  }
+}
+
 /** 欠けた値（null）で線を切り分ける。値が続いている区間ごとに、元の位置を添えて返す。 */
 export function segmentsOf<T>(values: readonly (T | null)[]): { start: number; values: T[] }[] {
   const segments: { start: number; values: T[] }[] = [];

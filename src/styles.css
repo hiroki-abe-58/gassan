@@ -3993,8 +3993,9 @@
   .g-viz-tooltip-value { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
 
   /* --- 10.6 donut（Q-05） ----------------------------------------------------
-   * 区切りは円周の割合（pathLength="100"）。真上から時計回りに置き、区切りの間を少し空ける。 */
-  .g-donut-body { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
+   * 区切りは円周の割合（pathLength="100"）。真上から時計回りに置き、区切りの間を少し空ける。
+   * 凡例が円の下に回ったとき（狭い器）は、円を真ん中に置く。横に並ぶときは凡例が伸びて残りを埋めるので、円は左のまま。 */
+  .g-donut-body { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 28px; }
   .g-donut-figure { position: relative; flex: none; inline-size: var(--g-donut-size, 180px); max-inline-size: 100%; aspect-ratio: 1; }
   .g-donut-figure > svg { display: block; inline-size: 100%; block-size: 100%; overflow: visible; rotate: -90deg; }
   .g-donut-track { fill: none; stroke: color-mix(in srgb, var(--g-fg) 8%, transparent); }
