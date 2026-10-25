@@ -1819,11 +1819,10 @@
   outline: 2px solid var(--g-focus);
   pointer-events: none;
 }
-.s-mock-focusring[data-on="danger"] {
-  inset: auto 10px 10px auto;
-  inline-size: 64px;
-  block-size: 28px;
-  border-radius: 8px;
+/* ボタンに当たったフォーカス。本物（K-07）と同じ 2px の輪を 2px 離して描く */
+.s-mock-btn[data-focused] {
+  outline: 2px solid var(--g-focus);
+  outline-offset: 2px;
 }
 .s-mock-input {
   block-size: 22px;

@@ -92,6 +92,8 @@ export function MockScreen({
 export interface MockButtonSpec {
   label: string;
   variant?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'gated' | 'disabled';
+  /** フォーカスの輪を描く。輪はボタン自身に付けるので、ラベルの長さ（言語）が変わってもずれない。 */
+  focused?: boolean;
 }
 
 /** 見本のパネル。 */
@@ -130,7 +132,7 @@ export function MockPanel({
         {buttons.length > 0 ? (
           <span className="s-mock-footer" data-stack={stack ? '' : undefined}>
             {buttons.map((button, i) => (
-              <span key={i} className="s-mock-btn" data-variant={button.variant ?? 'secondary'}>
+              <span key={i} className="s-mock-btn" data-variant={button.variant ?? 'secondary'} data-focused={button.focused ? '' : undefined}>
                 {button.label}
               </span>
             ))}

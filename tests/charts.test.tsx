@@ -10,7 +10,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { BarChart, BarList, DonutChart, Gauge, LineChart, Sparkline } from '../src';
-import { estimateTextWidth, labelStride, monotonePath, niceTicks, placeAxisLabels } from '../src/internal/chart-scale';
+import { arcLengths, estimateTextWidth, labelStride, monotonePath, niceTicks, placeAxisLabels } from '../src/internal/chart-scale';
 
 const css = readFileSync(resolve(process.cwd(), 'src/styles.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 
@@ -271,6 +271,52 @@ describe('DonutChart / Q-05', () => {
     expect(center).toHaveTextContent('40合計');
 
     expect(within(within(group).getByRole('table')).getAllByRole('columnheader').map((cell) => cell.textContent)).toEqual(['項目', '値', '割合']);
+  });
+
+  it('Q-05 隙間より小さな区切りも円から消さない。底上げした分は大きな区切りから引き、凡例の割合は元のまま', () => {
+    // 1,284 / 642 / 96 / 12。12 は 0.59% で、隙間（0.8）より短いため、以前は円に描かれなかった
+    const { container } = render(
+      <DonutChart
+        label="プランごとのワークスペース"
+        data={[
+          { label: 'Free', value: 1284 },
+          { label: 'Pro', value: 642 },
+          { label: 'Max', value: 96 },
+          { label: 'Enterprise', value: 12 },
+        ]}
+      />,
+    );
+    const segments = [...container.querySelectorAll('.g-donut-segment')];
+    expect(segments).toHaveLength(4);
+    const dash = segments.map((segment) => (segment.getAttribute('stroke-dasharray') ?? '').split(' ').map(Number));
+    // 円周を 100 とした長さ（見える長さ + 隙間）の合計は 100 のまま
+    expect(dash.reduce((sum, [visible = 0, rest = 0]) => sum + visible + rest, 0)).toBeCloseTo(400);
+    expect(dash.reduce((sum, [visible = 0]) => sum + visible + 0.8, 0)).toBeCloseTo(100);
+    expect(dash[3]?.[0]).toBeCloseTo(1.5);
+    expect(within(screen.getByRole('list', { name: '凡例' })).getAllByRole('listitem').map((item) => item.lastChild?.textContent)).toEqual([
+      '63.1%',
+      '31.6%',
+      '4.7%',
+      '0.6%',
+    ]);
+  });
+
+  it('Q-05 区切りの長さ: 底上げは元の順位を崩さず、0 は描かず、区切りが多すぎるときは割合のまま', () => {
+    const lengths = arcLengths([1284, 642, 96, 12], 0.8);
+    expect(lengths.reduce((sum, length) => sum + length, 0)).toBeCloseTo(100);
+    expect(lengths[3]).toBeCloseTo(2.3);
+    expect(lengths[0]).toBeGreaterThan(lengths[1] as number);
+    expect(lengths[1]).toBeGreaterThan(lengths[2] as number);
+    expect(lengths[2]).toBeGreaterThan(lengths[3] as number);
+    // 0 と負の値は長さ 0（描かない）。円（隙間 0）でも底は MIN_ARC
+    expect(arcLengths([99.5, 0.5, 0, -3], 0)).toEqual([expect.closeTo(98.5), expect.closeTo(1.5), 0, 0]);
+    // 底上げしきれない（50 個の同じ値）ときは割合のまま
+    expect(arcLengths(Array.from({ length: 50 }, () => 1), 0.8).every((length) => length === 2)).toBe(true);
+    expect(arcLengths([0, 0], 0.8)).toEqual([0, 0]);
+  });
+
+  it('Q-05 凡例が円の下に回ったときは、円を真ん中に置く', () => {
+    expect(css).toMatch(/\.g-donut-body \{[^}]*flex-wrap: wrap;[^}]*justify-content: center;/);
   });
 
   it('Q-05 合計が 0 なら区切りを描かず、データが無ければ「データがありません」と出す', () => {
