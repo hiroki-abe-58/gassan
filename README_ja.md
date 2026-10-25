@@ -18,17 +18,17 @@
 
 **ドキュメントサイト: <https://hiroki-abe-58.github.io/gassan/>**
 — 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・テーマ・寸法・折り返し・モーション）、
-全コンポーネントとフォーム部品の動くデモと API、ページのテンプレート、265項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
+全コンポーネントとフォーム部品の動くデモと API、ページのテンプレート、275項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
 サイトは日本語・[English](https://hiroki-abe-58.github.io/gassan/#/en)・[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)・[繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant)・[한국어](https://hiroki-abe-58.github.io/gassan/#/ko)・[ไทย](https://hiroki-abe-58.github.io/gassan/#/th) で読める（トップバーの地球の印で切り替える）。
 ライト・ダークの表示とプライマリカラーも切り替えられる。どの色を選んでも、文字と塗りが WCAG のコントラスト比を満たすように色を導いている。
 表・件数・API の説明はすべて仕様書と型定義からビルド時に生成していて、手で書いた数値は無い。
 
-設計の全文は [`modal.skill.md`](./modal.skill.md)（265項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
+設計の全文は [`modal.skill.md`](./modal.skill.md)（275項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
 AI コーディング時はそのファイルをコンテキストに入れる。
 
 | 文書 | 内容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の265項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の275項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 元の要件を分解し、「実装済み / 合成で対応 / ロードマップ」を1行ずつ示した監査表 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan の入力部品をモーダルに載せる最小例と、gassan に無い部品をほかのライブラリから包むときの注意 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | native `<dialog>` / Base UI / React Aria / Radix の比較（2026-09-29 時点、一次資料のみ） |
@@ -274,6 +274,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `ScrollArea` `PageScrollbar` | 自前で描くスクロールバー。ブラウザと OS で違う形をテーマにそろえる（スクロールそのものはブラウザのまま）。モーダルの本文・一覧・チャット・表など、部品の中のスクロールも同じバー |
 | `ChatWidget` | サイトの右下のチャットボット。丸い起点のボタンから、モーダルではない小窓を開き、右側の面へ広げられる。スマートフォンの幅では画面いっぱいのシート |
 | `SiteProvider` `SignInPage` `SignUpPage` `TwoFactorPage` `ForgotPasswordPage` `ResetPasswordPage` `VerifyEmailPage` `SignOutPage` | ログインとアカウントのページ（`templates.css`） |
+| `AuthDialog` `EmailFirstPage` `MagicLinkPage` `PhoneSignInPage` `QuickSignUpPage` `RegistrationWizardPage` `PasskeyPromptPage` `AccountChooserPage` `ReauthDialog` `GuestAccountCard` | ログインと登録の入口の形。ヘッダから開く窓、メールアドレスを先に聞くログイン、パスワードを使わないメールのリンクと SMS、メールアドレスだけの仮登録と保存しながら進む本登録の手順、パスキー、アカウントの選択、本人確認とログインの期限切れ、ゲストで買った後のアカウント作成 |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | エラー・メンテナンス・公開ページ |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` | アプリの枠と、その中のページ |
 | `GassanProvider` | 文言の差し替え（既定は日本語、`englishLabels` も同梱）と、折り返しの切り替え（`lineBreak`） |

@@ -129,6 +129,104 @@
   .g-form-summary-list a { color: color-mix(in srgb, var(--g-danger) 85%, var(--g-fg)); text-decoration: underline; text-underline-offset: 3px; }
   .g-form-summary-list a:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
 
+  /* --- T2b ログインと登録の形を変えたもの（P-21〜P-30） ----------------------------
+   * 窓の中のフォーム・画面を切り替えるボタン・届かないときの案内・パスキーの良い点・アカウントの一覧・
+   * 本登録の手順と確認・購入の後のカード。強調は地と余白でつけ、左の太い線で囲まない（§5）。 */
+  button.g-auth-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+  }
+  .g-auth-switch { margin: 0; color: var(--g-fg-muted); font-size: 0.9375rem; text-align: center; }
+  .g-auth-switch > .g-auth-link { display: inline-flex; align-items: center; min-block-size: var(--g-tap); }
+  .g-auth-note { margin: 0; color: var(--g-fg-muted); font-size: 0.9375rem; }
+  .g-auth-identity {
+    justify-self: start;
+    max-inline-size: 100%;
+    margin: 0;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--g-hover);
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+  }
+  .g-auth-dialog-body { display: grid; gap: 16px; }
+
+  /* 届かないときの案内。困った人だけが開く details。 */
+  .g-auth-tips { font-size: 0.9375rem; }
+  .g-auth-tips > summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--g-tap);
+    border-radius: 4px;
+    color: var(--g-fg-muted);
+    cursor: pointer;
+  }
+  .g-auth-tips > summary:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-auth-tips > ul { display: grid; gap: 4px; margin: 4px 0 0; padding-inline-start: 1.25em; color: var(--g-fg-muted); }
+
+  .g-auth-benefits { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .g-auth-benefits > li { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 10px; }
+  .g-auth-benefits svg { inline-size: 20px; block-size: 20px; margin-block-start: 2px; color: var(--g-success); }
+
+  /* アカウントの選択。行ごとに、選ぶボタンと外すボタン。 */
+  .g-account-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .g-account-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px; }
+  .g-account-choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    min-block-size: 56px;
+    padding: 8px 12px;
+    border: 1px solid var(--g-border);
+    border-radius: var(--g-radius-control);
+    background: var(--g-surface);
+    color: var(--g-fg);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .g-account-choice:hover { background: var(--g-hover); }
+  .g-account-choice:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-account-text { display: grid; min-inline-size: 0; }
+  .g-account-name { font-weight: 600; }
+  .g-account-email { color: var(--g-fg-muted); font-size: 0.875rem; overflow-wrap: anywhere; }
+  .g-account-go { inline-size: 18px; block-size: 18px; color: var(--g-fg-muted); }
+
+  /* 本登録の手順と確認の画面（はじめの設定と同じ広さのカード）。 */
+  .g-wizard .g-auth-card { inline-size: min(100%, 36rem); }
+  .g-wizard-content { display: grid; gap: 16px; }
+  .g-wizard-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+  .g-wizard-actions > .g-btn[data-variant="primary"] { min-inline-size: 8rem; }
+  .g-wizard-saved { min-block-size: 1.5em; margin: 0; color: var(--g-fg-muted); font-size: 0.875rem; text-align: center; }
+  .g-wizard-review { display: grid; gap: 8px; padding-block-end: 16px; border-block-end: 1px solid var(--g-border); }
+  .g-wizard-review-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; }
+  .g-wizard-review-head > h2 { margin: 0; font-size: 1rem; font-weight: 700; }
+  .g-wizard-summary { display: grid; gap: 6px; margin: 0; }
+  .g-wizard-summary > div { display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); gap: 12px; }
+  .g-wizard-summary dt { color: var(--g-fg-muted); }
+  .g-wizard-summary dd { margin: 0; overflow-wrap: anywhere; }
+
+  /* 購入の後のアカウント作成。ページの中に置くカード（h2 を持ち、ページの見出しは持たない）。 */
+  .g-guest-account {
+    display: grid;
+    gap: 12px;
+    padding: 20px;
+    border: 1px solid var(--g-border);
+    border-radius: calc(var(--g-radius) + 2px);
+    background: var(--g-surface);
+  }
+  .g-guest-account-title { margin: 0; font-size: 1.125rem; font-weight: 700; }
+  .g-guest-account-text { margin: 0; color: var(--g-fg-muted); line-height: 1.65; }
+  .g-guest-account-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  @container (max-width: 480px) {
+    .g-wizard-summary > div { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  }
+
   /* --- T3 status（P-05 / P-06） -----------------------------------------------
    * 何が起きたか・なぜか・次に何ができるかを、中央に縦に並べる。 */
   .g-status {

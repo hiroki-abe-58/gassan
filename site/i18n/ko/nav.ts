@@ -59,6 +59,7 @@ export default {
     uiChat: '채팅',
     uiScroll: '스크롤바',
     templatesAuth: '로그인과 가입',
+    templatesAuthPatterns: '로그인과 가입 패턴',
     templatesStatus: '오류와 점검',
     templatesPublic: '요금·FAQ·약관',
     templatesApp: '앱 셸',

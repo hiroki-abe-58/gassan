@@ -1,5 +1,6 @@
 import type { Messages } from '../ja';
 import accessibility from './accessibility';
+import authPatterns from './authPatterns';
 import body from './body';
 import button from './button';
 import chart from './chart';
@@ -109,6 +110,7 @@ export default {
   templates,
   templateDocs,
   templateSamples,
+  authPatterns,
   provider,
   spec,
   verification,

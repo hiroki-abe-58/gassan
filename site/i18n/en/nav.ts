@@ -59,6 +59,7 @@ export default {
     uiChat: 'Chat',
     uiScroll: 'Scrollbars',
     templatesAuth: 'Sign-in and sign-up',
+    templatesAuthPatterns: 'Sign-in and sign-up patterns',
     templatesStatus: 'Errors and maintenance',
     templatesPublic: 'Pricing, FAQ and legal',
     templatesApp: 'App shell',

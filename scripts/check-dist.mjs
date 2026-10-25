@@ -76,10 +76,14 @@ import { gzipSync } from 'node:zlib';
  * 名前つき export だけにして Modal 名前空間に入れず、forwardRef と先頭で作る値には @__PURE__ の注釈を付けたので、使わないアプリの JS には
  * 載らない（minify した束で、LineChart だけの束に関数と表が無いことを確かめた）。NativeSelect と EmailInput は入力部品なので
  * Modal 名前空間に入れた（Modal だけを使う束は 40,475 → 43,330 B）。
+ * 同日、JS を 145 → 154 KB に引き上げた。ログインと登録の形を変えたもの（P-21〜P-30。窓のログインと登録・メールを先に聞くログイン・
+ * メールのリンクとコード・仮登録と本登録の手順・SMS・パスキー・アカウントの選択・本人確認・購入の後のアカウント作成と、日本語と英語の
+ * 文言）を足したため（JS 約 9 KB・templates.css 約 0.4 KB）。名前つき import でだけ使うので、Modal だけ・グラフだけの束は変わらない。
+ * テンプレートの文言は 1 つの表なので、ほかのテンプレートを使う束には文言のぶん載る（MailboxPage だけの束で 46,021 → 48,771 B）。
  */
 const BUDGETS = {
-  'dist/index.js': 145 * 1024,
-  'dist/index.cjs': 145 * 1024,
+  'dist/index.js': 154 * 1024,
+  'dist/index.cjs': 154 * 1024,
   'dist/styles.css': 26 * 1024,
   'dist/templates.css': 7 * 1024,
 };
@@ -327,6 +331,17 @@ const REQUIRED_EXPORTS = [
   'AssistantPage',
   // メール。P-20。
   'MailboxPage',
+  // ログインと登録の形を変えたもの。P-21〜P-30。
+  'AuthDialog',
+  'EmailFirstPage',
+  'MagicLinkPage',
+  'PhoneSignInPage',
+  'QuickSignUpPage',
+  'RegistrationWizardPage',
+  'GuestAccountCard',
+  'PasskeyPromptPage',
+  'AccountChooserPage',
+  'ReauthDialog',
 ];
 
 let failed = false;

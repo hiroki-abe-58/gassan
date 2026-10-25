@@ -24,6 +24,7 @@ import {
 
 import { useT } from '../i18n';
 import { AtlasApp, InviteSample, OnboardingSample } from './AppPreviews';
+import { AuthPatternPreview } from './AuthPreviews';
 import { go, preview, wait } from './shared';
 
 /** 見本の製品のロゴ。名前は文字で添える（ロゴの読み上げ名が製品の名前になる）。 */
@@ -50,6 +51,17 @@ export const PREVIEWS = [
   'verify-email',
   'sign-out',
   'sign-out-confirm',
+  'auth-dialog',
+  'email-first',
+  'magic-link',
+  'quick-sign-up',
+  'registration-wizard',
+  'phone-sign-in',
+  'passkey-prompt',
+  'account-chooser',
+  'reauth',
+  'session-expired',
+  'guest-account',
   'error-400',
   'error-401',
   'error-402',
@@ -126,7 +138,7 @@ function errorStatus(name: string): ErrorStatus | number {
  * 送信は少し待ってから本物らしく応える（パスワードは「gassan」、確認コードは「123456」で通る）。
  */
 export function TemplatePreview({ name }: { name: string }): ReactNode {
-  const { templates, templateSamples: s } = useT();
+  const { templates, templateSamples: s, authPatterns } = useT();
   const links = {
     home: preview('pricing'),
     signIn: preview('sign-in'),
@@ -188,6 +200,10 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
             aside={aside}
             notice={s.signInNotice}
             providers={[{ id: 'google', name: 'Google', onClick: () => toast(s.providerNotice) }]}
+            onPasskey={async () => {
+              await wait(600);
+              toast(authPatterns.samples.passkeyNotice);
+            }}
             onSubmit={async ({ password }) => {
               await wait(800);
               if (password !== 'gassan') return { error: true };
@@ -375,6 +391,18 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
         return <AtlasApp page={name} />;
       case 'onboarding':
         return <OnboardingSample />;
+      case 'auth-dialog':
+      case 'email-first':
+      case 'magic-link':
+      case 'quick-sign-up':
+      case 'registration-wizard':
+      case 'phone-sign-in':
+      case 'passkey-prompt':
+      case 'account-chooser':
+      case 'reauth':
+      case 'session-expired':
+      case 'guest-account':
+        return <AuthPatternPreview name={name} />;
       case 'invite':
         return <InviteSample variant="pending" />;
       case 'invite-signed-out':

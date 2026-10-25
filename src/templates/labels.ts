@@ -130,6 +130,117 @@ export interface TemplateLabels {
     doneDescription: string;
     signInAgain: string;
   };
+  /** メールアドレスを先に聞くログイン（EmailFirstPage）。P-22。 */
+  emailFirst: {
+    title: string;
+    description: string;
+    continue: string;
+    changeEmail: string;
+    passwordDescription: (email: string) => string;
+    newAccountDescription: (email: string) => string;
+    ssoTitle: string;
+    ssoDescription: (provider: string) => string;
+  };
+  /** パスワードを使わない、メールのリンクと確認コードのログイン（MagicLinkPage）。P-23。 */
+  magicLink: {
+    title: string;
+    description: string;
+    submit: string;
+    sentTitle: string;
+    sentDescription: (email: string) => string;
+    code: string;
+    codeSubmit: string;
+    failed: string;
+    useAnotherEmail: string;
+    usePassword: string;
+  };
+  /** 送ったメールが届かないときの案内。sender は送り主（携帯会社のメールの受信設定に使う）。P-23 / P-24。 */
+  notReceived: {
+    title: string;
+    spam: string;
+    wait: string;
+    typo: string;
+    carrier: (sender: string) => string;
+  };
+  /** メールアドレスだけの仮登録（QuickSignUpPage）。P-24。 */
+  quickSignUp: {
+    title: string;
+    description: string;
+    submit: string;
+    sentTitle: string;
+    sentDescription: (email: string) => string;
+    expires: (period: string) => string;
+    nextSteps: string;
+  };
+  /** 本登録の手順（RegistrationWizardPage）。P-25。 */
+  wizard: {
+    progress: string;
+    back: string;
+    next: string;
+    skip: string;
+    saveAndExit: string;
+    saved: string;
+    reviewTitle: string;
+    reviewDescription: string;
+    edit: (step: string) => string;
+    backToReview: string;
+    submit: string;
+    doneTitle: string;
+    doneDescription: string;
+  };
+  /** 電話番号と SMS のコードのログイン（PhoneSignInPage）。確認コードの欄と送信は twoFactor の文言を使う。P-26。 */
+  phoneSignIn: {
+    title: string;
+    description: string;
+    phone: string;
+    phoneHelp: string;
+    notMobile: string;
+    invalidPhone: string;
+    submit: string;
+    codeTitle: string;
+    codeDescription: (phone: string, length: number) => string;
+    changeNumber: string;
+  };
+  /** パスキー（ログインのボタンと、作るかを尋ねる画面）。P-27。 */
+  passkey: {
+    signIn: string;
+    promptTitle: string;
+    promptDescription: string;
+    benefits: readonly string[];
+    create: string;
+    later: string;
+    createdTitle: string;
+    createdDescription: string;
+    failed: string;
+  };
+  /** この端末で使ったアカウントから選ぶ（AccountChooserPage）。P-28。 */
+  accountChooser: {
+    title: string;
+    description: string;
+    list: string;
+    useAnother: string;
+    remove: (account: string) => string;
+    removed: (account: string) => string;
+  };
+  /** もう一度のパスワード（大事な操作の前と、ログインの期限切れ。ReauthDialog）。P-29。 */
+  reauth: {
+    confirmTitle: string;
+    confirmDescription: string;
+    expiredTitle: string;
+    expiredDescription: string;
+    confirm: string;
+    failed: string;
+    signInAnother: string;
+  };
+  /** 購入の後にアカウントを作る（GuestAccountCard）。P-30。 */
+  guestAccount: {
+    title: string;
+    description: (email: string) => string;
+    submit: string;
+    later: string;
+    doneTitle: string;
+    doneDescription: string;
+  };
   error: {
     /** 状態コードの前に添える、読み上げ用の語（「エラー 404」）。 */
     code: string;
@@ -541,6 +652,111 @@ export const japaneseTemplateLabels: TemplateLabels = {
     doneTitle: 'ログアウトしました',
     doneDescription: 'ご利用ありがとうございました。',
     signInAgain: 'もう一度ログインする',
+  },
+  emailFirst: {
+    title: 'ログインまたは登録',
+    description: 'メールアドレスを入力してください。アカウントが無ければ、そのまま作れます。',
+    continue: '続ける',
+    changeEmail: 'メールアドレスを変える',
+    passwordDescription: (email) => `${email} でログインします。`,
+    newAccountDescription: (email) => `${email} のアカウントはまだありません。このまま新しく作ります。`,
+    ssoTitle: '組織のアカウントでログイン',
+    ssoDescription: (provider) => `このメールアドレスは ${provider} でログインします。`,
+  },
+  magicLink: {
+    title: 'メールでログイン',
+    description: 'ログイン用のリンクと確認コードをメールで送ります。パスワードは要りません。',
+    submit: 'ログイン用のメールを送る',
+    sentTitle: 'メールを確認してください',
+    sentDescription: (email) => `${email} にログイン用のリンクと確認コードを送りました。リンクを開くか、コードを入力してください。`,
+    code: '確認コード',
+    codeSubmit: 'ログイン',
+    failed: 'コードが違うか、有効期限が切れています。',
+    useAnotherEmail: '別のメールアドレスを使う',
+    usePassword: 'パスワードでログイン',
+  },
+  notReceived: {
+    title: 'メールが届かないとき',
+    spam: '迷惑メールのフォルダに入っていないか確かめてください。',
+    wait: '届くまで数分かかることがあります。',
+    typo: 'メールアドレスに打ち間違いがないか確かめてください。',
+    carrier: (sender) => `携帯会社のメールは、「${sender}」からのメールを受け取れるように設定してください。`,
+  },
+  quickSignUp: {
+    title: 'メールアドレスで登録',
+    description: 'まずはメールアドレスだけで登録できます。お名前などは、届いたメールのリンクから入力します。',
+    submit: '登録する',
+    sentTitle: '仮登録が完了しました',
+    sentDescription: (email) => `${email} に本登録のご案内を送りました。メールのリンクから、残りの項目を入力してください。`,
+    expires: (period) => `リンクの有効期限は ${period} です。`,
+    nextSteps: 'このあとの流れ',
+  },
+  wizard: {
+    progress: '登録の手順',
+    back: '戻る',
+    next: '次へ',
+    skip: 'あとで入力する',
+    saveAndExit: '保存してあとで続ける',
+    saved: '入力した内容を保存しました。',
+    reviewTitle: '入力内容の確認',
+    reviewDescription: '内容を確かめてから登録してください。',
+    edit: (step) => `${step}を修正する`,
+    backToReview: '確認に戻る',
+    submit: '登録する',
+    doneTitle: '登録が完了しました',
+    doneDescription: 'ご登録ありがとうございます。',
+  },
+  phoneSignIn: {
+    title: '電話番号でログイン',
+    description: 'SMS で確認コードを送ります。',
+    phone: '携帯電話の番号',
+    phoneHelp: 'ハイフンは無くても大丈夫です。',
+    notMobile: 'SMS を受け取れる携帯電話の番号（070・080・090 など）を入力してください',
+    invalidPhone: '電話番号の桁の数を確かめてください',
+    submit: '確認コードを送る',
+    codeTitle: '確認コードを入力',
+    codeDescription: (phone, length) => `${phone} に SMS で送った ${String(length)} 桁のコードを入力してください。`,
+    changeNumber: '電話番号を変える',
+  },
+  passkey: {
+    signIn: 'パスキーでログイン',
+    promptTitle: 'パスキーを作りませんか',
+    promptDescription: '次回から、パスワードの代わりに指紋・顔・画面のロックでログインできます。',
+    benefits: [
+      'パスワードを覚えたり打ったりしなくてよい',
+      'にせのサイトでは使えないので、だまされにくい',
+      '同じアカウントで同期しているほかの端末でも使える',
+    ],
+    create: 'パスキーを作る',
+    later: 'あとで',
+    createdTitle: 'パスキーを作りました',
+    createdDescription: '次回から、パスキーでログインできます。',
+    failed: 'パスキーを作れませんでした。もう一度試すか、あとで設定から作ってください。',
+  },
+  accountChooser: {
+    title: 'アカウントを選ぶ',
+    description: 'この端末でログインしたことのあるアカウントです。',
+    list: 'アカウント',
+    useAnother: '別のアカウントを使う',
+    remove: (account) => `${account} をこの端末から外す`,
+    removed: (account) => `${account} をこの端末から外しました。`,
+  },
+  reauth: {
+    confirmTitle: '本人確認',
+    confirmDescription: 'セキュリティのため、もう一度パスワードを入力してください。',
+    expiredTitle: 'もう一度ログインしてください',
+    expiredDescription: 'しばらく操作がなかったため、ログインの期限が切れました。入力中の内容はそのまま残っています。',
+    confirm: '確認する',
+    failed: 'パスワードが違います。',
+    signInAnother: '別のアカウントでログイン',
+  },
+  guestAccount: {
+    title: 'アカウントを作りませんか',
+    description: (email) => `パスワードを決めるだけで、${email} のアカウントを作れます。注文の状況をいつでも確かめられ、次からは入力を省けます。`,
+    submit: 'アカウントを作る',
+    later: 'いまは作らない',
+    doneTitle: 'アカウントを作りました',
+    doneDescription: '次回から、このメールアドレスとパスワードでログインできます。',
   },
   error: {
     code: 'エラー',
@@ -1018,6 +1234,111 @@ export const englishTemplateLabels: TemplateLabels = {
     doneTitle: 'You have signed out',
     doneDescription: 'Thanks for using the service.',
     signInAgain: 'Sign in again',
+  },
+  emailFirst: {
+    title: 'Sign in or sign up',
+    description: 'Enter your email address. If you don’t have an account yet, you can create one right away.',
+    continue: 'Continue',
+    changeEmail: 'Use a different email',
+    passwordDescription: (email) => `Signing in as ${email}.`,
+    newAccountDescription: (email) => `There is no account for ${email} yet. Let’s create one.`,
+    ssoTitle: 'Sign in with your organization',
+    ssoDescription: (provider) => `This email address signs in with ${provider}.`,
+  },
+  magicLink: {
+    title: 'Sign in with email',
+    description: 'We’ll email you a sign-in link and a code. No password needed.',
+    submit: 'Email me a sign-in link',
+    sentTitle: 'Check your email',
+    sentDescription: (email) => `We sent a sign-in link and a code to ${email}. Open the link, or enter the code.`,
+    code: 'Code',
+    codeSubmit: 'Sign in',
+    failed: 'That code is incorrect or has expired.',
+    useAnotherEmail: 'Use a different email',
+    usePassword: 'Sign in with a password',
+  },
+  notReceived: {
+    title: 'Didn’t get the email?',
+    spam: 'Check your spam or junk folder.',
+    wait: 'It can take a few minutes to arrive.',
+    typo: 'Make sure the email address is spelled correctly.',
+    carrier: (sender) => `If you use a mobile carrier address, allow email from ${sender}.`,
+  },
+  quickSignUp: {
+    title: 'Sign up with your email',
+    description: 'Start with just your email address. You’ll add your name and other details from the link we send you.',
+    submit: 'Sign up',
+    sentTitle: 'Almost there',
+    sentDescription: (email) => `We sent the next steps to ${email}. Open the link in the email to finish your registration.`,
+    expires: (period) => `The link expires in ${period}.`,
+    nextSteps: 'What happens next',
+  },
+  wizard: {
+    progress: 'Registration steps',
+    back: 'Back',
+    next: 'Next',
+    skip: 'Do this later',
+    saveAndExit: 'Save and continue later',
+    saved: 'Your progress has been saved.',
+    reviewTitle: 'Review your details',
+    reviewDescription: 'Check your details before you register.',
+    edit: (step) => `Edit ${step}`,
+    backToReview: 'Back to review',
+    submit: 'Register',
+    doneTitle: 'Registration complete',
+    doneDescription: 'Thanks for registering.',
+  },
+  phoneSignIn: {
+    title: 'Sign in with your phone',
+    description: 'We’ll text you a verification code.',
+    phone: 'Mobile number',
+    phoneHelp: 'Hyphens are optional.',
+    notMobile: 'Enter a mobile number that can receive text messages (070, 080, 090 and so on)',
+    invalidPhone: 'Check the number of digits',
+    submit: 'Send code',
+    codeTitle: 'Enter the code',
+    codeDescription: (phone, length) => `Enter the ${String(length)}-digit code we texted to ${phone}.`,
+    changeNumber: 'Use a different number',
+  },
+  passkey: {
+    signIn: 'Sign in with a passkey',
+    promptTitle: 'Create a passkey?',
+    promptDescription: 'Next time, sign in with your fingerprint, face or screen lock instead of a password.',
+    benefits: [
+      'No password to remember or type',
+      'Harder to phish: passkeys don’t work on fake sites',
+      'Works on your other devices that sync with the same account',
+    ],
+    create: 'Create a passkey',
+    later: 'Not now',
+    createdTitle: 'Passkey created',
+    createdDescription: 'Next time, you can sign in with your passkey.',
+    failed: 'We couldn’t create a passkey. Try again, or create one later in settings.',
+  },
+  accountChooser: {
+    title: 'Choose an account',
+    description: 'Accounts you’ve signed in with on this device.',
+    list: 'Accounts',
+    useAnother: 'Use another account',
+    remove: (account) => `Remove ${account} from this device`,
+    removed: (account) => `Removed ${account} from this device.`,
+  },
+  reauth: {
+    confirmTitle: 'Confirm it’s you',
+    confirmDescription: 'For your security, enter your password again.',
+    expiredTitle: 'Sign in again',
+    expiredDescription: 'You were signed out after a period of inactivity. What you were working on is still here.',
+    confirm: 'Confirm',
+    failed: 'That password is incorrect.',
+    signInAnother: 'Sign in with a different account',
+  },
+  guestAccount: {
+    title: 'Create an account?',
+    description: (email) => `Just choose a password to create an account for ${email}. You can check your orders anytime and check out faster next time.`,
+    submit: 'Create account',
+    later: 'Not now',
+    doneTitle: 'Account created',
+    doneDescription: 'Next time, sign in with this email address and password.',
   },
   error: {
     code: 'Error',

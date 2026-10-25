@@ -142,6 +142,10 @@ export { ScrollArea, PageScrollbar, SCROLLBAR_VISIBILITIES } from './scroll-area
 export { SiteProvider, SiteLink, useSite } from './templates/site';
 export { AuthLayout, StatusLayout } from './templates/layouts';
 export { SignInPage, SignUpPage, ForgotPasswordPage, ResetPasswordPage, TwoFactorPage, VerifyEmailPage, SignOutPage } from './templates/auth';
+export { AuthDialog } from './templates/auth-dialog';
+export { EmailFirstPage, MagicLinkPage, PhoneSignInPage } from './templates/passwordless';
+export { QuickSignUpPage, RegistrationWizardPage, GuestAccountCard } from './templates/registration';
+export { PasskeyPromptPage, AccountChooserPage, ReauthDialog } from './templates/session';
 export { ErrorPage, MaintenancePage } from './templates/status';
 export { SiteLayout } from './templates/site-layout';
 export { DocumentPage, FaqPage, PricingPage, ContactPage, ChangelogPage } from './templates/public';
@@ -366,6 +370,7 @@ export type {
 export type { AuthLayoutProps, StatusLayoutProps } from './templates/layouts';
 export type {
   AuthProvider,
+  PasskeyHandler,
   SignInPageProps,
   SignInValues,
   SignUpPageProps,
@@ -376,6 +381,10 @@ export type {
   VerifyEmailPageProps,
   SignOutPageProps,
 } from './templates/auth';
+export type { AuthDialogProps, AuthDialogMode } from './templates/auth-dialog';
+export type { EmailFirstPageProps, EmailFirstNext, MagicLinkPageProps, PhoneSignInPageProps } from './templates/passwordless';
+export type { QuickSignUpPageProps, RegistrationWizardPageProps, RegistrationStep, GuestAccountCardProps } from './templates/registration';
+export type { PasskeyPromptPageProps, AccountChooserPageProps, RememberedAccount, ReauthDialogProps } from './templates/session';
 export type { ErrorPageProps, MaintenancePageProps, MaintenanceUpdate } from './templates/status';
 export type { ErrorStatus, TemplateLabels } from './templates/labels';
 export type { SubmitResult } from './templates/form';
