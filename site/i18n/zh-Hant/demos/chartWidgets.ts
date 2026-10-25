@@ -11,7 +11,7 @@ export default {
   plans: '各方案的工作區',
   free: 'Free',
   pro: 'Pro',
-  business: 'Business',
+  max: 'Max',
   enterprise: 'Enterprise',
   workspaces: '工作區',
   pages: '瀏覽次數最多的頁面',

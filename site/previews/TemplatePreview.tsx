@@ -280,6 +280,16 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
                 recommended: true,
               },
               {
+                id: 'max',
+                name: s.pricing.max.name,
+                description: s.pricing.max.description,
+                monthly: 5000,
+                yearly: 50000,
+                note: s.pricing.perUser,
+                features: s.pricing.max.features,
+                cta: { label: s.pricing.max.cta, href: links.signUp },
+              },
+              {
                 id: 'enterprise',
                 name: s.pricing.enterprise.name,
                 description: s.pricing.enterprise.description,
@@ -289,11 +299,18 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
               },
             ]}
             comparison={[
-              { feature: s.pricing.compare.members, values: { free: '3', pro: s.pricing.compare.unlimited, enterprise: s.pricing.compare.unlimited } },
-              { feature: s.pricing.compare.storage, values: { free: '1 GB', pro: '100 GB', enterprise: s.pricing.compare.unlimited } },
-              { feature: s.pricing.compare.sso, values: { free: false, pro: false, enterprise: true } },
-              { feature: s.pricing.compare.audit, values: { free: false, pro: true, enterprise: true } },
-              { feature: s.pricing.compare.support, values: { free: s.pricing.compare.email, pro: s.pricing.compare.priority, enterprise: s.pricing.compare.dedicated } },
+              { feature: s.pricing.compare.members, values: { free: '3', pro: s.pricing.compare.unlimited, max: s.pricing.compare.unlimited, enterprise: s.pricing.compare.unlimited } },
+              { feature: s.pricing.compare.storage, values: { free: '1 GB', pro: '100 GB', max: '1 TB', enterprise: s.pricing.compare.unlimited } },
+              {
+                feature: s.pricing.compare.usage,
+                values: { free: s.pricing.compare.standard, pro: s.pricing.compare.usage5, max: s.pricing.compare.usage25, enterprise: s.pricing.compare.custom },
+              },
+              { feature: s.pricing.compare.sso, values: { free: false, pro: false, max: false, enterprise: true } },
+              { feature: s.pricing.compare.audit, values: { free: false, pro: true, max: true, enterprise: true } },
+              {
+                feature: s.pricing.compare.support,
+                values: { free: s.pricing.compare.email, pro: s.pricing.compare.priority, max: s.pricing.compare.highest, enterprise: s.pricing.compare.dedicated },
+              },
             ]}
             faq={s.pricing.faq.map((item, index) => ({ id: `pricing-${String(index)}`, question: item.q, answer: item.a }))}
           />

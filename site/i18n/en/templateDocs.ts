@@ -65,7 +65,7 @@ export default {
     },
     pricing: {
       title: 'Pricing',
-      intro: 'Switch between monthly and yearly billing; prices use the currency’s format. Screen readers hear the period in words, as in “¥1,500 per month”. The plan you recommend is marked with the word “Recommended” and an outline, and the comparison table has column and row headers.',
+      intro: 'Switch between monthly and yearly billing; prices use the currency’s format. Screen readers hear the period in words, as in “¥1,500 per month”. The plan you recommend is marked with the word “Recommended” and an outline, and the comparison table has column and row headers. With four plans (Free, Pro, Max and Enterprise in this example), they line up in four columns, two columns or one, depending on the container’s width, never in uneven rows such as 3 + 1.',
     },
     faq: {
       title: 'FAQ',

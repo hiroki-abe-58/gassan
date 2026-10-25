@@ -354,8 +354,9 @@
   .g-faq-contact-title { margin: 0; font-weight: 650; }
 
   /* --- T7 pricing（P-09） ------------------------------------------------------
-   * 推すプランは、外側の 2px の輪と言葉の印で示す（横の太い線や色だけで示さない）。 */
-  .g-pricing { display: grid; gap: 48px; }
+   * 推すプランは、外側の 2px の輪と言葉の印で示す（横の太い線や色だけで示さない）。
+   * 並びは自分の幅で決める（layout={false} で利用側の外枠に置いても同じ形になる）。 */
+  .g-pricing { display: grid; gap: 48px; container: g-pricing / inline-size; }
   .g-pricing-header { justify-items: center; margin-block-end: 0; text-align: center; }
   .g-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 16px; }
   .g-plan {
@@ -378,6 +379,18 @@
   .g-plan-features { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 0.9375rem; line-height: 1.5; }
   .g-plan-features > li { display: grid; grid-template-columns: 18px minmax(0, 1fr); align-items: start; gap: 8px; }
   .g-plan-check { inline-size: 18px; block-size: 18px; margin-block-start: 1px; color: var(--g-success); vertical-align: middle; }
+  /* プランが 3 つ・4 つのときは、半端な段（2 + 1・3 + 1）を作らない。3 つは 1 列か 3 列、4 つは 1 列・2 列・4 列。
+   * 列の幅は 15rem を下回らないように切り替える（1 列に 15rem と間 16px）。ほかの数は auto-fit のまま */
+  .g-plans:is(:has(> .g-plan:nth-child(3):last-child), :has(> .g-plan:nth-child(4):last-child)) { grid-template-columns: minmax(0, 1fr); }
+  @container g-pricing (min-width: 31rem) {
+    .g-plans:has(> .g-plan:nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @container g-pricing (min-width: 47rem) {
+    .g-plans:has(> .g-plan:nth-child(3):last-child) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @container g-pricing (min-width: 63rem) {
+    .g-plans:has(> .g-plan:nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
   .g-compare { display: grid; }
   .g-compare-scroll { position: relative; overflow-x: auto; border: 1px solid var(--g-border); border-radius: var(--g-radius-control); background: var(--g-surface); }
   .g-compare-scroll:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }

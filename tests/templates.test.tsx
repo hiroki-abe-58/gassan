@@ -611,6 +611,40 @@ describe('料金 / P-09', () => {
     expect(sso).toHaveTextContent('あり');
     expect(screen.getByRole('region', { name: 'プランの比較' })).toHaveAttribute('tabindex', '0');
   });
+
+  it('プランが 3 つ・4 つなら半端な段を作らない。並びは料金の器の幅で決める（4 つは 1・2・4 列、3 つは 1・3 列）', () => {
+    const sheet = readFileSync(resolve(process.cwd(), 'src/templates.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const four = '.g-plans:has(> .g-plan:nth-child(4):last-child)';
+    const three = '.g-plans:has(> .g-plan:nth-child(3):last-child)';
+    expect(sheet).toMatch(/\.g-pricing \{[^}]*container: g-pricing \/ inline-size;/);
+    // 既定は 1 列。器が広がるにつれ 4 つは 2 列 → 4 列、3 つは 3 列へ（列は 15rem を下回らない）
+    expect(sheet).toContain('.g-plans:is(:has(> .g-plan:nth-child(3):last-child), :has(> .g-plan:nth-child(4):last-child)) { grid-template-columns: minmax(0, 1fr); }');
+    const at = (width: string, selector: string, columns: number): void => {
+      const block = new RegExp(`@container g-pricing \\(min-width: ${width}\\) \\{\\s*([^@]*?)\\n  \\}`).exec(sheet)?.[1] ?? '';
+      expect(block).toContain(`${selector} { grid-template-columns: repeat(${String(columns)}, minmax(0, 1fr)); }`);
+    };
+    at('31rem', four, 2);
+    at('47rem', three, 3);
+    at('63rem', four, 4);
+    // 4 枚の並びは、サイトの見本（Free・Pro・Max・Enterprise）で描いて確かめる
+    render(
+      <PublicSite>
+        <PricingPage
+          plans={[
+            ...PLANS.slice(0, 2),
+            { id: 'max', name: 'Max', monthly: 5000, yearly: 50000, features: ['Pro の 5 倍の使用量'], cta: { label: 'Max を選ぶ', href: '/signup?plan=max' } },
+            ...PLANS.slice(2),
+          ]}
+        />
+      </PublicSite>,
+    );
+    expect(screen.getAllByRole('article').map((plan) => within(plan).getByRole('heading').textContent)).toEqual([
+      'Free',
+      'Pro',
+      'Max',
+      'Enterprise',
+    ]);
+  });
 });
 
 describe('お問い合わせ / P-10', () => {

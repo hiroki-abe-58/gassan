@@ -63,11 +63,11 @@ export default {
     mail: '给未付款的客户写一封通知',
     mailDescription: '措辞礼貌、简短',
     answer:
-      '上个月的销售额为 2,140 万日元，比前一个月增长了 8%。增长部分的六成来自 10 月推出的按年付费套餐。另外，从 Pro 升级到 Business 的工作区也有 14 个，席位数随之增加。另一方面，从 Free 转为 Pro 的比例下降了 0.4 个百分点，因此试用期的引导还有改进的余地。',
+      '上个月的销售额为 2,140 万日元，比前一个月增长了 8%。增长部分的六成来自 10 月推出的按年付费套餐。另外，从 Pro 升级到 Max 的工作区也有 14 个，席位数随之增加。另一方面，从 Free 转为 Pro 的比例下降了 0.4 个百分点，因此试用期的引导还有改进的余地。',
     history1: '查一下客户流失的原因',
     history1Answer: '上个月有 23 个客户取消了订阅，其中一半的理由是“用的人变少了”。如果在取消之前告知客户可以减少席位，这类流失应该能避免。',
     history2: '提出价格表的调整方案',
-    history2Answer: '方案是在 Pro 之上，增设 50 个席位起的 Business。按年付费可省 2 个月的费用，现有的 Pro 用户则可以按原价继续使用。',
+    history2Answer: '方案是在 Pro 与 Enterprise 之间，增设使用量上限为 5 倍的 Max。按年付费可省 2 个月的费用，现有的 Pro 用户则可以按原价继续使用。',
     history3: '新用户引导邮件的草稿',
     history3Answer: '邮件主题定为“欢迎使用 Atlas：最初的 3 个步骤”。按创建项目、邀请成员、设置通知的顺序依次引导。',
   },
@@ -152,6 +152,12 @@ export default {
       features: ['人数不限', '项目数不限', '100 GB 存储空间', '优先支持'],
       cta: '选择 Pro',
     },
+    max: {
+      name: 'Max',
+      description: '为高频使用的团队提高上限的 Pro。',
+      features: ['包含 Pro 的全部功能', '使用量为 Pro 的 5 倍', '1 TB 存储空间', '最优先支持'],
+      cta: '选择 Max',
+    },
     enterprise: {
       name: 'Enterprise',
       description: '满足大型组织的管理与安全需求。',
@@ -161,6 +167,7 @@ export default {
     compare: {
       members: '人数',
       storage: '存储空间',
+      usage: '使用量上限',
       sso: 'SSO (SAML)',
       audit: '审计日志',
       support: '支持',
@@ -168,6 +175,11 @@ export default {
       email: '邮件',
       priority: '优先',
       dedicated: '专属',
+      standard: '标准',
+      usage5: '5 倍',
+      usage25: '25 倍',
+      custom: '单独设定',
+      highest: '最优先',
     },
     faq: [
       { q: '可以中途更换套餐吗？', a: '随时都可以更换。差额按天折算结算。' },

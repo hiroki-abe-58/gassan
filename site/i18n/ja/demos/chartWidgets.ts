@@ -9,7 +9,7 @@ export default {
   plans: 'プランごとのワークスペース',
   free: 'Free',
   pro: 'Pro',
-  business: 'Business',
+  max: 'Max',
   enterprise: 'Enterprise',
   workspaces: 'ワークスペース',
   pages: 'よく見られたページ',

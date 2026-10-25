@@ -5,5 +5,5 @@ export default {
   month: '月',
   free: 'Free',
   pro: 'Pro',
-  business: 'Business',
+  max: 'Max',
 };

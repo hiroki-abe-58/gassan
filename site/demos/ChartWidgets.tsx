@@ -31,7 +31,7 @@ export default function ChartWidgets(): ReactNode {
           data={[
             { label: t.free, value: 1284 },
             { label: t.pro, value: 642 },
-            { label: t.business, value: 96 },
+            { label: t.max, value: 96 },
             { label: t.enterprise, value: 12 },
           ]}
           centerLabel={t.workspaces}

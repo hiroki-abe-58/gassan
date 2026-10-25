@@ -11,7 +11,7 @@ export default {
   plans: 'เวิร์กสเปซแยกตามแพ็กเกจ',
   free: 'Free',
   pro: 'Pro',
-  business: 'Business',
+  max: 'Max',
   enterprise: 'Enterprise',
   workspaces: 'เวิร์กสเปซ',
   pages: 'หน้าที่มีคนดูมากที่สุด',
