@@ -4,8 +4,9 @@ import { Button } from '../button';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { Steps } from '../navigation';
 import { FormError, runAction, type SubmitResult } from './form';
+import { commonLabels, onboardingLabels } from './labels';
 import { AuthLayout } from './layouts';
-import { useSite } from './site';
+import { useTemplateLabels } from './site';
 
 export interface OnboardingStep {
   id: string;
@@ -32,6 +33,8 @@ export interface OnboardingPageProps extends DataAttributes {
   className?: string;
 }
 
+const ONBOARDING_LABELS = { common: commonLabels, onboarding: onboardingLabels } as const;
+
 /**
  * はじめの設定（登録した直後の手順）。P-16。
  *
@@ -40,7 +43,7 @@ export interface OnboardingPageProps extends DataAttributes {
  * 最後の手順の「始める」は送信の流れ（P-03）と同じく、処理の間は二度押しできず、失敗の文を割り込ませて読む。
  */
 export function OnboardingPage({ steps, onComplete, onStepChange, defaultStep = 0, aside, className, ...rest }: OnboardingPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(ONBOARDING_LABELS);
   const { common, onboarding } = labels;
   const [index, setIndex] = useState(Math.min(Math.max(defaultStep, 0), Math.max(steps.length - 1, 0)));
   const [error, setError] = useState<ReactNode>(null);

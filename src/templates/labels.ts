@@ -19,7 +19,8 @@ export type ErrorCopyKey = `${Exclude<ErrorStatus, 'offline'>}` | 'offline' | '4
  * ページのテンプレートの文言。P-02。
  *
  * 日本語（japaneseTemplateLabels）と英語（englishTemplateLabels）を同梱する。既定は GassanProvider の言語
- * （labels.locale が ja で始まれば日本語）で選び、SiteProvider の labels で差し替えられる。
+ * （labels.locale が ja で始まれば日本語）で選び、SiteProvider の labels で差し替えられる。既定はまとまりごとの
+ * 日本語と英語の組（commonLabels など）に分けてあり、テンプレートは useTemplateLabels で使うまとまりの組だけを読む。
  * 文を組み立てる関数は、差し込む値（メールアドレス・秒数）を受け取る。リンクを差し込む文は ReactNode を受け取る。
  */
 export interface TemplateLabels {
@@ -645,12 +646,23 @@ export interface TemplateLabels {
   };
 }
 
+/** 文言のまとまりの名前（locale のほかのキー）。 */
+export type TemplateLabelGroup = Exclude<keyof TemplateLabels, 'locale'>;
+
+/**
+ * 1 つのまとまりの、日本語と英語の既定。まとまりごとに別の値にしておき、テンプレートは使うまとまりだけを読む
+ * （useTemplateLabels）。使わないテンプレートの文言は、束ねる道具が落とす。
+ */
+export interface TemplateLabelPair<K extends TemplateLabelGroup> {
+  readonly ja: TemplateLabels[K];
+  readonly en: TemplateLabels[K];
+}
+
 /** 「A と B に同意します」のような、リンクを挟む文を組み立てる。 */
 const join = (...parts: ReactNode[]): ReactNode => createElement(Fragment, null, ...parts);
 
-export const japaneseTemplateLabels: TemplateLabels = {
-  locale: 'ja-JP',
-  common: {
+export const commonLabels: TemplateLabelPair<'common'> = {
+  ja: {
     skipToContent: '本文へ移動',
     home: 'ホームへ戻る',
     back: '前のページへ戻る',
@@ -684,7 +696,44 @@ export const japaneseTemplateLabels: TemplateLabels = {
     reference: '問い合わせ番号',
     copyReference: '問い合わせ番号をコピー',
   },
-  signIn: {
+  en: {
+    skipToContent: 'Skip to content',
+    home: 'Back to home',
+    back: 'Go back',
+    retry: 'Try again',
+    contactSupport: 'Contact support',
+    statusPage: 'Check system status',
+    billing: 'Open billing settings',
+    signIn: 'Sign in',
+    signUp: 'Create an account',
+    backToSignIn: 'Back to sign in',
+    terms: 'Terms of Service',
+    privacy: 'Privacy Policy',
+    help: 'Help',
+    or: 'or',
+    continueWith: (provider) => `Continue with ${provider}`,
+    email: 'Email',
+    password: 'Password',
+    newPassword: 'New password',
+    confirmPassword: 'Confirm new password',
+    name: 'Name',
+    errorSummary: 'Check the following',
+    requiredField: (field) => `Enter your ${field.toLowerCase()}`,
+    invalidEmail: 'Enter an email address like name@example.com',
+    passwordTooShort: (min) => `Use at least ${String(min)} characters`,
+    confirmRequired: 'Enter the new password again',
+    passwordMismatch: 'The passwords do not match',
+    submitFailed: 'We could not send this. Try again in a moment.',
+    resend: 'Send again',
+    resendIn: (seconds) => `You can send again in ${String(seconds)} s`,
+    resent: 'Sent again',
+    reference: 'Reference',
+    copyReference: 'Copy reference',
+  },
+};
+
+export const signInLabels: TemplateLabelPair<'signIn'> = {
+  ja: {
     title: 'ログイン',
     description: 'メールアドレスとパスワードでログインします。',
     remember: 'ログインしたままにする',
@@ -693,7 +742,19 @@ export const japaneseTemplateLabels: TemplateLabels = {
     failed: 'メールアドレスかパスワードが違います。',
     noAccount: 'アカウントをお持ちでない方は',
   },
-  signUp: {
+  en: {
+    title: 'Sign in',
+    description: 'Sign in with your email and password.',
+    remember: 'Keep me signed in',
+    forgot: 'Forgot your password?',
+    submit: 'Sign in',
+    failed: 'The email or password is incorrect.',
+    noAccount: 'Don’t have an account?',
+  },
+};
+
+export const signUpLabels: TemplateLabelPair<'signUp'> = {
+  ja: {
     title: 'アカウントを作る',
     description: 'メールアドレスで登録します。',
     agree: (terms, privacy) => join(terms, 'と', privacy, 'に同意します'),
@@ -701,7 +762,18 @@ export const japaneseTemplateLabels: TemplateLabels = {
     submit: 'アカウントを作る',
     hasAccount: 'すでにアカウントをお持ちの方は',
   },
-  forgotPassword: {
+  en: {
+    title: 'Create an account',
+    description: 'Sign up with your email address.',
+    agree: (terms, privacy) => join('I agree to the ', terms, ' and the ', privacy),
+    agreeRequired: 'To sign up, agree to the Terms of Service and the Privacy Policy',
+    submit: 'Create account',
+    hasAccount: 'Already have an account?',
+  },
+};
+
+export const forgotPasswordLabels: TemplateLabelPair<'forgotPassword'> = {
+  ja: {
     title: 'パスワードの再設定',
     description: '登録したメールアドレスを入力してください。再設定の手順をお送りします。',
     submit: '再設定のメールを送る',
@@ -709,7 +781,18 @@ export const japaneseTemplateLabels: TemplateLabels = {
     sentDescription: (email) =>
       `${email} が登録されていれば、再設定の手順を送りました。数分たっても届かないときは、迷惑メールのフォルダもご確認ください。`,
   },
-  resetPassword: {
+  en: {
+    title: 'Reset your password',
+    description: 'Enter the email address you signed up with, and we will send you instructions.',
+    submit: 'Send reset email',
+    sentTitle: 'Check your email',
+    sentDescription: (email) =>
+      `If ${email} has an account, we have sent instructions to reset the password. If nothing arrives in a few minutes, check your spam folder.`,
+  },
+};
+
+export const resetPasswordLabels: TemplateLabelPair<'resetPassword'> = {
+  ja: {
     title: '新しいパスワードを決める',
     description: 'これまでと違うパスワードにしてください。',
     submit: 'パスワードを変える',
@@ -719,7 +802,20 @@ export const japaneseTemplateLabels: TemplateLabels = {
     expiredDescription: '再設定のリンクは、一定の時間がたつと使えなくなります。もう一度メールを送ってください。',
     requestAgain: 'もう一度メールを送る',
   },
-  twoFactor: {
+  en: {
+    title: 'Choose a new password',
+    description: 'Use a password you have not used before.',
+    submit: 'Change password',
+    doneTitle: 'Your password has been changed',
+    doneDescription: 'Sign in with your new password.',
+    expiredTitle: 'This link has expired',
+    expiredDescription: 'Reset links stop working after a while. Request a new email.',
+    requestAgain: 'Send a new email',
+  },
+};
+
+export const twoFactorLabels: TemplateLabelPair<'twoFactor'> = {
+  ja: {
     title: '2 段階認証',
     app: (length) => `認証アプリに表示されている ${String(length)} 桁のコードを入力してください。`,
     sms: (destination, length) => `${destination} に送った ${String(length)} 桁のコードを入力してください。`,
@@ -730,7 +826,21 @@ export const japaneseTemplateLabels: TemplateLabels = {
     failed: 'コードが違います。もう一度入力してください。',
     other: '別の方法で確認する',
   },
-  verifyEmail: {
+  en: {
+    title: 'Two-step verification',
+    app: (length) => `Enter the ${String(length)}-digit code shown in your authenticator app.`,
+    sms: (destination, length) => `Enter the ${String(length)}-digit code we sent to ${destination}.`,
+    email: (destination, length) => `Enter the ${String(length)}-digit code we sent to ${destination}.`,
+    code: 'Verification code',
+    trust: (days) => `Trust this device for ${String(days)} days`,
+    submit: 'Verify',
+    failed: 'That code is incorrect. Enter it again.',
+    other: 'Use another method',
+  },
+};
+
+export const verifyEmailLabels: TemplateLabelPair<'verifyEmail'> = {
+  ja: {
     title: 'メールアドレスを確認してください',
     description: (email) => `${email} に確認のメールを送りました。メールのリンクを開くと、登録が終わります。`,
     change: 'メールアドレスを変える',
@@ -740,7 +850,20 @@ export const japaneseTemplateLabels: TemplateLabels = {
     expiredTitle: '確認のリンクの有効期限が切れています',
     expiredDescription: '確認のリンクは、一定の時間がたつと使えなくなります。もう一度メールを送ってください。',
   },
-  signOut: {
+  en: {
+    title: 'Verify your email',
+    description: (email) => `We sent a verification email to ${email}. Open the link in it to finish signing up.`,
+    change: 'Change email address',
+    verifiedTitle: 'Your email is verified',
+    verifiedDescription: 'Thanks for signing up. Let’s get started.',
+    continue: 'Continue',
+    expiredTitle: 'This verification link has expired',
+    expiredDescription: 'Verification links stop working after a while. Request a new email.',
+  },
+};
+
+export const signOutLabels: TemplateLabelPair<'signOut'> = {
+  ja: {
     confirmTitle: 'ログアウトしますか',
     confirmDescription: 'この端末からログアウトします。保存していない変更は失われます。',
     confirm: 'ログアウト',
@@ -749,7 +872,19 @@ export const japaneseTemplateLabels: TemplateLabels = {
     doneDescription: 'ご利用ありがとうございました。',
     signInAgain: 'もう一度ログインする',
   },
-  emailFirst: {
+  en: {
+    confirmTitle: 'Sign out?',
+    confirmDescription: 'You will be signed out on this device. Unsaved changes will be lost.',
+    confirm: 'Sign out',
+    cancel: 'Cancel',
+    doneTitle: 'You have signed out',
+    doneDescription: 'Thanks for using the service.',
+    signInAgain: 'Sign in again',
+  },
+};
+
+export const emailFirstLabels: TemplateLabelPair<'emailFirst'> = {
+  ja: {
     title: 'ログインまたは登録',
     description: 'メールアドレスを入力してください。アカウントが無ければ、そのまま作れます。',
     continue: '続ける',
@@ -759,7 +894,20 @@ export const japaneseTemplateLabels: TemplateLabels = {
     ssoTitle: '組織のアカウントでログイン',
     ssoDescription: (provider) => `このメールアドレスは ${provider} でログインします。`,
   },
-  magicLink: {
+  en: {
+    title: 'Sign in or sign up',
+    description: 'Enter your email address. If you don’t have an account yet, you can create one right away.',
+    continue: 'Continue',
+    changeEmail: 'Use a different email',
+    passwordDescription: (email) => `Signing in as ${email}.`,
+    newAccountDescription: (email) => `There is no account for ${email} yet. Let’s create one.`,
+    ssoTitle: 'Sign in with your organization',
+    ssoDescription: (provider) => `This email address signs in with ${provider}.`,
+  },
+};
+
+export const magicLinkLabels: TemplateLabelPair<'magicLink'> = {
+  ja: {
     title: 'メールでログイン',
     description: 'ログイン用のリンクと確認コードをメールで送ります。パスワードは要りません。',
     submit: 'ログイン用のメールを送る',
@@ -771,14 +919,39 @@ export const japaneseTemplateLabels: TemplateLabels = {
     useAnotherEmail: '別のメールアドレスを使う',
     usePassword: 'パスワードでログイン',
   },
-  notReceived: {
+  en: {
+    title: 'Sign in with email',
+    description: 'We’ll email you a sign-in link and a code. No password needed.',
+    submit: 'Email me a sign-in link',
+    sentTitle: 'Check your email',
+    sentDescription: (email) => `We sent a sign-in link and a code to ${email}. Open the link, or enter the code.`,
+    code: 'Code',
+    codeSubmit: 'Sign in',
+    failed: 'That code is incorrect or has expired.',
+    useAnotherEmail: 'Use a different email',
+    usePassword: 'Sign in with a password',
+  },
+};
+
+export const notReceivedLabels: TemplateLabelPair<'notReceived'> = {
+  ja: {
     title: 'メールが届かないとき',
     spam: '迷惑メールのフォルダに入っていないか確かめてください。',
     wait: '届くまで数分かかることがあります。',
     typo: 'メールアドレスに打ち間違いがないか確かめてください。',
     carrier: (sender) => `携帯会社のメールは、「${sender}」からのメールを受け取れるように設定してください。`,
   },
-  quickSignUp: {
+  en: {
+    title: 'Didn’t get the email?',
+    spam: 'Check your spam or junk folder.',
+    wait: 'It can take a few minutes to arrive.',
+    typo: 'Make sure the email address is spelled correctly.',
+    carrier: (sender) => `If you use a mobile carrier address, allow email from ${sender}.`,
+  },
+};
+
+export const quickSignUpLabels: TemplateLabelPair<'quickSignUp'> = {
+  ja: {
     title: 'メールアドレスで登録',
     description: 'まずはメールアドレスだけで登録できます。お名前などは、届いたメールのリンクから入力します。',
     submit: '登録する',
@@ -787,7 +960,19 @@ export const japaneseTemplateLabels: TemplateLabels = {
     expires: (period) => `リンクの有効期限は ${period} です。`,
     nextSteps: 'このあとの流れ',
   },
-  wizard: {
+  en: {
+    title: 'Sign up with your email',
+    description: 'Start with just your email address. You’ll add your name and other details from the link we send you.',
+    submit: 'Sign up',
+    sentTitle: 'Almost there',
+    sentDescription: (email) => `We sent the next steps to ${email}. Open the link in the email to finish your registration.`,
+    expires: (period) => `The link expires in ${period}.`,
+    nextSteps: 'What happens next',
+  },
+};
+
+export const wizardLabels: TemplateLabelPair<'wizard'> = {
+  ja: {
     progress: '登録の手順',
     back: '戻る',
     next: '次へ',
@@ -802,7 +987,25 @@ export const japaneseTemplateLabels: TemplateLabels = {
     doneTitle: '登録が完了しました',
     doneDescription: 'ご登録ありがとうございます。',
   },
-  phoneSignIn: {
+  en: {
+    progress: 'Registration steps',
+    back: 'Back',
+    next: 'Next',
+    skip: 'Do this later',
+    saveAndExit: 'Save and continue later',
+    saved: 'Your progress has been saved.',
+    reviewTitle: 'Review your details',
+    reviewDescription: 'Check your details before you register.',
+    edit: (step) => `Edit ${step}`,
+    backToReview: 'Back to review',
+    submit: 'Register',
+    doneTitle: 'Registration complete',
+    doneDescription: 'Thanks for registering.',
+  },
+};
+
+export const phoneSignInLabels: TemplateLabelPair<'phoneSignIn'> = {
+  ja: {
     title: '電話番号でログイン',
     description: 'SMS で確認コードを送ります。',
     phone: '携帯電話の番号',
@@ -814,7 +1017,22 @@ export const japaneseTemplateLabels: TemplateLabels = {
     codeDescription: (phone, length) => `${phone} に SMS で送った ${String(length)} 桁のコードを入力してください。`,
     changeNumber: '電話番号を変える',
   },
-  passkey: {
+  en: {
+    title: 'Sign in with your phone',
+    description: 'We’ll text you a verification code.',
+    phone: 'Mobile number',
+    phoneHelp: 'Hyphens are optional.',
+    notMobile: 'Enter a mobile number that can receive text messages (070, 080, 090 and so on)',
+    invalidPhone: 'Check the number of digits',
+    submit: 'Send code',
+    codeTitle: 'Enter the code',
+    codeDescription: (phone, length) => `Enter the ${String(length)}-digit code we texted to ${phone}.`,
+    changeNumber: 'Use a different number',
+  },
+};
+
+export const passkeyLabels: TemplateLabelPair<'passkey'> = {
+  ja: {
     signIn: 'パスキーでログイン',
     promptTitle: 'パスキーを作りませんか',
     promptDescription: '次回から、パスワードの代わりに指紋・顔・画面のロックでログインできます。',
@@ -829,7 +1047,25 @@ export const japaneseTemplateLabels: TemplateLabels = {
     createdDescription: '次回から、パスキーでログインできます。',
     failed: 'パスキーを作れませんでした。もう一度試すか、あとで設定から作ってください。',
   },
-  accountChooser: {
+  en: {
+    signIn: 'Sign in with a passkey',
+    promptTitle: 'Create a passkey?',
+    promptDescription: 'Next time, sign in with your fingerprint, face or screen lock instead of a password.',
+    benefits: [
+      'No password to remember or type',
+      'Harder to phish: passkeys don’t work on fake sites',
+      'Works on your other devices that sync with the same account',
+    ],
+    create: 'Create a passkey',
+    later: 'Not now',
+    createdTitle: 'Passkey created',
+    createdDescription: 'Next time, you can sign in with your passkey.',
+    failed: 'We couldn’t create a passkey. Try again, or create one later in settings.',
+  },
+};
+
+export const accountChooserLabels: TemplateLabelPair<'accountChooser'> = {
+  ja: {
     title: 'アカウントを選ぶ',
     description: 'この端末でログインしたことのあるアカウントです。',
     list: 'アカウント',
@@ -837,7 +1073,18 @@ export const japaneseTemplateLabels: TemplateLabels = {
     remove: (account) => `${account} をこの端末から外す`,
     removed: (account) => `${account} をこの端末から外しました。`,
   },
-  reauth: {
+  en: {
+    title: 'Choose an account',
+    description: 'Accounts you’ve signed in with on this device.',
+    list: 'Accounts',
+    useAnother: 'Use another account',
+    remove: (account) => `Remove ${account} from this device`,
+    removed: (account) => `Removed ${account} from this device.`,
+  },
+};
+
+export const reauthLabels: TemplateLabelPair<'reauth'> = {
+  ja: {
     confirmTitle: '本人確認',
     confirmDescription: 'セキュリティのため、もう一度パスワードを入力してください。',
     expiredTitle: 'もう一度ログインしてください',
@@ -846,7 +1093,19 @@ export const japaneseTemplateLabels: TemplateLabels = {
     failed: 'パスワードが違います。',
     signInAnother: '別のアカウントでログイン',
   },
-  guestAccount: {
+  en: {
+    confirmTitle: 'Confirm it’s you',
+    confirmDescription: 'For your security, enter your password again.',
+    expiredTitle: 'Sign in again',
+    expiredDescription: 'You were signed out after a period of inactivity. What you were working on is still here.',
+    confirm: 'Confirm',
+    failed: 'That password is incorrect.',
+    signInAnother: 'Sign in with a different account',
+  },
+};
+
+export const guestAccountLabels: TemplateLabelPair<'guestAccount'> = {
+  ja: {
     title: 'アカウントを作りませんか',
     description: (email) => `パスワードを決めるだけで、${email} のアカウントを作れます。注文の状況をいつでも確かめられ、次からは入力を省けます。`,
     submit: 'アカウントを作る',
@@ -854,7 +1113,18 @@ export const japaneseTemplateLabels: TemplateLabels = {
     doneTitle: 'アカウントを作りました',
     doneDescription: '次回から、このメールアドレスとパスワードでログインできます。',
   },
-  error: {
+  en: {
+    title: 'Create an account?',
+    description: (email) => `Just choose a password to create an account for ${email}. You can check your orders anytime and check out faster next time.`,
+    submit: 'Create account',
+    later: 'Not now',
+    doneTitle: 'Account created',
+    doneDescription: 'Next time, sign in with this email address and password.',
+  },
+};
+
+export const errorLabels: TemplateLabelPair<'error'> = {
+  ja: {
     code: 'エラー',
     titles: {
       '400': 'リクエストを処理できませんでした',
@@ -948,583 +1218,7 @@ export const japaneseTemplateLabels: TemplateLabels = {
     },
     retryIn: (seconds) => `${String(seconds)} 秒後に、もう一度試せます`,
   },
-  maintenance: {
-    title: 'ただいまメンテナンス中です',
-    description: 'サービスをより良くするための作業をしています。ご不便をおかけします。',
-    schedule: '予定',
-    range: (start, end) => `${start}〜${end}`,
-    until: (end) => `${end} に終わる予定です`,
-    updates: '最新の情報',
-    reload: '再読み込み',
-  },
-  site: {
-    nav: 'サイトの案内',
-    menu: 'メニュー',
-    footerNav: 'サイトの情報',
-  },
-  document: {
-    toc: '目次',
-    effective: '施行日',
-    updated: '最終更新日',
-    article: (n) => `第 ${String(n)} 条`,
-    backToTop: 'ページの先頭へ',
-  },
-  faq: {
-    title: 'よくある質問',
-    description: 'お問い合わせの前に、よく寄せられる質問をご確認ください。',
-    search: '質問を探す',
-    results: (count) => `${String(count)} 件の質問が見つかりました`,
-    noResults: '当てはまる質問がありませんでした。言葉を変えて探すか、お問い合わせください。',
-    stillNeedHelp: '解決しませんでしたか',
-    contact: 'お問い合わせ',
-    other: 'その他',
-  },
-  pricing: {
-    title: '料金プラン',
-    description: 'チームの大きさと使い方に合わせて選べます。いつでも変えられます。',
-    billing: 'お支払いの間隔',
-    monthly: '月払い',
-    yearly: '年払い',
-    perMonth: '/ 月',
-    billedYearly: (amount) => `年 ${amount} を一括でお支払い`,
-    monthlyPrice: (amount) => `月額 ${amount}`,
-    contactSales: 'お問い合わせ',
-    custom: 'ご相談',
-    recommended: 'おすすめ',
-    compare: 'プランの比較',
-    feature: '機能',
-    included: 'あり',
-    notIncluded: 'なし',
-    faq: '料金についての質問',
-  },
-  contact: {
-    title: 'お問い合わせ',
-    description: '製品・料金・不具合など、お気軽にお問い合わせください。担当者からご連絡します。',
-    company: '会社名',
-    topic: 'お問い合わせの種類',
-    topics: { product: '製品について', billing: '料金・請求について', bug: '不具合の報告', other: 'その他' },
-    chooseTopic: '選んでください',
-    message: 'お問い合わせの内容',
-    agree: (privacy) => join(privacy, 'に同意します'),
-    agreeRequired: '送るには、プライバシーポリシーへの同意が必要です',
-    submit: '送信する',
-    doneTitle: 'お問い合わせを受け付けました',
-    doneDescription: (email) => `${email} に受付の控えを送りました。担当者からご連絡します。`,
-  },
-  changelog: {
-    title: '更新履歴',
-    description: '新しい機能・改善・修正のお知らせです。',
-    filter: '種類で絞り込む',
-    all: 'すべて',
-    tags: { new: '新機能', improved: '改善', fixed: '修正', security: 'セキュリティ', breaking: '重要な変更' },
-    subscribe: 'RSS で購読する',
-  },
-  app: {
-    nav: 'アプリの案内',
-    menu: 'メニュー',
-    account: (name) => `${name}のアカウント`,
-  },
-  settings: {
-    title: '設定',
-    description: 'プロフィール・パスワード・ログインの守り・ログインしている端末を管理します。',
-    save: '保存する',
-    saved: '保存しました',
-    profile: { title: 'プロフィール', description: '名前とメールアドレスは、ワークスペースのメンバーに表示されます。' },
-    password: {
-      title: 'パスワード',
-      description: 'ほかのサービスと同じパスワードは使わないでください。',
-      current: '今のパスワード',
-      submit: 'パスワードを変える',
-      changed: 'パスワードを変えました',
-    },
-    twoFactor: {
-      title: '2 段階認証',
-      description: 'ログインのときに、パスワードに加えて確認コードを求めます。',
-      on: '有効',
-      off: '無効',
-      enable: '有効にする',
-      disable: '無効にする',
-      disableTitle: '2 段階認証を無効にしますか',
-      disableDescription: '無効にすると、パスワードだけでログインできるようになります。',
-      disabled: '2 段階認証を無効にしました',
-    },
-    sessions: {
-      title: 'ログインしている端末',
-      description: '心当たりのない端末があれば、ログアウトさせてください。',
-      current: 'この端末',
-      lastActive: (time) => `最後の利用 ${time}`,
-      revoke: 'ログアウトさせる',
-      revokeFor: (device) => `${device} をログアウトさせる`,
-      revokeOthers: 'ほかの端末をすべてログアウトさせる',
-      revoked: 'ログアウトさせました',
-    },
-    deleteAccount: {
-      title: 'アカウントの削除',
-      description: 'アカウントと、作ったデータをすべて削除します。取り消せません。',
-      open: 'アカウントを削除する',
-      confirmTitle: 'アカウントを削除しますか',
-      confirmDescription: 'プロフィール・設定・作ったデータがすべて消え、もとに戻せません。',
-      typeToConfirm: (text) => `確認のため「${text}」と入力してください`,
-      mismatch: (text) => `「${text}」と入力すると削除できます`,
-      confirm: '削除する',
-    },
-  },
-  members: {
-    title: 'メンバー',
-    description: 'ワークスペースに参加している人と、招待中の人。',
-    invite: 'メンバーを招待',
-    inviteDescription: 'メールアドレスを入れると、招待のメールを送ります。',
-    emails: 'メールアドレス',
-    emailsHelp: 'Enter かカンマで区切ると、何人でもまとめて招待できます。',
-    emailsRequired: '招待する人のメールアドレスを入れてください',
-    role: '役割',
-    message: 'メッセージ',
-    send: '招待を送る',
-    sent: (count) => `${String(count)} 人に招待を送りました`,
-    search: '名前かメールアドレスで探す',
-    name: '名前',
-    status: '状態',
-    lastActive: '最終ログイン',
-    statuses: { active: '有効', invited: '招待中', suspended: '停止中' },
-    you: 'あなた',
-    roleFor: (name) => `${name} の役割`,
-    actionsFor: (name) => `${name} の操作`,
-    remove: 'ワークスペースから外す',
-    removeTitle: (name) => `${name} を外しますか`,
-    removeManyTitle: (count) => `${String(count)} 人を外しますか`,
-    removeDescription: '外した人は、このワークスペースのデータを見られなくなります。もう一度招待すれば戻せます。',
-    removed: (count) => `${String(count)} 人を外しました`,
-    roleChanged: (name, role) => `${name} の役割を「${role}」にしました`,
-    seats: '使っている席',
-    seatsValue: (used, total) => `${String(used)} / ${String(total)} 席`,
-    invitations: '招待中',
-    invitedAt: '招待した日',
-    resend: '送り直す',
-    resendFor: (email) => `${email} に招待を送り直す`,
-    resent: (email) => `${email} に招待を送り直しました`,
-    revoke: '取り消す',
-    revokeFor: (email) => `${email} への招待を取り消す`,
-    revoked: (email) => `${email} への招待を取り消しました`,
-    noMatch: (query) => `「${query}」に当てはまるメンバーはいません`,
-  },
-  billing: {
-    title: '料金と請求',
-    description: 'プラン・使っている量・支払い方法・請求書。',
-    plan: '今のプラン',
-    statuses: { active: '有効', trialing: '試用中', past_due: '支払いの失敗', canceled: '解約済み' },
-    price: (amount, interval) => `${interval === 'month' ? '月額' : '年額'} ${amount}`,
-    renews: (date) => `${date} に自動で更新します`,
-    trialEnds: (date) => `${date} に試用期間が終わります`,
-    endsOn: (date) => `${date} に終わります`,
-    changePlan: 'プランを変える',
-    cancel: '解約する',
-    cancelTitle: '解約しますか',
-    cancelDescription: (date) => `${date} までは今のプランのまま使えます。その後は、有料の機能が使えなくなります。`,
-    cancelConfirm: '解約する',
-    keep: '解約しない',
-    canceled: '解約しました。期間の終わりまで、今のプランのまま使えます。',
-    pastDue: '支払いに失敗しました。支払い方法を確かめてください。',
-    usage: '使っている量',
-    payment: '支払い方法',
-    card: (brand, last4) => `${brand}、末尾 ${last4}`,
-    expires: (month, year) => `有効期限 ${month}/${year}`,
-    updatePayment: '支払い方法を変える',
-    addPayment: '支払い方法を登録する',
-    noPayment: '支払い方法が登録されていません。',
-    billingEmail: '請求書の送り先',
-    invoices: '請求書',
-    invoiceNumber: '番号',
-    invoiceDate: '日付',
-    amount: '金額',
-    invoiceStatus: '状態',
-    invoiceStatuses: { paid: '支払い済み', open: '未払い', void: '無効', uncollectible: '回収できない' },
-    download: 'PDF',
-    downloadFor: (number) => `${number} の PDF を保存`,
-    noInvoices: 'まだ請求書はありません',
-  },
-  onboarding: { progress: 'はじめの設定', back: '戻る', next: '次へ', skip: 'あとで設定する', finish: '始める' },
-  invite: {
-    title: (workspace) => `${workspace} への招待`,
-    description: (inviter, workspace) => `${inviter} さんが、あなたを ${workspace} に招待しています。`,
-    role: (role) => `役割: ${role}`,
-    accept: '招待を受ける',
-    decline: '断る',
-    signIn: 'ログインして参加する',
-    signUp: 'アカウントを作って参加する',
-    signedOutHint: '参加するには、ログインするかアカウントを作ってください。',
-    wrongAccount: (email) => `この招待は ${email} 宛てです。宛先のアカウントでログインし直してください。`,
-    switchAccount: '別のアカウントでログインする',
-    expiredTitle: '招待の期限が切れています',
-    expiredDescription: '招待した人に、もう一度送ってもらってください。',
-    invalidTitle: 'この招待は使えません',
-    invalidDescription: 'リンクが正しいか確かめてください。すでに参加しているなら、ログインしてください。',
-    declinedTitle: '招待を断りました',
-    declinedDescription: 'あとで参加したくなったら、招待した人に、もう一度送ってもらってください。',
-  },
-  chat: {
-    title: 'メッセージ',
-    conversations: '会話',
-    channels: 'チャンネル',
-    directMessages: 'ダイレクトメッセージ',
-    search: '会話を探す',
-    noMatch: (query) => `「${query}」に当てはまる会話はありません`,
-    unread: (count) => `未読 ${count}件`,
-    back: '会話の一覧へ戻る',
-    none: '会話を選んでください',
-    messagesIn: (name) => `${name} のメッセージ`,
-    placeholder: (name, kind) => (kind === 'channel' ? `#${name} にメッセージを送信` : `${name}さんにメッセージを送信`),
-  },
-  assistant: {
-    title: 'アシスタント',
-    history: '履歴',
-    showHistory: '履歴を見る',
-    closeHistory: '会話へ戻る',
-    newThread: '新しい会話',
-    previous7Days: '過去 7 日間',
-    older: 'それより前',
-    greeting: '何をお手伝いしましょうか？',
-    conversation: 'アシスタントとの会話',
-    placeholder: 'アシスタントに質問する',
-    note: 'AI の回答は間違うことがあります。大事なことは確かめてください。',
-  },
-  mail: {
-    title: 'メール',
-    folders: 'フォルダ',
-    compose: '作成',
-    search: 'メールを探す',
-    noMatch: (query) => `「${query}」に当てはまるメールはありません`,
-    empty: 'このフォルダにメールはありません',
-    none: 'メールを選んでください',
-    back: 'メールの一覧へ戻る',
-    unread: '未読',
-    unreadCount: (count) => `未読 ${count}件`,
-    attachment: '添付あり',
-    selectAll: 'すべて選ぶ',
-    select: (subject) => `「${subject}」を選ぶ`,
-    selected: (count) => `${count}件を選択中`,
-    archive: 'アーカイブ',
-    delete: '削除',
-    markRead: '既読にする',
-    markUnread: '未読にする',
-    star: 'スター',
-    starFor: (subject) => `「${subject}」にスター`,
-    reply: '返信',
-    forward: '転送',
-    archived: (count) => `${count}件をアーカイブしました`,
-    deleted: (count) => `${count}件を削除しました`,
-    markedRead: (count) => `${count}件を既読にしました`,
-    markedUnread: (count) => `${count}件を未読にしました`,
-    to: '宛先',
-    cc: 'CC',
-    attachments: '添付ファイル',
-    download: (name) => `${name} をダウンロード`,
-    newMessage: '新しいメール',
-    subject: '件名',
-    body: '本文',
-    toHelp: 'Enter かカンマで区切ると、何人でもまとめて入れられます。',
-    toRequired: '宛先を入れてください。',
-    send: '送信',
-    sent: 'メールを送りました',
-    replyPrefix: 'Re: ',
-    forwardPrefix: 'Fwd: ',
-  },
-  orderReview: {
-    title: 'ご注文内容の確認',
-    description: 'まだ注文は確定していません。内容を確かめて「注文を確定する」を押してください。',
-    items: 'ご注文の商品',
-    product: '商品',
-    quantity: '数量',
-    quantityOf: (count, unit) => (unit ? `${String(count)} ${unit}` : String(count)),
-    unit: '点',
-    unitPrice: (price) => `単価 ${price}`,
-    lineTotal: '金額（税込）',
-    address: 'お届け先',
-    delivery: 'お届けの方法と時期',
-    payment: 'お支払いの方法と時期',
-    method: '方法',
-    timing: '時期',
-    offerPeriod: 'お申し込みの期間',
-    subscription: '定期購入の条件',
-    interval: 'お届けの間隔',
-    pricePerDelivery: '各回の代金（税込）',
-    minimumCount: 'お約束の回数',
-    minimumCountOf: (count) => `${String(count)} 回以上`,
-    noMinimum: 'なし（いつでも解約できます）',
-    howToCancel: '解約の方法',
-    cancellation: '返品・キャンセル',
-    summary: 'お支払い金額',
-    subtotal: '小計',
-    shipping: '送料',
-    free: '無料',
-    total: '合計（税込）',
-    edit: '変更',
-    editFor: (section) => `${section}を変更`,
-    submit: '注文を確定する',
-    submitNote: '「注文を確定する」を押すと、注文が確定します。',
-    consentRequired: '注文の前に、同意の欄にチェックを入れてください',
-  },
-  cookieConsent: {
-    title: 'Cookie と外部への送信',
-    description: 'サイトの改善と広告のために、閲覧の情報を外部の事業者へ送ることがあります。必要なものだけにすることもできます。',
-    policy: '送信先の一覧',
-    acceptAll: 'すべて許可する',
-    rejectAll: '必要なものだけ',
-    customize: '設定を選ぶ',
-    settingsTitle: 'Cookie と外部送信の設定',
-    settingsDescription: '種類ごとに、許可するかを選べます。あとからいつでも変えられます。',
-    save: '選んだ設定を保存',
-    alwaysOn: '常に有効',
-    categories: { necessary: '必要なもの', functional: '機能', analytics: '分析', marketing: '広告' },
-    descriptions: {
-      necessary: 'ログインの状態や、この設定を覚えておくために使います。止めるとサイトが動かないため、常に有効です。',
-      functional: '言語や表示の好みを覚えて、次に来たときに使います。',
-      analytics: 'どのページがよく見られているかを集計して、サイトの改善に使います。',
-      marketing: 'ほかのサイトでの広告を、関心に合わせて出すために使います。',
-    },
-  },
-  externalTransmission: {
-    label: '外部へ送る情報と送信先',
-    information: '送る情報',
-    purpose: '使う目的',
-    category: '種類',
-    policyFor: (recipient) => `${recipient} のプライバシーポリシー`,
-    optOutFor: (recipient) => `${recipient} への送信を止める`,
-  },
-  cancelSubscription: {
-    title: '解約の手続き',
-    description: (plan) => `${plan} を解約します。最後に確かめてから解約するので、途中でやめられます。`,
-    steps: '解約の手順',
-    stepReason: '理由',
-    stepOffer: 'ご提案',
-    stepConfirm: '確認',
-    reasonTitle: '解約の理由を教えてください',
-    reasonDescription: '答えなくても解約できます。サービスの改善に使います。',
-    comment: 'ほかに伝えたいこと',
-    next: '次へ',
-    back: '戻る',
-    offerTitle: '解約の前に、こんな方法もあります',
-    offerDescription: '合わなければ、そのまま解約に進めます。',
-    continueCancel: '解約に進む',
-    confirmTitle: '解約しますか',
-    until: (date) => `${date} までは今のプランのまま使えます。`,
-    afterEnd: 'その後は、有料の機能が使えなくなります。',
-    export: 'データを書き出す',
-    confirm: '解約する',
-    keep: '解約しない',
-    doneTitle: '解約しました',
-    doneDescription: (date) => `${date} までは今のプランのまま使えます。確認のメールを送りました。`,
-    keptTitle: 'ご提案を受け付けました',
-    keptDescription: '解約はしていません。今のプランのまま使えます。',
-  },
-};
-
-export const englishTemplateLabels: TemplateLabels = {
-  locale: 'en-US',
-  common: {
-    skipToContent: 'Skip to content',
-    home: 'Back to home',
-    back: 'Go back',
-    retry: 'Try again',
-    contactSupport: 'Contact support',
-    statusPage: 'Check system status',
-    billing: 'Open billing settings',
-    signIn: 'Sign in',
-    signUp: 'Create an account',
-    backToSignIn: 'Back to sign in',
-    terms: 'Terms of Service',
-    privacy: 'Privacy Policy',
-    help: 'Help',
-    or: 'or',
-    continueWith: (provider) => `Continue with ${provider}`,
-    email: 'Email',
-    password: 'Password',
-    newPassword: 'New password',
-    confirmPassword: 'Confirm new password',
-    name: 'Name',
-    errorSummary: 'Check the following',
-    requiredField: (field) => `Enter your ${field.toLowerCase()}`,
-    invalidEmail: 'Enter an email address like name@example.com',
-    passwordTooShort: (min) => `Use at least ${String(min)} characters`,
-    confirmRequired: 'Enter the new password again',
-    passwordMismatch: 'The passwords do not match',
-    submitFailed: 'We could not send this. Try again in a moment.',
-    resend: 'Send again',
-    resendIn: (seconds) => `You can send again in ${String(seconds)} s`,
-    resent: 'Sent again',
-    reference: 'Reference',
-    copyReference: 'Copy reference',
-  },
-  signIn: {
-    title: 'Sign in',
-    description: 'Sign in with your email and password.',
-    remember: 'Keep me signed in',
-    forgot: 'Forgot your password?',
-    submit: 'Sign in',
-    failed: 'The email or password is incorrect.',
-    noAccount: 'Don’t have an account?',
-  },
-  signUp: {
-    title: 'Create an account',
-    description: 'Sign up with your email address.',
-    agree: (terms, privacy) => join('I agree to the ', terms, ' and the ', privacy),
-    agreeRequired: 'To sign up, agree to the Terms of Service and the Privacy Policy',
-    submit: 'Create account',
-    hasAccount: 'Already have an account?',
-  },
-  forgotPassword: {
-    title: 'Reset your password',
-    description: 'Enter the email address you signed up with, and we will send you instructions.',
-    submit: 'Send reset email',
-    sentTitle: 'Check your email',
-    sentDescription: (email) =>
-      `If ${email} has an account, we have sent instructions to reset the password. If nothing arrives in a few minutes, check your spam folder.`,
-  },
-  resetPassword: {
-    title: 'Choose a new password',
-    description: 'Use a password you have not used before.',
-    submit: 'Change password',
-    doneTitle: 'Your password has been changed',
-    doneDescription: 'Sign in with your new password.',
-    expiredTitle: 'This link has expired',
-    expiredDescription: 'Reset links stop working after a while. Request a new email.',
-    requestAgain: 'Send a new email',
-  },
-  twoFactor: {
-    title: 'Two-step verification',
-    app: (length) => `Enter the ${String(length)}-digit code shown in your authenticator app.`,
-    sms: (destination, length) => `Enter the ${String(length)}-digit code we sent to ${destination}.`,
-    email: (destination, length) => `Enter the ${String(length)}-digit code we sent to ${destination}.`,
-    code: 'Verification code',
-    trust: (days) => `Trust this device for ${String(days)} days`,
-    submit: 'Verify',
-    failed: 'That code is incorrect. Enter it again.',
-    other: 'Use another method',
-  },
-  verifyEmail: {
-    title: 'Verify your email',
-    description: (email) => `We sent a verification email to ${email}. Open the link in it to finish signing up.`,
-    change: 'Change email address',
-    verifiedTitle: 'Your email is verified',
-    verifiedDescription: 'Thanks for signing up. Let’s get started.',
-    continue: 'Continue',
-    expiredTitle: 'This verification link has expired',
-    expiredDescription: 'Verification links stop working after a while. Request a new email.',
-  },
-  signOut: {
-    confirmTitle: 'Sign out?',
-    confirmDescription: 'You will be signed out on this device. Unsaved changes will be lost.',
-    confirm: 'Sign out',
-    cancel: 'Cancel',
-    doneTitle: 'You have signed out',
-    doneDescription: 'Thanks for using the service.',
-    signInAgain: 'Sign in again',
-  },
-  emailFirst: {
-    title: 'Sign in or sign up',
-    description: 'Enter your email address. If you don’t have an account yet, you can create one right away.',
-    continue: 'Continue',
-    changeEmail: 'Use a different email',
-    passwordDescription: (email) => `Signing in as ${email}.`,
-    newAccountDescription: (email) => `There is no account for ${email} yet. Let’s create one.`,
-    ssoTitle: 'Sign in with your organization',
-    ssoDescription: (provider) => `This email address signs in with ${provider}.`,
-  },
-  magicLink: {
-    title: 'Sign in with email',
-    description: 'We’ll email you a sign-in link and a code. No password needed.',
-    submit: 'Email me a sign-in link',
-    sentTitle: 'Check your email',
-    sentDescription: (email) => `We sent a sign-in link and a code to ${email}. Open the link, or enter the code.`,
-    code: 'Code',
-    codeSubmit: 'Sign in',
-    failed: 'That code is incorrect or has expired.',
-    useAnotherEmail: 'Use a different email',
-    usePassword: 'Sign in with a password',
-  },
-  notReceived: {
-    title: 'Didn’t get the email?',
-    spam: 'Check your spam or junk folder.',
-    wait: 'It can take a few minutes to arrive.',
-    typo: 'Make sure the email address is spelled correctly.',
-    carrier: (sender) => `If you use a mobile carrier address, allow email from ${sender}.`,
-  },
-  quickSignUp: {
-    title: 'Sign up with your email',
-    description: 'Start with just your email address. You’ll add your name and other details from the link we send you.',
-    submit: 'Sign up',
-    sentTitle: 'Almost there',
-    sentDescription: (email) => `We sent the next steps to ${email}. Open the link in the email to finish your registration.`,
-    expires: (period) => `The link expires in ${period}.`,
-    nextSteps: 'What happens next',
-  },
-  wizard: {
-    progress: 'Registration steps',
-    back: 'Back',
-    next: 'Next',
-    skip: 'Do this later',
-    saveAndExit: 'Save and continue later',
-    saved: 'Your progress has been saved.',
-    reviewTitle: 'Review your details',
-    reviewDescription: 'Check your details before you register.',
-    edit: (step) => `Edit ${step}`,
-    backToReview: 'Back to review',
-    submit: 'Register',
-    doneTitle: 'Registration complete',
-    doneDescription: 'Thanks for registering.',
-  },
-  phoneSignIn: {
-    title: 'Sign in with your phone',
-    description: 'We’ll text you a verification code.',
-    phone: 'Mobile number',
-    phoneHelp: 'Hyphens are optional.',
-    notMobile: 'Enter a mobile number that can receive text messages (070, 080, 090 and so on)',
-    invalidPhone: 'Check the number of digits',
-    submit: 'Send code',
-    codeTitle: 'Enter the code',
-    codeDescription: (phone, length) => `Enter the ${String(length)}-digit code we texted to ${phone}.`,
-    changeNumber: 'Use a different number',
-  },
-  passkey: {
-    signIn: 'Sign in with a passkey',
-    promptTitle: 'Create a passkey?',
-    promptDescription: 'Next time, sign in with your fingerprint, face or screen lock instead of a password.',
-    benefits: [
-      'No password to remember or type',
-      'Harder to phish: passkeys don’t work on fake sites',
-      'Works on your other devices that sync with the same account',
-    ],
-    create: 'Create a passkey',
-    later: 'Not now',
-    createdTitle: 'Passkey created',
-    createdDescription: 'Next time, you can sign in with your passkey.',
-    failed: 'We couldn’t create a passkey. Try again, or create one later in settings.',
-  },
-  accountChooser: {
-    title: 'Choose an account',
-    description: 'Accounts you’ve signed in with on this device.',
-    list: 'Accounts',
-    useAnother: 'Use another account',
-    remove: (account) => `Remove ${account} from this device`,
-    removed: (account) => `Removed ${account} from this device.`,
-  },
-  reauth: {
-    confirmTitle: 'Confirm it’s you',
-    confirmDescription: 'For your security, enter your password again.',
-    expiredTitle: 'Sign in again',
-    expiredDescription: 'You were signed out after a period of inactivity. What you were working on is still here.',
-    confirm: 'Confirm',
-    failed: 'That password is incorrect.',
-    signInAnother: 'Sign in with a different account',
-  },
-  guestAccount: {
-    title: 'Create an account?',
-    description: (email) => `Just choose a password to create an account for ${email}. You can check your orders anytime and check out faster next time.`,
-    submit: 'Create account',
-    later: 'Not now',
-    doneTitle: 'Account created',
-    doneDescription: 'Next time, sign in with this email address and password.',
-  },
-  error: {
+  en: {
     code: 'Error',
     titles: {
       '400': 'We couldn’t process the request',
@@ -1618,7 +1312,19 @@ export const englishTemplateLabels: TemplateLabels = {
     },
     retryIn: (seconds) => `You can try again in ${String(seconds)} s`,
   },
-  maintenance: {
+};
+
+export const maintenanceLabels: TemplateLabelPair<'maintenance'> = {
+  ja: {
+    title: 'ただいまメンテナンス中です',
+    description: 'サービスをより良くするための作業をしています。ご不便をおかけします。',
+    schedule: '予定',
+    range: (start, end) => `${start}〜${end}`,
+    until: (end) => `${end} に終わる予定です`,
+    updates: '最新の情報',
+    reload: '再読み込み',
+  },
+  en: {
     title: 'We’re down for maintenance',
     description: 'We are working to make the service better. Sorry for the inconvenience.',
     schedule: 'Schedule',
@@ -1627,19 +1333,50 @@ export const englishTemplateLabels: TemplateLabels = {
     updates: 'Latest updates',
     reload: 'Reload',
   },
-  site: {
+};
+
+export const siteLabels: TemplateLabelPair<'site'> = {
+  ja: {
+    nav: 'サイトの案内',
+    menu: 'メニュー',
+    footerNav: 'サイトの情報',
+  },
+  en: {
     nav: 'Main',
     menu: 'Menu',
     footerNav: 'Site information',
   },
-  document: {
+};
+
+export const documentLabels: TemplateLabelPair<'document'> = {
+  ja: {
+    toc: '目次',
+    effective: '施行日',
+    updated: '最終更新日',
+    article: (n) => `第 ${String(n)} 条`,
+    backToTop: 'ページの先頭へ',
+  },
+  en: {
     toc: 'Contents',
     effective: 'Effective',
     updated: 'Last updated',
     article: (n) => `Article ${String(n)}`,
     backToTop: 'Back to top',
   },
-  faq: {
+};
+
+export const faqLabels: TemplateLabelPair<'faq'> = {
+  ja: {
+    title: 'よくある質問',
+    description: 'お問い合わせの前に、よく寄せられる質問をご確認ください。',
+    search: '質問を探す',
+    results: (count) => `${String(count)} 件の質問が見つかりました`,
+    noResults: '当てはまる質問がありませんでした。言葉を変えて探すか、お問い合わせください。',
+    stillNeedHelp: '解決しませんでしたか',
+    contact: 'お問い合わせ',
+    other: 'その他',
+  },
+  en: {
     title: 'Frequently asked questions',
     description: 'Before contacting us, check the questions we hear most often.',
     search: 'Search questions',
@@ -1649,7 +1386,28 @@ export const englishTemplateLabels: TemplateLabels = {
     contact: 'Contact us',
     other: 'Other',
   },
-  pricing: {
+};
+
+export const pricingLabels: TemplateLabelPair<'pricing'> = {
+  ja: {
+    title: '料金プラン',
+    description: 'チームの大きさと使い方に合わせて選べます。いつでも変えられます。',
+    billing: 'お支払いの間隔',
+    monthly: '月払い',
+    yearly: '年払い',
+    perMonth: '/ 月',
+    billedYearly: (amount) => `年 ${amount} を一括でお支払い`,
+    monthlyPrice: (amount) => `月額 ${amount}`,
+    contactSales: 'お問い合わせ',
+    custom: 'ご相談',
+    recommended: 'おすすめ',
+    compare: 'プランの比較',
+    feature: '機能',
+    included: 'あり',
+    notIncluded: 'なし',
+    faq: '料金についての質問',
+  },
+  en: {
     title: 'Pricing',
     description: 'Choose the plan that fits your team. You can change it at any time.',
     billing: 'Billing period',
@@ -1667,7 +1425,24 @@ export const englishTemplateLabels: TemplateLabels = {
     notIncluded: 'Not included',
     faq: 'Questions about pricing',
   },
-  contact: {
+};
+
+export const contactLabels: TemplateLabelPair<'contact'> = {
+  ja: {
+    title: 'お問い合わせ',
+    description: '製品・料金・不具合など、お気軽にお問い合わせください。担当者からご連絡します。',
+    company: '会社名',
+    topic: 'お問い合わせの種類',
+    topics: { product: '製品について', billing: '料金・請求について', bug: '不具合の報告', other: 'その他' },
+    chooseTopic: '選んでください',
+    message: 'お問い合わせの内容',
+    agree: (privacy) => join(privacy, 'に同意します'),
+    agreeRequired: '送るには、プライバシーポリシーへの同意が必要です',
+    submit: '送信する',
+    doneTitle: 'お問い合わせを受け付けました',
+    doneDescription: (email) => `${email} に受付の控えを送りました。担当者からご連絡します。`,
+  },
+  en: {
     title: 'Contact us',
     description: 'Questions about the product, pricing or a bug? We will get back to you.',
     company: 'Company',
@@ -1681,7 +1456,18 @@ export const englishTemplateLabels: TemplateLabels = {
     doneTitle: 'We have received your message',
     doneDescription: (email) => `We sent a confirmation to ${email}. We will get back to you soon.`,
   },
-  changelog: {
+};
+
+export const changelogLabels: TemplateLabelPair<'changelog'> = {
+  ja: {
+    title: '更新履歴',
+    description: '新しい機能・改善・修正のお知らせです。',
+    filter: '種類で絞り込む',
+    all: 'すべて',
+    tags: { new: '新機能', improved: '改善', fixed: '修正', security: 'セキュリティ', breaking: '重要な変更' },
+    subscribe: 'RSS で購読する',
+  },
+  en: {
     title: 'Changelog',
     description: 'New features, improvements and fixes.',
     filter: 'Filter by type',
@@ -1689,12 +1475,68 @@ export const englishTemplateLabels: TemplateLabels = {
     tags: { new: 'New', improved: 'Improved', fixed: 'Fixed', security: 'Security', breaking: 'Breaking' },
     subscribe: 'Subscribe via RSS',
   },
-  app: {
+};
+
+export const appLabels: TemplateLabelPair<'app'> = {
+  ja: {
+    nav: 'アプリの案内',
+    menu: 'メニュー',
+    account: (name) => `${name}のアカウント`,
+  },
+  en: {
     nav: 'App navigation',
     menu: 'Menu',
     account: (name) => `${name}, account`,
   },
-  settings: {
+};
+
+export const settingsLabels: TemplateLabelPair<'settings'> = {
+  ja: {
+    title: '設定',
+    description: 'プロフィール・パスワード・ログインの守り・ログインしている端末を管理します。',
+    save: '保存する',
+    saved: '保存しました',
+    profile: { title: 'プロフィール', description: '名前とメールアドレスは、ワークスペースのメンバーに表示されます。' },
+    password: {
+      title: 'パスワード',
+      description: 'ほかのサービスと同じパスワードは使わないでください。',
+      current: '今のパスワード',
+      submit: 'パスワードを変える',
+      changed: 'パスワードを変えました',
+    },
+    twoFactor: {
+      title: '2 段階認証',
+      description: 'ログインのときに、パスワードに加えて確認コードを求めます。',
+      on: '有効',
+      off: '無効',
+      enable: '有効にする',
+      disable: '無効にする',
+      disableTitle: '2 段階認証を無効にしますか',
+      disableDescription: '無効にすると、パスワードだけでログインできるようになります。',
+      disabled: '2 段階認証を無効にしました',
+    },
+    sessions: {
+      title: 'ログインしている端末',
+      description: '心当たりのない端末があれば、ログアウトさせてください。',
+      current: 'この端末',
+      lastActive: (time) => `最後の利用 ${time}`,
+      revoke: 'ログアウトさせる',
+      revokeFor: (device) => `${device} をログアウトさせる`,
+      revokeOthers: 'ほかの端末をすべてログアウトさせる',
+      revoked: 'ログアウトさせました',
+    },
+    deleteAccount: {
+      title: 'アカウントの削除',
+      description: 'アカウントと、作ったデータをすべて削除します。取り消せません。',
+      open: 'アカウントを削除する',
+      confirmTitle: 'アカウントを削除しますか',
+      confirmDescription: 'プロフィール・設定・作ったデータがすべて消え、もとに戻せません。',
+      typeToConfirm: (text) => `確認のため「${text}」と入力してください`,
+      mismatch: (text) => `「${text}」と入力すると削除できます`,
+      confirm: '削除する',
+    },
+  },
+  en: {
     title: 'Settings',
     description: 'Manage your profile, password, sign-in security and signed-in devices.',
     save: 'Save',
@@ -1739,7 +1581,48 @@ export const englishTemplateLabels: TemplateLabels = {
       confirm: 'Delete',
     },
   },
-  members: {
+};
+
+export const membersLabels: TemplateLabelPair<'members'> = {
+  ja: {
+    title: 'メンバー',
+    description: 'ワークスペースに参加している人と、招待中の人。',
+    invite: 'メンバーを招待',
+    inviteDescription: 'メールアドレスを入れると、招待のメールを送ります。',
+    emails: 'メールアドレス',
+    emailsHelp: 'Enter かカンマで区切ると、何人でもまとめて招待できます。',
+    emailsRequired: '招待する人のメールアドレスを入れてください',
+    role: '役割',
+    message: 'メッセージ',
+    send: '招待を送る',
+    sent: (count) => `${String(count)} 人に招待を送りました`,
+    search: '名前かメールアドレスで探す',
+    name: '名前',
+    status: '状態',
+    lastActive: '最終ログイン',
+    statuses: { active: '有効', invited: '招待中', suspended: '停止中' },
+    you: 'あなた',
+    roleFor: (name) => `${name} の役割`,
+    actionsFor: (name) => `${name} の操作`,
+    remove: 'ワークスペースから外す',
+    removeTitle: (name) => `${name} を外しますか`,
+    removeManyTitle: (count) => `${String(count)} 人を外しますか`,
+    removeDescription: '外した人は、このワークスペースのデータを見られなくなります。もう一度招待すれば戻せます。',
+    removed: (count) => `${String(count)} 人を外しました`,
+    roleChanged: (name, role) => `${name} の役割を「${role}」にしました`,
+    seats: '使っている席',
+    seatsValue: (used, total) => `${String(used)} / ${String(total)} 席`,
+    invitations: '招待中',
+    invitedAt: '招待した日',
+    resend: '送り直す',
+    resendFor: (email) => `${email} に招待を送り直す`,
+    resent: (email) => `${email} に招待を送り直しました`,
+    revoke: '取り消す',
+    revokeFor: (email) => `${email} への招待を取り消す`,
+    revoked: (email) => `${email} への招待を取り消しました`,
+    noMatch: (query) => `「${query}」に当てはまるメンバーはいません`,
+  },
+  en: {
     title: 'Members',
     description: 'People in this workspace and people you have invited.',
     invite: 'Invite members',
@@ -1777,7 +1660,45 @@ export const englishTemplateLabels: TemplateLabels = {
     revoked: (email) => `Invitation to ${email} revoked`,
     noMatch: (query) => `No members match “${query}”`,
   },
-  billing: {
+};
+
+export const billingLabels: TemplateLabelPair<'billing'> = {
+  ja: {
+    title: '料金と請求',
+    description: 'プラン・使っている量・支払い方法・請求書。',
+    plan: '今のプラン',
+    statuses: { active: '有効', trialing: '試用中', past_due: '支払いの失敗', canceled: '解約済み' },
+    price: (amount, interval) => `${interval === 'month' ? '月額' : '年額'} ${amount}`,
+    renews: (date) => `${date} に自動で更新します`,
+    trialEnds: (date) => `${date} に試用期間が終わります`,
+    endsOn: (date) => `${date} に終わります`,
+    changePlan: 'プランを変える',
+    cancel: '解約する',
+    cancelTitle: '解約しますか',
+    cancelDescription: (date) => `${date} までは今のプランのまま使えます。その後は、有料の機能が使えなくなります。`,
+    cancelConfirm: '解約する',
+    keep: '解約しない',
+    canceled: '解約しました。期間の終わりまで、今のプランのまま使えます。',
+    pastDue: '支払いに失敗しました。支払い方法を確かめてください。',
+    usage: '使っている量',
+    payment: '支払い方法',
+    card: (brand, last4) => `${brand}、末尾 ${last4}`,
+    expires: (month, year) => `有効期限 ${month}/${year}`,
+    updatePayment: '支払い方法を変える',
+    addPayment: '支払い方法を登録する',
+    noPayment: '支払い方法が登録されていません。',
+    billingEmail: '請求書の送り先',
+    invoices: '請求書',
+    invoiceNumber: '番号',
+    invoiceDate: '日付',
+    amount: '金額',
+    invoiceStatus: '状態',
+    invoiceStatuses: { paid: '支払い済み', open: '未払い', void: '無効', uncollectible: '回収できない' },
+    download: 'PDF',
+    downloadFor: (number) => `${number} の PDF を保存`,
+    noInvoices: 'まだ請求書はありません',
+  },
+  en: {
     title: 'Plan and billing',
     description: 'Your plan, usage, payment method and invoices.',
     plan: 'Current plan',
@@ -1812,8 +1733,33 @@ export const englishTemplateLabels: TemplateLabels = {
     downloadFor: (number) => `Download ${number} as PDF`,
     noInvoices: 'No invoices yet',
   },
-  onboarding: { progress: 'Getting started', back: 'Back', next: 'Next', skip: 'Skip for now', finish: 'Get started' },
-  invite: {
+};
+
+export const onboardingLabels: TemplateLabelPair<'onboarding'> = {
+  ja: { progress: 'はじめの設定', back: '戻る', next: '次へ', skip: 'あとで設定する', finish: '始める' },
+  en: { progress: 'Getting started', back: 'Back', next: 'Next', skip: 'Skip for now', finish: 'Get started' },
+};
+
+export const inviteLabels: TemplateLabelPair<'invite'> = {
+  ja: {
+    title: (workspace) => `${workspace} への招待`,
+    description: (inviter, workspace) => `${inviter} さんが、あなたを ${workspace} に招待しています。`,
+    role: (role) => `役割: ${role}`,
+    accept: '招待を受ける',
+    decline: '断る',
+    signIn: 'ログインして参加する',
+    signUp: 'アカウントを作って参加する',
+    signedOutHint: '参加するには、ログインするかアカウントを作ってください。',
+    wrongAccount: (email) => `この招待は ${email} 宛てです。宛先のアカウントでログインし直してください。`,
+    switchAccount: '別のアカウントでログインする',
+    expiredTitle: '招待の期限が切れています',
+    expiredDescription: '招待した人に、もう一度送ってもらってください。',
+    invalidTitle: 'この招待は使えません',
+    invalidDescription: 'リンクが正しいか確かめてください。すでに参加しているなら、ログインしてください。',
+    declinedTitle: '招待を断りました',
+    declinedDescription: 'あとで参加したくなったら、招待した人に、もう一度送ってもらってください。',
+  },
+  en: {
     title: (workspace) => `Join ${workspace}`,
     description: (inviter, workspace) => `${inviter} has invited you to join ${workspace}.`,
     role: (role) => `Role: ${role}`,
@@ -1831,7 +1777,23 @@ export const englishTemplateLabels: TemplateLabels = {
     declinedTitle: 'Invitation declined',
     declinedDescription: 'If you change your mind, ask the person who invited you to send a new invitation.',
   },
-  chat: {
+};
+
+export const chatLabels: TemplateLabelPair<'chat'> = {
+  ja: {
+    title: 'メッセージ',
+    conversations: '会話',
+    channels: 'チャンネル',
+    directMessages: 'ダイレクトメッセージ',
+    search: '会話を探す',
+    noMatch: (query) => `「${query}」に当てはまる会話はありません`,
+    unread: (count) => `未読 ${count}件`,
+    back: '会話の一覧へ戻る',
+    none: '会話を選んでください',
+    messagesIn: (name) => `${name} のメッセージ`,
+    placeholder: (name, kind) => (kind === 'channel' ? `#${name} にメッセージを送信` : `${name}さんにメッセージを送信`),
+  },
+  en: {
     title: 'Messages',
     conversations: 'Conversations',
     channels: 'Channels',
@@ -1844,7 +1806,23 @@ export const englishTemplateLabels: TemplateLabels = {
     messagesIn: (name) => `Messages in ${name}`,
     placeholder: (name, kind) => (kind === 'channel' ? `Message #${name}` : `Message ${name}`),
   },
-  assistant: {
+};
+
+export const assistantLabels: TemplateLabelPair<'assistant'> = {
+  ja: {
+    title: 'アシスタント',
+    history: '履歴',
+    showHistory: '履歴を見る',
+    closeHistory: '会話へ戻る',
+    newThread: '新しい会話',
+    previous7Days: '過去 7 日間',
+    older: 'それより前',
+    greeting: '何をお手伝いしましょうか？',
+    conversation: 'アシスタントとの会話',
+    placeholder: 'アシスタントに質問する',
+    note: 'AI の回答は間違うことがあります。大事なことは確かめてください。',
+  },
+  en: {
     title: 'Assistant',
     history: 'History',
     showHistory: 'Show history',
@@ -1857,7 +1835,51 @@ export const englishTemplateLabels: TemplateLabels = {
     placeholder: 'Ask the assistant',
     note: 'AI answers can be wrong. Check anything important.',
   },
-  mail: {
+};
+
+export const mailLabels: TemplateLabelPair<'mail'> = {
+  ja: {
+    title: 'メール',
+    folders: 'フォルダ',
+    compose: '作成',
+    search: 'メールを探す',
+    noMatch: (query) => `「${query}」に当てはまるメールはありません`,
+    empty: 'このフォルダにメールはありません',
+    none: 'メールを選んでください',
+    back: 'メールの一覧へ戻る',
+    unread: '未読',
+    unreadCount: (count) => `未読 ${count}件`,
+    attachment: '添付あり',
+    selectAll: 'すべて選ぶ',
+    select: (subject) => `「${subject}」を選ぶ`,
+    selected: (count) => `${count}件を選択中`,
+    archive: 'アーカイブ',
+    delete: '削除',
+    markRead: '既読にする',
+    markUnread: '未読にする',
+    star: 'スター',
+    starFor: (subject) => `「${subject}」にスター`,
+    reply: '返信',
+    forward: '転送',
+    archived: (count) => `${count}件をアーカイブしました`,
+    deleted: (count) => `${count}件を削除しました`,
+    markedRead: (count) => `${count}件を既読にしました`,
+    markedUnread: (count) => `${count}件を未読にしました`,
+    to: '宛先',
+    cc: 'CC',
+    attachments: '添付ファイル',
+    download: (name) => `${name} をダウンロード`,
+    newMessage: '新しいメール',
+    subject: '件名',
+    body: '本文',
+    toHelp: 'Enter かカンマで区切ると、何人でもまとめて入れられます。',
+    toRequired: '宛先を入れてください。',
+    send: '送信',
+    sent: 'メールを送りました',
+    replyPrefix: 'Re: ',
+    forwardPrefix: 'Fwd: ',
+  },
+  en: {
     title: 'Mail',
     folders: 'Folders',
     compose: 'Compose',
@@ -1898,7 +1920,45 @@ export const englishTemplateLabels: TemplateLabels = {
     replyPrefix: 'Re: ',
     forwardPrefix: 'Fwd: ',
   },
-  orderReview: {
+};
+
+export const orderReviewLabels: TemplateLabelPair<'orderReview'> = {
+  ja: {
+    title: 'ご注文内容の確認',
+    description: 'まだ注文は確定していません。内容を確かめて「注文を確定する」を押してください。',
+    items: 'ご注文の商品',
+    product: '商品',
+    quantity: '数量',
+    quantityOf: (count, unit) => (unit ? `${String(count)} ${unit}` : String(count)),
+    unit: '点',
+    unitPrice: (price) => `単価 ${price}`,
+    lineTotal: '金額（税込）',
+    address: 'お届け先',
+    delivery: 'お届けの方法と時期',
+    payment: 'お支払いの方法と時期',
+    method: '方法',
+    timing: '時期',
+    offerPeriod: 'お申し込みの期間',
+    subscription: '定期購入の条件',
+    interval: 'お届けの間隔',
+    pricePerDelivery: '各回の代金（税込）',
+    minimumCount: 'お約束の回数',
+    minimumCountOf: (count) => `${String(count)} 回以上`,
+    noMinimum: 'なし（いつでも解約できます）',
+    howToCancel: '解約の方法',
+    cancellation: '返品・キャンセル',
+    summary: 'お支払い金額',
+    subtotal: '小計',
+    shipping: '送料',
+    free: '無料',
+    total: '合計（税込）',
+    edit: '変更',
+    editFor: (section) => `${section}を変更`,
+    submit: '注文を確定する',
+    submitNote: '「注文を確定する」を押すと、注文が確定します。',
+    consentRequired: '注文の前に、同意の欄にチェックを入れてください',
+  },
+  en: {
     title: 'Review your order',
     description: 'Your order is not placed yet. Check the details, then select “Place order”.',
     items: 'Items',
@@ -1933,7 +1993,29 @@ export const englishTemplateLabels: TemplateLabels = {
     submitNote: 'Selecting “Place order” places your order.',
     consentRequired: 'Check the box to agree before placing your order',
   },
-  cookieConsent: {
+};
+
+export const cookieConsentLabels: TemplateLabelPair<'cookieConsent'> = {
+  ja: {
+    title: 'Cookie と外部への送信',
+    description: 'サイトの改善と広告のために、閲覧の情報を外部の事業者へ送ることがあります。必要なものだけにすることもできます。',
+    policy: '送信先の一覧',
+    acceptAll: 'すべて許可する',
+    rejectAll: '必要なものだけ',
+    customize: '設定を選ぶ',
+    settingsTitle: 'Cookie と外部送信の設定',
+    settingsDescription: '種類ごとに、許可するかを選べます。あとからいつでも変えられます。',
+    save: '選んだ設定を保存',
+    alwaysOn: '常に有効',
+    categories: { necessary: '必要なもの', functional: '機能', analytics: '分析', marketing: '広告' },
+    descriptions: {
+      necessary: 'ログインの状態や、この設定を覚えておくために使います。止めるとサイトが動かないため、常に有効です。',
+      functional: '言語や表示の好みを覚えて、次に来たときに使います。',
+      analytics: 'どのページがよく見られているかを集計して、サイトの改善に使います。',
+      marketing: 'ほかのサイトでの広告を、関心に合わせて出すために使います。',
+    },
+  },
+  en: {
     title: 'Cookies and data sent to third parties',
     description: 'To improve the site and show ads, we may send information about your visit to other companies. You can allow only what is necessary.',
     policy: 'List of recipients',
@@ -1952,7 +2034,18 @@ export const englishTemplateLabels: TemplateLabels = {
       marketing: 'Shows ads on other sites based on your interests.',
     },
   },
-  externalTransmission: {
+};
+
+export const externalTransmissionLabels: TemplateLabelPair<'externalTransmission'> = {
+  ja: {
+    label: '外部へ送る情報と送信先',
+    information: '送る情報',
+    purpose: '使う目的',
+    category: '種類',
+    policyFor: (recipient) => `${recipient} のプライバシーポリシー`,
+    optOutFor: (recipient) => `${recipient} への送信を止める`,
+  },
+  en: {
     label: 'Information sent to third parties',
     information: 'Information sent',
     purpose: 'Purpose',
@@ -1960,7 +2053,36 @@ export const englishTemplateLabels: TemplateLabels = {
     policyFor: (recipient) => `${recipient} privacy policy`,
     optOutFor: (recipient) => `Stop sending to ${recipient}`,
   },
-  cancelSubscription: {
+};
+
+export const cancelSubscriptionLabels: TemplateLabelPair<'cancelSubscription'> = {
+  ja: {
+    title: '解約の手続き',
+    description: (plan) => `${plan} を解約します。最後に確かめてから解約するので、途中でやめられます。`,
+    steps: '解約の手順',
+    stepReason: '理由',
+    stepOffer: 'ご提案',
+    stepConfirm: '確認',
+    reasonTitle: '解約の理由を教えてください',
+    reasonDescription: '答えなくても解約できます。サービスの改善に使います。',
+    comment: 'ほかに伝えたいこと',
+    next: '次へ',
+    back: '戻る',
+    offerTitle: '解約の前に、こんな方法もあります',
+    offerDescription: '合わなければ、そのまま解約に進めます。',
+    continueCancel: '解約に進む',
+    confirmTitle: '解約しますか',
+    until: (date) => `${date} までは今のプランのまま使えます。`,
+    afterEnd: 'その後は、有料の機能が使えなくなります。',
+    export: 'データを書き出す',
+    confirm: '解約する',
+    keep: '解約しない',
+    doneTitle: '解約しました',
+    doneDescription: (date) => `${date} までは今のプランのまま使えます。確認のメールを送りました。`,
+    keptTitle: 'ご提案を受け付けました',
+    keptDescription: '解約はしていません。今のプランのまま使えます。',
+  },
+  en: {
     title: 'Cancel your subscription',
     description: (plan) => `You are canceling ${plan}. You can stop at any point; nothing is canceled until you confirm at the end.`,
     steps: 'Cancellation steps',
@@ -1987,3 +2109,52 @@ export const englishTemplateLabels: TemplateLabels = {
     keptDescription: 'Your subscription has not been canceled. You can keep using your current plan.',
   },
 };
+
+/** 全部のまとまりを 1 つの言語でまとめる（useSite と、文言を丸ごと差し替える利用者のため）。 */
+function templateLabelsIn(lang: 'ja' | 'en'): TemplateLabels {
+  return {
+    locale: lang === 'ja' ? 'ja-JP' : 'en-US',
+    common: commonLabels[lang],
+    signIn: signInLabels[lang],
+    signUp: signUpLabels[lang],
+    forgotPassword: forgotPasswordLabels[lang],
+    resetPassword: resetPasswordLabels[lang],
+    twoFactor: twoFactorLabels[lang],
+    verifyEmail: verifyEmailLabels[lang],
+    signOut: signOutLabels[lang],
+    emailFirst: emailFirstLabels[lang],
+    magicLink: magicLinkLabels[lang],
+    notReceived: notReceivedLabels[lang],
+    quickSignUp: quickSignUpLabels[lang],
+    wizard: wizardLabels[lang],
+    phoneSignIn: phoneSignInLabels[lang],
+    passkey: passkeyLabels[lang],
+    accountChooser: accountChooserLabels[lang],
+    reauth: reauthLabels[lang],
+    guestAccount: guestAccountLabels[lang],
+    error: errorLabels[lang],
+    maintenance: maintenanceLabels[lang],
+    site: siteLabels[lang],
+    document: documentLabels[lang],
+    faq: faqLabels[lang],
+    pricing: pricingLabels[lang],
+    contact: contactLabels[lang],
+    changelog: changelogLabels[lang],
+    app: appLabels[lang],
+    settings: settingsLabels[lang],
+    members: membersLabels[lang],
+    billing: billingLabels[lang],
+    onboarding: onboardingLabels[lang],
+    invite: inviteLabels[lang],
+    chat: chatLabels[lang],
+    assistant: assistantLabels[lang],
+    mail: mailLabels[lang],
+    orderReview: orderReviewLabels[lang],
+    cookieConsent: cookieConsentLabels[lang],
+    externalTransmission: externalTransmissionLabels[lang],
+    cancelSubscription: cancelSubscriptionLabels[lang],
+  };
+}
+
+export const japaneseTemplateLabels: TemplateLabels = /* @__PURE__ */ templateLabelsIn('ja');
+export const englishTemplateLabels: TemplateLabels = /* @__PURE__ */ templateLabelsIn('en');

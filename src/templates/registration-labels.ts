@@ -1,5 +1,5 @@
 import { useLabels } from '../labels';
-import { useSite } from './site';
+import { useSiteConfig } from './site';
 
 /*
  * 業種ごとの登録（P-31）と、その欄の部品（I-33〜I-37）の文言と選択肢。
@@ -977,7 +977,7 @@ export const englishRegistrationLabels: RegistrationLabels = {
 
 /** 登録の文言。SiteProvider の registrationLabels か、無ければ GassanProvider の言語（ja で始まれば日本語、ほかは英語）。 */
 export function useRegistrationLabels(): RegistrationLabels {
-  const { registrationLabels } = useSite();
+  const { registrationLabels } = useSiteConfig();
   const { locale } = useLabels();
   return registrationLabels ?? (locale.toLowerCase().startsWith('ja') ? japaneseRegistrationLabels : englishRegistrationLabels);
 }

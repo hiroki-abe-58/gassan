@@ -16,6 +16,7 @@ import { ModalNativeSelect } from '../native-select';
 import { usePhrase } from '../phrase';
 import type { SelectOption } from '../select';
 import { FormError, formatDate, looksLikeEmail, runAction, type SubmitResult } from './form';
+import { commonLabels, phoneSignInLabels } from './labels';
 import { RegistrationWizardPage, type RegistrationStep } from './registration';
 import {
   AnswerField,
@@ -67,7 +68,7 @@ import {
   type TenureBand,
 } from './registration-labels';
 import { REGISTRATION_PRESETS, type RegistrationFieldKey, type RegistrationPreset, type RegistrationPresetStep } from './registration-presets';
-import { useSite } from './site';
+import { useTemplateLabels } from './site';
 
 /* -------------------------------------------------------------------------- */
 /* 値                                                                          */
@@ -436,6 +437,8 @@ export interface RegistrationPresetPageProps extends DataAttributes {
   className?: string;
 }
 
+const REGISTRATION_PRESET_LABELS = { common: commonLabels, phoneSignIn: phoneSignInLabels } as const;
+
 /**
  * 業種ごとの本登録の手順。P-31。
  *
@@ -468,7 +471,7 @@ export function RegistrationPresetPage({
   ...rest
 }: RegistrationPresetPageProps): ReactNode {
   const r = useRegistrationLabels();
-  const { labels: t } = useSite();
+  const t = useTemplateLabels(REGISTRATION_PRESET_LABELS);
   const phrase = usePhrase();
   const preset = typeof presetProp === 'string' ? REGISTRATION_PRESETS[presetProp] : presetProp;
   const [initial] = useState<RegistrationValues>(() => ({ ...emptyRegistrationValues(), ...defaultValues }));

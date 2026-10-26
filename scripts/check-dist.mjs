@@ -12,6 +12,8 @@
  * 超えたら即悪ではない。超えたときに理由を説明できる状態を保つのが目的。
  */
 import { readFileSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
 /*
@@ -474,6 +476,41 @@ if (existsSync('dist/templates.css')) {
   const missing = required.filter((token) => !css.includes(token));
   if (missing.length > 0) fail(`templates.css is missing: ${missing.join(', ')}`);
   else console.log('  ok    templates.css keeps the required at-rules');
+}
+
+/*
+ * テンプレートの文言は、まとまりごとの日本語と英語の組に分けてあり、使うテンプレートの束にだけ載る。
+ * テンプレートの中で useSite()（全部の文言を既定から解決する）を呼ぶと、どの束にも全部の文言が戻ってくる。
+ * 利用者の多くが使う Vite（rollup）で 1 つのテンプレートだけを束ね、ほかのテンプレートの文言が載らないことを確かめる。
+ */
+if (existsSync('dist/index.js')) {
+  const { build } = await import('vite');
+  const dist = resolve('dist/index.js');
+  const { englishTemplateLabels: en } = await import(pathToFileURL(dist).href);
+  const strings = (value) => (typeof value === 'string' ? [value] : value && typeof value === 'object' ? Object.values(value).flatMap(strings) : []);
+  // ほかのまとまりにも出てくる言い回しで誤って落ちないよう、そのまとまりにしか無い 12 文字以上の文だけで調べる
+  const own = (group) =>
+    strings(en[group]).filter((text) => text.length >= 12 && Object.keys(en).every((other) => other === group || !strings(en[other]).some((s) => s.includes(text))));
+  const bundle = async (name) => {
+    const result = await build({
+      configFile: false,
+      logLevel: 'silent',
+      plugins: [{ name: 'entry', resolveId: (id) => (id === 'entry' ? id : null), load: (id) => (id === 'entry' ? `export { ${name} } from ${JSON.stringify(dist)};` : null) }],
+      // アプリ向けのビルドは入口の export を残さない（部品ごと落ちる）ので、ライブラリの使われ方に合わせて残す
+      build: { write: false, minify: false, rollupOptions: { input: 'entry', preserveEntrySignatures: 'strict', external: [/^react(-dom)?(\/|$)/] } },
+    });
+    return (Array.isArray(result) ? result[0] : result).output.map((chunk) => chunk.code ?? '').join('\n');
+  };
+  for (const [name, self, others] of [
+    ['OrderReviewPage', 'orderReview', ['mail', 'members', 'error', 'pricing']],
+    ['MailboxPage', 'mail', ['orderReview', 'cookieConsent', 'signIn', 'error']],
+  ]) {
+    const code = await bundle(name);
+    const leaked = others.filter((group) => own(group).some((text) => code.includes(text)));
+    if (!own(self).some((text) => code.includes(text))) fail(`${name} だけの束に、自分の文言（${self}）が見つからない（この検査が働いていない）`);
+    else if (leaked.length > 0) fail(`${name} だけの束に、ほかのテンプレートの文言（${leaked.join('・')}）が載っている`);
+    else console.log(`  ok    ${name} だけの束に、ほかのテンプレートの文言（${others.join('・')}）が載らない`);
+  }
 }
 
 /*

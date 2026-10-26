@@ -11,7 +11,8 @@ import { PageHeader } from '../page-header';
 import { usePhrase } from '../phrase';
 import { useFocusOnChange } from './auth-parts';
 import { ConsentField, ErrorSummary, FormError, formatDate, runAction, useTemplateForm, type SubmitResult } from './form';
-import { useSite } from './site';
+import { cancelSubscriptionLabels, commonLabels, orderReviewLabels } from './labels';
+import { useTemplateLabels } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -88,6 +89,8 @@ export interface OrderReviewPageProps extends DataAttributes {
   className?: string;
 }
 
+const ORDER_REVIEW_LABELS = { common: commonLabels, orderReview: orderReviewLabels } as const;
+
 /**
  * 注文の最終確認（最終確認画面）。P-32。
  *
@@ -116,7 +119,7 @@ export function OrderReviewPage({
   className,
   ...rest
 }: OrderReviewPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(ORDER_REVIEW_LABELS);
   const phrase = usePhrase();
   const { common, orderReview: o } = labels;
   const ids = useId();
@@ -318,6 +321,8 @@ export interface CancelSubscriptionPageProps extends DataAttributes {
 
 type CancelStep = 'reason' | 'offer' | 'confirm';
 
+const CANCEL_SUBSCRIPTION_LABELS = { common: commonLabels, cancelSubscription: cancelSubscriptionLabels } as const;
+
 /**
  * 解約の手続き。P-35。
  *
@@ -339,7 +344,7 @@ export function CancelSubscriptionPage({
   className,
   ...rest
 }: CancelSubscriptionPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(CANCEL_SUBSCRIPTION_LABELS);
   const phrase = usePhrase();
   const { common, cancelSubscription: c } = labels;
   const ids = useId();

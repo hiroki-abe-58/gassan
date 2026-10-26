@@ -11,8 +11,9 @@ import { ScrollPane } from '../internal/scrollbars';
 import { useLabels } from '../labels';
 import { usePhrase } from '../phrase';
 import { normalizeForMatch } from '../select';
+import { assistantLabels, chatLabels } from './labels';
 import { useListDetail } from './list-detail';
-import { useSite, useTimeZone } from './site';
+import { useTemplateLabels, useTimeZone } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -80,6 +81,8 @@ function ConversationMark({ conversation }: { conversation: ChatConversation }):
   );
 }
 
+const CHAT_LABELS = { chat: chatLabels } as const;
+
 /**
  * チャットのページ。P-18。AppShell の中に置く中身。
  *
@@ -105,7 +108,7 @@ export function ChatPage({
   className,
   ...rest
 }: ChatPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(CHAT_LABELS);
   const gassan = useLabels();
   const timeZone = useTimeZone();
   const phrase = usePhrase();
@@ -308,6 +311,8 @@ export interface AssistantPageProps extends DataAttributes {
   className?: string;
 }
 
+const ASSISTANT_LABELS = { assistant: assistantLabels } as const;
+
 /**
  * AI アシスタントのページ。P-19。AppShell の中に置く中身。
  *
@@ -336,7 +341,7 @@ export function AssistantPage({
   className,
   ...rest
 }: AssistantPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(ASSISTANT_LABELS);
   const gassan = useLabels();
   const timeZone = useTimeZone();
   const phrase = usePhrase();

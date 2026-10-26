@@ -9,7 +9,8 @@ import { ModalDescription, ModalHeader, ModalTitle } from '../header';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { usePhrase } from '../phrase';
 import { ModalRoot } from '../root';
-import { useSite } from './site';
+import { cookieConsentLabels, externalTransmissionLabels } from './labels';
+import { useSiteConfig, useTemplateLabels } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -41,6 +42,8 @@ export interface CookieConsentProps extends DataAttributes {
   className?: string;
 }
 
+const COOKIE_CONSENT_LABELS = { cookieConsent: cookieConsentLabels } as const;
+
 /**
  * Cookie と外部送信の同意。P-33。
  *
@@ -60,7 +63,8 @@ export function CookieConsent({
   className,
   ...rest
 }: CookieConsentProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(COOKIE_CONSENT_LABELS);
   const phrase = usePhrase();
   const k = labels.cookieConsent;
   const ids = useId();
@@ -208,6 +212,8 @@ export interface ExternalTransmissionListProps extends DataAttributes {
   className?: string;
 }
 
+const EXTERNAL_TRANSMISSION_LABELS = { cookieConsent: cookieConsentLabels, externalTransmission: externalTransmissionLabels } as const;
+
 /**
  * 外部送信の公表（送信先の一覧）。P-34。
  *
@@ -216,7 +222,7 @@ export interface ExternalTransmissionListProps extends DataAttributes {
  * 送信先のプライバシーポリシーと送信を止めるページへのリンクは、送信先の名前を含む名前にする。
  */
 export function ExternalTransmissionList({ items, label, className, ...rest }: ExternalTransmissionListProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(EXTERNAL_TRANSMISSION_LABELS);
   const phrase = usePhrase();
   const x = labels.externalTransmission;
   const names = labels.cookieConsent.categories;

@@ -6,9 +6,9 @@ import { Icon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { usePhrase } from '../phrase';
 import { useCooldown } from './form';
-import { ERROR_STATUSES, type ErrorCopyKey, type ErrorStatus } from './labels';
+import { commonLabels, ERROR_STATUSES, errorLabels, maintenanceLabels, type ErrorCopyKey, type ErrorStatus } from './labels';
 import { StatusLayout } from './layouts';
-import { SiteButtonLink, useSite, useTimeZone } from './site';
+import { SiteButtonLink, useSiteConfig, useTemplateLabels, useTimeZone } from './site';
 
 const isRegistered = (status: number): status is (typeof ERROR_STATUSES)[number] => (ERROR_STATUSES as readonly number[]).includes(status);
 
@@ -88,6 +88,8 @@ export interface ErrorPageProps extends DataAttributes {
   className?: string;
 }
 
+const ERROR_LABELS = { common: commonLabels, error: errorLabels } as const;
+
 /**
  * 4xx / 5xx とオフラインのページ。P-05。
  *
@@ -109,7 +111,8 @@ export function ErrorPage({
   className,
   ...rest
 }: ErrorPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(ERROR_LABELS);
   const phrase = usePhrase();
   const { common, error } = labels;
   const key = copyKey(status);
@@ -273,6 +276,8 @@ function scheduleParts(
   return { parts: [day.format(reference), times, ...tail], keep: true };
 }
 
+const MAINTENANCE_LABELS = { common: commonLabels, maintenance: maintenanceLabels } as const;
+
 /**
  * メンテナンス中のページ。P-06。
  *
@@ -291,7 +296,8 @@ export function MaintenancePage({
   className,
   ...rest
 }: MaintenancePageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(MAINTENANCE_LABELS);
   const siteZone = useTimeZone();
   const timeZone = zone ?? siteZone;
   const phrase = usePhrase();

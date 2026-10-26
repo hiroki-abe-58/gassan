@@ -9,8 +9,9 @@ import { ModalPasswordStrength } from '../password-strength';
 import { usePhrase } from '../phrase';
 import { EmailForm, NotReceived, ProviderButtons, Resend, SwitchButton, switchLine, useFocusOnChange, type AuthProvider } from './auth-parts';
 import { ErrorSummary, FormError, runAction, useTemplateForm, type SubmitResult } from './form';
+import { commonLabels, guestAccountLabels, quickSignUpLabels, signUpLabels, verifyEmailLabels, wizardLabels } from './labels';
 import { AuthLayout } from './layouts';
-import { useSite } from './site';
+import { useSiteConfig, useTemplateLabels } from './site';
 
 /* -------------------------------------------------------------------------- */
 /* QuickSignUpPage                                                             */
@@ -35,6 +36,8 @@ export interface QuickSignUpPageProps extends DataAttributes {
   className?: string;
 }
 
+const QUICK_SIGN_UP_LABELS = { common: commonLabels, signUp: signUpLabels, verifyEmail: verifyEmailLabels, quickSignUp: quickSignUpLabels } as const;
+
 /**
  * メールアドレスだけの仮登録。P-24。
  *
@@ -57,7 +60,8 @@ export function QuickSignUpPage({
   className,
   ...rest
 }: QuickSignUpPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(QUICK_SIGN_UP_LABELS);
   const phrase = usePhrase();
   const { common, signUp, quickSignUp, verifyEmail } = labels;
   const [sentTo, setSentTo] = useState<string | null>(null);
@@ -144,6 +148,8 @@ export interface RegistrationWizardPageProps extends DataAttributes {
 const REVIEW = '#review';
 const DONE = '#done';
 
+const REGISTRATION_WIZARD_LABELS = { common: commonLabels, wizard: wizardLabels } as const;
+
 /**
  * 本登録の手順（仮登録のメールのリンクから入る）。P-25。
  *
@@ -165,7 +171,7 @@ export function RegistrationWizardPage({
   className,
   ...rest
 }: RegistrationWizardPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(REGISTRATION_WIZARD_LABELS);
   const phrase = usePhrase();
   const { common, wizard } = labels;
   // 確認の画面の節の見出しの id。手順の id は利用側の文字列なので、そのまま DOM の id にしない（重なり・空白）
@@ -334,6 +340,8 @@ export interface GuestAccountCardProps extends DataAttributes {
   className?: string;
 }
 
+const GUEST_ACCOUNT_LABELS = { common: commonLabels, guestAccount: guestAccountLabels } as const;
+
 /**
  * 購入の後のアカウント作成。P-30。
  *
@@ -342,7 +350,7 @@ export interface GuestAccountCardProps extends DataAttributes {
  * 作れたら、カードの中身を完了の知らせに替えて読み上げる（role="status"）。ページの中に置く節（h2）で、ページの見出しは持たない。
  */
 export function GuestAccountCard({ email, onCreate, onDismiss, passwordMinLength = 8, className, ...rest }: GuestAccountCardProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(GUEST_ACCOUNT_LABELS);
   const phrase = usePhrase();
   const { common, guestAccount } = labels;
   const titleId = `${useId()}-title`;

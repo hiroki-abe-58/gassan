@@ -3,7 +3,8 @@ import { useId, useState, type ReactNode } from 'react';
 import { Icon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { usePhrase } from '../phrase';
-import { Brand, PageFooter, SiteButtonLink, SiteLink, useSite } from './site';
+import { commonLabels, siteLabels } from './labels';
+import { Brand, PageFooter, SiteButtonLink, SiteLink, useSiteConfig, useTemplateLabels } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -16,6 +17,8 @@ export interface SiteLayoutProps extends DataAttributes {
   className?: string;
 }
 
+const SITE_LAYOUT_LABELS = { common: commonLabels, site: siteLabels } as const;
+
 /**
  * 公開ページ（料金・よくある質問・お問い合わせ・規約など）の外枠。P-01。
  *
@@ -24,7 +27,8 @@ export interface SiteLayoutProps extends DataAttributes {
  * （サイトの案内は操作のメニューではないので、role="menu" にせず、開け閉めのボタンとリンクの一覧にする）。
  */
 export function SiteLayout({ children, current, actions, className, ...rest }: SiteLayoutProps): ReactNode {
-  const { labels, links, nav, footer } = useSite();
+  const { links, nav, footer } = useSiteConfig();
+  const labels = useTemplateLabels(SITE_LAYOUT_LABELS);
   const phrase = usePhrase();
   const base = useId();
   const mainId = `${base}-main`;

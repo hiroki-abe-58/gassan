@@ -22,8 +22,9 @@ import {
   type SignUpValues,
 } from './auth-parts';
 import { ErrorSummary, FormError, useTemplateForm, type SubmitResult } from './form';
+import { commonLabels, emailFirstLabels, magicLinkLabels, phoneSignInLabels, signInLabels, signUpLabels, twoFactorLabels } from './labels';
 import { AuthLayout } from './layouts';
-import { SiteLink, useSite } from './site';
+import { SiteLink, useSiteConfig, useTemplateLabels } from './site';
 
 /** テンプレートの props の共通部分。見出しと説明は既定の文言を上書きできる。 */
 interface PageText extends DataAttributes {
@@ -47,9 +48,11 @@ interface LinkSentProps {
   onChangeEmail: () => void;
 }
 
+const MAGIC_LINK_LABELS = { magicLink: magicLinkLabels } as const;
+
 /** ログインのリンクとコードを送った後の中身。コードの欄・送り直し・届かないときの案内・アドレスの変更。 */
 function LinkSent({ email, onCode, onResend, codeLength, resendAfter, sender, onChangeEmail }: LinkSentProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(MAGIC_LINK_LABELS);
   const { magicLink } = labels;
   return (
     <>
@@ -104,7 +107,7 @@ export function MagicLinkPage({
   className,
   ...rest
 }: MagicLinkPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(MAGIC_LINK_LABELS);
   const phrase = usePhrase();
   const { magicLink } = labels;
   const [sentTo, setSentTo] = useState<string | null>(null);
@@ -191,6 +194,14 @@ export interface EmailFirstPageProps extends PageText {
   defaultEmail?: string;
 }
 
+const EMAIL_FIRST_LABELS = {
+  common: commonLabels,
+  signIn: signInLabels,
+  signUp: signUpLabels,
+  emailFirst: emailFirstLabels,
+  magicLink: magicLinkLabels,
+} as const;
+
 /**
  * メールアドレスを先に聞くログイン（識別子が先）。P-22。
  *
@@ -221,7 +232,8 @@ export function EmailFirstPage({
   className,
   ...rest
 }: EmailFirstPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(EMAIL_FIRST_LABELS);
   const phrase = usePhrase();
   const { common, signIn, signUp, emailFirst, magicLink } = labels;
   const [step, setStep] = useState<EmailFirstStep>({ kind: 'email' });
@@ -330,6 +342,8 @@ export interface PhoneSignInPageProps extends PageText {
   defaultPhone?: string;
 }
 
+const PHONE_SIGN_IN_LABELS = { common: commonLabels, twoFactor: twoFactorLabels, phoneSignIn: phoneSignInLabels } as const;
+
 /**
  * 電話番号と SMS の確認コードのログイン。P-26。
  *
@@ -350,7 +364,7 @@ export function PhoneSignInPage({
   className,
   ...rest
 }: PhoneSignInPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(PHONE_SIGN_IN_LABELS);
   const phrase = usePhrase();
   const { common, phoneSignIn, twoFactor } = labels;
   const [sentTo, setSentTo] = useState<string | null>(null);

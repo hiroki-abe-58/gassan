@@ -25,7 +25,8 @@ import {
   type FormErrors,
   type SubmitResult,
 } from './form';
-import { useSite, useTimeZone } from './site';
+import { commonLabels, settingsLabels } from './labels';
+import { useTemplateLabels, useTimeZone } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -126,8 +127,10 @@ export interface SettingsDeleteAccount {
   onDelete: () => SubmitResult | Promise<SubmitResult>;
 }
 
+const SECTION_LABELS = { common: commonLabels, settings: settingsLabels } as const;
+
 function ProfileSection({ name, email, onSubmit }: SettingsProfile): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SECTION_LABELS);
   const { common, settings } = labels;
   const [saved, setSaved] = useState(false);
   const form = useTemplateForm<{ name: string; email: string }>({
@@ -172,7 +175,7 @@ function ProfileSection({ name, email, onSubmit }: SettingsProfile): ReactNode {
 }
 
 function PasswordSection({ onSubmit, minLength = 8 }: SettingsPassword): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SECTION_LABELS);
   const { common, settings } = labels;
   const [changed, setChanged] = useState(false);
   const form = useTemplateForm<{ current: string; next: string; confirm: string }>({
@@ -240,7 +243,7 @@ function PasswordSection({ onSubmit, minLength = 8 }: SettingsPassword): ReactNo
 }
 
 function TwoFactorSection({ enabled, onEnable, onDisable }: SettingsTwoFactor): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SECTION_LABELS);
   const gassan = useLabels();
   const { common, settings } = labels;
   const t = settings.twoFactor;
@@ -302,7 +305,7 @@ function TwoFactorSection({ enabled, onEnable, onDisable }: SettingsTwoFactor): 
 }
 
 function SessionsSection({ items, onRevoke, onRevokeOthers }: SettingsSessions): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SECTION_LABELS);
   const timeZone = useTimeZone();
   const phrase = usePhrase();
   const { common, settings } = labels;
@@ -347,7 +350,7 @@ function SessionsSection({ items, onRevoke, onRevokeOthers }: SettingsSessions):
 }
 
 function DeleteAccountSection({ confirmText, onDelete }: SettingsDeleteAccount): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SECTION_LABELS);
   const gassan = useLabels();
   const { common, settings } = labels;
   const t = settings.deleteAccount;
@@ -423,6 +426,8 @@ export interface SettingsPageProps extends DataAttributes {
   className?: string;
 }
 
+const SETTINGS_LABELS = { settings: settingsLabels } as const;
+
 /**
  * アカウントの設定。P-13。AppShell の中に置く中身（ページの外枠は持たない）。
  *
@@ -430,7 +435,7 @@ export interface SettingsPageProps extends DataAttributes {
  * 節ごとに送信の流れ（P-03）を持ち、結果は節の下端で読み上げる。アカウントの削除は、決めた文字を打つまで押せない（ゲート）。
  */
 export function SettingsPage({ title, description, profile, password, twoFactor, sessions, deleteAccount, children, className, ...rest }: SettingsPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SETTINGS_LABELS);
   return (
     <div {...domPassthrough(rest, 'SettingsPage')} className={cx('g-settings', className)}>
       <PageHeader title={title ?? labels.settings.title} description={description ?? labels.settings.description} />

@@ -19,7 +19,8 @@ import {
   type FormErrors,
   type SubmitResult,
 } from './form';
-import { SiteLink, useSite } from './site';
+import { commonLabels, notReceivedLabels, passkeyLabels, signInLabels, signUpLabels } from './labels';
+import { SiteLink, useSiteConfig, useTemplateLabels } from './site';
 
 /*
  * ログインと登録のページ（P-02）と、その形を変えたもの（窓・メールを先に聞く・パスワードなし。P-21〜P-30）が
@@ -40,6 +41,8 @@ export interface AuthProvider {
 /** パスキーでログインする（WebAuthn の呼び出しは利用側）。失敗なら { error } を返す。 */
 export type PasskeyHandler = () => SubmitResult | Promise<SubmitResult>;
 
+const PROVIDER_BUTTONS_LABELS = { common: commonLabels, passkey: passkeyLabels } as const;
+
 /**
  * 外部の ID とパスキーのボタンと、フォームとの「または」の区切り。どちらも無ければ何も描かない。
  * パスキーが失敗したら理由を割り込ませて読み、済んだら onPasskeyDone を呼ぶ（窓を閉じるなど）。
@@ -53,7 +56,7 @@ export function ProviderButtons({
   onPasskey?: PasskeyHandler;
   onPasskeyDone?: () => void;
 }): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(PROVIDER_BUTTONS_LABELS);
   const [error, setError] = useState<ReactNode>(null);
   if ((!providers || providers.length === 0) && !onPasskey) return null;
   return (
@@ -115,13 +118,15 @@ export function useFocusOnChange(key: string | number | boolean) {
   return headingRef;
 }
 
+const COMMON_LABELS = { common: commonLabels } as const;
+
 /**
  * 送った後の画面の、送り直すボタンと待ち時間。画面に来た時点で 1 通送ってあるので、最初から待たせる。
  * 待つ間のボタンは aria-disabled（フォーカスは止まり、待ち時間を説明として読む）。待ち時間は 1 秒ごとに
  * 変わるので読み上げの領域に入れず、送り直した結果だけを role="status" で伝える。
  */
 export function Resend({ onResend, resendAfter }: { onResend: () => SubmitResult | Promise<SubmitResult>; resendAfter: number }): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(COMMON_LABELS);
   const phrase = usePhrase();
   const waitId = `${useId()}-wait`;
   const { remaining, start } = useCooldown(resendAfter, true);
@@ -160,12 +165,14 @@ export function Resend({ onResend, resendAfter }: { onResend: () => SubmitResult
   );
 }
 
+const NOT_RECEIVED_LABELS = { notReceived: notReceivedLabels } as const;
+
 /**
  * 送ったメールが届かないときの案内（迷惑メールのフォルダ・届くまでの時間・打ち間違い・携帯会社のメールの受信設定）。
  * 開け閉めできる details にして、困った人だけが開く。sender（送り主）を渡すと、携帯会社のメールの受信設定にも触れる。
  */
 export function NotReceived({ sender }: { sender?: string }): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(NOT_RECEIVED_LABELS);
   const phrase = usePhrase();
   const t = labels.notReceived;
   const tips = [t.spam, t.wait, t.typo, ...(sender ? [t.carrier(sender)] : [])];
@@ -205,6 +212,8 @@ export interface SignInFormProps {
   onEmailChange?: (email: string) => void;
 }
 
+const SIGN_IN_LABELS = { common: commonLabels, signIn: signInLabels } as const;
+
 /**
  * ログインのフォーム。P-02。
  *
@@ -212,7 +221,7 @@ export interface SignInFormProps {
  * パスワード（current-password）。メールアドレスは打ち間違いの候補を出す（I-30）。失敗の理由はどちらが違うかを明かさない。
  */
 export function SignInForm({ onSubmit, onSuccess, providers, onPasskey, remember, defaultEmail, forgot, onEmailChange }: SignInFormProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SIGN_IN_LABELS);
   const { common, signIn } = labels;
   const form = useTemplateForm<SignInValues>({
     initial: { email: defaultEmail, password: '', remember: false },
@@ -298,6 +307,8 @@ export interface SignUpFormProps {
   onEmailChange?: (email: string) => void;
 }
 
+const SIGN_UP_LABELS = { common: commonLabels, signUp: signUpLabels } as const;
+
 /**
  * 登録のフォーム。P-02。
  *
@@ -315,7 +326,7 @@ export function SignUpForm({
   sender,
   onEmailChange,
 }: SignUpFormProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SIGN_UP_LABELS);
   const { common, signUp } = labels;
   const form = useTemplateForm<SignUpValues>({
     initial: { name: '', email: defaultEmail, password: '', agree: false },
@@ -411,7 +422,7 @@ type EmailFormValues = { email: string; agree: boolean };
  * メールアドレスを 1 つ聞いて送るフォーム（パスワードの再設定・ログインのリンク・仮登録・メールを先に聞くログイン）。P-04。
  */
 export function EmailForm({ onSubmit, onSent, submit, defaultEmail = '', autoComplete = 'email', sender, consent = false }: EmailFormProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(SIGN_UP_LABELS);
   const { common, signUp } = labels;
   const form = useTemplateForm<EmailFormValues>({
     initial: { email: defaultEmail, agree: false },
@@ -473,7 +484,7 @@ export interface PasswordFormProps {
  * 違っていたらパスワードを消して欄へ戻す。
  */
 export function PasswordForm({ email, onSubmit, onSuccess, submit, failed, forgot }: PasswordFormProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(COMMON_LABELS);
   const { common } = labels;
   const form = useTemplateForm<{ password: string }>({
     initial: { password: '' },
@@ -526,7 +537,7 @@ export interface CodeFormProps {
  * 桁がそろうと送る。違えば消して欄へ戻す。P-23 / P-26。
  */
 export function CodeForm({ label, length = 6, onSubmit, onSuccess, submit, failed }: CodeFormProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(COMMON_LABELS);
   const { common } = labels;
   const form = useTemplateForm<{ code: string }>({
     initial: { code: '' },
@@ -581,7 +592,8 @@ export function SwitchButton({ lead, label, onClick }: { lead?: string; label: s
  * チェックボックスの phrase は部品の要素の中までは入らないので、リンクの間の文（「と」「に同意します」）はここで文節に分ける。
  */
 function AgreeText(): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(SIGN_UP_LABELS);
   const phrase = usePhrase();
   const { common, signUp } = labels;
   const docLink = (href: string | undefined, label: string): ReactNode => (href ? <SiteLink href={href}>{phrase(label)}</SiteLink> : phrase(label));
