@@ -45,7 +45,8 @@ export interface ModalInputProps extends InputHTMLAttributes<HTMLInputElement> {
  * 浮くラベルの Field の中では、プレースホルダが無ければ空白 1 文字を持つ。値が空かどうかを
  * CSS が :placeholder-shown で見るためで、空白は見えない（I-24）。
  */
-export const ModalInput = forwardRef<HTMLInputElement, ModalInputProps>(function ModalInput(
+// forwardRef の前の PURE の注釈は、使わないアプリの束から部品ごと外せるようにするため（src/japanese.ts の先頭の注を参照）
+export const ModalInput = /* @__PURE__ */ forwardRef<HTMLInputElement, ModalInputProps>(function ModalInput(
   { start, end, normalize, className, ...rest },
   ref,
 ) {
@@ -79,7 +80,7 @@ export type ModalPasswordInputProps = Omit<ModalInputProps, 'type' | 'end'>;
  * 表示を切り替えられるパスワード。I-04。
  * トグルは aria-pressed で状態を持つので、文言は「パスワードを表示」の 1 つで足りる。
  */
-export const ModalPasswordInput = forwardRef<HTMLInputElement, ModalPasswordInputProps>(
+export const ModalPasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, ModalPasswordInputProps>(
   function ModalPasswordInput(props, ref) {
     const labels = useLabels();
     const [visible, setVisible] = useState(false);
@@ -118,7 +119,7 @@ export type ModalSearchInputProps = Omit<ModalInputProps, 'type' | 'start' | 'en
  * 消すボタンは値があるときだけ見せる（:placeholder-shown で判定するので、placeholder を必ず持たせる）。
  * 消したらフォーカスを入力欄へ戻す。ボタンが消えるとフォーカスの行き先が無くなるため。
  */
-export const ModalSearchInput = forwardRef<HTMLInputElement, ModalSearchInputProps>(function ModalSearchInput(
+export const ModalSearchInput = /* @__PURE__ */ forwardRef<HTMLInputElement, ModalSearchInputProps>(function ModalSearchInput(
   { className, placeholder, ...inputProps },
   ref,
 ) {
@@ -167,7 +168,7 @@ export type ModalTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
  * 数え方はブラウザの maxLength と同じ UTF-16 の単位。表示と制限をずらさない。
  * 高さは中身に合わせて伸びる（field-sizing。対応していないブラウザでは手で伸ばす）。
  */
-export const ModalTextarea = forwardRef<HTMLTextAreaElement, ModalTextareaProps>(function ModalTextarea(
+export const ModalTextarea = /* @__PURE__ */ forwardRef<HTMLTextAreaElement, ModalTextareaProps>(function ModalTextarea(
   { className, maxLength, onChange, 'aria-describedby': describedBy, ...rest },
   ref,
 ) {

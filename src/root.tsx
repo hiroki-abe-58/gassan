@@ -158,7 +158,8 @@ function cx(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(' ');
 }
 
-export const ModalRoot = forwardRef<HTMLDialogElement, ModalRootProps>(function ModalRoot(
+// forwardRef の前の PURE の注釈は、使わないアプリの束から部品ごと外せるようにするため（src/japanese.ts の先頭の注を参照）
+export const ModalRoot = /* @__PURE__ */ forwardRef<HTMLDialogElement, ModalRootProps>(function ModalRoot(
   props,
   forwardedRef,
 ) {

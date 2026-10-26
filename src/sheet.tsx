@@ -26,7 +26,8 @@ export interface ModalHandleProps extends DataAttributes {
  * center / top 配置では何も描かない。中央のダイアログに掴みどころを出しても
  * 動かせるものが無く、フォーカスだけが余計に 1 つ増える。
  */
-export const ModalHandle = forwardRef<HTMLDivElement, ModalHandleProps>(function ModalHandle(
+// forwardRef の前の PURE の注釈は、使わないアプリの束から部品ごと外せるようにするため（src/japanese.ts の先頭の注を参照）
+export const ModalHandle = /* @__PURE__ */ forwardRef<HTMLDivElement, ModalHandleProps>(function ModalHandle(
   { label, className, ...rest },
   ref,
 ) {
