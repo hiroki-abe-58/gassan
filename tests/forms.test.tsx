@@ -44,6 +44,23 @@ describe('配線 / I-01', () => {
     expect(select).toHaveAttribute('aria-required', 'true');
   });
 
+  it('値を見せるだけの欄（readOnly）には「必須 / 任意」の印を出さない', () => {
+    render(
+      <>
+        <Modal.Field label="招待のリンク" help="このリンクを知っている人は参加できます" readOnly>
+          {(control) => <Modal.Input {...control} readOnly value="https://example.com/join/4f2a" />}
+        </Modal.Field>
+        <Modal.Field label="会社名">{(control) => <Modal.Input {...control} />}</Modal.Field>
+      </>,
+    );
+    const link = screen.getByRole('textbox', { name: '招待のリンク' });
+    expect(link).toHaveAttribute('readonly');
+    expect(link).toHaveAccessibleDescription('このリンクを知っている人は参加できます');
+    expect(link).not.toHaveAttribute('aria-required');
+    // 入力する欄は、これまでどおり「任意」を出す
+    expect(screen.getByText('会社名').closest('label')).toHaveTextContent('任意');
+  });
+
   it('ボタンで開く部品（日付・期間・時刻）は、いまの値をボタンの説明として読む（ラベルで名前を付けると、ボタンの中の文字は名前にならないため）', () => {
     render(
       <>

@@ -140,6 +140,9 @@ export const PREVIEWS = [
   'app-assistant',
   'app-billing',
   'app-settings',
+  'app-api-keys',
+  'app-audit-log',
+  'app-notifications',
   'onboarding',
   'invite',
   'invite-signed-out',
@@ -410,6 +413,9 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
       case 'app-assistant':
       case 'app-billing':
       case 'app-settings':
+      case 'app-api-keys':
+      case 'app-audit-log':
+      case 'app-notifications':
         return <AtlasApp page={name} />;
       case 'onboarding':
         return <OnboardingSample />;

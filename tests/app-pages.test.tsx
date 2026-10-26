@@ -215,7 +215,7 @@ const ROLES = [
 ];
 
 describe('メンバー / P-14', () => {
-  it('自分の行は選べず外せず役割も変えられない。役割は名前つきのセレクトで変え、外すときは確かめて結果を読み上げる', async () => {
+  it('自分の行は選べず外せず役割も変えられない。役割は名前つきのセレクトで変え、外すときは確かめて結果を読み上げ、フォーカスを探す欄へ移す', async () => {
     const user = userEvent.setup();
     const onRoleChange = vi.fn();
     const onRemove = vi.fn();
@@ -240,6 +240,8 @@ describe('メンバー / P-14', () => {
     await user.click(within(dialog).getByRole('button', { name: 'ワークスペースから外す' }));
     expect(onRemove).toHaveBeenCalledWith(['u2', 'u3']);
     await notice('2 人を外しました');
+    // 選択が消えて起点（まとめての操作）も消えるので、探す欄へ移す
+    await vi.waitFor(() => expect(screen.getByRole('searchbox', { name: '名前かメールアドレスで探す' })).toHaveFocus());
   });
 
   it('外すのに失敗した文は確かめるモーダルの中で読み、Esc で閉じても次に開いたときには残さない', async () => {

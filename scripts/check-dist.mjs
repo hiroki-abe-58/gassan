@@ -96,10 +96,15 @@ import { gzipSync } from 'node:zlib';
  * 束は変わらず、Modal だけの束は ModalSwitch に足した aria-describedby のぶんだけ増える。テンプレートの文言は 1 つの表なので、
  * ほかのテンプレートを使う束には文言のぶん載る（minify した束で Modal だけ 43,852 → 43,859 B・LineChart だけ 26,017 B・
  * MailboxPage だけ 49,132 → 51,634 B）。
+ * 同日、JS を 197 → 204 KB に引き上げた。API キー・監査ログ・通知の設定（P-36〜P-38）と、アプリの中のページが共有する
+ * 部品（知らせの帯・確かめる窓・探す欄）を足したため（JS 約 6.4 KB）。文言はまとまりごとに分けてあるので、ほかの
+ * テンプレートの束には「検索」の 1 語と Field の readOnly のぶんしか載らない（minify した束で MailboxPage だけ
+ * 33,673 → 33,722 B、OrderReviewPage だけ 17,526 → 17,541 B、Modal だけ 43,514 → 43,533 B。LineChart だけ（17,162 B）は変わらない）。
+ * templates.css は 8 KB の予算の中（7,821 → 8,122 B）。残りは約 70 B なので、次にテンプレートを足すときは引き上げる。
  */
 const BUDGETS = {
-  'dist/index.js': 197 * 1024,
-  'dist/index.cjs': 197 * 1024,
+  'dist/index.js': 204 * 1024,
+  'dist/index.cjs': 204 * 1024,
   'dist/styles.css': 29 * 1024,
   'dist/templates.css': 8 * 1024,
 };
@@ -397,6 +402,9 @@ const REQUIRED_EXPORTS = [
   'CookieConsent',
   'ExternalTransmissionList',
   'CONSENT_CATEGORIES',
+  'ApiKeysPage',
+  'AuditLogPage',
+  'NotificationSettingsPage',
 ];
 
 let failed = false;

@@ -18,17 +18,17 @@
 
 **ドキュメントサイト: <https://hiroki-abe-58.github.io/gassan/>**
 — 設計思想（存在理由・4層モデル・5類型・アクセシビリティ）、スタイル（スクリム・色とコントラスト・テーマ・寸法・折り返し・モーション）、
-全コンポーネントとフォーム部品の動くデモと API、ページのテンプレート、294項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
+全コンポーネントとフォーム部品の動くデモと API、ページのテンプレート、297項目の振る舞い仕様を、Material Design 3 のガイドラインのような形で読める。
 サイトは日本語・[English](https://hiroki-abe-58.github.io/gassan/#/en)・[简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans)・[繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant)・[한국어](https://hiroki-abe-58.github.io/gassan/#/ko)・[ไทย](https://hiroki-abe-58.github.io/gassan/#/th) で読める（トップバーの地球の印で切り替える）。
 ライト・ダークの表示とプライマリカラーも切り替えられる。どの色を選んでも、文字と塗りが WCAG のコントラスト比を満たすように色を導いている。
 表・件数・API の説明はすべて仕様書と型定義からビルド時に生成していて、手で書いた数値は無い。
 
-設計の全文は [`modal.skill.md`](./modal.skill.md)（294項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
+設計の全文は [`modal.skill.md`](./modal.skill.md)（297項目の振る舞い表・意思決定マトリクス・品質ルーブリック）にある。
 AI コーディング時はそのファイルをコンテキストに入れる。
 
 | 文書 | 内容 |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の294項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
+| [`docs/traceability.md`](./docs/traceability.md) | `modal.skill.md` の297項目が、どのテスト・どの CSS で満たされているかの対応表。`npm run check:trace` が機械検証する |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | 元の要件を分解し、「実装済み / 合成で対応 / ロードマップ」を1行ずつ示した監査表 |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | gassan の入力部品をモーダルに載せる最小例と、gassan に無い部品をほかのライブラリから包むときの注意 |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | native `<dialog>` / Base UI / React Aria / Radix の比較（2026-09-29 時点、一次資料のみ） |
@@ -122,7 +122,7 @@ export function SignIn() {
 }
 ```
 
-ログインした後は `AppShell` が左の案内の帯・上の帯・狭い画面での案内の面を持ち、その中を `SettingsPage`・`MembersPage`・`BillingPage`・`OnboardingPage`・`InviteAcceptPage`・`ChatPage`・`AssistantPage`・`MailboxPage` で埋める。
+ログインした後は `AppShell` が左の案内の帯・上の帯・狭い画面での案内の面を持ち、その中を `SettingsPage`・`MembersPage`・`BillingPage`・`OnboardingPage`・`InviteAcceptPage`・`ChatPage`・`AssistantPage`・`MailboxPage`・`ApiKeysPage`・`AuditLogPage`・`NotificationSettingsPage` で埋める。
 渡すのはデータと処理だけ。処理が `{ error }` を返すとその文を読み上げ、二度押しは起きない。
 日時は `SiteProvider` の `timeZone` で描く。無ければ見ている人の時間帯で描き、hydration を終えるまでは UTC で描くので、サーバーとブラウザで文字が食い違わない。
 
@@ -279,7 +279,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `RegistrationPresetPage` `REGISTRATION_PRESETS` `OccupationField` `PurposeField` `PepsField` `TaxResidencyField` `UsPersonField` `DeclarationField` `MyNumberField` `CompanyFields` `IdentityMethodField` `GuardianFields` `MarketingConsentField` | 業種ごとの本登録。メールアドレスだけの仮登録の後、取引の前までに法令が求める手順と欄を、15 の業種（銀行・証券・暗号資産・送金・カード・通販・酒類・法人向け・買取・オンライン診療・マッチング・求人・賃貸・チケット・携帯電話）ごとに組み、なぜ聞くかを根拠の法令で示す。未成年の保護者の同意・年齢の下限・本人確認の方法（施行日で切り替わる）も業種に合わせる。2026 年 10 月時点の目安で、法的な助言ではない |
 | `OrderReviewPage` `CookieConsent` `ExternalTransmissionList` `CancelSubscriptionPage` | 購入と同意。特定商取引法 12 条の 6 の最終確認画面（表示事項を見出しのある節に並べる）、「すべて許可する」と「必要なものだけ」を同じ重さで並べる Cookie と外部送信の同意の帯（種類ごとに選べる窓つき）、電気通信事業法 27 条の 12 が公表を求める送信先の一覧、理由・提案（1 度だけ）・確認の順に進み、出口を隠さない解約の手続き。2026 年 10 月時点の目安で、法的な助言ではない |
 | `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | エラー・メンテナンス・公開ページ |
-| `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` | アプリの枠と、その中のページ |
+| `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` `ApiKeysPage` `AuditLogPage` `NotificationSettingsPage` | アプリの枠と、その中のページ |
 | `GassanProvider` | 文言の差し替え（既定は日本語、`englishLabels` も同梱）と、折り返しの切り替え（`lineBreak`） |
 | `Phrase` `splitPhrases` | 自分の UI の日本語・中国語・韓国語にも同じ折り返しを効かせる（gassan の部品の中では既定で効いている） |
 

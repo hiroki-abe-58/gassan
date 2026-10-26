@@ -5,7 +5,7 @@ import { Timeline } from '../display';
 import { Icon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { usePhrase } from '../phrase';
-import { useCooldown } from './form';
+import { timeZoneName, useCooldown } from './form';
 import { commonLabels, ERROR_STATUSES, errorLabels, maintenanceLabels, type ErrorCopyKey, type ErrorStatus } from './labels';
 import { StatusLayout } from './layouts';
 import { SiteButtonLink, useSiteConfig, useTemplateLabels, useTimeZone } from './site';
@@ -267,7 +267,7 @@ function scheduleParts(
   const time = new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', timeZone });
   const reference = start ?? end;
   if (!reference) return null;
-  const zone = new Intl.DateTimeFormat(locale, { timeZoneName: 'short', timeZone }).formatToParts(reference).find((part) => part.type === 'timeZoneName')?.value;
+  const zone = timeZoneName(locale, timeZone, reference);
   const tail = zone ? [`(${zone})`] : [];
   if (start && end && day.format(start) !== day.format(end)) {
     return { parts: [range(`${day.format(start)} ${time.format(start)}`, `${day.format(end)} ${time.format(end)}`), ...tail], keep: false };

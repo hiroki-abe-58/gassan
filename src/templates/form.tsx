@@ -193,10 +193,19 @@ export function formatDate(value: Date | string, locale: string, timeZone?: stri
   return { text, iso: dateOnly ? (value as string) : date.toISOString() };
 }
 
-/** 日時を見せる（「2026/10/23 9:12」）。機械が読む値と組にして time 要素に入れる。時間帯は useTimeZone() で決める。 */
-export function formatDateTime(value: Date | string, locale: string, timeZone?: string): { text: string; iso: string } {
+/**
+ * 日時を見せる（「2026/10/23 9:12」。seconds なら秒まで）。機械が読む値と組にして time 要素に入れる。
+ * 時間帯は useTimeZone() で決める。
+ */
+export function formatDateTime(value: Date | string, locale: string, timeZone?: string, seconds = false): { text: string; iso: string } {
   const date = value instanceof Date ? value : new Date(value);
-  return { text: new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(date), iso: date.toISOString() };
+  return { text: new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: seconds ? 'medium' : 'short', timeZone }).format(date), iso: date.toISOString() };
+}
+
+/** 時間帯の短い名前（「JST」「GMT+9」）。夏時間で名前が変わるので、見せる日時（at）の時点の名前にする。 */
+export function timeZoneName(locale: string, timeZone: string | undefined, at: Date | string): string {
+  const date = at instanceof Date ? at : new Date(at);
+  return new Intl.DateTimeFormat(locale, { timeZoneName: 'short', timeZone }).formatToParts(date).find((part) => part.type === 'timeZoneName')?.value ?? '';
 }
 
 /** 送信に失敗した理由（サーバーからの文）。読み上げを割り込ませる。 */

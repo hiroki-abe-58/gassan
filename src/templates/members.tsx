@@ -4,7 +4,7 @@ import { ModalBody } from '../body';
 import { Button, IconButton } from '../button';
 import { DataTable, type DataTableColumn } from '../data-table';
 import { Avatar, Badge } from '../display';
-import { Banner, Progress } from '../feedback';
+import { Progress } from '../feedback';
 import { ModalField } from '../fields';
 import { ModalButton, ModalFooter } from '../footer';
 import { ModalDescription, ModalHeader, ModalTitle } from '../header';
@@ -20,6 +20,7 @@ import { ModalSelect, normalizeForMatch } from '../select';
 import { ModalTagInput } from '../tag-input';
 import { FormError, formatDateTime, looksLikeEmail, runAction, type SubmitResult } from './form';
 import { commonLabels, membersLabels } from './labels';
+import { ConfirmDialog, useNotice } from './page-parts';
 import { useTemplateLabels, useTimeZone } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
@@ -78,8 +79,6 @@ export interface MembersPageProps extends DataAttributes {
   className?: string;
 }
 
-type Notice = { tone: 'success' | 'error'; text: ReactNode };
-
 const MEMBERS_LABELS = { common: commonLabels, members: membersLabels } as const;
 
 /**
@@ -107,29 +106,22 @@ export function MembersPage({
 }: MembersPageProps): ReactNode {
   const labels = useTemplateLabels(MEMBERS_LABELS);
   const timeZone = useTimeZone();
-  const gassan = useLabels();
   const phrase = usePhrase();
   const { common, members: m } = labels;
   const base = useId();
   const invitationsId = `${base}-invitations`;
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
-  const [notice, setNotice] = useState<Notice | null>(null);
+  const { notice, report, show } = useNotice();
   const [removing, setRemoving] = useState<string[] | null>(null);
-  const [removeError, setRemoveError] = useState<ReactNode>(null);
   const [inviting, setInviting] = useState(false);
+  // 外した行は消えるので、済んだらフォーカスを探す欄へ移す
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const roleLabel = (value: string): string => roles.find((role) => role.value === value)?.label ?? value;
   const nameOf = (id: string): string => members.find((member) => member.id === id)?.name ?? id;
   const needle = normalizeForMatch(query.trim());
   const shown = needle ? members.filter((member) => normalizeForMatch(`${member.name} ${member.email}`).includes(needle)) : members;
-
-  const report = (failure: ReactNode, success: ReactNode): void => setNotice(failure ? { tone: 'error', text: failure } : { tone: 'success', text: success });
-  // Esc・キャンセル・外し終えた後のどれで閉じても、前の失敗の文を次に持ち越さない
-  const closeRemove = (): void => {
-    setRemoving(null);
-    setRemoveError(null);
-  };
 
   const columns: DataTableColumn<WorkspaceMember>[] = [
     {
@@ -219,11 +211,7 @@ export function MembersPage({
           ) : undefined
         }
       />
-      {notice ? (
-        <Banner tone={notice.tone} live onDismiss={() => setNotice(null)}>
-          {notice.text}
-        </Banner>
-      ) : null}
+      {notice}
       {seats ? (
         <Progress
           className="g-members-seats"
@@ -235,7 +223,7 @@ export function MembersPage({
         />
       ) : null}
       <div className="g-members-toolbar">
-        <ModalSearchInput aria-label={m.search} placeholder={m.search} value={query} onChange={(event) => setQuery(event.target.value)} />
+        <ModalSearchInput ref={searchRef} aria-label={m.search} placeholder={m.search} value={query} onChange={(event) => setQuery(event.target.value)} />
       </div>
       <DataTable
         label={m.title}
@@ -322,47 +310,25 @@ export function MembersPage({
           onOpenChange={setInviting}
           roles={roles}
           onInvite={onInvite}
-          onSent={(count) => setNotice({ tone: 'success', text: m.sent(count) })}
+          onSent={(count) => show(m.sent(count))}
         />
       ) : null}
 
       {onRemove ? (
-        <ModalRoot
+        <ConfirmDialog
           open={removing !== null}
-          onOpenChange={(open) => {
-            if (!open) closeRemove();
+          onClose={() => setRemoving(null)}
+          title={removing && removing.length === 1 ? m.removeTitle(nameOf(removing[0] ?? '')) : m.removeManyTitle(removing?.length ?? 0)}
+          description={m.removeDescription}
+          confirm={m.remove}
+          onConfirm={() => onRemove(removing ?? [])}
+          onDone={() => {
+            const ids = removing ?? [];
+            setSelected((current) => current.filter((id) => !ids.includes(id)));
+            show(m.removed(ids.length));
           }}
-          kind="confirm"
-        >
-          <ModalHeader>
-            <ModalTitle>{removing && removing.length === 1 ? m.removeTitle(nameOf(removing[0] ?? '')) : m.removeManyTitle(removing?.length ?? 0)}</ModalTitle>
-          </ModalHeader>
-          <ModalBody>
-            <ModalDescription>{m.removeDescription}</ModalDescription>
-            <FormError>{removeError}</FormError>
-          </ModalBody>
-          <ModalFooter>
-            <ModalButton variant="tertiary" onClick={closeRemove}>
-              {gassan.cancel}
-            </ModalButton>
-            <ModalButton
-              variant="danger"
-              onAction={async () => {
-                const ids = removing ?? [];
-                const failure = await runAction(() => onRemove(ids), common.submitFailed);
-                if (failure) {
-                  setRemoveError(failure);
-                  return;
-                }
-                closeRemove();
-                setSelected((current) => current.filter((id) => !ids.includes(id)));
-                setNotice({ tone: 'success', text: m.removed(ids.length) });
-              }}
-            >
-              {m.remove}
-            </ModalButton>
-          </ModalFooter>
-        </ModalRoot>
+          fallbackFocus={searchRef}
+        />
       ) : null}
     </div>
   );

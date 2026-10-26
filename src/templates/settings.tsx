@@ -65,8 +65,8 @@ export function SettingsSection({ title, description, tone, children, className,
   );
 }
 
-/** 節の下端の操作と、結果の知らせ（いつも置いてある role="status" の領域で読み上げる）。 */
-function SectionActions({ status, children }: { status: ReactNode; children?: ReactNode }): ReactNode {
+/** 節の下端の操作と、結果の知らせ（いつも置いてある role="status" の領域で読み上げる）。通知の設定も使う（公開はしない）。 */
+export function SectionActions({ status, children }: { status: ReactNode; children?: ReactNode }): ReactNode {
   const phrase = usePhrase();
   return (
     <div className="g-settings-actions">

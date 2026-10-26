@@ -486,6 +486,17 @@ describe('アプリの枠 / P-12', () => {
     await user.click(trigger);
     expect(screen.getByRole('menuitem', { name: 'ログアウト' })).toBeInTheDocument();
   });
+
+  it('上の帯は幅 320px でも 1 段に収め、操作の束は縮めずにロゴの名前の方を省略する', () => {
+    // 幅はヘッドレス Chrome で確かめた（320px で、メニュー・ロゴ・操作 2 つ・アバターが 1 段）。ここでは規則が残っていることを見る
+    const sheet = readFileSync(resolve(process.cwd(), 'src/templates.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    expect(sheet).toMatch(/\.g-app-actions \{[^}]*flex: none;/);
+    expect(sheet).not.toMatch(/\.g-app-actions \{[^}]*flex-wrap: wrap/);
+    expect(sheet).toContain('.g-app-topbar-brand .g-brand-name { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }');
+    const narrow = /@container \(max-width: 400px\) \{\s*([^@]*?)\n {2}\}/.exec(sheet)?.[1] ?? '';
+    expect(narrow).toContain('.g-app-topbar { gap: 4px; padding-inline: 12px; }');
+    expect(narrow).toContain('.g-app-account-chevron { display: none; }');
+  });
 });
 
 describe('文書 / P-07', () => {

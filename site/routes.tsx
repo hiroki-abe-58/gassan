@@ -59,6 +59,7 @@ import { AuthTemplatesPage } from './pages/templates/AuthTemplatesPage';
 import { AuthPatternsTemplatesPage } from './pages/templates/AuthPatternsTemplatesPage';
 import { RegistrationPresetsTemplatesPage } from './pages/templates/RegistrationPresetsTemplatesPage';
 import { CommerceTemplatesPage } from './pages/templates/CommerceTemplatesPage';
+import { WorkspaceTemplatesPage } from './pages/templates/WorkspaceTemplatesPage';
 import { PublicTemplatesPage } from './pages/templates/PublicTemplatesPage';
 import { StatusTemplatesPage } from './pages/templates/StatusTemplatesPage';
 
@@ -145,6 +146,7 @@ export const PAGES: readonly PageDef[] = [
   { path: '/templates/public', key: 'templatesPublic', section: 'templates', Component: PublicTemplatesPage },
   { path: '/templates/app', key: 'templatesApp', section: 'templates', Component: AppTemplatesPage },
   { path: '/templates/app-pages', key: 'templatesAppPages', section: 'templates', Component: AppPagesTemplatesPage },
+  { path: '/templates/workspace', key: 'templatesWorkspace', section: 'templates', Component: WorkspaceTemplatesPage },
   { path: '/templates/conversations', key: 'templatesConversations', section: 'templates', Component: ConversationTemplatesPage },
   { path: '/templates/mail', key: 'templatesMail', section: 'templates', Component: MailTemplatesPage },
 

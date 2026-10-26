@@ -15,9 +15,12 @@ import {
   AccountChooserPage,
   Accordion,
   AddressFields,
+  ApiKeysPage,
   AppShell,
+  AuditLogPage,
   AuthDialog,
   CookieConsent,
+  NotificationSettingsPage,
   EmailFirstPage,
   GuestAccountCard,
   OrderReviewPage,
@@ -633,6 +636,41 @@ for (const [label, passed] of [
   [
     'CookieConsent renders the banner as a manual popover with the two choices on the server',
     /popover="manual"/.test(commerceHtml) && textOf(commerceHtml).includes('すべて許可する') && textOf(commerceHtml).includes('必要なものだけ'),
+  ],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// API キー・監査ログ・通知の設定（P-36〜P-38）。窓は閉じたまま描き、日時は timeZone が無ければ UTC で秒まで描く。
+// 通知の表のチェックボックスは、行と列の見出しの 2 つの id を名前にして描く。
+const workspaceHtml = render(
+  h(
+    'div',
+    null,
+    h(ApiKeysPage, { keys: [{ id: 'k1', name: '本番のサーバー', hint: 'sk_live_…4f2a', createdAt: '2026-09-01T00:00:00Z' }], onCreate: noop }),
+    h(AuditLogPage, {
+      events: [{ id: 'e1', time: '2026-10-26T00:41:05Z', actor: '佐藤 葵', action: 'メンバーを招待した' }],
+      query: { text: '', action: null, range: null, page: 1 },
+      onQueryChange: noop,
+      total: 1,
+      pageCount: 1,
+    }),
+    h(NotificationSettingsPage, { topics: [{ id: 'comments', label: 'コメント' }], defaultValue: { channels: { comments: ['email'] }, paused: false }, onSubmit: noop }),
+  ),
+);
+for (const [label, passed] of [
+  [
+    'ApiKeysPage renders the key hint and the create button with no open dialog on the server',
+    textOf(workspaceHtml).includes('sk_live_…4f2a') && textOf(workspaceHtml).includes('API キーを作る') && !/<dialog[^>]*\sopen/.test(workspaceHtml),
+  ],
+  [
+    'AuditLogPage renders the search landmark and the time with seconds in UTC on the server',
+    /role="search"/.test(workspaceHtml) && textOf(workspaceHtml).includes('日時（UTC）') && textOf(workspaceHtml).includes('2026/10/26 0:41:05'),
+  ],
+  [
+    'NotificationSettingsPage renders each checkbox named by its row and column headers on the server',
+    /aria-labelledby="[^"]+ [^"]+"/.test(workspaceHtml) && /type="checkbox"[^>]*checked/.test(workspaceHtml),
   ],
 ]) {
   if (passed) ok(label);
