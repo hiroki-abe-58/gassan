@@ -40,7 +40,8 @@ const AXES: Record<NonNullable<ScrollAreaProps['orientation']>, readonly ScrollA
  * テーマの色と形にそろえる。スクロールはブラウザのまま（ホイール・キー・タッチ・慣性）で、ネイティブのバーを隠し、
  * 窓の端にバーを重ねて描く。`ref` は窓（スクロールする要素）を指す（`scrollTo` などに使う）。
  */
-export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(function ScrollArea(
+// forwardRef の前の PURE の注釈は、使わないアプリの束から部品ごと外せるようにするため（src/japanese.ts の先頭の注を参照）
+export const ScrollArea = /* @__PURE__ */ forwardRef<HTMLDivElement, ScrollAreaProps>(function ScrollArea(
   { children, orientation = 'vertical', visibility, label, className, viewportClassName, style, ...rest },
   ref,
 ) {

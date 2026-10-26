@@ -9,6 +9,10 @@ v1.0 までの公開計画は [`ROADMAP.md`](./ROADMAP.md) にある。
 
 ## [Unreleased]
 
+### 変更（使わない forwardRef の部品を束から外す）
+
+- `forwardRef` で作る部品（`Button`・`ButtonLink`・`IconButton`・`ModalInput`・`ModalPasswordInput`・`ModalSearchInput`・`ModalTextarea`・`ScrollArea`・`ModalRoot`・`ModalHandle`）に `/* @__PURE__ */` の注釈を付けた。注釈が無いと、束ねる道具が forwardRef の呼び出しを副作用ありと見なし、部品を 1 つでも使う束に、この 10 個とその中身が全部残っていた（新しい部品にはすでに付けていた）。dist を esbuild で束ねて minify・gzip した実測で、`Button` だけの束は 21,689 → 11,376 B、`Toast` だけは 23,456 → 14,250 B、`Carousel` だけは 23,619 → 14,727 B、`LineChart` だけは 26,024 → 17,162 B、`OrderReviewPage` だけは 26,619 → 17,526 B。全部を使う束と、振る舞いは変わらない。
+
 ### 変更（テンプレートの文言を、使うテンプレートの束にだけ載せる）
 
 - テンプレートの文言の既定（日本語と英語）を、まとまりごとの組に分け、各テンプレートは使うまとまりだけを読むようにした。これまでは、どれか 1 つのテンプレートを使うと、全部のテンプレートの文言（gzip で約 17 KB）が束に載っていた。dist を esbuild で束ねて minify・gzip した実測で、`MailboxPage` だけの束は 51,634 → 34,365 B、`OrderReviewPage` だけは 43,686 → 26,619 B、`CookieConsent` だけは 43,281 → 25,375 B、`SignInPage` だけは 44,891 → 27,657 B。`Modal` だけ・`LineChart` だけの束は変わらない。全部を使う束は組の分だけ約 0.9 KB 増える。

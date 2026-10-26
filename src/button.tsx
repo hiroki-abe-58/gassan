@@ -52,7 +52,8 @@ export interface ButtonProps extends ButtonLook, Omit<ButtonHTMLAttributes<HTMLB
  * ゲートと同じ見た目になり、押しても何もしない（フォーカスは止まり、理由が読まれる）。
  * ref は button に届く（Tooltip・Menu の起点にできる）。
  */
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+// forwardRef の前の PURE の注釈は、使わないアプリの束から部品ごと外せるようにするため（src/japanese.ts の先頭の注を参照）
+export const Button = /* @__PURE__ */ forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = 'secondary', size = 'md', iconStart, iconEnd, block = false, loading = false, onAction, onClick, children, className, type = 'button', ...rest },
   ref,
 ) {
@@ -129,7 +130,7 @@ export interface ButtonLinkProps extends ButtonLook, Omit<AnchorHTMLAttributes<H
 }
 
 /** ボタンの見た目のリンク。行き先が別のページなら、役割はリンクのまま（Enter で辿り、Space では押せない）。U-01。 */
-export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(
+export const ButtonLink = /* @__PURE__ */ forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(
   { variant = 'secondary', size = 'md', iconStart, iconEnd, block = false, children, className, ...rest },
   ref,
 ) {
@@ -165,7 +166,7 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
  * 印だけのボタン。名前は label で必ず渡す（title 属性の吹き出しには頼らず、要るなら Tooltip を添える）。U-02。
  * aria-disabled の間は押しても何もしない（Button と同じ）。
  */
-export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
+export const IconButton = /* @__PURE__ */ forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
   { label, children, variant = 'ghost', size = 'md', className, type = 'button', onClick, ...rest },
   ref,
 ) {
