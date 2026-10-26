@@ -101,12 +101,16 @@ import { gzipSync } from 'node:zlib';
  * テンプレートの束には「検索」の 1 語と Field の readOnly のぶんしか載らない（minify した束で MailboxPage だけ
  * 33,673 → 33,722 B、OrderReviewPage だけ 17,526 → 17,541 B、Modal だけ 43,514 → 43,533 B。LineChart だけ（17,162 B）は変わらない）。
  * templates.css は 8 KB の予算の中（7,821 → 8,122 B）。残りは約 70 B なので、次にテンプレートを足すときは引き上げる。
+ * 同日、JS を 204 → 210 KB、templates.css を 8 → 9 KB に引き上げた。稼働状況と検索結果（P-39・P-40。日ごとの稼働の帯・
+ * 障害の経過・登録、当たる所の強調・絞り込みと狭い器の面）を足したため（JS 約 5.5 KB・templates.css 約 0.7 KB）。強調は
+ * コマンドパレットと共有にした（internal/match）。名前つき import でだけ使うので、minify した束で Modal だけ・LineChart だけ・
+ * MailboxPage だけ・OrderReviewPage だけは ±13 B の中で変わらない（ServiceStatusPage だけは 22,623 B、SearchPage だけは 28,292 B）。
  */
 const BUDGETS = {
-  'dist/index.js': 204 * 1024,
-  'dist/index.cjs': 204 * 1024,
+  'dist/index.js': 210 * 1024,
+  'dist/index.cjs': 210 * 1024,
   'dist/styles.css': 29 * 1024,
-  'dist/templates.css': 8 * 1024,
+  'dist/templates.css': 9 * 1024,
 };
 
 const REQUIRED_EXPORTS = [
@@ -405,6 +409,8 @@ const REQUIRED_EXPORTS = [
   'ApiKeysPage',
   'AuditLogPage',
   'NotificationSettingsPage',
+  'ServiceStatusPage',
+  'SearchPage',
 ];
 
 let failed = false;

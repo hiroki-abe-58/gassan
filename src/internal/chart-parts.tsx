@@ -105,10 +105,11 @@ export interface Roving {
 /**
  * 点をたどるキー操作（Q-02）。点は 1 つだけが Tab で止まり（ロービング）、矢印・Home・End で移る。
  * フォーカスのある点とポインタの乗った点を分けて持ち、フォーカスを優先して示す。
+ * initial は最初に Tab で止まる点（稼働の帯は、いちばん新しい今日から）。
  */
-export function useRoving(count: number): Roving {
+export function useRoving(count: number, initial = 0): Roving {
   const refs = useRef<(HTMLElement | null)[]>([]);
-  const [tabStop, setTabStop] = useState(0);
+  const [tabStop, setTabStop] = useState(initial);
   const [focused, setFocused] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const stop = Math.min(tabStop, Math.max(0, count - 1));

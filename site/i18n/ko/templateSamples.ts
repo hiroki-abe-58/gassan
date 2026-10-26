@@ -190,6 +190,29 @@ export default {
       { q: '무료 요금제에 기한이 있나요?', a: '없습니다. 인원과 프로젝트 제한 안에서 계속 사용할 수 있습니다.' },
     ],
   },
+  serviceStatus: {
+    components: { api: 'API', dashboard: '대시보드', mail: '메일 발송', webhooks: 'Webhook', storage: '파일 저장' },
+    descriptions: { webhooks: '외부 서비스로 보내는 알림', storage: '업로드한 파일의 저장과 전송' },
+    slow: {
+      title: 'API 응답이 느려지고 있습니다',
+      identified: '데이터베이스 부하가 높아진 것을 확인했습니다. 읽기 요청을 다른 서버로 분산하고 있습니다.',
+      investigating: '일부 지역에서 API 응답이 느려지고 있습니다. 원인을 조사하고 있습니다.',
+    },
+    outage: {
+      title: '대시보드에 로그인할 수 없는 장애',
+      resolved: '모든 분이 다시 로그인할 수 있게 되었습니다. 불편을 드려 죄송합니다.',
+      monitoring: '수정 사항을 반영했습니다. 로그인할 수 있는지 확인하고 있습니다.',
+      identified: '인증 서버의 설정 오류가 원인이었습니다. 수정하고 있습니다.',
+      investigating: '대시보드에 로그인할 수 없는 상태입니다. 원인을 조사하고 있습니다.',
+    },
+    maintenance: {
+      title: '데이터베이스 정기 점검',
+      resolved: '점검을 마쳤습니다.',
+      monitoring: '점검을 시작했습니다. 끝날 때까지 대시보드는 읽기 전용입니다.',
+    },
+    notes: { slow: 'API 응답 지연', outage: '로그인 장애 1시간 20분', maintenance: '예정된 점검 2시간', storage: '업로드 실패 25분' },
+  },
+  search: { kind: '종류', category: '카테고리', initial: '데이터' },
   faq: [
     { id: 'refund', category: '요금', q: '환불받을 수 있나요?', a: '결제 후 30일 이내라면 이유를 묻지 않고 전액 환불합니다.', keywords: ['취소', '환급'] },
     {

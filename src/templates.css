@@ -682,13 +682,13 @@
   /* --- T11〜T13 アプリの中のページ（P-13〜P-15） -------------------------------------
    * 設定・メンバー・請求は AppShell の main に置く中身。自分を器にして、置いた所の幅で形を決める。
    * 見出しの帯の下は、知らせの帯・数・表・節を同じ間隔で積む。 */
-  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow, .g-api-keys, .g-audit-log, .g-notification-settings) {
+  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow, .g-api-keys, .g-audit-log, .g-notification-settings, .g-results) {
     container-type: inline-size;
     display: grid;
     gap: 16px;
     min-inline-size: 0;
   }
-  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow, .g-api-keys, .g-audit-log, .g-notification-settings) > .g-page-header { margin-block-end: 8px; }
+  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow, .g-api-keys, .g-audit-log, .g-notification-settings, .g-results) > .g-page-header { margin-block-end: 8px; }
   .g-app-subtitle { margin: 0; font-size: 1.125rem; font-weight: 700; line-height: 1.4; }
 
   /* T11 settings（P-13）。節ごとに見出しと説明を左、中身を右に置く（器が狭いときは縦に積む）。節の間は 1px の線、
@@ -1130,6 +1130,70 @@
   .g-notification-fixed > svg { inline-size: 18px; block-size: 18px; }
   .g-notification-paused { margin: 0 0 8px; color: var(--g-fg-muted); font-size: 0.875rem; }
   .g-quiet-hours { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); align-items: start; gap: 12px; margin-block-start: 12px; }
+
+  /* --- T23 稼働状況（P-39）・検索結果（P-40） ----------------------------------------------
+   * 稼働の帯は日の升を 1 行に並べ、状態を地の色で示す（読み上げと帯の説明でも同じことを伝える）。時間の軸は
+   * グラフと同じく、文書の向きによらず左が古い。検索結果は、器が 760px 以上（search.tsx の WIDE と同じ）なら
+   * 絞り込みを左の列に出し、狭ければ「絞り込み」のボタンから開く面へ移す。 */
+  .g-service-status { display: grid; gap: 32px; max-inline-size: 52rem; margin-inline: auto; }
+  .g-service-status > .g-public-header { margin-block-end: 0; }
+  .g-service-jump { margin: 0; }
+  .g-service-section { display: grid; gap: 16px; }
+  :is(.g-service-heading, .g-results-heading) { margin: 0; font-weight: 700; line-height: 1.4; }
+  .g-service-heading { font-size: 1.25rem; }
+  :is(.g-service-heading, .g-results-heading):focus-visible { border-radius: 4px; outline: 2px solid var(--g-focus); outline-offset: 4px; }
+  .g-service-components { display: grid; margin: 0; padding: 0; border: 1px solid var(--g-border); border-radius: var(--g-radius); list-style: none; }
+  .g-service-component { display: grid; gap: 10px; padding: 16px 20px; }
+  .g-service-component + .g-service-component { border-block-start: 1px solid var(--g-border); }
+  .g-service-component-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; }
+  .g-service-component-name { margin: 0; font-size: 1rem; font-weight: 650; }
+  :is(.g-service-component-description, .g-service-empty, .g-service-subscribe-description) { margin: 0; color: var(--g-fg-muted); }
+  .g-service-component-description { font-size: 0.875rem; }
+  .g-uptime { display: grid; gap: 6px; }
+  .g-uptime-days { direction: ltr; display: flex; gap: 2px; block-size: 32px; touch-action: pan-y; }
+  .g-uptime-day { flex: 1 1 0; min-inline-size: 0; border-radius: 2px; background: var(--g-success); }
+  .g-uptime-day[data-status="maintenance"] { background: var(--g-info); }
+  .g-uptime-day[data-status="degraded"] { background: var(--g-warning); }
+  .g-uptime-day[data-status="partial"] { background: color-mix(in srgb, var(--g-warning) 50%, var(--g-danger)); }
+  .g-uptime-day[data-status="major"] { background: var(--g-danger); }
+  .g-uptime-day[data-status="none"] { background: var(--g-border); }
+  .g-uptime-day[data-active] { outline: 2px solid var(--g-fg); outline-offset: 1px; }
+  .g-uptime-day:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
+  .g-uptime-axis { direction: ltr; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; color: var(--g-fg-muted); font-size: 0.75rem; }
+  .g-uptime-readout { color: var(--g-fg); text-align: center; }
+  .g-uptime-summary { display: flex; flex-wrap: wrap; gap: 2px 16px; margin: 0; color: var(--g-fg-muted); font-size: 0.8125rem; }
+  .g-incidents { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+  .g-incident { display: grid; gap: 12px; padding: 16px 20px; border: 1px solid var(--g-border); border-radius: var(--g-radius); }
+  .g-incident-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .g-incident-title { flex: 1 1 16rem; margin: 0; font-size: 1rem; font-weight: 650; line-height: 1.5; }
+  .g-service-subscribe { max-inline-size: 32rem; }
+  @container (max-width: 480px) {
+    /* 90 日ぶんの升を 320px の画面に収める */
+    .g-uptime-days { gap: 1px; }
+    :is(.g-service-component, .g-incident) { padding-inline: 14px; }
+  }
+  .g-results-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .g-results-layout { display: grid; gap: 24px; min-inline-size: 0; }
+  .g-results-facets { display: none; }
+  .g-results-main { display: grid; gap: 12px; align-content: start; min-inline-size: 0; }
+  .g-results-heading { font-size: 1rem; }
+  .g-results-count { margin: 0; color: var(--g-fg-muted); font-size: 0.875rem; }
+  .g-results-list { display: grid; gap: 20px; margin: 0; padding: 0; list-style: none; }
+  .g-result { display: grid; gap: 4px; }
+  .g-result-title { margin: 0; font-size: 1.0625rem; font-weight: 650; line-height: 1.5; }
+  :is(.g-result-meta, .g-result-snippet) { margin: 0; color: var(--g-fg-muted); }
+  .g-result-meta { font-size: 0.8125rem; }
+  .g-result-snippet { font-size: 0.9375rem; line-height: 1.7; }
+  .g-result-mark { padding-inline: 1px; border-radius: 3px; background: color-mix(in srgb, var(--g-warning) 24%, transparent); color: inherit; }
+  .g-results-facet-list { display: grid; gap: 20px; }
+  .g-results-facet { display: grid; gap: 8px; min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+  .g-results-facet-title { padding: 0; font-size: 0.875rem; font-weight: 650; }
+  .g-results-facet-count { color: var(--g-fg-muted); font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+  @container (min-width: 760px) {
+    .g-results-layout { grid-template-columns: 14rem minmax(0, 1fr); }
+    .g-results-facets { display: grid; gap: 16px; align-content: start; }
+    .g-results-filter-button { display: none; }
+  }
 }
 
 @layer gassan.theme {
@@ -1154,5 +1218,11 @@
     /* forced-color-adjust: none は子へ受け継がれるので、控えめな色の日時や冒頭の文も選んだ色の文字にそろえる */
     :is(.g-split-item, .g-mail-item)[aria-current="true"] * { color: inherit; }
     .g-mail-row[data-selected] { outline: 1px solid CanvasText; outline-offset: -1px; }
+    /* 稼働の帯の地の色は消えるので、系統色で塗り分ける（問題の日は CanvasText、正常は GrayText、記録の無い日は枠だけ） */
+    .g-uptime-day { forced-color-adjust: none; background: GrayText; }
+    .g-uptime-day:is([data-status="degraded"], [data-status="partial"], [data-status="major"]) { background: CanvasText; }
+    .g-uptime-day[data-status="maintenance"] { background: Highlight; }
+    .g-uptime-day[data-status="none"] { background: Canvas; box-shadow: inset 0 0 0 1px GrayText; }
+    .g-result-mark { forced-color-adjust: none; background: Highlight; color: HighlightText; }
   }
 }

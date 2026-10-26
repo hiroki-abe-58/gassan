@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
 
 import { ModalBody } from '../body';
 import { Avatar } from '../display';
@@ -10,6 +10,7 @@ import { Menu, type MenuEntry } from '../overlay';
 import { usePhrase } from '../phrase';
 import { ModalRoot } from '../root';
 import { appLabels, commonLabels } from './labels';
+import { useCloseWhenWide } from './page-parts';
 import { Brand, SiteLink, useTemplateLabels } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
@@ -108,15 +109,7 @@ export function AppShell({ nav, current, actions, account, sidebarFooter, childr
   const [open, setOpen] = useState(false);
 
   // 開いたまま器が広くなったら閉じる（左の帯と面に、同じ案内が 2 つ出ないように）
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!open || !root || typeof ResizeObserver === 'undefined') return undefined;
-    const observer = new ResizeObserver(([entry]) => {
-      if (entry && entry.contentRect.width >= WIDE) setOpen(false);
-    });
-    observer.observe(root);
-    return () => observer.disconnect();
-  }, [open]);
+  useCloseWhenWide(rootRef, open, setOpen, WIDE);
 
   return (
     <div {...domPassthrough(rest, 'AppShell')} ref={rootRef} className={cx('g-page g-app', className)}>

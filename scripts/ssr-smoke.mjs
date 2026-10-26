@@ -21,6 +21,8 @@ import {
   AuthDialog,
   CookieConsent,
   NotificationSettingsPage,
+  SearchPage,
+  ServiceStatusPage,
   EmailFirstPage,
   GuestAccountCard,
   OrderReviewPage,
@@ -671,6 +673,55 @@ for (const [label, passed] of [
   [
     'NotificationSettingsPage renders each checkbox named by its row and column headers on the server',
     /aria-labelledby="[^"]+ [^"]+"/.test(workspaceHtml) && /type="checkbox"[^>]*checked/.test(workspaceHtml),
+  ],
+]) {
+  if (passed) ok(label);
+  else fail(label);
+}
+
+// 稼働状況・検索結果（P-39・P-40）。全体の状態の文と、部分ごとに 1 つの帯（Tab で止まる升は最後の 1 つだけ）と稼働率を
+// サーバーでも描く。検索結果は全角で打った言葉でも、見出しの当たる所を mark で描く。
+const statusSearchHtml = render(
+  h(
+    'div',
+    null,
+    h(ServiceStatusPage, {
+      layout: false,
+      components: [
+        {
+          id: 'api',
+          name: 'API',
+          status: 'degraded',
+          uptime: 99.98,
+          days: [
+            { date: '2026-10-25', status: 'partial' },
+            { date: '2026-10-26', status: 'operational' },
+          ],
+        },
+      ],
+    }),
+    h(SearchPage, {
+      query: { text: 'ａｐｉ', facets: {}, page: 1 },
+      onQueryChange: noop,
+      results: [{ id: 'r1', title: 'API キーを作る', href: '/help/api-keys' }],
+      total: 1,
+    }),
+  ),
+);
+const gridCells = statusSearchHtml.match(/role="gridcell"[^>]*/g) ?? [];
+for (const [label, passed] of [
+  [
+    'ServiceStatusPage renders the overall status, one uptime grid with only the last day tabbable and the uptime on the server',
+    textOf(statusSearchHtml).includes('一部のシステムで動作が遅くなっています') &&
+      (statusSearchHtml.match(/role="grid"/g) ?? []).length === 1 &&
+      gridCells.length === 2 &&
+      gridCells.filter((cell) => /tabindex="0"/i.test(cell)).length === 1 &&
+      /tabindex="0"/i.test(gridCells[1] ?? '') &&
+      textOf(statusSearchHtml).includes('稼働率 99.98%'),
+  ],
+  [
+    'SearchPage renders the search landmark and marks the query in full-width letters on the server',
+    /role="search"/.test(statusSearchHtml) && /<mark[^>]*>API<\/mark>/.test(statusSearchHtml) && textOf(statusSearchHtml).includes('「ａｐｉ」の検索結果 1 件'),
   ],
 ]) {
   if (passed) ok(label);

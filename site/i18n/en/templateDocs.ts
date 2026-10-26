@@ -40,7 +40,7 @@ export default {
     a11yCaption: 'Specification items the sign-in and sign-up templates satisfy',
   },
   status: {
-    lead: '4xx / 5xx, offline and maintenance. Each says what happened, why, and what you can do next, in words that don’t blame the user, and the next step changes with each status.',
+    lead: '4xx / 5xx, offline, maintenance and system status. Each says what happened, why, and what you can do next, in words that don’t blame the user, and the next step changes with each status.',
     error: {
       title: 'Error pages',
       intro: 'Each of the 40 IANA-registered 4xx and 5xx codes, plus offline, has its own heading, description and next step (a status that isn’t registered falls back to the general 4xx / 5xx text). The next step changes with the status: sign-in for 401, billing settings for 402, contacting support for 403 and 451, home when a page or feature can’t be reached (404, 410 and so on), the previous page when there’s a problem with what was sent, and trying again when a wait or a reload will fix it (for server-side problems, the status page too). The status code is shown large and read out as “Error 404”. The reference on 5xx can be copied. On 429, “Try again” can’t be pressed while the wait lasts.',
@@ -52,12 +52,16 @@ export default {
       title: 'Maintenance',
       intro: 'The schedule is shown in the viewer’s time zone, with the time zone’s name (when both ends fall on the same day, the date appears only once). If there is a status page, it is pointed to first, and progress updates are listed with their times.',
     },
-    code: "import { ErrorPage, MaintenancePage } from '@genelab/gassan';\n\n// app/not-found.tsx in Next.js\nexport default function NotFound() {\n  return <ErrorPage status={404} />;\n}\n\n<ErrorPage status={500} reference={error.digest} onRetry={reset} />\n<ErrorPage status={429} retryAfter={30} />\n\n<MaintenancePage start=\"2026-10-24T02:00:00+09:00\" end=\"2026-10-24T04:00:00+09:00\" />",
+    serviceStatus: {
+      title: 'System status',
+      intro: 'The overall status (the sentence for the worst part), ongoing incidents, the status of each part with a 90-day uptime bar, past incidents and ways to get updates, on one page. The bar is a one-row table: only today’s day is a Tab stop, ← and → move between days, and each reads like “Sat, October 3: Partial outage”. Nothing relies on color alone: the uptime and the number of days with issues are tied to the bar as its description. A pointer picks a day anywhere along the bar, so nobody has to hit a thin day. Dates are shown as the calendar days of the time zone the service records them in. Place it where the error pages and the footer’s “System status” link point (links.status).',
+    },
+    code: "import { ErrorPage, MaintenancePage, ServiceStatusPage } from '@genelab/gassan';\n\n// app/not-found.tsx in Next.js\nexport default function NotFound() {\n  return <ErrorPage status={404} />;\n}\n\n<ErrorPage status={500} reference={error.digest} onRetry={reset} />\n<ErrorPage status={429} retryAfter={30} />\n\n<MaintenancePage start=\"2026-10-24T02:00:00+09:00\" end=\"2026-10-24T04:00:00+09:00\" />\n\n// Each part’s days run oldest first (the last is today). Incidents run newest first\n<ServiceStatusPage components={components} incidents={incidents} updatedAt={checkedAt} onSubscribe={subscribe} feedHref=\"/status.rss\" />",
     codeCaption: 'Usage',
-    a11yCaption: 'Specification items the error and maintenance templates satisfy',
+    a11yCaption: 'Specification items the error, maintenance and system status templates satisfy',
   },
   public: {
-    lead: 'Pricing, FAQ, contact, terms and privacy policy, and changelog. Each comes as one component, header and footer (SiteLayout) included. Write the navigation and the footer columns once in SiteProvider, and they apply to every page.',
+    lead: 'Pricing, FAQ, contact, terms and privacy policy, changelog, and search results. Except for search results, each comes as one component, header and footer (SiteLayout) included. Write the navigation and the footer columns once in SiteProvider, and they apply to every page.',
     site: {
       title: 'Site layout',
       intro: 'A link that skips to the content, header navigation (aria-current on the current page), footer link columns and links to the legal documents. When the container is narrow, the navigation folds under a “Menu” button. To place a page inside your own layout, use layout={false}.',
@@ -83,6 +87,10 @@ export default {
     changelog: {
       title: 'Changelog',
       intro: 'Each update has a heading, a date (time element), a version and type badges that use words, and the list can be filtered by the types actually in use. When the container is wide, the date and version sit in a column alongside.',
+    },
+    search: {
+      title: 'Search results',
+      intro: 'A search field (sent with Enter or “Search”), filters, the count, the results and pagination. Searching and paging happen on the server, and your app holds the query. Where the search terms appear in a result’s title and excerpt, they are marked (ignoring kana type and character width). The page tells “not searched yet” apart from “no results”, and when nothing matches it offers a way to clear the filters. In a narrow container, the filters move into a panel opened from the “Filters” button. It is used both in public help pages and inside apps, so it has no site frame of its own (this sample wraps it in SiteLayout and indexes the FAQ and changelog samples).',
     },
     a11yCaption: 'Specification items the public page templates satisfy',
   },
