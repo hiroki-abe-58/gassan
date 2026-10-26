@@ -11,8 +11,9 @@ import { ModalRoot } from '../root';
 import type { CloseReason } from '../types';
 import { PasswordForm, ProviderButtons, useFocusOnChange, type PasskeyHandler } from './auth-parts';
 import { FormError, runAction, type SubmitResult } from './form';
+import { accountChooserLabels, passkeyLabels, reauthLabels, signInLabels, verifyEmailLabels } from './labels';
 import { AuthLayout } from './layouts';
-import { SiteButtonLink, SiteLink, useSite } from './site';
+import { SiteButtonLink, SiteLink, useSiteConfig, useTemplateLabels } from './site';
 
 /**
  * メールアドレスを、「@」の後と「.」の前でだけ折れるようにする（狭い器で「example.co｜m」のように語の途中で折らない）。
@@ -43,6 +44,8 @@ export interface PasskeyPromptPageProps extends DataAttributes {
   className?: string;
 }
 
+const PASSKEY_PROMPT_LABELS = { verifyEmail: verifyEmailLabels, passkey: passkeyLabels } as const;
+
 /**
  * パスキーを作るかを尋ねる画面（ログインの直後に 1 度）。P-27。
  *
@@ -51,7 +54,7 @@ export interface PasskeyPromptPageProps extends DataAttributes {
  * 作れたら完了の画面に切り替え、見出しへフォーカスを移す。失敗の理由は割り込ませて読む。ログインの側は SignInPage の onPasskey。
  */
 export function PasskeyPromptPage({ onCreate, onLater, continueHref, aside, className, ...rest }: PasskeyPromptPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(PASSKEY_PROMPT_LABELS);
   const phrase = usePhrase();
   const { verifyEmail, passkey } = labels;
   const [created, setCreated] = useState(false);
@@ -132,6 +135,8 @@ export interface AccountChooserPageProps extends DataAttributes {
   className?: string;
 }
 
+const ACCOUNT_CHOOSER_LABELS = { accountChooser: accountChooserLabels } as const;
+
 /**
  * この端末で使ったアカウントから選ぶ（2 回目からのログイン）。P-28。
  *
@@ -150,7 +155,7 @@ export function AccountChooserPage({
   className,
   ...rest
 }: AccountChooserPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(ACCOUNT_CHOOSER_LABELS);
   const phrase = usePhrase();
   const { accountChooser } = labels;
   const [status, setStatus] = useState('');
@@ -233,6 +238,8 @@ export interface ReauthDialogProps extends DataAttributes {
   className?: string;
 }
 
+const REAUTH_LABELS = { signIn: signInLabels, reauth: reauthLabels } as const;
+
 /**
  * もう一度パスワードを聞く窓（大事な操作の前の本人確認と、ログインの期限切れ）。P-29。
  *
@@ -252,7 +259,8 @@ export function ReauthDialog({
   className,
   ...rest
 }: ReauthDialogProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(REAUTH_LABELS);
   const phrase = usePhrase();
   const { signIn, reauth } = labels;
   const expired = reason === 'expired';

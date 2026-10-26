@@ -12,7 +12,8 @@ import { PageHeader } from '../page-header';
 import { usePhrase } from '../phrase';
 import { ModalRoot } from '../root';
 import { FormError, formatDate, runAction, type SubmitResult } from './form';
-import { SiteButtonLink, useSite, useTimeZone } from './site';
+import { billingLabels, commonLabels } from './labels';
+import { SiteButtonLink, useSiteConfig, useTemplateLabels, useTimeZone } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -85,6 +86,8 @@ const INVOICE_TONES: Record<BillingInvoice['status'], StatusTone> = { paid: 'suc
 /** 使っている量の色。8 割を超えたら注意、上限に届いたら失敗の色（色だけでなく数でも分かる）。 */
 const usageTone = (used: number, limit: number): StatusTone | undefined => (used >= limit ? 'error' : used >= limit * 0.8 ? 'warning' : undefined);
 
+const BILLING_LABELS = { common: commonLabels, billing: billingLabels } as const;
+
 /**
  * 料金と請求。P-15。AppShell の中に置く中身。
  *
@@ -106,7 +109,8 @@ export function BillingPage({
   className,
   ...rest
 }: BillingPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(BILLING_LABELS);
   const timeZone = useTimeZone();
   const phrase = usePhrase();
   const { common, billing: b } = labels;

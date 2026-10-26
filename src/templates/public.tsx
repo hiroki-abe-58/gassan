@@ -22,8 +22,9 @@ import {
   type FormErrors,
   type SubmitResult,
 } from './form';
+import { changelogLabels, commonLabels, contactLabels, documentLabels, faqLabels, pricingLabels } from './labels';
 import { WithSiteLayout } from './site-layout';
-import { SiteButtonLink, SiteLink, useSite, useTimeZone } from './site';
+import { SiteButtonLink, SiteLink, useSiteConfig, useTemplateLabels, useTimeZone } from './site';
 
 /** 公開ページの共通の props。 */
 interface PublicPage extends DataAttributes {
@@ -74,6 +75,8 @@ export interface DocumentPageProps extends PublicPage {
   current?: string;
 }
 
+const DOCUMENT_LABELS = { document: documentLabels } as const;
+
 /**
  * 規約・プライバシーポリシー・特定商取引法に基づく表記などの文書。P-07。
  *
@@ -93,7 +96,7 @@ export function DocumentPage({
   className,
   ...rest
 }: DocumentPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(DOCUMENT_LABELS);
   const timeZone = useTimeZone();
   const phrase = usePhrase();
   const tocId = `${useId()}-toc`;
@@ -194,9 +197,11 @@ function groupFaq(items: readonly FaqItem[], other: string): { name: string | nu
   return [...groups].map(([name, list]) => ({ name, items: list }));
 }
 
+const FAQ_LABELS = { faq: faqLabels } as const;
+
 /** 質問の一覧（まとまりの見出しとアコーディオン）。FaqPage と PricingPage が使う。 */
 function FaqList({ items, headingLevel }: { items: readonly FaqItem[]; headingLevel: 2 | 3 }): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(FAQ_LABELS);
   const phrase = usePhrase();
   const base = useId();
   const Heading = headingLevel === 2 ? 'h2' : 'h3';
@@ -226,7 +231,8 @@ function FaqList({ items, headingLevel }: { items: readonly FaqItem[]; headingLe
  * まとまりがあれば見出しで分ける。アドレスの #id の質問は開いた状態で出す。最後に問い合わせの道を置く。
  */
 export function FaqPage({ items, search, title, description, layout = true, className, ...rest }: FaqPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(FAQ_LABELS);
   const phrase = usePhrase();
   const [query, setQuery] = useState('');
   // アドレスの #id の質問を開いて見せる。描いた後に開く（サーバーの描画と食い違わないように）。
@@ -313,6 +319,8 @@ export interface PricingPageProps extends PublicPage {
   faq?: readonly FaqItem[];
 }
 
+const PRICING_LABELS = { pricing: pricingLabels } as const;
+
 /**
  * 料金プラン。P-09。
  *
@@ -333,7 +341,8 @@ export function PricingPage({
   className,
   ...rest
 }: PricingPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(PRICING_LABELS);
   const phrase = usePhrase();
   const base = useId();
   const { pricing } = labels;
@@ -499,6 +508,8 @@ export interface ContactPageProps extends PublicPage {
   details?: ReactNode;
 }
 
+const CONTACT_LABELS = { common: commonLabels, contact: contactLabels } as const;
+
 /**
  * お問い合わせ。P-10。
  *
@@ -517,7 +528,8 @@ export function ContactPage({
   className,
   ...rest
 }: ContactPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(CONTACT_LABELS);
   const phrase = usePhrase();
   const { common, contact } = labels;
   const [sentTo, setSentTo] = useState<string | null>(null);
@@ -659,6 +671,8 @@ const TAG_TONES: Record<ChangelogTag, StatusTone> = {
 };
 const TAG_ORDER: readonly ChangelogTag[] = ['new', 'improved', 'fixed', 'security', 'breaking'];
 
+const CHANGELOG_LABELS = { changelog: changelogLabels } as const;
+
 /**
  * 更新履歴（リリースノート）。P-11。
  *
@@ -666,7 +680,8 @@ const TAG_ORDER: readonly ChangelogTag[] = ['new', 'improved', 'fixed', 'securit
  * 使われている種類だけで絞り込める。器が広いときは日付と版を横の列に置く。
  */
 export function ChangelogPage({ entries, feedHref, title, description, layout = true, className, ...rest }: ChangelogPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(CHANGELOG_LABELS);
   const timeZone = useTimeZone();
   const phrase = usePhrase();
   const base = useId();

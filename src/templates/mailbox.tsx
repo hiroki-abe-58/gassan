@@ -18,8 +18,9 @@ import { ModalRoot } from '../root';
 import { ModalSelect, normalizeForMatch } from '../select';
 import { ModalTagInput } from '../tag-input';
 import { FormError, formatDateTime, looksLikeEmail, runAction, type SubmitResult } from './form';
+import { commonLabels, mailLabels } from './labels';
 import { useListDetail } from './list-detail';
-import { useSite, useTimeZone } from './site';
+import { useTemplateLabels, useTimeZone } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -130,6 +131,8 @@ function formatSize(size: number): string {
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+const MAILBOX_LABELS = { common: commonLabels, mail: mailLabels } as const;
+
 /**
  * メールのページ。P-20。AppShell の中に置く中身。
  *
@@ -153,7 +156,7 @@ export function MailboxPage({
   className,
   ...rest
 }: MailboxPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(MAILBOX_LABELS);
   const gassan = useLabels();
   const timeZone = useTimeZone();
   const phrase = usePhrase();
@@ -525,7 +528,7 @@ function ComposeModal({
   onSend: (values: MailComposeValues) => SubmitResult | Promise<SubmitResult>;
   onSent: () => void;
 }): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(MAILBOX_LABELS);
   const gassan = useLabels();
   const { common, mail: m } = labels;
   const [to, setTo] = useState(draft.to);

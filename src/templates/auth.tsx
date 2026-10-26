@@ -20,8 +20,18 @@ import {
   type SignUpValues,
 } from './auth-parts';
 import { ErrorSummary, FormError, useTemplateForm, type FormErrors, type SubmitResult } from './form';
+import {
+  commonLabels,
+  forgotPasswordLabels,
+  resetPasswordLabels,
+  signInLabels,
+  signOutLabels,
+  signUpLabels,
+  twoFactorLabels,
+  verifyEmailLabels,
+} from './labels';
 import { AuthLayout } from './layouts';
-import { SiteButtonLink, SiteLink, useSite } from './site';
+import { SiteButtonLink, SiteLink, useSiteConfig, useTemplateLabels } from './site';
 
 export type { AuthProvider, PasskeyHandler, SignInValues, SignUpValues } from './auth-parts';
 
@@ -51,6 +61,8 @@ export interface SignInPageProps extends PageText {
   onPasskey?: PasskeyHandler;
 }
 
+const SIGN_IN_LABELS = { common: commonLabels, signIn: signInLabels } as const;
+
 /**
  * ログイン。P-02。
  *
@@ -70,7 +82,8 @@ export function SignInPage({
   className,
   ...rest
 }: SignInPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(SIGN_IN_LABELS);
   const phrase = usePhrase();
   const { common, signIn } = labels;
   return (
@@ -118,6 +131,8 @@ export interface SignUpPageProps extends PageText {
   sender?: string;
 }
 
+const SIGN_UP_LABELS = { common: commonLabels, signUp: signUpLabels } as const;
+
 /**
  * アカウントの作成。P-02。
  *
@@ -137,7 +152,8 @@ export function SignUpPage({
   className,
   ...rest
 }: SignUpPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(SIGN_UP_LABELS);
   const { common, signUp } = labels;
   return (
     <AuthLayout
@@ -171,6 +187,8 @@ export interface ForgotPasswordPageProps extends PageText {
   resendAfter?: number;
 }
 
+const FORGOT_PASSWORD_LABELS = { common: commonLabels, forgotPassword: forgotPasswordLabels } as const;
+
 /**
  * パスワードの再設定のメールを送る。P-04。
  *
@@ -178,7 +196,8 @@ export interface ForgotPasswordPageProps extends PageText {
  * 同じ画面に進む（アカウントの有無を明かさない）。待ち時間の後に送り直せる。
  */
 export function ForgotPasswordPage({ onSubmit, resendAfter = 60, title, description, aside, className, ...rest }: ForgotPasswordPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(FORGOT_PASSWORD_LABELS);
   const { common, forgotPassword } = labels;
   const [sentTo, setSentTo] = useState<string | null>(null);
   const headingRef = useFocusOnChange(sentTo !== null);
@@ -225,6 +244,8 @@ export interface ResetPasswordPageProps extends PageText {
   passwordMinLength?: number;
 }
 
+const RESET_PASSWORD_LABELS = { common: commonLabels, resetPassword: resetPasswordLabels } as const;
+
 /**
  * 新しいパスワードを決める。P-04。
  *
@@ -241,7 +262,8 @@ export function ResetPasswordPage({
   className,
   ...rest
 }: ResetPasswordPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(RESET_PASSWORD_LABELS);
   const { common, resetPassword } = labels;
   const [done, setDone] = useState(false);
   const headingRef = useFocusOnChange(done);
@@ -345,6 +367,8 @@ export interface TwoFactorPageProps extends PageText {
   length?: number;
 }
 
+const TWO_FACTOR_LABELS = { common: commonLabels, twoFactor: twoFactorLabels } as const;
+
 /**
  * 2 段階認証のコードの入力。P-02。
  *
@@ -366,7 +390,7 @@ export function TwoFactorPage({
   className,
   ...rest
 }: TwoFactorPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(TWO_FACTOR_LABELS);
   const { common, twoFactor } = labels;
   const form = useTemplateForm<{ code: string; trust: boolean }>({
     initial: { code: '', trust: false },
@@ -444,6 +468,8 @@ export interface VerifyEmailPageProps extends PageText {
   continueHref?: string;
 }
 
+const VERIFY_EMAIL_LABELS = { verifyEmail: verifyEmailLabels } as const;
+
 /** メールアドレスの確認。P-04。送った先を示し、送り直し・アドレスの変更・確認後の続きを案内する。 */
 export function VerifyEmailPage({
   email,
@@ -458,7 +484,7 @@ export function VerifyEmailPage({
   className,
   ...rest
 }: VerifyEmailPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(VERIFY_EMAIL_LABELS);
   const { verifyEmail } = labels;
   const layout = { ...domPassthrough(rest, 'VerifyEmailPage'), className, aside };
   if (status === 'verified') {
@@ -499,9 +525,12 @@ export interface SignOutPageProps extends PageText {
   cancelHref?: string;
 }
 
+const SIGN_OUT_LABELS = { common: commonLabels, signOut: signOutLabels } as const;
+
 /** ログアウトの確認と、ログアウトした後のページ。P-02。 */
 export function SignOutPage({ status = 'done', onConfirm, cancelHref, title, description, aside, className, ...rest }: SignOutPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(SIGN_OUT_LABELS);
   const { common, signOut } = labels;
   const layout = { ...domPassthrough(rest, 'SignOutPage'), className, aside };
   if (status === 'confirm') {

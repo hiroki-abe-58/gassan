@@ -19,7 +19,8 @@ import { ModalRoot } from '../root';
 import { ModalSelect, normalizeForMatch } from '../select';
 import { ModalTagInput } from '../tag-input';
 import { FormError, formatDateTime, looksLikeEmail, runAction, type SubmitResult } from './form';
-import { useSite, useTimeZone } from './site';
+import { commonLabels, membersLabels } from './labels';
+import { useTemplateLabels, useTimeZone } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -79,6 +80,8 @@ export interface MembersPageProps extends DataAttributes {
 
 type Notice = { tone: 'success' | 'error'; text: ReactNode };
 
+const MEMBERS_LABELS = { common: commonLabels, members: membersLabels } as const;
+
 /**
  * ワークスペースのメンバー。P-14。AppShell の中に置く中身。
  *
@@ -102,7 +105,7 @@ export function MembersPage({
   className,
   ...rest
 }: MembersPageProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(MEMBERS_LABELS);
   const timeZone = useTimeZone();
   const gassan = useLabels();
   const phrase = usePhrase();
@@ -379,7 +382,7 @@ function InviteModal({
   onInvite: (values: MemberInviteValues) => SubmitResult | Promise<SubmitResult>;
   onSent: (count: number) => void;
 }): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(MEMBERS_LABELS);
   const gassan = useLabels();
   const { common, members: m } = labels;
   const firstRole = roles[0]?.value ?? '';

@@ -9,7 +9,8 @@ import { ScrollPane } from '../internal/scrollbars';
 import { Menu, type MenuEntry } from '../overlay';
 import { usePhrase } from '../phrase';
 import { ModalRoot } from '../root';
-import { Brand, SiteLink, useSite } from './site';
+import { appLabels, commonLabels } from './labels';
+import { Brand, SiteLink, useTemplateLabels } from './site';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -88,6 +89,8 @@ function AppNav({ nav, current, label, onNavigate }: { nav: readonly AppNavSecti
   );
 }
 
+const APP_SHELL_LABELS = { common: commonLabels, app: appLabels } as const;
+
 /**
  * ログインした後のアプリの枠。P-12。
  *
@@ -97,7 +100,7 @@ function AppNav({ nav, current, label, onNavigate }: { nav: readonly AppNavSecti
  * いまのページは地の色と太字で示し、左の太い線では示さない（§5 の 21）。
  */
 export function AppShell({ nav, current, actions, account, sidebarFooter, children, className, ...rest }: AppShellProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(APP_SHELL_LABELS);
   const phrase = usePhrase();
   const base = useId();
   const mainId = `${base}-main`;

@@ -20,7 +20,8 @@ import {
   type SignUpValues,
 } from './auth-parts';
 import type { SubmitResult } from './form';
-import { useSite } from './site';
+import { commonLabels, forgotPasswordLabels, signInLabels, signUpLabels } from './labels';
+import { useTemplateLabels } from './site';
 
 /** 窓に出している画面。 */
 export type AuthDialogMode = 'signIn' | 'signUp' | 'forgotPassword';
@@ -55,6 +56,8 @@ export interface AuthDialogProps extends DataAttributes {
   className?: string;
 }
 
+const AUTH_DIALOG_LABELS = { common: commonLabels, signIn: signInLabels, signUp: signUpLabels, forgotPassword: forgotPasswordLabels } as const;
+
 /**
  * 窓で出すログインと登録。P-21。
  *
@@ -84,7 +87,7 @@ export function AuthDialog({
   className,
   ...rest
 }: AuthDialogProps): ReactNode {
-  const { labels } = useSite();
+  const labels = useTemplateLabels(AUTH_DIALOG_LABELS);
   const phrase = usePhrase();
   const { common, signIn, signUp, forgotPassword } = labels;
   const [current, setCurrent] = useControllable<AuthDialogMode>(mode, defaultMode, onModeChange);

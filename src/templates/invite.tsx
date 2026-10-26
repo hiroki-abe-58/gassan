@@ -6,8 +6,9 @@ import { Banner } from '../feedback';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
 import { usePhrase } from '../phrase';
 import { FormError, runAction, type SubmitResult } from './form';
+import { commonLabels, inviteLabels } from './labels';
 import { AuthLayout } from './layouts';
-import { SiteButtonLink, useSite } from './site';
+import { SiteButtonLink, useSiteConfig, useTemplateLabels } from './site';
 
 export interface InviteAcceptPageProps extends DataAttributes {
   /** 招待されたワークスペースの名前。 */
@@ -31,6 +32,8 @@ export interface InviteAcceptPageProps extends DataAttributes {
   className?: string;
 }
 
+const INVITE_LABELS = { common: commonLabels, invite: inviteLabels } as const;
+
 /**
  * 招待を受けるページ。P-17。
  *
@@ -53,7 +56,8 @@ export function InviteAcceptPage({
   className,
   ...rest
 }: InviteAcceptPageProps): ReactNode {
-  const { labels, links } = useSite();
+  const { links } = useSiteConfig();
+  const labels = useTemplateLabels(INVITE_LABELS);
   const phrase = usePhrase();
   const { common, invite } = labels;
   const [declined, setDeclined] = useState(false);

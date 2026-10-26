@@ -1,9 +1,9 @@
-import { createContext, useContext, useSyncExternalStore, type ComponentType, type MouseEventHandler, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, useSyncExternalStore, type ComponentType, type MouseEventHandler, type ReactNode } from 'react';
 
 import { ButtonBody } from '../internal/button-body';
 import { useLabels } from '../labels';
 import { usePhrase } from '../phrase';
-import { englishTemplateLabels, japaneseTemplateLabels, type TemplateLabels } from './labels';
+import { commonLabels, englishTemplateLabels, japaneseTemplateLabels, type TemplateLabelGroup, type TemplateLabelPair, type TemplateLabels } from './labels';
 import type { RegistrationLabels } from './registration-labels';
 
 /**
@@ -97,12 +97,37 @@ export interface Site extends Omit<SiteConfig, 'labels'> {
   labels: TemplateLabels;
 }
 
-/** テンプレートが読む、解決済みの設定。 */
+/** 解決済みの設定と、全部のテンプレートの文言（自分で組むページが読む）。 */
 export function useSite(): Site {
-  const config = useContext(SiteContext);
+  const config = useSiteConfig();
+  const { labels } = useContext(SiteContext);
   const { locale } = useLabels();
-  const labels = config.labels ?? (locale.toLowerCase().startsWith('ja') ? japaneseTemplateLabels : englishTemplateLabels);
-  return { ...config, links: config.links ?? {}, labels };
+  return { ...config, labels: labels ?? (locale.toLowerCase().startsWith('ja') ? japaneseTemplateLabels : englishTemplateLabels) };
+}
+
+/**
+ * テンプレートの中で読む、文言を除いた設定。useSite は全部のテンプレートの文言を既定から解決し、
+ * 呼んだテンプレートの束に全部の文言が載るので、テンプレートの中では使わない。
+ */
+export function useSiteConfig(): Omit<Site, 'labels'> {
+  const config = useContext(SiteContext);
+  return { ...config, links: config.links ?? {} };
+}
+
+/**
+ * テンプレートが読む文言のまとまり。SiteProvider の labels があればそれを、無ければ GassanProvider の言語の既定を返す
+ * （locale が ja で始まれば日本語、ほかは英語）。既定はまとまりごとの値なので、使うテンプレートの束にだけ載る。
+ * pairs はモジュールの先頭で作った定数を渡す（描くたびに作り直すと、毎回新しい文言の値になる）。
+ */
+export function useTemplateLabels<K extends TemplateLabelGroup>(pairs: { readonly [P in K]: TemplateLabelPair<P> }): Pick<TemplateLabels, K | 'locale'> {
+  const { labels } = useContext(SiteContext);
+  const ja = useLabels().locale.toLowerCase().startsWith('ja');
+  return useMemo(() => {
+    if (labels) return labels;
+    const resolved: Record<string, unknown> = { locale: ja ? 'ja-JP' : 'en-US' };
+    for (const [key, pair] of Object.entries<TemplateLabelPair<TemplateLabelGroup>>(pairs)) resolved[key] = ja ? pair.ja : pair.en;
+    return resolved as Pick<TemplateLabels, K | 'locale'>;
+  }, [labels, ja, pairs]);
 }
 
 const subscribeNothing = (): (() => void) => () => undefined;
@@ -155,7 +180,7 @@ export function SiteButtonLink({ href, variant = 'secondary', block = false, chi
 
 /** ロゴか製品の名前を、ホームへのリンクとして出す。どちらも無ければ何も出さない。 */
 export function Brand(): ReactNode {
-  const { name, logo, links } = useSite();
+  const { name, logo, links } = useSiteConfig();
   if (!logo && !name) return null;
   const mark = logo ?? <span className="g-brand-name">{name}</span>;
   return links.home ? (
@@ -167,12 +192,15 @@ export function Brand(): ReactNode {
   );
 }
 
+const PAGE_FOOTER_LABELS = { common: commonLabels } as const;
+
 /**
  * ページの足元（footer）。children（SiteLayout の列）の下に、利用規約・プライバシーポリシー・ヘルプ・著作権の行を置く。
  * 行き先は渡されたものだけを並べる。置くものが何も無ければ footer ごと出さない（空のランドマークを作らない）。
  */
 export function PageFooter({ className, children }: { className: string; children?: ReactNode }): ReactNode {
-  const { links, labels, copyright } = useSite();
+  const { links, copyright } = useSiteConfig();
+  const labels = useTemplateLabels(PAGE_FOOTER_LABELS);
   const phrase = usePhrase();
   const items = [
     links.terms ? { href: links.terms, label: labels.common.terms } : null,
