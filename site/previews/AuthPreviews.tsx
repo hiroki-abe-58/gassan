@@ -33,8 +33,8 @@ import {
 
 import { POSTAL_SAMPLES } from '../data/japan';
 import { useT } from '../i18n';
-import { AtlasApp, USER_EMAIL } from './AppPreviews';
-import { go, preview, wait } from './shared';
+import { AtlasApp } from './AppPreviews';
+import { USER_EMAIL, go, preview, wait } from './shared';
 
 /** 見本のパスワードと確認コード（ほかの見本と同じ）。 */
 const PASSWORD = 'gassan';

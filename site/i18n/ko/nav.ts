@@ -66,6 +66,7 @@ export default {
     templatesPublic: '요금·FAQ·약관',
     templatesApp: '앱 셸',
     templatesAppPages: '설정·멤버·결제',
+    templatesWorkspace: 'API 키·감사 로그·알림',
     templatesConversations: '채팅과 AI 어시스턴트',
     templatesMail: '메일',
     provider: 'GassanProvider',

@@ -447,8 +447,9 @@
   margin-block: 16px 20px;
 }
 /* 文節でまとめた要素の中のコードと、文の器の直下のコード（文節にまとめられなかった最後のコード）の両方に当てる。
- * 表は文言の Markdown を描く DataTable のセルだけ（API の表の型と既定値は、地を付けない素のコードのまま） */
-:is(.s-prose, .s-lead, .s-section-intro, .s-keypoint, .s-guideline-text, .s-card, td, .s-api-doc) :not(pre) > code,
+ * 表はサイトの表（.s-table）のセルだけで、文言の Markdown を描く DataTable のセルに当たる（API の表の型と既定値は、
+ * 地を付けない素のコードのまま。見本の中のライブラリの表にも当てない） */
+:is(.s-prose, .s-lead, .s-section-intro, .s-keypoint, .s-guideline-text, .s-card, .s-table td, .s-api-doc) :not(pre) > code,
 :is(.s-prose, .s-lead, .s-section-intro, .s-keypoint, .s-guideline-text) > code,
 .s-data-table td > code {
   padding: 0.1em 0.35em;

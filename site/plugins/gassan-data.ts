@@ -260,6 +260,16 @@ const EXTRA_INTERFACES = new Set([
   'CancelReason',
   'RetentionOffer',
   'ExternalTransmission',
+  // API キー・監査ログ・通知の設定（P-36〜P-38）。
+  'ApiKey',
+  'ApiKeyScope',
+  'ApiKeyCreateValues',
+  'AuditEvent',
+  'AuditLogQuery',
+  'NotificationChannel',
+  'NotificationTopic',
+  'NotificationSettingsValue',
+  'QuietHours',
   // 日本の入力（I-25〜I-31）。
   'JapaneseAddress',
   'PostalAddress',

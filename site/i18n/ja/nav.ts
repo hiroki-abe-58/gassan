@@ -65,6 +65,7 @@ export default {
     templatesPublic: '料金・FAQ・規約',
     templatesApp: 'アプリの枠',
     templatesAppPages: '設定・メンバー・請求',
+    templatesWorkspace: 'API キー・監査ログ・通知',
     templatesConversations: 'チャットと AI アシスタント',
     templatesMail: 'メール',
     provider: 'GassanProvider',

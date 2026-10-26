@@ -65,15 +65,25 @@ function useMessages(baseId: string, help: ReactNode, error: ReactNode) {
  */
 const FieldsetRequiredContext = createContext<boolean | null>(null);
 
-/** ラベルの中身。文言と「必須 / 任意」のバッジ（requiredBadge が false なら「任意」だけ）。 */
-function LabelContent({ label, required, requiredBadge }: { label: ReactNode; required: boolean; requiredBadge: boolean }): ReactNode {
+/** ラベルの中身。文言と「必須 / 任意」のバッジ（requiredBadge が false なら「任意」だけ。値を見せるだけの欄には出さない）。 */
+function LabelContent({
+  label,
+  required,
+  requiredBadge,
+  readOnly = false,
+}: {
+  label: ReactNode;
+  required: boolean;
+  requiredBadge: boolean;
+  readOnly?: boolean;
+}): ReactNode {
   const labels = useLabels();
   const phrase = usePhrase();
   const group = useContext(FieldsetRequiredContext);
   return (
     <>
       <span className="g-label-text">{phrase(label)}</span>
-      {(required && !requiredBadge) || group === required ? null : (
+      {readOnly || (required && !requiredBadge) || group === required ? null : (
         <span className="g-label-badge" data-required={required ? '' : undefined}>
           {required ? labels.required : labels.optional}
         </span>
@@ -90,6 +100,11 @@ export interface ModalFieldProps extends DataAttributes {
   required?: boolean;
   /** 「必須」のバッジを出すか。既定 true。false は全部が必須の短いフォーム（ログインなど）向けで、任意の項目にだけ「任意」を出す。 */
   requiredBadge?: boolean;
+  /**
+   * 値を見せるだけの欄（作った API キー・招待のリンクなど）。「必須 / 任意」の印を出さない（入力しない欄には意味が無い）。
+   * 中の入力部品にも readOnly を付ける。
+   */
+  readOnly?: boolean;
   /**
    * ラベルの置き場所。既定 'top'（入力欄の上）。'floating' は入力欄の枠の中に置き、フォーカスか値があると
    * 左上へ縮んで退く（I-24）。前に飾りの無い Input / PasswordInput 向けで、ほかの部品では 'top' と同じ形で出す。
@@ -120,6 +135,7 @@ export function ModalField({
   error,
   required = false,
   requiredBadge = true,
+  readOnly = false,
   labelPlacement = 'top',
   id,
   className,
@@ -132,7 +148,7 @@ export function ModalField({
 
   const labelElement = (
     <label className="g-label" htmlFor={fieldId}>
-      <LabelContent label={label} required={required} requiredBadge={requiredBadge} />
+      <LabelContent label={label} required={required} requiredBadge={requiredBadge} readOnly={readOnly} />
     </label>
   );
   const control = (

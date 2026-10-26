@@ -631,7 +631,12 @@
   .g-app-menu > svg { inline-size: 20px; block-size: 20px; }
   .g-app-menu:hover { background: var(--g-hover); }
   .g-app-menu:focus-visible { outline: 2px solid var(--g-focus); outline-offset: 2px; }
-  .g-app-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-inline-start: auto; }
+  /* 幅が足りないときは、操作の束を縮めて縦に積まず、ロゴの名前の方を省略する */
+  .g-app-topbar-brand { min-inline-size: 0; }
+  .g-app-topbar-brand > .g-brand { max-inline-size: 100%; }
+  .g-app-topbar-brand .g-brand-name { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .g-app-topbar-brand .g-brand-name wbr { display: none; }
+  .g-app-actions { display: flex; flex: none; align-items: center; gap: 4px; margin-inline-start: auto; }
   .g-app-account {
     display: inline-flex;
     align-items: center;
@@ -661,6 +666,11 @@
     .g-app-account-name { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     .g-app-account { padding-inline-end: 4px; }
   }
+  @container (max-width: 400px) {
+    /* 幅 320px でも、メニュー・ロゴ・操作 2 つ・アカウントを 1 段に収める（アカウントはアバターだけにする） */
+    .g-app-topbar { gap: 4px; padding-inline: 12px; }
+    .g-app-account-chevron { display: none; }
+  }
   @container (min-width: 960px) {
     .g-app-frame { grid-template-columns: 15rem minmax(0, 1fr); }
     .g-app-sidebar { display: grid; }
@@ -672,13 +682,13 @@
   /* --- T11〜T13 アプリの中のページ（P-13〜P-15） -------------------------------------
    * 設定・メンバー・請求は AppShell の main に置く中身。自分を器にして、置いた所の幅で形を決める。
    * 見出しの帯の下は、知らせの帯・数・表・節を同じ間隔で積む。 */
-  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow) {
+  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow, .g-api-keys, .g-audit-log, .g-notification-settings) {
     container-type: inline-size;
     display: grid;
     gap: 16px;
     min-inline-size: 0;
   }
-  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow) > .g-page-header { margin-block-end: 8px; }
+  :is(.g-settings, .g-members, .g-billing, .g-order-review, .g-cancel-flow, .g-api-keys, .g-audit-log, .g-notification-settings) > .g-page-header { margin-block-end: 8px; }
   .g-app-subtitle { margin: 0; font-size: 1.125rem; font-weight: 700; line-height: 1.4; }
 
   /* T11 settings（P-13）。節ごとに見出しと説明を左、中身を右に置く（器が狭いときは縦に積む）。節の間は 1px の線、
@@ -1094,6 +1104,32 @@
   .g-transmission-title { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.4; }
   .g-transmission-service { margin-inline-start: 8px; color: var(--g-fg-muted); font-size: 0.875rem; font-weight: 500; }
   .g-transmission-links { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; font-size: 0.875rem; }
+
+  /* --- T22 API キー（P-36）・監査ログ（P-37）・通知の設定（P-38） ------------------------
+   * 名前の下に補足（見分けるための一部・メールアドレス・場所）を小さく積む。キーと IP アドレスは等幅の字で書く。
+   * 絞り込みは折り返す 1 行に並べ、探す欄だけを伸ばす。 */
+  .g-api-key-name,
+  .g-audit-actor,
+  .g-audit-source,
+  .g-notification-topic { display: grid; gap: 2px; }
+  .g-api-key-hint,
+  .g-audit-detail,
+  .g-notification-detail { color: var(--g-fg-muted); font-size: 0.8125rem; font-weight: 400; }
+  .g-api-key-hint,
+  .g-audit-source code,
+  .g-api-key-secret .g-bare { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .g-api-key-expiry { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+  .g-api-key-secret { display: grid; gap: 8px; }
+  .g-api-key-secret > .g-copy { justify-self: start; }
+  .g-audit-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .g-search-form { display: flex; flex: 1 1 18rem; gap: 8px; min-inline-size: 0; }
+  .g-search-form > .g-search { flex: 1; min-inline-size: 0; }
+  .g-audit-filter { flex: 0 1 14rem; min-inline-size: 0; }
+  .g-audit-count { margin: 0; color: var(--g-fg-muted); font-size: 0.875rem; }
+  .g-notification-fixed { display: inline-flex; color: var(--g-success); }
+  .g-notification-fixed > svg { inline-size: 18px; block-size: 18px; }
+  .g-notification-paused { margin: 0 0 8px; color: var(--g-fg-muted); font-size: 0.875rem; }
+  .g-quiet-hours { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); align-items: start; gap: 12px; margin-block-start: 12px; }
 }
 
 @layer gassan.theme {

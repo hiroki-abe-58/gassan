@@ -62,6 +62,7 @@ import textInput from './textInput';
 import theme from './theme';
 import title from './title';
 import verification from './verification';
+import workspace from './workspace';
 
 const messages = {
   common,
@@ -120,6 +121,7 @@ const messages = {
   registration,
   registrationPresets,
   commerce,
+  workspace,
   provider,
   spec,
   verification,

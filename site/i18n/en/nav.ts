@@ -66,6 +66,7 @@ export default {
     templatesPublic: 'Pricing, FAQ and legal',
     templatesApp: 'App shell',
     templatesAppPages: 'Settings, members and billing',
+    templatesWorkspace: 'API keys, audit log and notifications',
     templatesConversations: 'Chat and AI assistant',
     templatesMail: 'Mail',
     provider: 'GassanProvider',

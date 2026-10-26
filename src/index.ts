@@ -180,6 +180,9 @@ export {
 } from './templates/registration-labels';
 export { OrderReviewPage, CancelSubscriptionPage } from './templates/commerce';
 export { CookieConsent, ExternalTransmissionList, CONSENT_CATEGORIES } from './templates/consent';
+export { ApiKeysPage } from './templates/api-keys';
+export { AuditLogPage } from './templates/audit-log';
+export { NotificationSettingsPage } from './templates/notification-settings';
 export { ErrorPage, MaintenancePage } from './templates/status';
 export { SiteLayout } from './templates/site-layout';
 export { DocumentPage, FaqPage, PricingPage, ContactPage, ChangelogPage } from './templates/public';
@@ -482,6 +485,15 @@ export type {
   RetentionOffer,
 } from './templates/commerce';
 export type { CookieConsentProps, CookieConsentValue, ConsentCategory, ExternalTransmissionListProps, ExternalTransmission } from './templates/consent';
+export type { ApiKeysPageProps, ApiKey, ApiKeyScope, ApiKeyCreateValues, ApiKeyCreateResult } from './templates/api-keys';
+export type { AuditLogPageProps, AuditEvent, AuditLogQuery } from './templates/audit-log';
+export type {
+  NotificationSettingsPageProps,
+  NotificationChannel,
+  NotificationTopic,
+  NotificationSettingsValue,
+  QuietHours,
+} from './templates/notification-settings';
 export type { ErrorPageProps, MaintenancePageProps, MaintenanceUpdate } from './templates/status';
 export type { ErrorStatus, TemplateLabels } from './templates/labels';
 export type { SubmitResult } from './templates/form';

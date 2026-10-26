@@ -34,10 +34,8 @@ import {
 
 import DashboardSample from '../demos/DashboardSample';
 import { fmt, useDemoText, useT } from '../i18n';
-import { go, preview, wait } from './shared';
-
-/** ログインしている人のメールアドレス（メンバーの表のデモの 1 人目）。 */
-export const USER_EMAIL = 'aoi@example.com';
+import { USER_EMAIL, go, minutesAgo, preview, wait } from './shared';
+import { ApiKeysContent, AuditLogContent, NotificationsContent } from './WorkspacePreviews';
 
 /** アプリの枠の見本の案内の印（飾り）。 */
 const ICON_PATHS = {
@@ -53,6 +51,8 @@ const ICON_PATHS = {
   assistant: 'M10 3.5l1.6 4.9 4.9 1.6-4.9 1.6L10 16.5l-1.6-4.9L3.5 10l4.9-1.6L10 3.5Z',
   billing: 'M3 6.5A1.5 1.5 0 0 1 4.5 5h11A1.5 1.5 0 0 1 17 6.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 13.5v-7ZM3 8.5h14M6 12h3',
   settings: 'M3.5 6.5h6M13.5 6.5h3M11.5 8.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM3.5 13.5h2M9.5 13.5h7M7.5 15.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
+  key: 'M13 10.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM10.5 9.5l-7 7M5.5 14.5l1.75 1.75M7.75 12.25l1.5 1.5',
+  audit: 'M7.5 3h5v2.5h-5V3ZM7.5 4.25h-2a1 1 0 0 0-1 1V16a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V5.25a1 1 0 0 0-1-1h-2M7.5 9.5h5M7.5 12.5h5',
   changelog: 'M6 4.5h8M6 8.5h8M6 12.5h5M3.5 4.5h.01M3.5 8.5h.01M3.5 12.5h.01',
   help: 'M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM8 8a2 2 0 1 1 2.8 1.8c-.5.2-.8.7-.8 1.2v.5M10 14h.01',
   search: 'M8.75 14.5a5.75 5.75 0 1 0 0-11.5 5.75 5.75 0 0 0 0 11.5ZM17 17l-4.1-4.1',
@@ -208,8 +208,6 @@ function SettingsContent(): ReactNode {
     />
   );
 }
-
-const minutesAgo = (minutes: number): string => new Date(Date.now() - minutes * 60_000).toISOString();
 
 /** 会話の最後のメッセージ（一覧に添える文と日時）。 */
 const lastOf = (messages: readonly ChatMessage[]): { preview?: string; lastAt?: string } => {
@@ -533,6 +531,9 @@ const APP_PAGES = {
   'app-assistant': AssistantContent,
   'app-billing': BillingContent,
   'app-settings': SettingsContent,
+  'app-api-keys': ApiKeysContent,
+  'app-audit-log': AuditLogContent,
+  'app-notifications': NotificationsContent,
 } as const;
 
 export type AppPreviewName = keyof typeof APP_PAGES;
@@ -562,6 +563,8 @@ export function AtlasApp({ page, children }: { page: AppPreviewName; children?: 
       items: [
         { target: 'app-billing', label: app.billing, icon: ICON_PATHS.billing },
         { target: 'app-settings', label: app.settings, icon: ICON_PATHS.settings },
+        { target: 'app-api-keys', label: app.apiKeys, icon: ICON_PATHS.key },
+        { target: 'app-audit-log', label: app.auditLog, icon: ICON_PATHS.audit },
       ],
     },
     {
@@ -600,6 +603,7 @@ export function AtlasApp({ page, children }: { page: AppPreviewName; children?: 
         name: app.user,
         menu: [
           { value: 'profile', label: app.profile, href: preview('app-settings') },
+          { value: 'notifications', label: app.notificationSettings, href: preview('app-notifications') },
           { value: 'billing', label: app.billing, href: preview('app-billing') },
           { type: 'separator' },
           { value: 'sign-out', label: app.signOut, href: preview('sign-out-confirm') },

@@ -66,6 +66,7 @@ export default {
     templatesPublic: 'ราคา คำถามที่พบบ่อย และข้อกำหนด',
     templatesApp: 'โครงแอป',
     templatesAppPages: 'การตั้งค่า สมาชิก และการเรียกเก็บเงิน',
+    templatesWorkspace: 'คีย์ API บันทึกการตรวจสอบ และการแจ้งเตือน',
     templatesConversations: 'แชตและผู้ช่วย AI',
     templatesMail: 'อีเมล',
     provider: 'GassanProvider',

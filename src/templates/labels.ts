@@ -63,6 +63,8 @@ export interface TemplateLabels {
     resent: string;
     reference: string;
     copyReference: string;
+    /** 探す欄の送るボタン（監査ログ・検索結果）。 */
+    search: string;
   };
   signIn: {
     title: string;
@@ -644,6 +646,88 @@ export interface TemplateLabels {
     keptTitle: string;
     keptDescription: string;
   };
+  /** API キー（ApiKeysPage）。P-36。 */
+  apiKeys: {
+    title: string;
+    description: string;
+    create: string;
+    createDescription: string;
+    name: string;
+    nameHelp: string;
+    scopes: string;
+    scopesRequired: string;
+    expiry: string;
+    /** 有効期限の日数（「90 日」）。 */
+    days: (count: number) => string;
+    noExpiry: string;
+    submit: string;
+    createdTitle: string;
+    secret: string;
+    secretWarning: string;
+    copySecret: string;
+    done: string;
+    /** キーを見せている間に Esc や外を押したとき、閉じずに読み上げる。 */
+    closeBlocked: string;
+    created: string;
+    lastUsed: string;
+    neverUsed: string;
+    expired: string;
+    revoke: string;
+    /** 「無効にする」の名前（「本番のサーバー を無効にする」）。 */
+    revokeFor: (name: string) => string;
+    revokeTitle: (name: string) => string;
+    revokeDescription: string;
+    revoked: (name: string) => string;
+    empty: string;
+  };
+  /** 監査ログ（AuditLogPage）。P-37。 */
+  auditLog: {
+    title: string;
+    description: string;
+    filters: string;
+    search: string;
+    action: string;
+    allActions: string;
+    range: string;
+    clear: string;
+    /** 条件に合う記録の数（「1,234 件」）。 */
+    count: (count: number) => string;
+    actor: string;
+    target: string;
+    source: string;
+    /** 日時の列の見出し。時間帯の名前（「JST」）を添える。 */
+    time: (zone: string) => string;
+    export: string;
+    exported: string;
+    empty: string;
+    noMatch: string;
+  };
+  /** 通知の設定（NotificationSettingsPage）。P-38。 */
+  notificationSettings: {
+    title: string;
+    description: string;
+    pause: string;
+    pauseSwitch: string;
+    pauseDescription: string;
+    paused: string;
+    topics: string;
+    topicsDescription: string;
+    topic: string;
+    matrix: string;
+    /** 既定の受け取る方法の名前。 */
+    channels: { email: string; push: string; inApp: string };
+    required: string;
+    unavailable: string;
+    quietHours: string;
+    quietHoursDescription: string;
+    quietHoursSwitch: string;
+    start: string;
+    end: string;
+    /** おやすみ時間の説明（「毎日 22:00〜翌 7:00」）。nextDay は終わりが翌日のとき。 */
+    everyDay: (start: string, end: string, nextDay: boolean) => string;
+    save: string;
+    saved: string;
+  };
 }
 
 /** 文言のまとまりの名前（locale のほかのキー）。 */
@@ -695,6 +779,7 @@ export const commonLabels: TemplateLabelPair<'common'> = {
     resent: '送り直しました',
     reference: '問い合わせ番号',
     copyReference: '問い合わせ番号をコピー',
+    search: '検索',
   },
   en: {
     skipToContent: 'Skip to content',
@@ -729,6 +814,7 @@ export const commonLabels: TemplateLabelPair<'common'> = {
     resent: 'Sent again',
     reference: 'Reference',
     copyReference: 'Copy reference',
+    search: 'Search',
   },
 };
 
@@ -2110,6 +2196,159 @@ export const cancelSubscriptionLabels: TemplateLabelPair<'cancelSubscription'> =
   },
 };
 
+export const apiKeysLabels: TemplateLabelPair<'apiKeys'> = {
+  ja: {
+    title: 'API キー',
+    description: 'API を呼ぶためのキーです。使わなくなったキーは無効にしてください。',
+    create: 'API キーを作る',
+    createDescription: 'キーは作った直後に 1 度だけ表示します。',
+    name: '名前',
+    nameHelp: '何に使うキーか分かる名前にします（例: 本番のサーバー）。',
+    scopes: '権限',
+    scopesRequired: '権限を 1 つ以上選んでください',
+    expiry: '有効期限',
+    days: (count) => `${String(count)} 日`,
+    noExpiry: '期限なし',
+    submit: '作る',
+    createdTitle: 'API キーを作りました',
+    secret: '新しい API キー',
+    secretWarning: 'このキーは今しか表示できません。閉じる前にコピーして、安全な場所に保存してください。',
+    copySecret: 'API キーをコピー',
+    done: '完了',
+    closeBlocked: 'キーを保存したら「完了」を押してください',
+    created: '作った日',
+    lastUsed: '最後に使った日時',
+    neverUsed: 'まだ使っていません',
+    expired: '期限切れ',
+    revoke: '無効にする',
+    revokeFor: (name) => `${name} を無効にする`,
+    revokeTitle: (name) => `${name} を無効にしますか`,
+    revokeDescription: 'このキーを使っているアプリやスクリプトは、すぐに API を呼べなくなります。もとに戻せません。',
+    revoked: (name) => `${name} を無効にしました`,
+    empty: 'まだ API キーはありません',
+  },
+  en: {
+    title: 'API keys',
+    description: 'Keys for calling the API. Revoke keys you no longer use.',
+    create: 'Create API key',
+    createDescription: 'The key is shown once, right after you create it.',
+    name: 'Name',
+    nameHelp: 'Use a name that says what the key is for (for example, Production server).',
+    scopes: 'Permissions',
+    scopesRequired: 'Choose at least one permission',
+    expiry: 'Expires',
+    days: (count) => (count === 1 ? '1 day' : `${String(count)} days`),
+    noExpiry: 'Never',
+    submit: 'Create',
+    createdTitle: 'API key created',
+    secret: 'New API key',
+    secretWarning: 'This key is shown only now. Copy it and store it somewhere safe before you close this.',
+    copySecret: 'Copy API key',
+    done: 'Done',
+    closeBlocked: 'Save the key, then select “Done”',
+    created: 'Created',
+    lastUsed: 'Last used',
+    neverUsed: 'Never used',
+    expired: 'Expired',
+    revoke: 'Revoke',
+    revokeFor: (name) => `Revoke ${name}`,
+    revokeTitle: (name) => `Revoke ${name}?`,
+    revokeDescription: 'Apps and scripts that use this key will stop being able to call the API right away. This can’t be undone.',
+    revoked: (name) => `${name} was revoked`,
+    empty: 'No API keys yet',
+  },
+};
+
+export const auditLogLabels: TemplateLabelPair<'auditLog'> = {
+  ja: {
+    title: '監査ログ',
+    description: 'ワークスペースで、誰が・いつ・何をしたかの記録です。',
+    filters: '記録の絞り込み',
+    search: '人・対象・IP アドレスで探す',
+    action: '操作',
+    allActions: 'すべての操作',
+    range: '期間',
+    clear: '条件をクリア',
+    count: (count) => `${count.toLocaleString('ja-JP')} 件`,
+    actor: '操作した人',
+    target: '対象',
+    source: 'IP アドレスと場所',
+    time: (zone) => (zone ? `日時（${zone}）` : '日時'),
+    export: 'CSV で書き出す',
+    exported: 'CSV の書き出しを始めました',
+    empty: 'まだ記録はありません',
+    noMatch: '条件に合う記録はありません',
+  },
+  en: {
+    title: 'Audit log',
+    description: 'A record of who did what, and when, in this workspace.',
+    filters: 'Filter the log',
+    search: 'Search by person, target or IP address',
+    action: 'Action',
+    allActions: 'All actions',
+    range: 'Date range',
+    clear: 'Clear filters',
+    count: (count) => `${count.toLocaleString('en-US')} ${count === 1 ? 'event' : 'events'}`,
+    actor: 'Actor',
+    target: 'Target',
+    source: 'IP address and location',
+    time: (zone) => (zone ? `Time (${zone})` : 'Time'),
+    export: 'Export CSV',
+    exported: 'Started exporting the CSV',
+    empty: 'No events yet',
+    noMatch: 'No events match these filters',
+  },
+};
+
+export const notificationSettingsLabels: TemplateLabelPair<'notificationSettings'> = {
+  ja: {
+    title: '通知',
+    description: '知らせの種類ごとに、受け取る方法を選びます。',
+    pause: '通知を止める',
+    pauseSwitch: 'すべての通知を止める',
+    pauseDescription: 'セキュリティと請求の大事な知らせは、止めても届きます。',
+    paused: '通知を止めているあいだは、ここでは選べません。',
+    topics: '知らせの種類',
+    topicsDescription: '受け取りたい方法にチェックを入れてください。',
+    topic: '知らせ',
+    matrix: '知らせの種類と受け取る方法',
+    channels: { email: 'メール', push: 'プッシュ通知', inApp: 'アプリ内' },
+    required: '必ず届きます',
+    unavailable: 'この方法では届きません',
+    quietHours: 'おやすみ時間',
+    quietHoursDescription: 'この時間は、プッシュ通知を鳴らしません。',
+    quietHoursSwitch: 'おやすみ時間を使う',
+    start: '始まり',
+    end: '終わり',
+    everyDay: (start, end, nextDay) => `毎日 ${start}〜${nextDay ? '翌 ' : ''}${end}`,
+    save: '保存する',
+    saved: '保存しました',
+  },
+  en: {
+    title: 'Notifications',
+    description: 'Choose how you receive each kind of notification.',
+    pause: 'Pause notifications',
+    pauseSwitch: 'Pause all notifications',
+    pauseDescription: 'Important security and billing notices still reach you.',
+    paused: 'You can’t change these while notifications are paused.',
+    topics: 'Notification types',
+    topicsDescription: 'Check the ways you want to be notified.',
+    topic: 'Notification',
+    matrix: 'Notification types and how you receive them',
+    channels: { email: 'Email', push: 'Push', inApp: 'In-app' },
+    required: 'Always sent',
+    unavailable: 'Not sent this way',
+    quietHours: 'Quiet hours',
+    quietHoursDescription: 'Push notifications stay silent during these hours.',
+    quietHoursSwitch: 'Use quiet hours',
+    start: 'Start',
+    end: 'End',
+    everyDay: (start, end, nextDay) => `Every day, ${start}–${end}${nextDay ? ' the next day' : ''}`,
+    save: 'Save',
+    saved: 'Saved',
+  },
+};
+
 /** 全部のまとまりを 1 つの言語でまとめる（useSite と、文言を丸ごと差し替える利用者のため）。 */
 function templateLabelsIn(lang: 'ja' | 'en'): TemplateLabels {
   return {
@@ -2153,6 +2392,9 @@ function templateLabelsIn(lang: 'ja' | 'en'): TemplateLabels {
     cookieConsent: cookieConsentLabels[lang],
     externalTransmission: externalTransmissionLabels[lang],
     cancelSubscription: cancelSubscriptionLabels[lang],
+    apiKeys: apiKeysLabels[lang],
+    auditLog: auditLogLabels[lang],
+    notificationSettings: notificationSettingsLabels[lang],
   };
 }
 

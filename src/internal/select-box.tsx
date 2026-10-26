@@ -13,6 +13,7 @@ export function SelectBox({
   onChange,
   label,
   labelledBy,
+  disabled = false,
   inputRef,
 }: {
   className: string;
@@ -21,6 +22,8 @@ export function SelectBox({
   onChange: (checked: boolean) => void;
   label?: string;
   labelledBy?: string;
+  /** 選べないとき（通知の設定で、通知を止めている間など）。 */
+  disabled?: boolean;
   inputRef?: RefObject<HTMLInputElement | null>;
 }): ReactNode {
   const ownRef = useRef<HTMLInputElement>(null);
@@ -38,6 +41,7 @@ export function SelectBox({
           checked={checked}
           aria-label={label}
           aria-labelledby={labelledBy}
+          disabled={disabled}
           onChange={(event) => onChange(event.target.checked)}
         />
         <Icon name={indeterminate ? 'minus' : 'check'} className="g-check-icon" />
