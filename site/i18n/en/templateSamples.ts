@@ -195,6 +195,29 @@ export default {
       { q: 'Does the free plan expire?', a: 'No. You can keep using it as long as you stay within the limits on people and projects.' },
     ],
   },
+  serviceStatus: {
+    components: { api: 'API', dashboard: 'Dashboard', mail: 'Email delivery', webhooks: 'Webhooks', storage: 'File storage' },
+    descriptions: { webhooks: 'Notifications to outside services', storage: 'Storing and serving uploaded files' },
+    slow: {
+      title: 'API responses are slow',
+      identified: 'We found heavy load on the database and are routing reads to other servers.',
+      investigating: 'API responses are slow in some regions. We are looking into the cause.',
+    },
+    outage: {
+      title: 'Unable to sign in to the dashboard',
+      resolved: 'Everyone can sign in again. We’re sorry for the trouble.',
+      monitoring: 'A fix has been applied. We are confirming that sign-in works.',
+      identified: 'The cause was a configuration error on the authentication server. We are fixing it.',
+      investigating: 'People can’t sign in to the dashboard. We are looking into the cause.',
+    },
+    maintenance: {
+      title: 'Scheduled database maintenance',
+      resolved: 'Maintenance is complete.',
+      monitoring: 'Maintenance has started. Until it ends, the dashboard is read-only.',
+    },
+    notes: { slow: 'Slow API responses', outage: 'Sign-in outage, 1 h 20 min', maintenance: 'Scheduled maintenance, 2 h', storage: 'Failed uploads, 25 min' },
+  },
+  search: { kind: 'Type', category: 'Category', initial: 'data' },
   faq: [
     { id: 'refund', category: 'Billing', q: 'Can I get a refund?', a: 'Within 30 days of payment, we refund the full amount, no questions asked.', keywords: ['cancel', 'money back'] },
     {

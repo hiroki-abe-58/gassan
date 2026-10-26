@@ -9,7 +9,7 @@ import { Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { TemplateFrame } from '../../ui/TemplateFrame';
 
-const IDS = ['P-01', 'P-07', 'P-08', 'P-09', 'P-10', 'P-11'];
+const IDS = ['P-01', 'P-07', 'P-08', 'P-09', 'P-10', 'P-11', 'P-40'];
 
 export function PublicTemplatesPage({ rest }: PageProps): ReactNode {
   const { nav, templateDocs } = useT();
@@ -50,6 +50,9 @@ export function PublicTemplatesPage({ rest }: PageProps): ReactNode {
           <Section id="changelog" title={t.changelog.title} intro={t.changelog.intro}>
             <TemplateFrame title={t.changelog.title} height={820} variants={[{ name: 'changelog', label: t.changelog.title }]} />
           </Section>
+          <Section id="search" title={t.search.title} intro={t.search.intro}>
+            <TemplateFrame title={t.search.title} height={820} variants={[{ name: 'search', label: t.search.title }]} />
+          </Section>
         </>
       )}
       api={() => (
@@ -67,6 +70,11 @@ export function PublicTemplatesPage({ rest }: PageProps): ReactNode {
           <ApiTable name="DocumentSection" />
           <ApiTable name="ChangelogPageProps" title="ChangelogPage" />
           <ApiTable name="ChangelogEntry" />
+          <ApiTable name="SearchPageProps" title="SearchPage" />
+          <ApiTable name="SearchResult" />
+          <ApiTable name="SearchQuery" />
+          <ApiTable name="SearchFacet" />
+          <ApiTable name="SearchFacetOption" />
         </>
       )}
       a11y={() => <SpecTable ids={IDS} caption={t.a11yCaption} />}

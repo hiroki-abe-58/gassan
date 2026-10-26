@@ -190,6 +190,29 @@ export default {
       { q: '免费套餐有期限吗？', a: '没有。只要在人数和项目数的上限之内，就能一直使用。' },
     ],
   },
+  serviceStatus: {
+    components: { api: 'API', dashboard: '仪表盘', mail: '邮件发送', webhooks: 'Webhook', storage: '文件存储' },
+    descriptions: { webhooks: '发给外部服务的通知', storage: '上传文件的存储与分发' },
+    slow: {
+      title: 'API 响应变慢',
+      identified: '已查明是数据库负载过高。正在把读取请求分流到其他服务器。',
+      investigating: '部分地区的 API 响应变慢。正在调查原因。',
+    },
+    outage: {
+      title: '无法登录仪表盘的故障',
+      resolved: '所有用户都已恢复登录。给您带来不便，敬请谅解。',
+      monitoring: '已应用修复。正在确认能否正常登录。',
+      identified: '原因是身份验证服务器的配置错误。正在修复。',
+      investigating: '目前无法登录仪表盘。正在调查原因。',
+    },
+    maintenance: {
+      title: '数据库定期维护',
+      resolved: '维护已完成。',
+      monitoring: '维护已开始。维护结束前，仪表盘为只读状态。',
+    },
+    notes: { slow: 'API 响应延迟', outage: '无法登录的故障 1 小时 20 分钟', maintenance: '计划内维护 2 小时', storage: '上传失败 25 分钟' },
+  },
+  search: { kind: '类型', category: '类别', initial: '数据' },
   faq: [
     { id: 'refund', category: '费用', q: '可以退款吗？', a: '付款后 30 天内，无论什么理由都全额退款。', keywords: ['取消', '退费'] },
     {

@@ -11,7 +11,7 @@ import { useEvent } from './internal/use-event';
 import { useLabels } from './labels';
 import { usePhrase } from './phrase';
 import { ModalRoot } from './root';
-import { normalizeForMatch } from './select';
+import { firstRange, fold, highlight, type Folded } from './internal/match';
 
 const cx = (base: string, extra?: string): string => (extra ? `${base} ${extra}` : base);
 
@@ -59,28 +59,6 @@ export interface CommandPaletteProps extends DataAttributes {
 /* 絞り込み                                                                    */
 /* -------------------------------------------------------------------------- */
 
-/**
- * 1 文字ずつ正規化した文字列と、正規化した位置から元の文字の位置への対応。
- * 正規化（全角半角・大文字小文字・かなの種類）で長さが変わっても、当てはまった所を元の文字で示せる。
- */
-interface Folded {
-  text: string;
-  origin: number[];
-  chars: string[];
-}
-
-function fold(source: string): Folded {
-  const chars = [...source];
-  let text = '';
-  const origin: number[] = [];
-  chars.forEach((char, index) => {
-    const piece = normalizeForMatch(char);
-    text += piece;
-    for (let k = 0; k < piece.length; k += 1) origin.push(index);
-  });
-  return { text, origin, chars };
-}
-
 interface Match {
   item: CommandItem;
   /** 0 は当てはまらない。名前の頭 3・名前の中 2・補足と別名 1。打っていなければ全部 1。 */
@@ -93,12 +71,8 @@ interface Match {
 function matchItem(item: CommandItem, needle: string): Match {
   const label = fold(item.label);
   if (!needle) return { item, score: 1, range: null, label };
-  const at = label.text.indexOf(needle);
-  if (at >= 0) {
-    const start = label.origin[at] ?? 0;
-    const end = (label.origin[at + needle.length - 1] ?? start) + 1;
-    return { item, score: at === 0 ? 3 : 2, range: [start, end], label };
-  }
+  const range = firstRange(label, needle);
+  if (range) return { item, score: label.text.startsWith(needle) ? 3 : 2, range, label };
   const extra = fold([item.description ?? '', ...(item.keywords ?? [])].join('\n')).text;
   return { item, score: extra.includes(needle) ? 1 : 0, range: null, label };
 }
@@ -119,18 +93,6 @@ function arrange(items: readonly CommandItem[], needle: string): Group[] {
     else groups.push({ title: match.item.group, matches: [match] });
   }
   return groups;
-}
-
-function Highlighted({ label, range }: { label: Folded; range: [number, number] | null }): ReactNode {
-  if (!range) return label.chars.join('');
-  const [start, end] = range;
-  return (
-    <>
-      {label.chars.slice(0, start).join('')}
-      <mark className="g-command-mark">{label.chars.slice(start, end).join('')}</mark>
-      {label.chars.slice(end).join('')}
-    </>
-  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -336,7 +298,7 @@ function CommandList({
         ) : null}
         <span className="g-command-text">
           <span id={`${id}-label`} className="g-command-label">
-            <Highlighted label={match.label} range={match.range} />
+            {highlight(match.label, match.range ? [match.range] : [], 'g-command-mark')}
           </span>
           {item.description ? (
             <span id={`${id}-description`} className="g-command-description">

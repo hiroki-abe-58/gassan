@@ -728,6 +728,60 @@ export interface TemplateLabels {
     save: string;
     saved: string;
   };
+  /** 稼働状況（ServiceStatusPage）。P-39。 */
+  serviceStatus: {
+    title: string;
+    description: string;
+    /** 全体の状態の文（いちばん重い部分の状態で決める）。 */
+    overall: { operational: string; degraded: string; partial: string; major: string; maintenance: string };
+    /** 部分ごと・日ごとの状態の語。none は記録の無い日。 */
+    statuses: { operational: string; degraded: string; partial: string; major: string; maintenance: string; none: string };
+    /** 最終更新（「最終更新 10月26日 12:00」）。 */
+    updated: (time: string) => string;
+    components: string;
+    /** 稼働率（「稼働率 99.98%」）。 */
+    uptime: (percent: string) => string;
+    /** 稼働の帯の名前（「API の過去 90 日」）。 */
+    uptimeOf: (name: string, days: number) => string;
+    /** 帯の説明（「90 日のうち、問題があった日は 2 日」）。 */
+    issueDays: (count: number, days: number) => string;
+    /** 日の升の読み上げ（「10月3日(土) 一部の障害。API の遅延 2 時間 15 分」）。 */
+    day: (date: string, status: string, note?: string) => string;
+    /** 帯の左端の目盛り（「90 日前」）。 */
+    daysAgo: (days: number) => string;
+    active: string;
+    history: string;
+    noIncidents: string;
+    /** 障害の対応の段階。 */
+    stages: { investigating: string; identified: string; monitoring: string; resolved: string };
+    affected: string;
+    subscribe: string;
+    subscribeDescription: string;
+    subscribeSubmit: string;
+    /** 登録の確認のメールを送ったとき。 */
+    subscribed: (email: string) => string;
+  };
+  /** 検索結果（SearchPage）。P-40。送るボタンは common.search。 */
+  searchResults: {
+    title: string;
+    /** 探す欄の目印（role="search"）の名前。 */
+    label: string;
+    input: string;
+    results: string;
+    /** 件数（「「請求書」の検索結果 12 件」）。query が空なら件数だけ。 */
+    count: (count: number, query: string) => string;
+    filters: string;
+    /** 狭い器の絞り込みのボタン（「絞り込み（2）」）。count は選んでいる数。 */
+    filtersCount: (count: number) => string;
+    /** 絞り込みの面を閉じるボタン（「12 件の結果を見る」）。 */
+    showResults: (count: number) => string;
+    clearFilters: string;
+    emptyTitle: string;
+    emptyDescription: string;
+    /** 当てはまらないとき。query が空なら絞り込みに当てはまらない文。 */
+    noResultsTitle: (query: string) => string;
+    noResultsDescription: string;
+  };
 }
 
 /** 文言のまとまりの名前（locale のほかのキー）。 */
@@ -2349,6 +2403,101 @@ export const notificationSettingsLabels: TemplateLabelPair<'notificationSettings
   },
 };
 
+export const serviceStatusLabels: TemplateLabelPair<'serviceStatus'> = {
+  ja: {
+    title: '稼働状況',
+    description: 'サービスの今の状態と、障害の記録です。',
+    overall: {
+      operational: 'すべてのシステムは正常に動いています',
+      degraded: '一部のシステムで動作が遅くなっています',
+      partial: '一部のシステムで障害が起きています',
+      major: '大規模な障害が起きています',
+      maintenance: 'メンテナンスをしています',
+    },
+    statuses: { operational: '正常', degraded: '遅延', partial: '一部の障害', major: '大規模な障害', maintenance: 'メンテナンス', none: '記録なし' },
+    updated: (time) => `最終更新 ${time}`,
+    components: 'システムの状態',
+    uptime: (percent) => `稼働率 ${percent}`,
+    uptimeOf: (name, days) => `${name} の過去 ${String(days)} 日`,
+    issueDays: (count, days) => (count === 0 ? `${String(days)} 日のあいだ、問題はありませんでした` : `${String(days)} 日のうち、問題があった日は ${String(count)} 日`),
+    day: (date, status, note) => (note ? `${date} ${status}。${note}` : `${date} ${status}`),
+    daysAgo: (days) => `${String(days)} 日前`,
+    active: '対応中の障害',
+    history: '過去の障害',
+    noIncidents: '障害の記録はありません',
+    stages: { investigating: '調査中', identified: '原因を特定', monitoring: '経過を観察中', resolved: '解決済み' },
+    affected: '影響を受けた部分',
+    subscribe: '更新を受け取る',
+    subscribeDescription: '障害が起きたときと解決したときに、メールでお知らせします。',
+    subscribeSubmit: '登録する',
+    subscribed: (email) => `${email} に確認のメールを送りました。メールのリンクを開くと登録が終わります。`,
+  },
+  en: {
+    title: 'System status',
+    description: 'The current state of the service and the record of incidents.',
+    overall: {
+      operational: 'All systems operational',
+      degraded: 'Some systems are running slowly',
+      partial: 'Some systems are having an outage',
+      major: 'Major outage',
+      maintenance: 'Under maintenance',
+    },
+    statuses: { operational: 'Operational', degraded: 'Degraded', partial: 'Partial outage', major: 'Major outage', maintenance: 'Maintenance', none: 'No data' },
+    updated: (time) => `Last updated ${time}`,
+    components: 'Systems',
+    uptime: (percent) => `${percent} uptime`,
+    uptimeOf: (name, days) => `${name}, past ${String(days)} days`,
+    issueDays: (count, days) => (count === 0 ? `No issues in the past ${String(days)} days` : `Issues on ${String(count)} of the past ${String(days)} days`),
+    day: (date, status, note) => (note ? `${date}: ${status}. ${note}` : `${date}: ${status}`),
+    daysAgo: (days) => `${String(days)} days ago`,
+    active: 'Ongoing incidents',
+    history: 'Past incidents',
+    noIncidents: 'No incidents reported',
+    stages: { investigating: 'Investigating', identified: 'Identified', monitoring: 'Monitoring', resolved: 'Resolved' },
+    affected: 'Affected',
+    subscribe: 'Get updates',
+    subscribeDescription: 'We’ll email you when an incident starts and when it’s resolved.',
+    subscribeSubmit: 'Subscribe',
+    subscribed: (email) => `We sent a confirmation email to ${email}. Open the link in it to finish subscribing.`,
+  },
+};
+
+export const searchResultsLabels: TemplateLabelPair<'searchResults'> = {
+  ja: {
+    title: '検索',
+    label: 'サイト内の検索',
+    input: '探す言葉',
+    results: '検索結果',
+    count: (count, query) => (query ? `「${query}」の検索結果 ${count.toLocaleString('ja-JP')} 件` : `${count.toLocaleString('ja-JP')} 件`),
+    filters: '絞り込み',
+    filtersCount: (count) => (count > 0 ? `絞り込み（${String(count)}）` : '絞り込み'),
+    showResults: (count) => `${count.toLocaleString('ja-JP')} 件の結果を見る`,
+    clearFilters: '絞り込みを外す',
+    emptyTitle: '探したい言葉を入れてください',
+    emptyDescription: 'ページの名前や本文の言葉で探せます。',
+    noResultsTitle: (query) => (query ? `「${query}」に当てはまるものはありません` : '条件に当てはまるものはありません'),
+    noResultsDescription: '言葉を短くするか、ほかの言い方で探してください。',
+  },
+  en: {
+    title: 'Search',
+    label: 'Site search',
+    input: 'Search terms',
+    results: 'Results',
+    count: (count, query) => {
+      const text = `${count.toLocaleString('en-US')} ${count === 1 ? 'result' : 'results'}`;
+      return query ? `${text} for “${query}”` : text;
+    },
+    filters: 'Filters',
+    filtersCount: (count) => (count > 0 ? `Filters (${String(count)})` : 'Filters'),
+    showResults: (count) => `Show ${count.toLocaleString('en-US')} ${count === 1 ? 'result' : 'results'}`,
+    clearFilters: 'Clear filters',
+    emptyTitle: 'Enter something to search for',
+    emptyDescription: 'You can search page titles and their text.',
+    noResultsTitle: (query) => (query ? `No results for “${query}”` : 'No results match these filters'),
+    noResultsDescription: 'Try fewer words or different wording.',
+  },
+};
+
 /** 全部のまとまりを 1 つの言語でまとめる（useSite と、文言を丸ごと差し替える利用者のため）。 */
 function templateLabelsIn(lang: 'ja' | 'en'): TemplateLabels {
   return {
@@ -2395,6 +2544,8 @@ function templateLabelsIn(lang: 'ja' | 'en'): TemplateLabels {
     apiKeys: apiKeysLabels[lang],
     auditLog: auditLogLabels[lang],
     notificationSettings: notificationSettingsLabels[lang],
+    serviceStatus: serviceStatusLabels[lang],
+    searchResults: searchResultsLabels[lang],
   };
 }
 

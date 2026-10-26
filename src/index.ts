@@ -183,6 +183,8 @@ export { CookieConsent, ExternalTransmissionList, CONSENT_CATEGORIES } from './t
 export { ApiKeysPage } from './templates/api-keys';
 export { AuditLogPage } from './templates/audit-log';
 export { NotificationSettingsPage } from './templates/notification-settings';
+export { ServiceStatusPage } from './templates/service-status';
+export { SearchPage } from './templates/search';
 export { ErrorPage, MaintenancePage } from './templates/status';
 export { SiteLayout } from './templates/site-layout';
 export { DocumentPage, FaqPage, PricingPage, ContactPage, ChangelogPage } from './templates/public';
@@ -494,6 +496,16 @@ export type {
   NotificationSettingsValue,
   QuietHours,
 } from './templates/notification-settings';
+export type {
+  ServiceStatusPageProps,
+  ServiceStatus,
+  ServiceDay,
+  ServiceComponent,
+  ServiceIncident,
+  IncidentUpdate,
+  IncidentStage,
+} from './templates/service-status';
+export type { SearchPageProps, SearchResult, SearchFacet, SearchFacetOption, SearchQuery } from './templates/search';
 export type { ErrorPageProps, MaintenancePageProps, MaintenanceUpdate } from './templates/status';
 export type { ErrorStatus, TemplateLabels } from './templates/labels';
 export type { SubmitResult } from './templates/form';

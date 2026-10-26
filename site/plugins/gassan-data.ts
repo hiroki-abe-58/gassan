@@ -270,6 +270,15 @@ const EXTRA_INTERFACES = new Set([
   'NotificationTopic',
   'NotificationSettingsValue',
   'QuietHours',
+  // 稼働状況・検索結果（P-39・P-40）。
+  'ServiceDay',
+  'ServiceComponent',
+  'ServiceIncident',
+  'IncidentUpdate',
+  'SearchResult',
+  'SearchFacet',
+  'SearchFacetOption',
+  'SearchQuery',
   // 日本の入力（I-25〜I-31）。
   'JapaneseAddress',
   'PostalAddress',

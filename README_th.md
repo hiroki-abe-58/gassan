@@ -18,17 +18,17 @@ focus trap, Esc, การทำให้พื้นหลังเป็น in
 
 **เว็บไซต์เอกสาร: <https://hiroki-abe-58.github.io/gassan/#/th>**
 — แนวคิดการออกแบบ (โมดอลมีไว้ทำไม, โมเดล 4 เลเยอร์, 5 ประเภท, การเข้าถึง), สไตล์ (scrim, สีและคอนทราสต์, ธีม, ขนาด, การตัดบรรทัด, โมชัน),
-เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์และส่วนประกอบฟอร์ม เทมเพลตหน้าเว็บ และสเปกของพฤติกรรม 297 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
+เดโมที่ใช้งานได้จริงและ API ของทุกคอมโพเนนต์และส่วนประกอบฟอร์ม เทมเพลตหน้าเว็บ และสเปกของพฤติกรรม 299 รายการ จัดวางแบบเดียวกับแนวทาง (guidelines) ของ Material Design 3
 เว็บไซต์มีให้อ่านเป็นภาษาไทย, [English](https://hiroki-abe-58.github.io/gassan/#/en), [日本語](https://hiroki-abe-58.github.io/gassan/), [简体中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hans), [繁體中文](https://hiroki-abe-58.github.io/gassan/#/zh-Hant) และ [한국어](https://hiroki-abe-58.github.io/gassan/#/ko) (สลับภาษาได้ด้วยปุ่มรูปลูกโลกที่แถบด้านบน)
 มีธีมสว่าง / มืด และเลือกสีหลัก (primary color) ได้ ไม่ว่าจะเลือกสีไหน สีตัวอักษรและสีพื้นจะถูกคำนวณให้ผ่านอัตราส่วนคอนทราสต์ของ WCAG
 ตาราง จำนวน และคำอธิบาย API ทั้งหมดบนเว็บไซต์สร้างขึ้นตอน build จากสเปกและ type definition ไม่มีตัวเลขไหนที่เขียนด้วยมือ
 
-การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 297 รายการ, decision matrix และเกณฑ์คุณภาพ)
+การออกแบบฉบับเต็มอยู่ใน [`modal.skill.md`](./modal.skill.md) (ตารางพฤติกรรม 299 รายการ, decision matrix และเกณฑ์คุณภาพ)
 เวลาเขียนโค้ดกับผู้ช่วย AI ให้ใส่ไฟล์นี้ไว้ใน context
 
 | เอกสาร | เนื้อหา |
 |---|---|
-| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 297 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
+| [`docs/traceability.md`](./docs/traceability.md) | จับคู่พฤติกรรม 299 รายการใน `modal.skill.md` แต่ละข้อกับเทสต์และ CSS ที่ทำให้ข้อนั้นเป็นจริง ตรวจสอบอัตโนมัติด้วย `npm run check:trace` |
 | [`docs/requirements-audit.md`](./docs/requirements-audit.md) | แตกข้อกำหนดตั้งต้นออกเป็นบรรทัดละข้อ: implement แล้ว / ทำได้ด้วยการประกอบ (composition) / อยู่ในโรดแมป |
 | [`docs/control-recipes.md`](./docs/control-recipes.md) | ตัวอย่างขั้นต่ำของการใส่ส่วนประกอบอินพุตของ gassan ลงในโมดอล และข้อควรระวังเมื่อห่อคอมโพเนนต์จากไลบรารีอื่นมาใช้แทนส่วนที่ gassan ไม่มี |
 | [`docs/library-landscape.md`](./docs/library-landscape.md) | `<dialog>` แบบเนทีฟ vs Base UI vs React Aria vs Radix (ณ วันที่ 2026-09-29 ใช้เฉพาะแหล่งข้อมูลปฐมภูมิ) |
@@ -279,7 +279,7 @@ const plain = <GassanProvider lineBreak="browser">{edit}</GassanProvider>;
 | `AuthDialog` `EmailFirstPage` `MagicLinkPage` `PhoneSignInPage` `QuickSignUpPage` `RegistrationWizardPage` `PasskeyPromptPage` `AccountChooserPage` `ReauthDialog` `GuestAccountCard` | ทางเข้าสู่ระบบและสมัครสมาชิกแบบอื่น ๆ: หน้าต่างที่เปิดจากส่วนหัว, การถามอีเมลก่อน, ลิงก์ทางอีเมลและรหัสทาง SMS ที่ไม่ต้องใช้รหัสผ่าน, การสมัครเบื้องต้นด้วยอีเมลอย่างเดียวตามด้วยขั้นตอนลงทะเบียนที่บันทึกไปทีละขั้น, พาสคีย์, การเลือกบัญชี, การยืนยันตัวตนอีกครั้งและการเข้าสู่ระบบที่หมดอายุ, และการสร้างบัญชีหลังซื้อแบบผู้เยี่ยมชม |
 | `RegistrationPresetPage` `REGISTRATION_PRESETS` `OccupationField` `PurposeField` `PepsField` `TaxResidencyField` `UsPersonField` `DeclarationField` `MyNumberField` `CompanyFields` `IdentityMethodField` `GuardianFields` `MarketingConsentField` | การลงทะเบียนจริงตามประเภทธุรกิจ หลังการสมัครเบื้องต้นด้วยอีเมลอย่างเดียว จัดขั้นตอนและช่องที่กฎหมายญี่ปุ่นกำหนดก่อนทำธุรกรรมให้ 15 ประเภทธุรกิจ (ธนาคาร หลักทรัพย์ สินทรัพย์ดิจิทัล การโอนเงิน บัตรเครดิต ร้านค้าออนไลน์ สุรา บริการสำหรับนิติบุคคล รับซื้อของมือสอง การรักษาออนไลน์ หาคู่ หางาน เช่าที่พัก ตั๋ว โทรศัพท์มือถือ) พร้อมอธิบายเหตุผลที่ถามด้วยกฎหมายที่เป็นฐาน ทั้งความยินยอมของผู้ปกครองสำหรับผู้เยาว์ อายุขั้นต่ำ และวิธียืนยันตัวตน (เปลี่ยนตามวันที่กฎหมายมีผลบังคับใช้) ก็ปรับตามประเภทธุรกิจ เป็นแนวทาง ณ เดือนตุลาคม 2026 ไม่ใช่คำแนะนำทางกฎหมาย |
 | `OrderReviewPage` `CookieConsent` `ExternalTransmissionList` `CancelSubscriptionPage` | การซื้อและความยินยอม: หน้ายืนยันคำสั่งซื้อขั้นสุดท้ายตามมาตรา 12-6 ของกฎหมายว่าด้วยธุรกรรมทางการค้าเฉพาะประเภทของญี่ปุ่น (แยกแต่ละรายการที่ต้องแสดงเป็นส่วนที่มีหัวข้อ), แถบขอความยินยอมเรื่องคุกกี้และการส่งข้อมูลออกภายนอกที่ให้ "อนุญาตทั้งหมด" กับ "อนุญาตเฉพาะที่จำเป็น" มีน้ำหนักเท่ากัน (พร้อมหน้าต่างให้เลือกตามประเภท), รายการผู้รับข้อมูลที่มาตรา 27-12 ของกฎหมายธุรกิจโทรคมนาคมกำหนดให้เปิดเผย และขั้นตอนยกเลิกสมาชิกตามลำดับ เหตุผล ข้อเสนอ (ครั้งเดียว) และการยืนยัน ที่ไม่ซ่อนทางออก เป็นแนวทาง ณ เดือนตุลาคม 2026 ไม่ใช่คำแนะนำทางกฎหมาย |
-| `ErrorPage` `MaintenancePage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` | หน้าข้อผิดพลาด, การปิดปรับปรุง และหน้าสาธารณะ |
+| `ErrorPage` `MaintenancePage` `ServiceStatusPage` `DocumentPage` `FaqPage` `PricingPage` `ContactPage` `ChangelogPage` `SearchPage` | หน้าข้อผิดพลาด, การปิดปรับปรุง และหน้าสาธารณะ |
 | `AppShell` `SettingsPage` `MembersPage` `BillingPage` `OnboardingPage` `InviteAcceptPage` `ChatPage` `AssistantPage` `MailboxPage` `ApiKeysPage` `AuditLogPage` `NotificationSettingsPage` | โครงแอปและหน้าที่อยู่ข้างใน |
 | `GassanProvider` | แทนที่ข้อความ UI (ค่าเริ่มต้นเป็นภาษาญี่ปุ่น มี `englishLabels` มาให้ด้วย) และสลับการตัดบรรทัด (`lineBreak`) |
 | `Phrase` `splitPhrases` | การตัดบรรทัดแบบเดียวกันสำหรับข้อความภาษาญี่ปุ่น จีน และเกาหลีใน UI ของคุณเอง (ในคอมโพเนนต์ของ gassan เปิดอยู่แล้วโดยค่าเริ่มต้น) |

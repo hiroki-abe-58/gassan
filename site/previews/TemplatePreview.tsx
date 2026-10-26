@@ -28,6 +28,7 @@ import { AtlasApp, InviteSample, OnboardingSample } from './AppPreviews';
 import { AuthPatternPreview } from './AuthPreviews';
 import { CommercePreview } from './CommercePreviews';
 import { RegistrationPresetPreview } from './RegistrationPreviews';
+import { StatusSearchPreview } from './StatusSearchPreviews';
 import { go, preview, wait } from './shared';
 
 /** 見本の製品のロゴ。名前は文字で添える（ロゴの読み上げ名が製品の名前になる）。 */
@@ -133,6 +134,8 @@ export const PREVIEWS = [
   'privacy',
   'legal',
   'changelog',
+  'service-status',
+  'search',
   'app-dashboard',
   'app-members',
   'app-chat',
@@ -176,7 +179,7 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
     pricing: preview('pricing'),
     faq: preview('faq'),
     changelog: preview('changelog'),
-    status: preview('maintenance'),
+    status: preview('service-status'),
     billing: preview('app-billing'),
   };
   const nav = [
@@ -452,6 +455,9 @@ export function TemplatePreview({ name }: { name: string }): ReactNode {
       case 'external-transmission':
       case 'cancel-subscription':
         return <CommercePreview name={name} />;
+      case 'service-status':
+      case 'search':
+        return <StatusSearchPreview name={name} />;
       case 'invite':
         return <InviteSample variant="pending" />;
       case 'invite-signed-out':

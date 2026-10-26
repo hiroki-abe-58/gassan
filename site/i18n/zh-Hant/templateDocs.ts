@@ -40,7 +40,7 @@ export default {
     a11yCaption: '登入與註冊範本滿足的規格',
   },
   status: {
-    lead: '4xx / 5xx、離線、維護。用不責怪使用者的措辭寫出發生了什麼、為什麼、接下來能做什麼，並依狀態改變下一步。',
+    lead: '4xx / 5xx、離線、維護、服務狀態。用不責怪使用者的措辭寫出發生了什麼、為什麼、接下來能做什麼，並依狀態改變下一步。',
     error: {
       title: '錯誤頁面',
       intro: '在 IANA 註冊的 4xx 與 5xx 共 40 個狀態碼，以及離線，各自都有標題、說明與下一步（未註冊的狀態以 4xx / 5xx 的文案顯示）。下一步依狀態改變：401 引導登入，402 引導前往帳單設定，403 與 451 引導聯絡客服，無法到達頁面或功能時（404、410 等）引導回到首頁，送出的內容有問題時引導回到上一頁，稍候或重新載入就能恢復時引導再試一次（若是伺服器端的問題，還會附上服務狀態）。狀態碼顯示得很大，朗讀時讀作「錯誤 404」。5xx 的參考編號可以複製。429 在等候期間無法按下「再試一次」。',
@@ -52,12 +52,16 @@ export default {
       title: '維護',
       intro: '預定時間以瀏覽者所在的時區顯示，並附上時區名稱（同一天時日期只顯示一次）。若有服務狀態頁面，會優先引導前往，並依時間列出進度通知。',
     },
-    code: "import { ErrorPage, MaintenancePage } from '@genelab/gassan';\n\n// Next.js 的 app/not-found.tsx\nexport default function NotFound() {\n  return <ErrorPage status={404} />;\n}\n\n<ErrorPage status={500} reference={error.digest} onRetry={reset} />\n<ErrorPage status={429} retryAfter={30} />\n\n<MaintenancePage start=\"2026-10-24T02:00:00+09:00\" end=\"2026-10-24T04:00:00+09:00\" />",
+    serviceStatus: {
+      title: '服務狀態',
+      intro: '將整體狀態（由最嚴重部分的狀態決定的一句話）、正在處理的故障、各部分的狀態與過去 90 天的可用率橫條、過往故障，以及訂閱更新的方式，排在同一個頁面上。橫條是只有一列的表格，只有今天的格子是 Tab 鍵的停留點，以 ←→ 在日期之間移動，讀作「10月3日週六：部分故障」。不只靠顏色傳達，而是把可用率與發生問題的天數作為橫條的說明連結起來。指標在橫條上的任何位置都能選取日期，不必對準細小的格子。日期依服務記錄時所用時區的日曆日期原樣顯示。放在錯誤頁面與頁尾的「服務狀態」所指向的位置（links.status）。',
+    },
+    code: "import { ErrorPage, MaintenancePage, ServiceStatusPage } from '@genelab/gassan';\n\n// Next.js 的 app/not-found.tsx\nexport default function NotFound() {\n  return <ErrorPage status={404} />;\n}\n\n<ErrorPage status={500} reference={error.digest} onRetry={reset} />\n<ErrorPage status={429} retryAfter={30} />\n\n<MaintenancePage start=\"2026-10-24T02:00:00+09:00\" end=\"2026-10-24T04:00:00+09:00\" />\n\n// 各部分的 days 依由舊到新排列（最後一個是今天）。incidents 依由新到舊排列\n<ServiceStatusPage components={components} incidents={incidents} updatedAt={checkedAt} onSubscribe={subscribe} feedHref=\"/status.rss\" />",
     codeCaption: '用法',
-    a11yCaption: '錯誤與維護範本滿足的規格',
+    a11yCaption: '錯誤、維護與服務狀態範本滿足的規格',
   },
   public: {
-    lead: '價格、常見問題、聯絡我們、服務條款與隱私權政策、更新紀錄。連同頁首與頁尾（SiteLayout）一起由一個元件輸出。導覽與頁尾的各欄只要在 SiteProvider 寫一次，就會套用到所有頁面。',
+    lead: '價格、常見問題、聯絡我們、服務條款與隱私權政策、更新紀錄、搜尋結果。除了搜尋結果之外，都連同頁首與頁尾（SiteLayout）一起由一個元件輸出。導覽與頁尾的各欄只要在 SiteProvider 寫一次，就會套用到所有頁面。',
     site: {
       title: '頁面外框',
       intro: '跳到主要內容的連結、頁首的導覽（目前頁面帶有 aria-current）、頁尾的連結欄，以及條款的連結。容器較窄時，導覽會收進「選單」按鈕底下。放進自己的外框時，使用 layout={false}。',
@@ -83,6 +87,10 @@ export default {
     changelog: {
       title: '更新紀錄',
       intro: '每次更新都有標題、日期（time 元素）、版本與以文字表示類型的標籤，可以只依實際用到的類型篩選。容器較寬時，日期與版本放在側邊的一欄。',
+    },
+    search: {
+      title: '搜尋結果',
+      intro: '搜尋欄位（按 Enter 或「搜尋」送出）、篩選、結果數量、結果與分頁。搜尋與分頁在伺服器端進行，條件（query）由應用程式自行管理。在結果的標題與摘要中，符合搜尋字詞的部分會加上標示（不區分平假名與片假名、全形與半形）。區分尚未搜尋的畫面與沒有結果的畫面；沒有結果時，提供清除篩選的入口。容器較窄時，篩選會移到從「篩選」按鈕開啟的面板中。由於公開的說明頁面與應用程式內都會使用，所以本身不帶頁面外框（本範例以 SiteLayout 包住，並以常見問題與更新紀錄的範例作為索引）。',
     },
     a11yCaption: '公開頁面範本滿足的規格',
   },

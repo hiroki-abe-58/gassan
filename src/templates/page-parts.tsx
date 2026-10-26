@@ -1,4 +1,4 @@
-import { useState, type ReactNode, type RefObject } from 'react';
+import { useEffect, useState, type ReactNode, type RefObject } from 'react';
 
 import { ModalBody } from '../body';
 import { Button } from '../button';
@@ -35,6 +35,22 @@ export function useNotice(): { notice: ReactNode; report: (failure: ReactNode, s
     report: (failure, success) => setState(failure ? { tone: 'error', text: failure } : { tone: 'success', text: success }),
     show: (text) => setState({ tone: 'success', text }),
   };
+}
+
+/**
+ * 開いている面（狭い器の案内・絞り込み）を、器（rootRef）が width 以上に広がったら閉じる。広い器では同じ中身を
+ * ページの中に出すので、2 つ見せないため。width は CSS の @container の値と同じにする。
+ */
+export function useCloseWhenWide(rootRef: RefObject<HTMLElement | null>, open: boolean, setOpen: (open: boolean) => void, width: number): void {
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!open || !root || typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry && entry.contentRect.width >= width) setOpen(false);
+    });
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [open, rootRef, setOpen, width]);
 }
 
 export interface ConfirmDialogProps {

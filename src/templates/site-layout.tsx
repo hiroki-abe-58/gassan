@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react';
+import { useId, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from 'react';
 
 import { Icon } from '../internal/icons';
 import { domPassthrough, type DataAttributes } from '../internal/passthrough';
@@ -127,6 +127,28 @@ export function SiteLayout({ children, current, actions, className, ...rest }: S
       </PageFooter>
     </div>
   );
+}
+
+/** 公開ページの共通の props。 */
+export interface PublicPage extends DataAttributes {
+  title?: ReactNode;
+  description?: ReactNode;
+  /** SiteLayout（ヘッダ・フッタ）で包むか。既定 true。false は自分の外枠の中に置くとき（中身だけを描く）。 */
+  layout?: boolean;
+  className?: string;
+}
+
+/**
+ * ページの中の見出しへ移る。スクロールして、見出しにフォーカスを渡す。
+ * アドレスの # は、ハッシュでページを切り替えるアプリ（#/…）では書き換えない（ページが変わってしまう）。
+ */
+export function jumpTo(event: ReactMouseEvent<HTMLAnchorElement>, id: string): void {
+  const target = document.getElementById(id);
+  if (!target) return;
+  event.preventDefault();
+  target.scrollIntoView({ block: 'start' });
+  target.focus({ preventScroll: true });
+  if (!window.location.hash.startsWith('#/')) window.history.replaceState(null, '', `#${id}`);
 }
 
 /**

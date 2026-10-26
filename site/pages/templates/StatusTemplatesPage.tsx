@@ -12,7 +12,7 @@ import { Section } from '../../ui/Page';
 import { SpecTable } from '../../ui/Spec';
 import { TemplateFrame } from '../../ui/TemplateFrame';
 
-const IDS = ['P-01', 'P-05', 'P-06'];
+const IDS = ['P-01', 'P-05', 'P-06', 'P-39'];
 
 export function StatusTemplatesPage({ rest }: PageProps): ReactNode {
   const { nav, templateDocs, templates } = useT();
@@ -48,6 +48,9 @@ export function StatusTemplatesPage({ rest }: PageProps): ReactNode {
           <Section id="maintenance" title={t.maintenance.title} intro={t.maintenance.intro}>
             <TemplateFrame title={t.maintenance.title} height={760} variants={[{ name: 'maintenance', label: t.maintenance.title }]} />
           </Section>
+          <Section id="service-status" title={t.serviceStatus.title} intro={t.serviceStatus.intro}>
+            <TemplateFrame title={t.serviceStatus.title} height={900} variants={[{ name: 'service-status', label: t.serviceStatus.title }]} />
+          </Section>
           <Section id="usage" title={t.codeCaption}>
             <CodeBlock lang="tsx" code={t.code} />
           </Section>
@@ -58,6 +61,11 @@ export function StatusTemplatesPage({ rest }: PageProps): ReactNode {
           <ApiTable name="ErrorPageProps" title="ErrorPage" />
           <ApiTable name="MaintenancePageProps" title="MaintenancePage" />
           <ApiTable name="MaintenanceUpdate" />
+          <ApiTable name="ServiceStatusPageProps" title="ServiceStatusPage" />
+          <ApiTable name="ServiceComponent" />
+          <ApiTable name="ServiceDay" />
+          <ApiTable name="ServiceIncident" />
+          <ApiTable name="IncidentUpdate" />
           <ApiTable name="StatusLayoutProps" title="StatusLayout" />
         </>
       )}

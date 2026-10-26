@@ -38,7 +38,7 @@ export default {
     a11yCaption: 'ログインと登録のテンプレートが満たす仕様',
   },
   status: {
-    lead: '4xx / 5xx・オフライン・メンテナンス。何が起きたか・なぜか・次に何ができるかを、利用者を責めない言葉で書き、次の一歩を状態ごとに変える。',
+    lead: '4xx / 5xx・オフライン・メンテナンス・稼働状況。何が起きたか・なぜか・次に何ができるかを、利用者を責めない言葉で書き、次の一歩を状態ごとに変える。',
     error: {
       title: 'エラーのページ',
       intro: 'IANA に登録された 4xx と 5xx の 40 個とオフラインに、それぞれの見出し・説明・次の一歩を持つ（登録に無い状態は 4xx / 5xx の文で出す）。次の一歩は状態で変える。401 はログイン、402 は請求の設定、403 と 451 は問い合わせ、ページや機能にたどり着けないとき（404・410 など）はホーム、送った内容に問題があるときは前のページ、時間をおくか読み込み直せば直るときはもう一度試す（サーバー側の問題には稼働状況も添える）。状態コードは大きく見せ、読み上げでは「エラー 404」と読ませる。5xx の問い合わせ番号は写せる。429 は待ち時間の間、「もう一度試す」を押せない。',
@@ -50,12 +50,16 @@ export default {
       title: 'メンテナンス',
       intro: '予定は見ている人の時間帯で、時間帯の名前を添えて出す（同じ日なら日付は 1 度だけ）。稼働状況のページがあれば先に案内し、経過の知らせを時刻つきで並べる。',
     },
-    code: "import { ErrorPage, MaintenancePage } from '@genelab/gassan';\n\n// Next.js の app/not-found.tsx\nexport default function NotFound() {\n  return <ErrorPage status={404} />;\n}\n\n<ErrorPage status={500} reference={error.digest} onRetry={reset} />\n<ErrorPage status={429} retryAfter={30} />\n\n<MaintenancePage start=\"2026-10-24T02:00:00+09:00\" end=\"2026-10-24T04:00:00+09:00\" />",
+    serviceStatus: {
+      title: '稼働状況',
+      intro: '全体の状態（いちばん重い部分の状態の文）・対応中の障害・部分ごとの状態と過去 90 日の稼働の帯・過去の障害・更新の受け取り方を 1 枚に並べる。帯は 1 行の表で、今日の升だけが Tab で止まり、←→ で日を移って「10月3日(土) 一部の障害」と読む。色だけで伝えず、稼働率と問題のあった日の数を帯の説明に結ぶ。ポインタは帯全体で日を選ぶので、細い升に当てなくてよい。日付は、サービスが記録している時間帯の暦の日のまま出す。エラーのページとフッタの「稼働状況」の行き先（links.status）に置く。',
+    },
+    code: "import { ErrorPage, MaintenancePage, ServiceStatusPage } from '@genelab/gassan';\n\n// Next.js の app/not-found.tsx\nexport default function NotFound() {\n  return <ErrorPage status={404} />;\n}\n\n<ErrorPage status={500} reference={error.digest} onRetry={reset} />\n<ErrorPage status={429} retryAfter={30} />\n\n<MaintenancePage start=\"2026-10-24T02:00:00+09:00\" end=\"2026-10-24T04:00:00+09:00\" />\n\n// 部分ごとの days は古い順（最後が今日）。incidents は新しい順\n<ServiceStatusPage components={components} incidents={incidents} updatedAt={checkedAt} onSubscribe={subscribe} feedHref=\"/status.rss\" />",
     codeCaption: '使い方',
-    a11yCaption: 'エラーとメンテナンスのテンプレートが満たす仕様',
+    a11yCaption: 'エラー・メンテナンス・稼働状況のテンプレートが満たす仕様',
   },
   public: {
-    lead: '料金・よくある質問・お問い合わせ・規約とプライバシーポリシー・更新履歴。ヘッダとフッタ（SiteLayout）ごと 1 つの部品で出す。案内とフッタの列は SiteProvider に 1 度書けば、全部のページに効く。',
+    lead: '料金・よくある質問・お問い合わせ・規約とプライバシーポリシー・更新履歴・検索結果。検索結果のほかは、ヘッダとフッタ（SiteLayout）ごと 1 つの部品で出す。案内とフッタの列は SiteProvider に 1 度書けば、全部のページに効く。',
     site: {
       title: '外枠',
       intro: '本文へ飛ぶリンク・ヘッダの案内（いまのページに aria-current）・フッタのリンクの列・規約のリンク。器が狭いときは、案内を「メニュー」のボタンの下に畳む。自分の外枠の中に置くときは layout={false}。',
@@ -81,6 +85,10 @@ export default {
     changelog: {
       title: '更新履歴',
       intro: '更新ごとに見出し・日付（time 要素）・版・種類の言葉の印を持ち、使われている種類だけで絞り込める。器が広いときは日付と版を横の列に置く。',
+    },
+    search: {
+      title: '検索結果',
+      intro: '探す欄（Enter か「検索」で送る）・絞り込み・件数・結果・ページ送り。探すのとページ分けはサーバーで行い、条件（query）は利用側が持つ。結果の見出しと抜き出しの、探した言葉に当たる所に印を付ける（かなと全角半角を区別しない）。まだ探していない画面と当てはまらない画面を分け、当てはまらなければ絞り込みを外す道を出す。器が狭いときは、絞り込みを「絞り込み」のボタンから開く面へ移す。公開のヘルプでもアプリの中でも使うので外枠は持たない（この見本は SiteLayout で包み、よくある質問と更新履歴の見本を索引にしている）。',
     },
     a11yCaption: '公開ページのテンプレートが満たす仕様',
   },

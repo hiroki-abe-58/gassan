@@ -40,7 +40,7 @@ export default {
     a11yCaption: '로그인과 가입 템플릿이 충족하는 명세',
   },
   status: {
-    lead: '4xx / 5xx·오프라인·점검. 무슨 일이 일어났는지·왜인지·다음에 무엇을 할 수 있는지를 사용자를 탓하지 않는 말로 쓰고, 다음 한 걸음을 상태마다 바꾼다.',
+    lead: '4xx / 5xx·오프라인·점검·서비스 상태. 무슨 일이 일어났는지·왜인지·다음에 무엇을 할 수 있는지를 사용자를 탓하지 않는 말로 쓰고, 다음 한 걸음을 상태마다 바꾼다.',
     error: {
       title: '오류 페이지',
       intro: 'IANA에 등록된 4xx와 5xx 40개, 그리고 오프라인은 저마다 제목·설명·다음 한 걸음을 갖는다(등록에 없는 상태는 4xx / 5xx 문구로 보여 준다). 다음 한 걸음은 상태마다 바꾼다. 401은 로그인, 402는 결제 설정, 403과 451은 문의, 페이지나 기능에 도달할 수 없을 때(404·410 등)는 홈, 보낸 내용에 문제가 있을 때는 이전 페이지, 잠시 기다리거나 새로 고침하면 해결될 때는 다시 시도로 이끈다(서버 쪽 문제에는 서비스 상태도 함께 안내한다). 상태 코드는 크게 보여 주고, 스크린 리더에서는 “오류 404”로 읽게 한다. 5xx의 문의 번호는 복사할 수 있다. 429는 대기 시간 동안 “다시 시도”를 누를 수 없다.',
@@ -52,12 +52,16 @@ export default {
       title: '점검',
       intro: '일정은 보는 사람의 시간대로, 시간대 이름을 붙여 보여 준다(같은 날이면 날짜는 한 번만). 서비스 상태 페이지가 있으면 먼저 안내하고, 진행 소식을 시각과 함께 나열한다.',
     },
-    code: "import { ErrorPage, MaintenancePage } from '@genelab/gassan';\n\n// Next.js의 app/not-found.tsx\nexport default function NotFound() {\n  return <ErrorPage status={404} />;\n}\n\n<ErrorPage status={500} reference={error.digest} onRetry={reset} />\n<ErrorPage status={429} retryAfter={30} />\n\n<MaintenancePage start=\"2026-10-24T02:00:00+09:00\" end=\"2026-10-24T04:00:00+09:00\" />",
+    serviceStatus: {
+      title: '서비스 상태',
+      intro: '전체 상태(가장 심각한 부분의 상태로 정해지는 문장)·대응 중인 장애·부분별 상태와 지난 90일의 가동 막대·지난 장애·업데이트 받는 방법을 한 페이지에 늘어놓는다. 막대는 한 행짜리 표로, 오늘 칸만 Tab으로 멈추고, ←→로 날짜를 옮기며 “10월 3일 (토) 부분 장애”처럼 읽는다. 색만으로 전하지 않고, 가동률과 문제가 있었던 날의 수를 막대의 설명으로 연결한다. 포인터는 막대 어디에서나 날짜를 고르므로, 가느다란 칸을 정확히 겨누지 않아도 된다. 날짜는 서비스가 기록하는 시간대의 달력 날짜 그대로 보여 준다. 오류 페이지와 푸터의 “서비스 상태”가 가리키는 곳(links.status)에 둔다.',
+    },
+    code: "import { ErrorPage, MaintenancePage, ServiceStatusPage } from '@genelab/gassan';\n\n// Next.js의 app/not-found.tsx\nexport default function NotFound() {\n  return <ErrorPage status={404} />;\n}\n\n<ErrorPage status={500} reference={error.digest} onRetry={reset} />\n<ErrorPage status={429} retryAfter={30} />\n\n<MaintenancePage start=\"2026-10-24T02:00:00+09:00\" end=\"2026-10-24T04:00:00+09:00\" />\n\n// 부분별 days는 오래된 순(마지막이 오늘). incidents는 최신순\n<ServiceStatusPage components={components} incidents={incidents} updatedAt={checkedAt} onSubscribe={subscribe} feedHref=\"/status.rss\" />",
     codeCaption: '사용법',
-    a11yCaption: '오류와 점검 템플릿이 충족하는 명세',
+    a11yCaption: '오류·점검·서비스 상태 템플릿이 충족하는 명세',
   },
   public: {
-    lead: '요금·자주 묻는 질문·문의·약관과 개인정보 처리방침·업데이트 내역. 헤더와 푸터(SiteLayout)까지 컴포넌트 하나로 보여 준다. 탐색과 푸터의 열은 SiteProvider에 한 번만 쓰면 모든 페이지에 적용된다.',
+    lead: '요금·자주 묻는 질문·문의·약관과 개인정보 처리방침·업데이트 내역·검색 결과. 검색 결과 외에는 헤더와 푸터(SiteLayout)까지 컴포넌트 하나로 보여 준다. 탐색과 푸터의 열은 SiteProvider에 한 번만 쓰면 모든 페이지에 적용된다.',
     site: {
       title: '바깥 틀',
       intro: '본문으로 건너뛰는 링크·헤더의 탐색(현재 페이지에 aria-current)·푸터의 링크 열·약관 링크. 컨테이너가 좁으면 탐색을 “메뉴” 버튼 아래로 접는다. 자체 레이아웃 안에 둘 때는 layout={false}.',
@@ -83,6 +87,10 @@ export default {
     changelog: {
       title: '업데이트 내역',
       intro: '업데이트마다 제목·날짜(time 요소)·버전·종류를 말로 나타낸 배지를 가지며, 실제로 쓰인 종류로만 필터링할 수 있다. 컨테이너가 넓으면 날짜와 버전을 옆 열에 둔다.',
+    },
+    search: {
+      title: '검색 결과',
+      intro: '검색창(Enter나 “검색”으로 보낸다)·필터·결과 수·결과·페이지 이동. 검색과 페이지 나누기는 서버에서 하고, 조건(query)은 사용하는 쪽이 관리한다. 결과의 제목과 발췌문에서 검색어에 해당하는 부분에 표시를 붙인다(히라가나와 가타카나, 전각과 반각을 구별하지 않는다). 아직 검색하지 않은 화면과 결과가 없는 화면을 구분하고, 결과가 없으면 필터를 초기화하는 길을 보여 준다. 컨테이너가 좁을 때는 필터를 “필터” 버튼으로 여는 패널로 옮긴다. 공개 도움말에서도 앱 안에서도 쓰므로 바깥 틀은 갖지 않는다(이 견본은 SiteLayout으로 감싸고, 자주 묻는 질문과 업데이트 내역 견본을 색인으로 삼는다).',
     },
     a11yCaption: '공개 페이지 템플릿이 충족하는 명세',
   },

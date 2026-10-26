@@ -192,6 +192,29 @@ export default {
       { q: '無料のプランに期限はありますか', a: 'ありません。人数とプロジェクトの上限の中で、ずっと使えます。' },
     ],
   },
+  serviceStatus: {
+    components: { api: 'API', dashboard: 'ダッシュボード', mail: 'メールの送信', webhooks: 'Webhook', storage: 'ファイルの保存' },
+    descriptions: { webhooks: '外部のサービスへの通知', storage: 'アップロードしたファイルの保存と配信' },
+    slow: {
+      title: 'API の応答が遅くなっています',
+      identified: 'データベースの負荷が高くなっていることが分かりました。読み取りを別のサーバーへ振り分けています。',
+      investigating: '一部の地域で API の応答が遅くなっています。原因を調べています。',
+    },
+    outage: {
+      title: 'ダッシュボードにログインできない障害',
+      resolved: 'すべての方がログインできるようになりました。ご不便をおかけしました。',
+      monitoring: '修正を反映しました。ログインできることを確かめています。',
+      identified: '認証のサーバーの設定の誤りが原因でした。修正しています。',
+      investigating: 'ダッシュボードにログインできない状態です。原因を調べています。',
+    },
+    maintenance: {
+      title: 'データベースの定期メンテナンス',
+      resolved: 'メンテナンスを終えました。',
+      monitoring: 'メンテナンスを始めました。終わるまで、ダッシュボードは読み取りだけになります。',
+    },
+    notes: { slow: 'API の応答の遅延', outage: 'ログインできない障害 1 時間 20 分', maintenance: '予定のメンテナンス 2 時間', storage: 'アップロードの失敗 25 分' },
+  },
+  search: { kind: '種類', category: 'カテゴリ', initial: 'データ' },
   faq: [
     { id: 'refund', category: '料金', q: '返金はできますか', a: 'お支払いから 30 日以内なら、理由を問わず全額を返金します。', keywords: ['キャンセル', '払い戻し'] },
     {

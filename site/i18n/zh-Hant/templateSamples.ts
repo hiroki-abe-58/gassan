@@ -190,6 +190,29 @@ export default {
       { q: '免費方案有期限嗎？', a: '沒有。只要在人數與專案數的上限內，就能一直使用。' },
     ],
   },
+  serviceStatus: {
+    components: { api: 'API', dashboard: '儀表板', mail: '郵件寄送', webhooks: 'Webhook', storage: '檔案儲存' },
+    descriptions: { webhooks: '傳送給外部服務的通知', storage: '上傳檔案的儲存與傳遞' },
+    slow: {
+      title: 'API 回應變慢',
+      identified: '已查明是資料庫負載過高。正在將讀取要求分散到其他伺服器。',
+      investigating: '部分地區的 API 回應變慢。正在調查原因。',
+    },
+    outage: {
+      title: '無法登入儀表板的故障',
+      resolved: '所有使用者都已恢復登入。造成不便，敬請見諒。',
+      monitoring: '已套用修正。正在確認能否正常登入。',
+      identified: '原因是身分驗證伺服器的設定錯誤。正在修正。',
+      investigating: '目前無法登入儀表板。正在調查原因。',
+    },
+    maintenance: {
+      title: '資料庫定期維護',
+      resolved: '維護已完成。',
+      monitoring: '維護已開始。維護結束前，儀表板為唯讀狀態。',
+    },
+    notes: { slow: 'API 回應延遲', outage: '無法登入的故障 1 小時 20 分鐘', maintenance: '預定維護 2 小時', storage: '上傳失敗 25 分鐘' },
+  },
+  search: { kind: '類型', category: '類別', initial: '資料' },
   faq: [
     { id: 'refund', category: '費用', q: '可以退款嗎？', a: '付款後 30 天內，無論任何理由都全額退款。', keywords: ['取消', '退費'] },
     {
